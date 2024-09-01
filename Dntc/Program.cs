@@ -1,59 +1,74 @@
 ﻿using Dntc.Common;
+using Dntc.Common.Definitions;
 using Mono.Cecil;
 
-var catalog = new Catalog();
 var module = ModuleDefinition.ReadModule("TestInputs/SimpleFunctions.dll");
-catalog.AddModule(module);
-
-foreach (var typeName in catalog.DefinedTypes)
+var catalog = new Catalog();
+foreach (var type in NativeDefinedType.StandardTypes)
 {
-    var typeInfo = catalog.FindType(typeName);
-    Console.WriteLine($"{typeInfo!.ClrName.Name}");
+    catalog.AddType(type);
+}
 
-    Console.WriteLine($"\tMethods found: {typeInfo.Methods.Count}");
-    foreach (var methodName in typeInfo.Methods)
+foreach (var type in module.Types.Where(x => x.Name != "<Module>"))
+{
+    var definedType = new DotNetDefinedType(type);
+    catalog.AddType(definedType);
+
+    foreach (var method in type.Methods)
     {
-        var method = catalog.FindMethod(methodName);
-        if (method == null)
+        var definedMethod = new DotNetDefinedMethod(method);
+        catalog.AddMethod(definedMethod);
+    }
+}
+
+var foundType = catalog.FindType(new ClrTypeName("TestSetups.SimpleFunctions"));
+if (foundType == null)
+{
+    throw new InvalidOperationException("CLR type not found");
+}
+
+Console.WriteLine($"Type {foundType.ClrName.Name}");
+Console.WriteLine($"\tFields: {foundType.Fields.Count}");
+foreach (var field in foundType.Fields)
+{
+    Console.WriteLine($"\t\t{field.Name}: {field.Type.Name}");
+}
+
+Console.WriteLine($"\tMethods: {foundType.Methods.Count}");
+foreach (var methodId in foundType.Methods)
+{
+    Console.WriteLine($"\t\t{methodId.Name}");
+
+    var method = catalog.FindMethod(methodId);
+    if (method == null)
+    {
+        throw new InvalidOperationException($"No method in catalog with id '{methodId.Name}");
+    }
+    
+    Console.WriteLine($"\t\t\tReturn Type: {method.ReturnType.Name}");
+    for (var x = 0; x < method.Parameters.Count; x++)
+    {
+        var param = method.Parameters[x];
+        Console.WriteLine($"\t\t\tParameter #{x:000}: {param.Name} ({param.Type.Name})");
+    }
+
+    for (var x = 0; x < method.Locals.Count; x++)
+    {
+        var local = method.Locals[x];
+        Console.WriteLine($"\t\t\tLocal #{x:000}: {local.Name}");
+    }
+    
+    Console.WriteLine("\t\t\tValidation Errors:");
+    var errors = CatalogValidator.IsMethodImplementable(catalog, methodId);
+    if (errors.Count == 0)
+    {
+        Console.WriteLine("\t\t\t\tNone!");
+    }
+    else
+    {
+        foreach (var error in errors)
         {
-            var message = $"No method found with {methodName.Name} on type {typeName.Name}";
-            throw new NullReferenceException(message);
+            Console.WriteLine($"\t\t\t\t{error}");
         }
-
-        Console.Write($"\t\t{typeName.Name}.{methodName.Name}(");
-        for (var x = 0; x < method.Parameters.Count; x++)
-        {
-            if (x > 0) Console.Write(", ");
-            var param = method.Parameters[x];
-            Console.Write($"{param.Type.Name} {param.Name}");
-        }
-
-        Console.WriteLine(")");
-        
-        Console.WriteLine("\t\tLocal Variables:");
-        for (var x = 0; x < method.Locals.Count; x++)
-        {
-            Console.WriteLine($"\t\t\t{x:0000} - {method.Locals[x].Name}");
-        }
-
-        Console.WriteLine("\t\tInstructions:");
-
-        foreach (var instruction in method.Instructions)
-        {
-            Console.Write($"\t\t\t{instruction.Offset:0000}: {instruction.OpCode} ");
-            switch (instruction.Operand)
-            {
-                case null:
-                    break;
-
-                default:
-                    Console.Write($"{instruction.Operand} ({instruction.Operand?.GetType().FullName})");
-                    break;
-            }
-
-            Console.WriteLine();
-        }
-
-        Console.WriteLine();
     }
 }

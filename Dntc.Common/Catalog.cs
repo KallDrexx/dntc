@@ -1,81 +1,48 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.Definitions;
 
 namespace Dntc.Common;
 
 public class Catalog
 {
-    private readonly Dictionary<ClrTypeName, TypeInfo> _types = new();
-    private readonly Dictionary<ClrMethodFullName, MethodInfo> _methods = new();
+    private readonly Dictionary<ClrTypeName, DefinedType> _types = new();
+    private readonly Dictionary<ClrMethodId, DefinedMethod> _methods = new();
 
-    public void AddModule(ModuleDefinition module)
+    public void AddType(DefinedType type)
     {
-        foreach (var type in module.Types)
+        if (_types.TryGetValue(type.ClrName, out var existingType))
         {
-            if (type.FullName == "<Module>")
-            {
-                continue;
-            }
-            
-            AddType(type);
-            foreach (var method in type.Methods)
-            {
-                AddMethod(method);
-            }
+            // TODO: Add better duplication logic, and possibly allow overriding
+            // in some circumstances
+            var message = $"CLR type '{type.ClrName.Name} is already defined and cannot " +
+                          $"be redefined";
+
+            throw new InvalidOperationException(message);
         }
 
-        foreach (var type in module.GetTypeReferences())
+        _types[type.ClrName] = type;
+    }
+
+    public void AddMethod(DefinedMethod method)
+    {
+        if (_methods.TryGetValue(method.Id, out var existingMethod))
         {
-            AddType(type);
-        }
-    }
+            // TODO: Add better duplication logic, and possibly allow overriding
+            var message = $"CLR method '{method.Id.Name}' is already defined and cannot " +
+                          $"be redefined";
 
-    public IReadOnlyList<ClrTypeName> DefinedTypes => _types
-        .Where(x => x.Value.HasBeenDefined)
-        .Select(x => x.Key)
-        .OrderBy(x => x.Name)
-        .ToArray();
-
-    public TypeInfo? FindType(ClrTypeName name)
-    {
-        return _types.GetValueOrDefault(name);
-    }
-
-    public MethodInfo? FindMethod(ClrMethodFullName name)
-    {
-        return _methods.GetValueOrDefault(name);
-    }
-    
-    private void AddType(TypeDefinition definition)
-    {
-        var name = new ClrTypeName(definition.FullName);
-        if (_types.TryGetValue(name, out var info))
-        {
-            if (!info.HasBeenDefined)
-            {
-                info.Update(definition);
-            }
-
-            return;
+            throw new InvalidOperationException(message);
         }
 
-        _types[name] = new TypeInfo(definition);
+        _methods[method.Id] = method;
     }
 
-    private void AddType(TypeReference reference)
+    public DefinedType? FindType(ClrTypeName clrName)
     {
-        var name = new ClrTypeName(reference.FullName);
-        if (!_types.ContainsKey(name))
-        {
-            _types[name] = new TypeInfo(reference);
-        }
+        return _types.GetValueOrDefault(clrName);
     }
 
-    private void AddMethod(MethodDefinition definition)
+    public DefinedMethod? FindMethod(ClrMethodId methodId)
     {
-        var name = new ClrMethodFullName(definition.FullName);
-        if (!_methods.ContainsKey(name))
-        {
-            _methods[name] = new MethodInfo(definition);
-        }
+        return _methods.GetValueOrDefault(methodId);
     }
 }
