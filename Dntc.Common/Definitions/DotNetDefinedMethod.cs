@@ -9,17 +9,17 @@ public class DotNetDefinedMethod : DefinedMethod
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
-        Id = new ClrMethodId(definition.FullName);
-        ReturnType = new ClrTypeName(definition.ReturnType.FullName);
+        Id = new IlMethodId(definition.FullName);
+        ReturnType = new IlTypeName(definition.ReturnType.FullName);
         Parameters = definition.Parameters
             .OrderBy(x => x.Index)
-            .Select(x => new Parameter(new ClrTypeName(x.ParameterType.FullName), x.Name))
+            .Select(x => new Parameter(new IlTypeName(x.ParameterType.FullName), x.Name))
             .ToArray();
 
         Locals = definition.Body
             .Variables
             .OrderBy(x => x.Index)
-            .Select(x => new ClrTypeName(x.VariableType.FullName))
+            .Select(x => new IlTypeName(x.VariableType.FullName))
             .ToArray();
     }
 }

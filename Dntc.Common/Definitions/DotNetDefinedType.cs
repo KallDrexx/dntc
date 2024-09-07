@@ -7,21 +7,21 @@ public class DotNetDefinedType : DefinedType
     private readonly TypeDefinition _definition;
     
     public ModuleDefinition DefinedModule { get; }
-    public ClrNamespace Namespace { get; }
+    public IlNamespace Namespace { get; }
 
     public DotNetDefinedType(TypeDefinition definition)
     {
         _definition = definition;
         DefinedModule = definition.Module;
-        ClrName = new ClrTypeName(definition.FullName);
-        Namespace = new ClrNamespace(definition.Namespace);
+        IlName = new IlTypeName(definition.FullName);
+        Namespace = new IlNamespace(definition.Namespace);
 
         Fields = definition.Fields
-            .Select(x => new Field(new ClrTypeName(x.FieldType.FullName), x.Name))
+            .Select(x => new Field(new IlTypeName(x.FieldType.FullName), x.Name))
             .ToArray();
 
         Methods = definition.Methods
-            .Select(x => new ClrMethodId(x.FullName))
+            .Select(x => new IlMethodId(x.FullName))
             .ToArray();
     }
 }

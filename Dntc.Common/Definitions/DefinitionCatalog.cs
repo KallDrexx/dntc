@@ -1,25 +1,23 @@
-﻿using Dntc.Common.Definitions;
+﻿namespace Dntc.Common.Definitions;
 
-namespace Dntc.Common;
-
-public class Catalog
+public class DefinitionCatalog
 {
-    private readonly Dictionary<ClrTypeName, DefinedType> _types = new();
-    private readonly Dictionary<ClrMethodId, DefinedMethod> _methods = new();
+    private readonly Dictionary<IlTypeName, DefinedType> _types = new();
+    private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
 
     public void AddType(DefinedType type)
     {
-        if (_types.TryGetValue(type.ClrName, out var existingType))
+        if (_types.TryGetValue(type.IlName, out var existingType))
         {
             // TODO: Add better duplication logic, and possibly allow overriding
             // in some circumstances
-            var message = $"CLR type '{type.ClrName.Name} is already defined and cannot " +
+            var message = $"CLR type '{type.IlName.Name} is already defined and cannot " +
                           $"be redefined";
 
             throw new InvalidOperationException(message);
         }
 
-        _types[type.ClrName] = type;
+        _types[type.IlName] = type;
     }
 
     public void AddMethod(DefinedMethod method)
@@ -36,12 +34,12 @@ public class Catalog
         _methods[method.Id] = method;
     }
 
-    public DefinedType? FindType(ClrTypeName clrName)
+    public DefinedType? FindType(IlTypeName ilName)
     {
-        return _types.GetValueOrDefault(clrName);
+        return _types.GetValueOrDefault(ilName);
     }
 
-    public DefinedMethod? FindMethod(ClrMethodId methodId)
+    public DefinedMethod? FindMethod(IlMethodId methodId)
     {
         return _methods.GetValueOrDefault(methodId);
     }

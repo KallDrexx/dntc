@@ -7,7 +7,7 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class MethodConversionInfo
 {
-    public ClrMethodId MethodId { get; private set; }
+    public IlMethodId MethodId { get; private set; }
     
     /// <summary>
     /// If true, then this is a function that has already been declared in

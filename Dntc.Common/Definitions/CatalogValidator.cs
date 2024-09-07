@@ -1,30 +1,30 @@
-﻿namespace Dntc.Common;
+﻿namespace Dntc.Common.Definitions;
 
 public static class CatalogValidator
 {
     public interface IValidationError;
 
-    public record MissingMethodDefinition(ClrMethodId MethodId) : IValidationError;
+    public record MissingMethodDefinition(IlMethodId MethodId) : IValidationError;
 
-    public record MissingTypeDefinition(ClrTypeName TypeName) : IValidationError;
+    public record MissingTypeDefinition(IlTypeName TypeName) : IValidationError;
 
-    public static IReadOnlyList<IValidationError> IsMethodImplementable(Catalog catalog, ClrMethodId id)
+    public static IReadOnlyList<IValidationError> IsMethodImplementable(DefinitionCatalog definitionCatalog, IlMethodId id)
     {
-        var method = catalog.FindMethod(id);
+        var method = definitionCatalog.FindMethod(id);
         if (method == null)
         {
             return new[] { new MissingMethodDefinition(id) };
         }
 
-        var missingTypes = new HashSet<ClrTypeName>();
-        if (catalog.FindType(method.ReturnType) == null)
+        var missingTypes = new HashSet<IlTypeName>();
+        if (definitionCatalog.FindType(method.ReturnType) == null)
         {
             missingTypes.Add(method.ReturnType);
         }
 
         foreach (var param in method.Parameters)
         {
-            if (catalog.FindType(param.Type) == null)
+            if (definitionCatalog.FindType(param.Type) == null)
             {
                 missingTypes.Add(param.Type);
             }
@@ -32,7 +32,7 @@ public static class CatalogValidator
 
         foreach (var local in method.Locals)
         {
-            if (catalog.FindType(local) == null)
+            if (definitionCatalog.FindType(local) == null)
             {
                 missingTypes.Add(local);
             }

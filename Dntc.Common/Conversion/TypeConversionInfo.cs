@@ -10,7 +10,7 @@ public class TypeConversionInfo
     /// <summary>
     /// The name this type has when referenced in .net
     /// </summary>
-    public ClrTypeName ClrName { get; }
+    public IlTypeName IlName { get; }
     
     /// <summary>
     /// If true, this is a type that can be considered pre-declared and should not
@@ -31,7 +31,7 @@ public class TypeConversionInfo
 
     public TypeConversionInfo(DefinedType type)
     {
-        ClrName = type.ClrName;
+        IlName = type.IlName;
 
         switch (type)
         {
@@ -57,7 +57,7 @@ public class TypeConversionInfo
     {
         IsPredeclared = false;
         Header = new HeaderName(ConvertNameToC(type.Namespace.Namespace) + ".h");
-        NameInC = new CTypeName(ConvertNameToC(type.ClrName.Name));
+        NameInC = new CTypeName(ConvertNameToC(type.IlName.Name));
     }
 
     private void SetupNativeType(NativeDefinedType type)
