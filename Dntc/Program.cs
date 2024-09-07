@@ -1,4 +1,5 @@
 ﻿using Dntc.Common;
+using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
 using Dntc.Common.Dependencies;
 using Mono.Cecil;
@@ -28,81 +29,25 @@ if (foundType == null)
     throw new InvalidOperationException("CLR type not found");
 }
 
-Console.WriteLine($"Type {foundType.ClrName.Name}");
-Console.WriteLine($"\tFields: {foundType.Fields.Count}");
-foreach (var field in foundType.Fields)
+var foundMethod = catalog.FindMethod(new ClrMethodId("System.Int32 TestSetups.SimpleFunctions::IntAdd(System.Int32,System.Int32)"));
+if (foundMethod == null)
 {
-    Console.WriteLine($"\t\t{field.Name}: {field.Type.Name}");
+    throw new InvalidOperationException("CLR method not found");
 }
 
-Console.WriteLine($"\tMethods: {foundType.Methods.Count}");
-foreach (var methodId in foundType.Methods)
-{
-    Console.WriteLine($"\t\t{methodId.Name}");
+var typeConversion = new TypeConversionInfo(foundType);
+Console.WriteLine($"Type: {typeConversion.ClrName.Name}");
+Console.WriteLine($"Header: {typeConversion.Header?.Name}");
+Console.WriteLine($"IsPredeclared: {typeConversion.IsPredeclared}");
+Console.WriteLine($"C Name: {typeConversion.NameInC.Name}");
+Console.WriteLine();
 
-    var method = catalog.FindMethod(methodId);
-    if (method == null)
-    {
-        throw new InvalidOperationException($"No method in catalog with id '{methodId.Name}");
-    }
-    
-    Console.WriteLine($"\t\t\tReturn Type: {method.ReturnType.Name}");
-    for (var x = 0; x < method.Parameters.Count; x++)
-    {
-        var param = method.Parameters[x];
-        Console.WriteLine($"\t\t\tParameter #{x:000}: {param.Name} ({param.Type.Name})");
-    }
+var methodConversion = new MethodConversionInfo(foundMethod);
+Console.WriteLine($"Method: {methodConversion.MethodId.Name}");
+Console.WriteLine($"Header: {methodConversion.Header.Name}");
+Console.WriteLine($"Implementation File: {methodConversion.ImplementationFile?.Name}");
+Console.WriteLine($"IsPredeclared: {methodConversion.IsPredeclared}");
+Console.WriteLine($"C Name: {methodConversion.NameInC.Name}");
+Console.WriteLine();
 
-    for (var x = 0; x < method.Locals.Count; x++)
-    {
-        var local = method.Locals[x];
-        Console.WriteLine($"\t\t\tLocal #{x:000}: {local.Name}");
-    }
-    
-    Console.WriteLine("\t\t\tValidation Errors:");
-    var errors = CatalogValidator.IsMethodImplementable(catalog, methodId);
-    if (errors.Count == 0)
-    {
-        Console.WriteLine("\t\t\t\tNone!");
-    }
-    else
-    {
-        foreach (var error in errors)
-        {
-            Console.WriteLine($"\t\t\t\t{error}");
-        }
-    }
-    
-    void RenderGraphNode(DependencyGraph.Node node, int indent)
-    {
-        for (var x = 0; x < indent; x++)
-        {
-            Console.Write("\t");
-        }
-        
-        switch (node)
-        {
-            case DependencyGraph.MethodNode methodNode:
-                Console.WriteLine(methodNode.MethodId.Name);
-                break;
-            
-            case DependencyGraph.TypeNode typeNode:
-                Console.WriteLine(typeNode.TypeName.Name);
-                break;
-            
-            default:
-                throw new NotSupportedException(node.GetType().FullName);
-        }
-
-        foreach (var child in node.Children)
-        {
-            RenderGraphNode(child, indent + 1);
-        }
-    }
-    
-    Console.WriteLine();
-    Console.WriteLine("\t\t\tDependency Graph");
-    var graph = new DependencyGraph(catalog, method.Id);
-    RenderGraphNode(graph.Root, 4);
-}
 

@@ -7,12 +7,14 @@ public class DotNetDefinedType : DefinedType
     private readonly TypeDefinition _definition;
     
     public ModuleDefinition DefinedModule { get; }
+    public ClrNamespace Namespace { get; }
 
     public DotNetDefinedType(TypeDefinition definition)
     {
         _definition = definition;
         DefinedModule = definition.Module;
         ClrName = new ClrTypeName(definition.FullName);
+        Namespace = new ClrNamespace(definition.Namespace);
 
         Fields = definition.Fields
             .Select(x => new Field(new ClrTypeName(x.FieldType.FullName), x.Name))
