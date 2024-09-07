@@ -1,5 +1,6 @@
 ﻿using Dntc.Common;
 using Dntc.Common.Definitions;
+using Dntc.Common.Dependencies;
 using Mono.Cecil;
 
 var module = ModuleDefinition.ReadModule("TestInputs/SimpleFunctions.dll");
@@ -71,4 +72,37 @@ foreach (var methodId in foundType.Methods)
             Console.WriteLine($"\t\t\t\t{error}");
         }
     }
+    
+    void RenderGraphNode(DependencyGraph.Node node, int indent)
+    {
+        for (var x = 0; x < indent; x++)
+        {
+            Console.Write("\t");
+        }
+        
+        switch (node)
+        {
+            case DependencyGraph.MethodNode methodNode:
+                Console.WriteLine(methodNode.MethodId.Name);
+                break;
+            
+            case DependencyGraph.TypeNode typeNode:
+                Console.WriteLine(typeNode.TypeName.Name);
+                break;
+            
+            default:
+                throw new NotSupportedException(node.GetType().FullName);
+        }
+
+        foreach (var child in node.Children)
+        {
+            RenderGraphNode(child, indent + 1);
+        }
+    }
+    
+    Console.WriteLine();
+    Console.WriteLine("\t\t\tDependency Graph");
+    var graph = new DependencyGraph(catalog, method.Id);
+    RenderGraphNode(graph.Root, 4);
 }
+
