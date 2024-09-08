@@ -6,4 +6,4 @@ public readonly record struct CTypeName(string Value);
 public readonly record struct HeaderName(string Value);
 public readonly record struct IlNamespace(string Value);
 public readonly record struct CFunctionName(string Value);
-public readonly record struct CImplementationFile(string Value);
+public readonly record struct CSourceFileName(string Value);

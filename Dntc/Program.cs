@@ -1,5 +1,4 @@
 ﻿using Dntc.Common;
-using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Planning;
 using Dntc.Common.Definitions;
 using Dntc.Common.Dependencies;
@@ -59,6 +58,26 @@ foreach (var header in plan.Headers)
     Console.WriteLine();
     Console.WriteLine("\tMethods:");
     foreach (var method in header.DeclaredMethods)
+    {
+        Console.WriteLine($"\t\t{method.NameInC.Value} ({method.MethodId.Value})");
+    }
+    
+    Console.WriteLine();
+}
+
+Console.WriteLine("Source Files:");
+foreach (var sourceFile in plan.SourceFiles)
+{
+    Console.WriteLine($"\t{sourceFile.Name.Value}");
+    Console.WriteLine($"\tReferenced Headers:");
+    foreach (var referencedHeader in sourceFile.ReferencedHeaders)
+    {
+        Console.WriteLine($"\t\t{referencedHeader.Value}");
+    }
+    
+    Console.WriteLine();
+    Console.WriteLine("\tMethods:");
+    foreach (var method in sourceFile.ImplementedMethods)
     {
         Console.WriteLine($"\t\t{method.NameInC.Value} ({method.MethodId.Value})");
     }

@@ -8,14 +8,72 @@ namespace Dntc.Common.Conversion.Planning;
 /// </summary>
 public class ImplementationPlan
 {
-    private readonly Dictionary<HeaderName, PlannedHeader> _headers = new();
+    private readonly Dictionary<HeaderName, PlannedHeaderFile> _headers = new();
+    private readonly Dictionary<CSourceFileName, PlannedSourceFile> _sourceFiles = new();
 
-    public IEnumerable<PlannedHeader> Headers => _headers.Values;
+    public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
+    public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
 
     public ImplementationPlan(DefinitionCatalog definitionCatalog, DependencyGraph dependencies)
     {
         var conversionCatalog = new ConversionCatalog(definitionCatalog, dependencies);
         ProcessNode(conversionCatalog, dependencies.Root);
+    }
+
+    private static void AddReferencedHeaders(ConversionCatalog catalog, DependencyGraph.Node node, PlannedHeaderFile headerFile)
+    {
+        foreach (var child in node.Children)
+        {
+            switch (child)
+            {
+                case DependencyGraph.TypeNode typeNode:
+                    var childType = catalog.Find(typeNode.TypeName);
+                    if (childType.Header != null && !headerFile.ReferencedHeaders.Contains(childType.Header.Value))
+                    {
+                        headerFile.ReferencedHeaders.Add(childType.Header.Value);
+                    }
+                    break;
+                
+                case DependencyGraph.MethodNode methodNode:
+                    var childMethod = catalog.Find(methodNode.MethodId);
+                    if (!headerFile.ReferencedHeaders.Contains(childMethod.Header))
+                    {
+                        headerFile.ReferencedHeaders.Add(childMethod.Header);
+                    }
+                    break;
+                
+                default:
+                    throw new NotSupportedException(child.GetType().FullName);
+            }
+        }
+    }
+    
+    private static void AddReferencedHeaders(
+        ConversionCatalog catalog, 
+        DependencyGraph.Node node, 
+        PlannedSourceFile sourceFile)
+    {
+        foreach (var child in node.Children)
+        {
+            switch (child)
+            {
+                case DependencyGraph.TypeNode typeNode:
+                    var childType = catalog.Find(typeNode.TypeName);
+                    if (childType.Header != null )
+                    {
+                        sourceFile.AddReferencedHeader(childType.Header.Value);
+                    }
+                    break;
+                
+                case DependencyGraph.MethodNode methodNode:
+                    var childMethod = catalog.Find(methodNode.MethodId);
+                    sourceFile.AddReferencedHeader(childMethod.Header);
+                    break;
+                
+                default:
+                    throw new NotSupportedException(child.GetType().FullName);
+            }
+        }
     }
 
     private void ProcessNode(ConversionCatalog catalog, DependencyGraph.Node node)
@@ -33,6 +91,7 @@ public class ImplementationPlan
             
             case DependencyGraph.MethodNode methodNode:
                 DeclareMethod(catalog, methodNode);
+                AddMethodImplementation(catalog, methodNode);
                 break;
             
             default:
@@ -57,13 +116,12 @@ public class ImplementationPlan
 
         if (!_headers.TryGetValue(type.Header.Value, out var header))
         {
-            header = new PlannedHeader(type.Header.Value);
-            _headers[type.Header.Value] = header;
+            header = new PlannedHeaderFile(type.Header.Value);
+            _headers[header.Name] = header;
         }
         
-        header.DeclaredTypes.Add(type);
         AddReferencedHeaders(catalog, node, header);
-        
+        header.DeclaredTypes.Add(type);
     }
 
     private void DeclareMethod(ConversionCatalog catalog, DependencyGraph.MethodNode node)
@@ -77,39 +135,35 @@ public class ImplementationPlan
         
         if (!_headers.TryGetValue(method.Header, out var header))
         {
-            header = new PlannedHeader(method.Header);
+            header = new PlannedHeaderFile(method.Header);
             _headers[method.Header] = header;
         }
         
-        header.DeclaredMethods.Add(method);
         AddReferencedHeaders(catalog, node, header);
+        header.DeclaredMethods.Add(method);
     }
 
-    private void AddReferencedHeaders(ConversionCatalog catalog, DependencyGraph.Node node, PlannedHeader header)
+    private void AddMethodImplementation(ConversionCatalog catalog, DependencyGraph.MethodNode node)
     {
-        foreach (var child in node.Children)
+        var method = catalog.Find(node.MethodId);
+        if (method.IsPredeclared)
         {
-            switch (child)
-            {
-                case DependencyGraph.TypeNode typeNode:
-                    var childType = catalog.Find(typeNode.TypeName);
-                    if (childType.Header != null && !header.ReferencedHeaders.Contains(childType.Header.Value))
-                    {
-                        header.ReferencedHeaders.Add(childType.Header.Value);
-                    }
-                    break;
-                
-                case DependencyGraph.MethodNode methodNode:
-                    var childMethod = catalog.Find(methodNode.MethodId);
-                    if (!header.ReferencedHeaders.Contains(childMethod.Header))
-                    {
-                        header.ReferencedHeaders.Add(childMethod.Header);
-                    }
-                    break;
-                
-                default:
-                    throw new NotSupportedException(child.GetType().FullName);
-            }
+            return;
         }
+
+        if (method.SourceFileName == null)
+        {
+            var message = $"Method `{method.MethodId.Value}` is not predeclared but has no source file named";
+            throw new InvalidOperationException(message);
+        }
+
+        if (!_sourceFiles.TryGetValue(method.SourceFileName.Value, out var sourceFile))
+        {
+            sourceFile = new PlannedSourceFile(method.SourceFileName.Value);
+            _sourceFiles[sourceFile.Name] = sourceFile;
+        }
+        
+        AddReferencedHeaders(catalog, node, sourceFile);
+        sourceFile.AddMethod(method);
     }
 }

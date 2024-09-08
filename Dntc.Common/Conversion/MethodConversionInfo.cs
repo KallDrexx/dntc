@@ -27,7 +27,7 @@ public class MethodConversionInfo
     /// either part of the C standard or implemented in the integrated C
     /// code base.
     /// </summary>
-    public CImplementationFile? ImplementationFile { get; private set; }
+    public CSourceFileName? SourceFileName { get; private set; }
     
     /// <summary>
     /// The name of the function when defined in C
@@ -59,7 +59,7 @@ public class MethodConversionInfo
 
         var fileNameBase = ConvertNameToC(method.Definition.DeclaringType.Namespace);
         Header = new HeaderName(fileNameBase + ".h");
-        ImplementationFile = new CImplementationFile(fileNameBase + ".c");
+        SourceFileName = new CSourceFileName(fileNameBase + ".c");
 
         // TOOD: Need to figure out a good way to disambiguate overloaded functions
         var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
