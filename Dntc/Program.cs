@@ -1,4 +1,5 @@
 ﻿using Dntc.Common;
+using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Planning;
 using Dntc.Common.Definitions;
 using Dntc.Common.Dependencies;
@@ -36,53 +37,25 @@ if (foundMethod == null)
 }
 
 var graph = new DependencyGraph(catalog, foundMethod.Id);
-var plan = new ImplementationPlan(catalog, graph);
+var conversionCatalog = new ConversionCatalog(catalog, graph);
+var plan = new ImplementationPlan(conversionCatalog, graph);
+var headerGenerator = new HeaderGenerator(catalog, conversionCatalog);
 
-Console.WriteLine("Headers:");
 foreach (var header in plan.Headers)
 {
-    Console.WriteLine($"\t{header.Name.Value}");
-    Console.WriteLine($"\tReferenced Headers:");
-    foreach (var referencedHeader in header.ReferencedHeaders)
+    var contents = new MemoryStream();
+    await using (var writer = new StreamWriter(contents, leaveOpen: true))
     {
-        Console.WriteLine($"\t\t{referencedHeader.Value}");
+        await headerGenerator.WriteHeaderFileAsync(header, writer);
     }
     
-    Console.WriteLine();
-    Console.WriteLine($"\tTypes:");
-    foreach (var type in header.DeclaredTypes)
-    {
-        Console.WriteLine($"\t\t{type.NameInC.Value} ({type.IlName.Value})");
-    }
-    
-    Console.WriteLine();
-    Console.WriteLine("\tMethods:");
-    foreach (var method in header.DeclaredMethods)
-    {
-        Console.WriteLine($"\t\t{method.NameInC.Value} ({method.MethodId.Value})");
-    }
-    
-    Console.WriteLine();
-}
+    Console.WriteLine($"Header: {header.Name.Value}");
+    contents.Seek(0, SeekOrigin.Begin);
 
-Console.WriteLine("Source Files:");
-foreach (var sourceFile in plan.SourceFiles)
-{
-    Console.WriteLine($"\t{sourceFile.Name.Value}");
-    Console.WriteLine($"\tReferenced Headers:");
-    foreach (var referencedHeader in sourceFile.ReferencedHeaders)
+    using (var reader = new StreamReader(contents))
     {
-        Console.WriteLine($"\t\t{referencedHeader.Value}");
+        Console.Write(await reader.ReadToEndAsync());
     }
-    
-    Console.WriteLine();
-    Console.WriteLine("\tMethods:");
-    foreach (var method in sourceFile.ImplementedMethods)
-    {
-        Console.WriteLine($"\t\t{method.NameInC.Value} ({method.MethodId.Value})");
-    }
-    
-    Console.WriteLine();
 }
 
 

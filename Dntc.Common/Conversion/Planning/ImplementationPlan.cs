@@ -14,9 +14,8 @@ public class ImplementationPlan
     public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
     public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
 
-    public ImplementationPlan(DefinitionCatalog definitionCatalog, DependencyGraph dependencies)
+    public ImplementationPlan(ConversionCatalog conversionCatalog, DependencyGraph dependencies)
     {
-        var conversionCatalog = new ConversionCatalog(definitionCatalog, dependencies);
         ProcessNode(conversionCatalog, dependencies.Root);
     }
 
