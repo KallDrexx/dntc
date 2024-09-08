@@ -34,12 +34,12 @@ public class DefinitionCatalog
         _methods[method.Id] = method;
     }
 
-    public DefinedType? FindType(IlTypeName ilName)
+    public DefinedType? Find(IlTypeName ilName)
     {
         return _types.GetValueOrDefault(ilName);
     }
 
-    public DefinedMethod? FindMethod(IlMethodId methodId)
+    public DefinedMethod? Find(IlMethodId methodId)
     {
         return _methods.GetValueOrDefault(methodId);
     }
