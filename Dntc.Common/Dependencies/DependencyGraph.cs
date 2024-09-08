@@ -27,7 +27,7 @@ public class DependencyGraph
         var method = definitionCatalog.Find(methodId);
         if (method == null)
         {
-            var message = $"No method in the catalog with the id '{methodId.Name}'";
+            var message = $"No method in the catalog with the id '{methodId.Value}'";
             throw new InvalidOperationException(message);
         }
 
@@ -56,7 +56,7 @@ public class DependencyGraph
         var type = definitionCatalog.Find(typeName);
         if (type == null)
         {
-            var message = $"No type in the catalog with the name '{typeName.Name}'";
+            var message = $"No type in the catalog with the name '{typeName.Value}'";
             throw new InvalidOperationException(message);
         }
 
@@ -88,7 +88,7 @@ public class DependencyGraph
 
         if (referenceFound)
         {
-            ThrowCircularReferenceException(path, id.Name);
+            ThrowCircularReferenceException(path, id.Value);
         }
     }
 
@@ -106,7 +106,7 @@ public class DependencyGraph
 
         if (referenceFound)
         {
-            ThrowCircularReferenceException(path, typeName.Name);
+            ThrowCircularReferenceException(path, typeName.Value);
         }
     }
 
@@ -119,11 +119,11 @@ public class DependencyGraph
             switch (node)
             {
                 case MethodNode methodNode:
-                    pathString.Append($"{methodNode.MethodId.Name} --> ");
+                    pathString.Append($"{methodNode.MethodId.Value} --> ");
                     break;
                 
                 case TypeNode typeNode:
-                    pathString.Append($"{typeNode.TypeName.Name} --> ");
+                    pathString.Append($"{typeNode.TypeName.Value} --> ");
                     break;
                 
                 default:

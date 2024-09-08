@@ -1,9 +1,9 @@
 ﻿namespace Dntc.Common;
 
-public readonly record struct IlTypeName(string Name);
-public readonly record struct IlMethodId(string Name);
-public readonly record struct CTypeName(string Name);
-public readonly record struct HeaderName(string Name);
-public readonly record struct IlNamespace(string Namespace);
-public readonly record struct CFunctionName(string Name);
-public readonly record struct CImplementationFile(string Name);
+public readonly record struct IlTypeName(string Value);
+public readonly record struct IlMethodId(string Value);
+public readonly record struct CTypeName(string Value);
+public readonly record struct HeaderName(string Value);
+public readonly record struct IlNamespace(string Value);
+public readonly record struct CFunctionName(string Value);
+public readonly record struct CImplementationFile(string Value);

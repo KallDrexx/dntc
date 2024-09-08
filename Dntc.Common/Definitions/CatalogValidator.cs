@@ -38,7 +38,7 @@ public static class CatalogValidator
             }
         }
 
-        return missingTypes.OrderBy(x => x.Name)
+        return missingTypes.OrderBy(x => x.Value)
             .Select(x => new MissingTypeDefinition(x))
             .ToArray();
     }

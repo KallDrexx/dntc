@@ -20,7 +20,7 @@ public class ConversionCatalog
             return info;
         }
 
-        var message = $"Conversion catalog did not contain the type '{name.Name}";
+        var message = $"Conversion catalog did not contain the type '{name.Value}";
         throw new InvalidOperationException(message);
     }
 
@@ -31,7 +31,7 @@ public class ConversionCatalog
             return info;
         }
 
-        var message = $"Conversion catalog did not contain the type '{method.Name}'";
+        var message = $"Conversion catalog did not contain the type '{method.Value}'";
         throw new InvalidOperationException(message);
     }
 
@@ -59,7 +59,7 @@ public class ConversionCatalog
             var definition = definitionCatalog.Find(node.TypeName);
             if (definition == null)
             {
-                var message = $"Dependency graph contained node for type '{node.TypeName.Name}' but no " +
+                var message = $"Dependency graph contained node for type '{node.TypeName.Value}' but no " +
                               $"definition exists for it";
                 throw new InvalidOperationException(message);
             }
@@ -76,7 +76,7 @@ public class ConversionCatalog
             var definition = definitionCatalog.Find(node.MethodId);
             if (definition == null)
             {
-                var message = $"Dependency graph contained node for method '{node.MethodId.Name}' but no " +
+                var message = $"Dependency graph contained node for method '{node.MethodId.Value}' but no " +
                               $"definition exists for it";
                 throw new InvalidOperationException(message);
             }

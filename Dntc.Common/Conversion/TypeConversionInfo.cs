@@ -56,8 +56,8 @@ public class TypeConversionInfo
     private void SetupDotNetType(DotNetDefinedType type)
     {
         IsPredeclared = false;
-        Header = new HeaderName(ConvertNameToC(type.Namespace.Namespace) + ".h");
-        NameInC = new CTypeName(ConvertNameToC(type.IlName.Name));
+        Header = new HeaderName(ConvertNameToC(type.Namespace.Value) + ".h");
+        NameInC = new CTypeName(ConvertNameToC(type.IlName.Value));
     }
 
     private void SetupNativeType(NativeDefinedType type)

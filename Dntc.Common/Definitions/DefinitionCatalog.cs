@@ -11,7 +11,7 @@ public class DefinitionCatalog
         {
             // TODO: Add better duplication logic, and possibly allow overriding
             // in some circumstances
-            var message = $"CLR type '{type.IlName.Name} is already defined and cannot " +
+            var message = $"CLR type '{type.IlName.Value} is already defined and cannot " +
                           $"be redefined";
 
             throw new InvalidOperationException(message);
@@ -25,7 +25,7 @@ public class DefinitionCatalog
         if (_methods.TryGetValue(method.Id, out var existingMethod))
         {
             // TODO: Add better duplication logic, and possibly allow overriding
-            var message = $"CLR method '{method.Id.Name}' is already defined and cannot " +
+            var message = $"CLR method '{method.Id.Value}' is already defined and cannot " +
                           $"be redefined";
 
             throw new InvalidOperationException(message);

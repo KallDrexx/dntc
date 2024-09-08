@@ -42,25 +42,25 @@ var plan = new ImplementationPlan(catalog, graph);
 Console.WriteLine("Headers:");
 foreach (var header in plan.Headers)
 {
-    Console.WriteLine($"\t{header.Name.Name}");
+    Console.WriteLine($"\t{header.Name.Value}");
     Console.WriteLine($"\tReferenced Headers:");
     foreach (var referencedHeader in header.ReferencedHeaders)
     {
-        Console.WriteLine($"\t\t{referencedHeader.Name}");
+        Console.WriteLine($"\t\t{referencedHeader.Value}");
     }
     
     Console.WriteLine();
     Console.WriteLine($"\tTypes:");
     foreach (var type in header.DeclaredTypes)
     {
-        Console.WriteLine($"\t\t{type.NameInC.Name} ({type.IlName.Name})");
+        Console.WriteLine($"\t\t{type.NameInC.Value} ({type.IlName.Value})");
     }
     
     Console.WriteLine();
     Console.WriteLine("\tMethods:");
     foreach (var method in header.DeclaredMethods)
     {
-        Console.WriteLine($"\t\t{method.NameInC.Name} ({method.MethodId.Name})");
+        Console.WriteLine($"\t\t{method.NameInC.Value} ({method.MethodId.Value})");
     }
     
     Console.WriteLine();
