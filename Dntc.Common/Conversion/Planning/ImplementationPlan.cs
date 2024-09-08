@@ -28,18 +28,15 @@ public class ImplementationPlan
             {
                 case DependencyGraph.TypeNode typeNode:
                     var childType = catalog.Find(typeNode.TypeName);
-                    if (childType.Header != null && !headerFile.ReferencedHeaders.Contains(childType.Header.Value))
+                    if (childType.Header != null)
                     {
-                        headerFile.ReferencedHeaders.Add(childType.Header.Value);
+                        headerFile.AddReferencedHeader(childType.Header.Value);
                     }
                     break;
                 
                 case DependencyGraph.MethodNode methodNode:
                     var childMethod = catalog.Find(methodNode.MethodId);
-                    if (!headerFile.ReferencedHeaders.Contains(childMethod.Header))
-                    {
-                        headerFile.ReferencedHeaders.Add(childMethod.Header);
-                    }
+                    headerFile.AddReferencedHeader(childMethod.Header);
                     break;
                 
                 default:
@@ -121,7 +118,7 @@ public class ImplementationPlan
         }
         
         AddReferencedHeaders(catalog, node, header);
-        header.DeclaredTypes.Add(type);
+        header.AddDeclaredType(type);
     }
 
     private void DeclareMethod(ConversionCatalog catalog, DependencyGraph.MethodNode node)
@@ -140,7 +137,7 @@ public class ImplementationPlan
         }
         
         AddReferencedHeaders(catalog, node, header);
-        header.DeclaredMethods.Add(method);
+        header.AddDeclaredMethod(method);
     }
 
     private void AddMethodImplementation(ConversionCatalog catalog, DependencyGraph.MethodNode node)
