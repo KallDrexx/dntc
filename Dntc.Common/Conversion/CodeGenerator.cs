@@ -11,7 +11,7 @@ public class CodeGenerator
         _conversionCatalog = catalog;
     }
     
-    public async Task GenerateStruct(DotNetDefinedType type, StreamWriter writer)
+    public async Task GenerateStructAsync(DotNetDefinedType type, StreamWriter writer)
     {
         var conversionInfo = _conversionCatalog.Find(type.IlName);
         
@@ -25,7 +25,7 @@ public class CodeGenerator
         await writer.WriteLineAsync($"}} {conversionInfo.NameInC.Value};");
     }
 
-    public async Task GenerateMethodDeclaration(DotNetDefinedMethod method, StreamWriter writer)
+    public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer)
     {
         var methodInfo = _conversionCatalog.Find(method.Id);
         var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
@@ -40,5 +40,26 @@ public class CodeGenerator
         }
 
         await writer.WriteLineAsync(");");
+    }
+
+    public async Task GenerateMethodImplementationAsync(DotNetDefinedMethod method, StreamWriter writer)
+    {
+        var methodInfo = _conversionCatalog.Find(method.Id);
+        var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
+
+        await writer.WriteAsync($"{returnTypeInfo.NameInC.Value} {methodInfo.NameInC.Value}(");
+        for (var x = 0; x < method.Parameters.Count; x++)
+        {
+            var param = method.Parameters[x];
+            var prefix = x > 0 ? ", " : "";
+            var paramInfo = _conversionCatalog.Find(param.Type);
+            await writer.WriteAsync($"{prefix}{paramInfo.NameInC.Value} {param.Name}");
+        }
+
+        await writer.WriteLineAsync(") {");
+
+        await writer.WriteLineAsync("\t// TODO....");
+
+        await writer.WriteLineAsync("}");
     }
 }

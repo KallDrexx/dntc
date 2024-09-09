@@ -39,7 +39,7 @@ if (foundMethod == null)
 var graph = new DependencyGraph(catalog, foundMethod.Id);
 var conversionCatalog = new ConversionCatalog(catalog, graph);
 var plan = new ImplementationPlan(conversionCatalog, graph);
-var headerGenerator = new HeaderGenerator(catalog, conversionCatalog);
+var headerGenerator = new FileGenerator(catalog, conversionCatalog);
 
 foreach (var header in plan.Headers)
 {
@@ -58,4 +58,20 @@ foreach (var header in plan.Headers)
     }
 }
 
+Console.WriteLine();
+foreach (var sourceFile in plan.SourceFiles)
+{
+    var contents = new MemoryStream();
+    await using (var writer = new StreamWriter(contents, leaveOpen: true))
+    {
+        await headerGenerator.WriteSourceFileAsync(sourceFile, writer);
+    }
+    
+    Console.WriteLine($"Source File: {sourceFile.Name.Value}");
+    contents.Seek(0, SeekOrigin.Begin);
 
+    using (var reader = new StreamReader(contents))
+    {
+        Console.Write(await reader.ReadToEndAsync());
+    }
+}
