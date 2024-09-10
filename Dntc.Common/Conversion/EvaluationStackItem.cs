@@ -1,4 +1,4 @@
-﻿namespace Dntc.Common.Conversion.OpCodeHandling;
+﻿namespace Dntc.Common.Conversion;
 
 public abstract record EvaluationStackItem();
 
