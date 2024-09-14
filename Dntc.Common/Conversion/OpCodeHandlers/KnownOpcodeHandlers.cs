@@ -4,7 +4,7 @@ namespace Dntc.Common.Conversion.OpCodeHandlers;
 
 public class KnownOpcodeHandlers
 {
-    private readonly IReadOnlyDictionary<Code, IOpCodeHandler> _handlers;
+    private readonly IReadOnlyDictionary<Code, OpCodeHandlerFn> _handlers;
 
     public KnownOpcodeHandlers()
     {
@@ -12,13 +12,14 @@ public class KnownOpcodeHandlers
             .GetTypes()
             .Where(x => !x.IsInterface)
             .Where(x => !x.IsAbstract)
-            .Where(x => x.IsAssignableTo(typeof(IOpCodeHandler)))
+            .Where(x => x.IsAssignableTo(typeof(IOpCodeHandlerFnFactory)))
             .Select(Activator.CreateInstance)
-            .Cast<IOpCodeHandler>()
-            .ToDictionary(x => x.OpCode, x => x);
+            .Cast<IOpCodeHandlerFnFactory>()
+            .SelectMany(x => x.Get())
+            .ToDictionary(x => x.Key, x => x.Value);
     }
 
-    public IOpCodeHandler? Get(Code opCode)
+    public OpCodeHandlerFn? Get(Code opCode)
     {
         return _handlers.GetValueOrDefault(opCode);
     }

@@ -13,8 +13,6 @@ public class CodeGenerator
         _conversionCatalog = catalog;
     }
     
-    public static string LocalName(int index) => $"__local_{index}";
-    
     public async Task GenerateStructAsync(DotNetDefinedType type, StreamWriter writer)
     {
         var conversionInfo = _conversionCatalog.Find(type.IlName);
@@ -50,6 +48,7 @@ public class CodeGenerator
     {
         var methodInfo = _conversionCatalog.Find(method.Id);
         var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
+        var namedLocals = new LocalNameCollection();
 
         await writer.WriteAsync($"{returnTypeInfo.NameInC.Value} {methodInfo.NameInC.Value}(");
         for (var x = 0; x < method.Parameters.Count; x++)
@@ -62,24 +61,37 @@ public class CodeGenerator
 
         await writer.WriteLineAsync(") {");
 
-        var evaluationStack = new Stack<EvaluationStackItem>();
-
         for (var x = 0; x < method.Locals.Count; x++)
         {
             var local = method.Locals[x];
             var type = _conversionCatalog.Find(local);
-            await writer.WriteLineAsync($"\t{type.NameInC.Value} {LocalName(x)};");
+            var index = namedLocals.Add();
+            if (index != x)
+            {
+                var message = $"Local ${x} was given an index of {index} in the name collection";
+                throw new InvalidOperationException(message);
+            }
+
+            await writer.WriteLineAsync($"\t{type.NameInC.Value} {namedLocals};");
         }
 
         await writer.WriteLineAsync();
 
+        var context = new OpCodeHandlingContext(
+            method.Parameters.Select(x => x.Name).ToArray(), 
+            namedLocals,
+            writer);
+        
         foreach (var instruction in method.Definition.Body.Instructions)
         {
             var handler = _opcodeHandlers.Get(instruction.OpCode.Code);
             if (handler == null)
             {
-                throw new NotSupportedException($"No handler for opcode {instruction.OpCode}");
+                throw new NotSupportedException($"No handler for opcode '{instruction.OpCode}'");
             }
+
+            context.Operand = instruction.Operand;
+            await handler(context);
         }
         
         await writer.WriteLineAsync("}");

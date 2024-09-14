@@ -2,13 +2,20 @@
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-public class NopHandler : IOpCodeHandler
+public class NopHandler : IOpCodeHandlerFnFactory
 {
-    public Code OpCode => Code.Nop;
+    public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get()
+    {
+        return new Dictionary<Code, OpCodeHandlerFn>
+        {
+            { Code.Nop, HandleOpCodeAsync }
+        };
+    }
     
-    public ValueTask HandleOpCodeAsync(object operand, Stack<EvaluationStackItem> evaluationStack, StreamWriter writer)
+    private static ValueTask HandleOpCodeAsync(OpCodeHandlingContext context)
     {
         // Do nothing
         return new ValueTask();
     }
+
 }
