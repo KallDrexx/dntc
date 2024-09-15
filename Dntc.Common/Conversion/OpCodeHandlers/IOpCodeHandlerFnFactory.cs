@@ -2,7 +2,7 @@
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-public interface IOpCodeHandlerFnFactory
+internal interface IOpCodeHandlerFnFactory
 {
     IReadOnlyDictionary<Code, OpCodeHandlerFn> Get();
 }

@@ -2,7 +2,7 @@
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-public class KnownOpcodeHandlers
+internal class KnownOpcodeHandlers
 {
     private readonly IReadOnlyDictionary<Code, OpCodeHandlerFn> _handlers;
 

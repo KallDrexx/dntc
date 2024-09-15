@@ -1,8 +1,9 @@
-﻿using Mono.Cecil.Cil;
+﻿using Dntc.Common.Conversion.EvaluationStack;
+using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-public class LdArgHandlers : IOpCodeHandlerFnFactory
+internal class LdArgHandlers : IOpCodeHandlerFnFactory
 {
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get()
     {
@@ -47,6 +48,6 @@ public class LdArgHandlers : IOpCodeHandlerFnFactory
     
     private static void LoadArgument(int index, Stack<EvaluationStackItem> evaluationStackItems)
     {
-        evaluationStackItems.Push(new MethodArgument(index));
+        evaluationStackItems.Push(new MethodParameter(index));
     }
 }

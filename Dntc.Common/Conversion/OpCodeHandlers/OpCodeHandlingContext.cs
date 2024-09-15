@@ -1,20 +1,22 @@
-﻿namespace Dntc.Common.Conversion.OpCodeHandlers;
+﻿using Dntc.Common.Conversion.EvaluationStack;
 
-public class OpCodeHandlingContext
+namespace Dntc.Common.Conversion.OpCodeHandlers;
+
+internal class OpCodeHandlingContext
 {
     public object Operand { get; set; }
     public Stack<EvaluationStackItem> EvaluationStack { get; } = new();
     public IReadOnlyList<string> ArgumentNames { get; }
-    public LocalNameCollection LocalNameCollection { get; }
+    public VariableCollection Variables { get; }
     public StreamWriter Writer { get; }
 
     public OpCodeHandlingContext(
         IReadOnlyList<string> argumentNames, 
-        LocalNameCollection localNameCollection, 
+        VariableCollection variables, 
         StreamWriter writer)
     {
         ArgumentNames = argumentNames;
-        LocalNameCollection = localNameCollection;
+        Variables = variables;
         Writer = writer;
     }
 }
