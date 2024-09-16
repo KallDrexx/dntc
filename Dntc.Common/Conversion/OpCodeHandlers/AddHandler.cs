@@ -20,9 +20,13 @@ internal class AddHandler : IOpCodeHandlerFnFactory
 
         var item2 = GetNextStackItemInfo(context);
         var item1 = GetNextStackItemInfo(context);
+        
+        context.EvaluationStack.Push(new AddResultItem(item1, item2));
+
+        return new ValueTask();
     }
 
-    private static (TypeConversionInfo info, string name) GetNextStackItemInfo(OpCodeHandlingContext context)
+    private static Variable GetNextStackItemInfo(OpCodeHandlingContext context)
     {
         var item = context.EvaluationStack.Pop();
         switch (item)
@@ -35,8 +39,7 @@ internal class AddHandler : IOpCodeHandlerFnFactory
                     throw new InvalidOperationException(message);
                 }
                 
-                var localInfo = context.Variables.Locals[local.Index];
-                return (localInfo.Type, localInfo.Name);
+                return context.Variables.Locals[local.Index];
             
             case MethodParameter param:
                 if (context.Variables.Parameters.Count < param.Index)
@@ -46,8 +49,7 @@ internal class AddHandler : IOpCodeHandlerFnFactory
                     throw new InvalidOperationException(message);
                 }
                 
-                var paramInfo = context.Variables.Parameters[param.Index];
-                return (paramInfo.Type, paramInfo.Name);
+                return context.Variables.Parameters[param.Index];
             
             default:
                 throw new NotSupportedException(item.GetType().FullName);
