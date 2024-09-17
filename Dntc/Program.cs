@@ -3,6 +3,7 @@ using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Planning;
 using Dntc.Common.Definitions;
 using Dntc.Common.Dependencies;
+using Dntc.Common.MethodAnalysis;
 using Mono.Cecil;
 
 var module = ModuleDefinition.ReadModule("TestInputs/SimpleFunctions.dll");
@@ -35,6 +36,8 @@ if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");
 }
+
+var analysisResults = new MethodAnalyzer().Analyze((DotNetDefinedMethod)foundMethod);
 
 var graph = new DependencyGraph(catalog, foundMethod.Id);
 var conversionCatalog = new ConversionCatalog(catalog, graph);

@@ -12,9 +12,9 @@ internal class KnownOpcodeHandlers
             .GetTypes()
             .Where(x => !x.IsInterface)
             .Where(x => !x.IsAbstract)
-            .Where(x => x.IsAssignableTo(typeof(IOpCodeHandlerFnFactory)))
+            .Where(x => x.IsAssignableTo(typeof(IOpCodeFnFactory)))
             .Select(Activator.CreateInstance)
-            .Cast<IOpCodeHandlerFnFactory>()
+            .Cast<IOpCodeFnFactory>()
             .SelectMany(x => x.Get())
             .ToDictionary(x => x.Key, x => x.Value);
     }

@@ -3,7 +3,7 @@ using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-internal class LdArgHandlers : IOpCodeHandlerFnFactory
+internal class LdArgHandlers : IOpCodeFnFactory
 {
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get()
     {

@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion.OpCodeHandlers;
 using Dntc.Common.Definitions;
+using Dntc.Common.MethodAnalysis;
 
 namespace Dntc.Common.Conversion;
 
@@ -12,6 +13,8 @@ public class CodeGenerator
     {
         _conversionCatalog = catalog;
     }
+
+    public static string OffsetLabel(int offset) => $"il{offset:0000}";
     
     public async Task GenerateStructAsync(DotNetDefinedType type, StreamWriter writer)
     {
@@ -49,6 +52,7 @@ public class CodeGenerator
         var methodInfo = _conversionCatalog.Find(method.Id);
         var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
         var methodVariables = new VariableCollection();
+        var methodAnalysis = new MethodAnalyzer().Analyze(method);
 
         await writer.WriteAsync($"{returnTypeInfo.NameInC.Value} {methodInfo.NameInC.Value}(");
         for (var x = 0; x < method.Parameters.Count; x++)
@@ -100,6 +104,13 @@ public class CodeGenerator
             }
 
             context.Operand = instruction.Operand;
+
+            if (methodAnalysis.BranchTargetOffsets.Contains(instruction.Offset))
+            {
+                // This instruction is a branch target, so we need to give it a label
+                await writer.WriteLineAsync($"{OffsetLabel(instruction.Offset)}");
+            }
+            
             await handler(context);
         }
         
