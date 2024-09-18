@@ -85,7 +85,7 @@ public class CodeGenerator
                 throw new InvalidOperationException(message);
             }
 
-            await writer.WriteLineAsync($"\t{type.NameInC.Value} {methodVariables};");
+            await writer.WriteLineAsync($"\t{type.NameInC.Value} {methodVariables.Locals[index].Name};");
         }
 
         await writer.WriteLineAsync();
@@ -108,7 +108,7 @@ public class CodeGenerator
             if (methodAnalysis.BranchTargetOffsets.Contains(instruction.Offset))
             {
                 // This instruction is a branch target, so we need to give it a label
-                await writer.WriteLineAsync($"{OffsetLabel(instruction.Offset)}");
+                await writer.WriteLineAsync($"{OffsetLabel(instruction.Offset)}:");
             }
             
             await handler(context);

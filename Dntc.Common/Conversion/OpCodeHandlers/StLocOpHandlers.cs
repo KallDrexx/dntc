@@ -36,7 +36,7 @@ internal class StLocOpHandlers : IOpCodeFnFactory
     private static async ValueTask HandleStore(int localIndex, OpCodeHandlingContext context)
     {
         var local = context.Variables.Locals[localIndex];
-        await context.Writer.WriteAsync($"{local.Name} = ");
+        await context.Writer.WriteAsync($"\t{local.Name} = ");
 
         var stackItem = context.EvaluationStack.Pop();
         switch (stackItem)
