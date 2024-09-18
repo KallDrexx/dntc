@@ -108,6 +108,7 @@ public class CodeGenerator
             if (methodAnalysis.BranchTargetOffsets.Contains(instruction.Offset))
             {
                 // This instruction is a branch target, so we need to give it a label
+                await writer.WriteLineAsync();
                 await writer.WriteLineAsync($"{OffsetLabel(instruction.Offset)}:");
             }
             

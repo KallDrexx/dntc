@@ -6,7 +6,7 @@ using Dntc.Common.Dependencies;
 using Dntc.Common.MethodAnalysis;
 using Mono.Cecil;
 
-var module = ModuleDefinition.ReadModule("TestInputs/SimpleFunctions.dll");
+var module = ModuleDefinition.ReadModule("TestInputs/TestSetups.dll");
 var catalog = new DefinitionCatalog();
 foreach (var type in NativeDefinedType.StandardTypes)
 {
@@ -31,7 +31,7 @@ if (foundType == null)
     throw new InvalidOperationException("CLR type not found");
 }
 
-var foundMethod = catalog.Find(new IlMethodId("System.Int32 TestSetups.SimpleFunctions::IntAdd(System.Int32,System.Int32)"));
+var foundMethod = catalog.Find(new IlMethodId("System.Int32 TestSetups.SimpleFunctions::IfTest(System.Int32)"));
 if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");

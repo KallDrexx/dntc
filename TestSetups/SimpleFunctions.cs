@@ -6,4 +6,19 @@ public static class SimpleFunctions
     {
         return a + b;
     }
+
+    public static int IfTest(int input)
+    {
+        if (input < 20)
+        {
+            return -1;
+        }
+
+        if (input >= 50)
+        {
+            return 100;
+        }
+
+        return input;
+    }
 }

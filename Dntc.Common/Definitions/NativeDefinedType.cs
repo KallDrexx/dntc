@@ -27,6 +27,7 @@ public class NativeDefinedType : DefinedType
         StdIntType("System.UInt64", "uint64_t"),
         new NativeDefinedType(new IlTypeName("System.Single"), null, new CTypeName("float")),
         new NativeDefinedType(new IlTypeName("System.Double"), null, new CTypeName("double")),
+        new NativeDefinedType(new IlTypeName("System.Boolean"), new HeaderName("<stdbool.h>"), new CTypeName("bool")),
     };
 
     private static NativeDefinedType StdIntType(string clrName, string nativeName)
