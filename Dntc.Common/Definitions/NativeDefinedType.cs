@@ -14,22 +14,33 @@ public class NativeDefinedType : DefinedType
         Fields = ArraySegment<Field>.Empty;
         Methods = ArraySegment<IlMethodId>.Empty;
     }
-    
-    public static IEnumerable<NativeDefinedType> StandardTypes => new[]
-    {
-        StdIntType("System.SByte", "int8_t"),
-        StdIntType("System.Int16", "int16_t"),
-        StdIntType("System.Int32", "int32_t"),
-        StdIntType("System.Int64", "int64_t"),
-        StdIntType("System.Byte", "uint8_t"),
-        StdIntType("System.UInt16", "uint16_t"),
-        StdIntType("System.UInt32", "uint32_t"),
-        StdIntType("System.UInt64", "uint64_t"),
-        new NativeDefinedType(new IlTypeName("System.Single"), null, new CTypeName("float")),
-        new NativeDefinedType(new IlTypeName("System.Double"), null, new CTypeName("double")),
-        new NativeDefinedType(new IlTypeName("System.Boolean"), new HeaderName("<stdbool.h>"), new CTypeName("bool")),
-    };
 
+    public static IReadOnlyDictionary<Type, NativeDefinedType> StandardTypes { get; } =
+        new Dictionary<Type, NativeDefinedType>
+        {
+            { typeof(sbyte), StdIntType(typeof(sbyte).FullName!, "int8_t") },
+            { typeof(short), StdIntType(typeof(short).FullName!, "int16_t") },
+            { typeof(int), StdIntType(typeof(int).FullName!, "int32_t") },
+            { typeof(long), StdIntType(typeof(long).FullName!, "int64_t") },
+            { typeof(byte), StdIntType(typeof(byte).FullName!, "uint8_t") },
+            { typeof(ushort), StdIntType(typeof(ushort).FullName!, "uint16_t") },
+            { typeof(uint), StdIntType(typeof(uint).FullName!, "uint32_t") },
+            { typeof(ulong), StdIntType(typeof(ulong).FullName!, "uint64_t") },
+            {
+                typeof(float),
+                new NativeDefinedType(new IlTypeName(typeof(float).FullName!), null, new CTypeName("float"))
+            },
+            {
+                typeof(double),
+                new NativeDefinedType(new IlTypeName(typeof(double).FullName!), null, new CTypeName("double"))
+            },
+            {
+                typeof(bool),
+                new NativeDefinedType(new IlTypeName(typeof(bool).FullName!), new HeaderName("<stdbool.h>"),
+                    new CTypeName("bool"))
+            },
+        };
+    
     private static NativeDefinedType StdIntType(string clrName, string nativeName)
     {
         return new NativeDefinedType(new IlTypeName(clrName), new HeaderName("<stdint.h>"), new CTypeName(nativeName));

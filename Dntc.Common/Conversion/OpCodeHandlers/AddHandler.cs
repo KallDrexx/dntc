@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion.EvaluationStack;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -18,41 +17,19 @@ internal class AddHandler : IOpCodeFnFactory
             throw new InvalidOperationException(message);
         }
 
-        var item2 = GetNextStackItemInfo(context);
-        var item1 = GetNextStackItemInfo(context);
-        
-        context.EvaluationStack.Push(new AddResultItem(item1, item2));
+        if (context.EvaluationStack.Count < 2)
+        {
+            var message = $"Expected at least 2 items on the evaluation stack, but " +
+                          $"only {context.EvaluationStack.Count} are in it";
+            throw new InvalidOperationException(message);
+        }
+
+        var item2 = context.EvaluationStack.Pop();
+        var item1 = context.EvaluationStack.Pop();
+
+        var newItem = new EvaluationStackItem($"({item1.Text} + {item2.Text})");
+        context.EvaluationStack.Push(newItem);
 
         return new ValueTask();
-    }
-
-    private static Variable GetNextStackItemInfo(OpCodeHandlingContext context)
-    {
-        var item = context.EvaluationStack.Pop();
-        switch (item)
-        {
-            case LocalVariable local:
-                if (context.Variables.Locals.Count < local.Index)
-                {
-                    var message = $"Local variable with index {local.Index} was on the stack, " +
-                                  $"but only {context.Variables.Locals.Count} exist";
-                    throw new InvalidOperationException(message);
-                }
-                
-                return context.Variables.Locals[local.Index];
-            
-            case MethodParameter param:
-                if (context.Variables.Parameters.Count < param.Index)
-                {
-                    var message = $"Method parameters with index {param.Index} was on the stack, " +
-                                  $"but only {context.Variables.Parameters.Count} exist";
-                    throw new InvalidOperationException(message);
-                }
-                
-                return context.Variables.Parameters[param.Index];
-            
-            default:
-                throw new NotSupportedException(item.GetType().FullName);
-        }
     }
 }

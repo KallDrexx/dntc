@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using Dntc.Common.Conversion.EvaluationStack;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -37,7 +35,7 @@ internal class LdcHandler : IOpCodeFnFactory
 
     private static ValueTask HandleLdcI4(int number, OpCodeHandlingContext context)
     {
-        context.EvaluationStack.Push(new LiteralValue(number.ToString()));
+        context.EvaluationStack.Push(new EvaluationStackItem(number.ToString()));
         return new ValueTask();
     }
 }

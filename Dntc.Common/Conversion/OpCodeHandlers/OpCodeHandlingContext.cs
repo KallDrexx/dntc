@@ -1,6 +1,4 @@
-﻿using Dntc.Common.Conversion.EvaluationStack;
-
-namespace Dntc.Common.Conversion.OpCodeHandlers;
+﻿namespace Dntc.Common.Conversion.OpCodeHandlers;
 
 internal class OpCodeHandlingContext
 {

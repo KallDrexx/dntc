@@ -1,6 +1,6 @@
 ﻿namespace Dntc.Common.Conversion;
 
-internal class Variable
+public class Variable
 {
     public TypeConversionInfo Type { get; }
     public string Name { get; }

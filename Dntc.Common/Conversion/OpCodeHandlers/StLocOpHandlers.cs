@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion.EvaluationStack;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -38,25 +37,12 @@ internal class StLocOpHandlers : IOpCodeFnFactory
         var local = context.Variables.Locals[localIndex];
         await context.Writer.WriteAsync($"\t{local.Name} = ");
 
-        var stackItem = context.EvaluationStack.Pop();
-        switch (stackItem)
+        if (!context.EvaluationStack.TryPop(out var stackItem))
         {
-            case LocalVariable localVariable:
-                var localAssignSource = context.Variables.Locals[localVariable.Index];
-                await context.Writer.WriteLineAsync($"{localAssignSource.Name};");
-                break;
-            
-            case MethodParameter parameter:
-                var paramAssignSource = context.Variables.Parameters[parameter.Index];
-                await context.Writer.WriteLineAsync($"{paramAssignSource.Name};");
-                break;
-            
-            case AddResultItem addResult:
-                await context.Writer.WriteLineAsync($"{addResult.first.Name} + {addResult.second.Name};");
-                break;
-            
-            default:
-                throw new NotSupportedException(stackItem.GetType().FullName);
+            var message = "Store local required an item on the evaluation stack, but none existed";
+            throw new InvalidOperationException(message);
         }
+        
+        await context.Writer.WriteLineAsync($"{stackItem.Text};");
     }
 }

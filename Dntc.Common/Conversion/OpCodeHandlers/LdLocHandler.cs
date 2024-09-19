@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion.EvaluationStack;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -42,8 +41,8 @@ internal class LdLocHandler : IOpCodeFnFactory
 
             throw new InvalidOperationException(message);
         }
-        
-        var item = new LocalVariable(index);
+
+        var item = new EvaluationStackItem(context.Variables.Locals[index].Name);
         context.EvaluationStack.Push(item);
 
         return new ValueTask();

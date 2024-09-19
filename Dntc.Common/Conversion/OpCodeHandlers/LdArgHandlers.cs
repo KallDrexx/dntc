@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion.EvaluationStack;
-using Mono.Cecil.Cil;
+﻿using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -19,10 +18,9 @@ internal class LdArgHandlers : IOpCodeFnFactory
 
     private static OpCodeHandlerFn CreateHandlerFn(int? hardCodedIndex)
     {
-        OpCodeHandlerFn fn;
         if (hardCodedIndex == null)
         {
-            fn = context =>
+            return context =>
             {
                 if (context.Operand is not int index)
                 {
@@ -30,24 +28,27 @@ internal class LdArgHandlers : IOpCodeFnFactory
                     throw new ArgumentException(message);
                 }
 
-                LoadArgument(index, context.EvaluationStack);
-                return new ValueTask();
-            };
-        }
-        else
-        {
-            fn = context =>
-            {
-                LoadArgument(hardCodedIndex.Value, context.EvaluationStack);
+                LoadArgument(index, context);
                 return new ValueTask();
             };
         }
 
-        return fn;
+        return context =>
+        {
+            LoadArgument(hardCodedIndex.Value, context);
+            return new ValueTask();
+        };
     }
     
-    private static void LoadArgument(int index, Stack<EvaluationStackItem> evaluationStackItems)
+    private static void LoadArgument(int index, OpCodeHandlingContext context)
     {
-        evaluationStackItems.Push(new MethodParameter(index));
+        if (context.ArgumentNames.Count <= index)
+        {
+            var message = $"Argument index #{index} referenced, but only {context.ArgumentNames.Count} exist";
+            throw new InvalidOperationException(message);
+        }
+
+        var argument = context.ArgumentNames[index];
+        context.EvaluationStack.Push(new EvaluationStackItem(argument));
     }
 }
