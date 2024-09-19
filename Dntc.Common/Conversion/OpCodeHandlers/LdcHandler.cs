@@ -17,6 +17,7 @@ internal class LdcHandler : IOpCodeFnFactory
         { Code.Ldc_I4_6, CreateldcI4Fn(6) },
         { Code.Ldc_I4_7, CreateldcI4Fn(7) },
         { Code.Ldc_I4_8, CreateldcI4Fn(8) },
+        { Code.Ldc_I4_M1, CreateldcI4Fn(-1) },
     };
 
     private static OpCodeHandlerFn CreateldcI4Fn(int? hardCodedNumber)

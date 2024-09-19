@@ -8,9 +8,9 @@ internal class StLocOpHandlers : IOpCodeFnFactory
     {
         { Code.Stloc, CreateFn(null) },
         { Code.Stloc_0, CreateFn(0) },
-        { Code.Stloc_1, CreateFn(0) },
-        { Code.Stloc_2, CreateFn(0) },
-        { Code.Stloc_3, CreateFn(0) },
+        { Code.Stloc_1, CreateFn(1) },
+        { Code.Stloc_2, CreateFn(2) },
+        { Code.Stloc_3, CreateFn(3) },
     };
 
     private static OpCodeHandlerFn CreateFn(int? hardCodedIndex)

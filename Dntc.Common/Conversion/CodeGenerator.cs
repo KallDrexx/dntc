@@ -14,7 +14,7 @@ public class CodeGenerator
         _conversionCatalog = catalog;
     }
 
-    public static string OffsetLabel(int offset) => $"il{offset:0000}";
+    public static string OffsetLabel(int offset) => $"IL_{offset:X4}";
     
     public async Task GenerateStructAsync(DotNetDefinedType type, StreamWriter writer)
     {
