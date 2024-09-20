@@ -17,7 +17,8 @@ public class MethodAnalyzer
         {
             if (_knownOpcodeHandlers.Get(instruction.OpCode.Code) == null)
             {
-                var message = $"Function contains op code '{instruction.OpCode.Code}' but no handler exists for it";
+                var message = $"Method '{method.Id.Value}' contains op code '{instruction.OpCode.Code}' " +
+                              "but no handler exists for it";
                 throw new InvalidOperationException(message);
             }
             
