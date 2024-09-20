@@ -21,4 +21,9 @@ public static class SimpleFunctions
 
         return input;
     }
+
+    public static int StaticFunctionCall(int a)
+    {
+        return IntAdd(a, 20);
+    }
 }

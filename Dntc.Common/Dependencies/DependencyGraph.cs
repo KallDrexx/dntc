@@ -1,10 +1,13 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
+using Dntc.Common.MethodAnalysis;
 
 namespace Dntc.Common.Dependencies;
 
 public class DependencyGraph
 {
+    private readonly MethodAnalyzer _methodAnalyzer = new();
+    
     public abstract record Node
     {
         public List<Node> Children { get; } = new();
@@ -21,7 +24,7 @@ public class DependencyGraph
         Root = CreateNode(definitionCatalog, rootMethod, new List<Node>());
     }
 
-    private static Node CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
+    private Node CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
     {
         EnsureNotCircularReference(path, methodId);
         var method = definitionCatalog.Find(methodId);
@@ -44,6 +47,16 @@ public class DependencyGraph
         {
             var typeNode = CreateNode(definitionCatalog, type, path);
             node.Children.Add(typeNode);
+        }
+
+        if (method is DotNetDefinedMethod dotNetDefinedMethod)
+        {
+            var analysisResults = _methodAnalyzer.Analyze(dotNetDefinedMethod);
+            foreach (var calledMethod in analysisResults.CalledMethods)
+            {
+                var methodNode = CreateNode(definitionCatalog, calledMethod, path);
+                node.Children.Add(methodNode);
+            }
         }
         
         path.RemoveAt(path.Count - 1);

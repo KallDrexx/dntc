@@ -93,7 +93,8 @@ public class CodeGenerator
         var context = new OpCodeHandlingContext(
             method.Parameters.Select(x => x.Name).ToArray(), 
             methodVariables,
-            writer);
+            writer,
+            _conversionCatalog);
         
         foreach (var instruction in method.Definition.Body.Instructions)
         {

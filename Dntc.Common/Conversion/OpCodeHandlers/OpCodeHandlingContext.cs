@@ -7,14 +7,17 @@ internal class OpCodeHandlingContext
     public IReadOnlyList<string> ArgumentNames { get; }
     public VariableCollection Variables { get; }
     public StreamWriter Writer { get; }
+    public ConversionCatalog ConversionCatalog { get; }
 
     public OpCodeHandlingContext(
         IReadOnlyList<string> argumentNames, 
         VariableCollection variables, 
-        StreamWriter writer)
+        StreamWriter writer, 
+        ConversionCatalog conversionCatalog)
     {
         ArgumentNames = argumentNames;
         Variables = variables;
         Writer = writer;
+        ConversionCatalog = conversionCatalog;
     }
 }

@@ -17,7 +17,7 @@ internal class RetHandler : IOpCodeFnFactory
         // when a return is encountered.
         if (context.EvaluationStack.TryPop(out var item))
         {
-            await context.Writer.WriteAsync($" {item.Text};");
+            await context.Writer.WriteAsync($" {item.Text}");
         }
         
         await context.Writer.WriteLineAsync(";");
