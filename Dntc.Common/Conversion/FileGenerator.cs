@@ -21,7 +21,7 @@ public class FileGenerator
         await writer.WriteLineAsync($"#define {guardName}");
         await writer.WriteLineAsync();
 
-        await WriteReferencedHeaders(plannedHeader.ReferencedHeaders, writer);
+        await WriteReferencedHeaders(plannedHeader.Name, plannedHeader.ReferencedHeaders, writer);
 
         foreach (var type in plannedHeader.DeclaredTypes)
         {
@@ -57,7 +57,7 @@ public class FileGenerator
 
     public async Task WriteSourceFileAsync(PlannedSourceFile sourceFile, StreamWriter writer)
     {
-        await WriteReferencedHeaders(sourceFile.ReferencedHeaders, writer);
+        await WriteReferencedHeaders(null, sourceFile.ReferencedHeaders, writer);
 
         foreach (var method in sourceFile.ImplementedMethods)
         {
@@ -66,10 +66,18 @@ public class FileGenerator
         }
     }
 
-    private static async Task WriteReferencedHeaders(IReadOnlyList<HeaderName> headers, StreamWriter writer)
+    private static async Task WriteReferencedHeaders(
+        HeaderName? currentHeaderName, 
+        IReadOnlyList<HeaderName> headers, 
+        StreamWriter writer)
     {
         foreach (var referencedHeader in headers)
         {
+            if (currentHeaderName != null && currentHeaderName == referencedHeader)
+            {
+                continue;
+            }
+            
             if (referencedHeader.Value.StartsWith('<'))
             {
                 await writer.WriteLineAsync($"#include {referencedHeader.Value}");
