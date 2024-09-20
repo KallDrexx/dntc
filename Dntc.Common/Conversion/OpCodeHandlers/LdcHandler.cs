@@ -26,8 +26,26 @@ internal class LdcHandler : IOpCodeFnFactory
         {
             return context =>
             {
-                var number = (sbyte)context.Operand;
-                return HandleLdcI4(number, context);
+                switch (context.Operand)
+                {
+                    case sbyte sbyteValue:
+                        return HandleLdcI4(sbyteValue, context);
+                    
+                    case byte byteValue:
+                        return HandleLdcI4(byteValue, context);
+                    
+                    case short shortValue:
+                        return HandleLdcI4(shortValue, context);
+                    
+                    case ushort ushortValue:
+                        return HandleLdcI4(ushortValue, context);
+                    
+                    case int intValue:
+                        return HandleLdcI4(intValue, context);
+                    
+                    default:
+                        throw new NotSupportedException(context.Operand.GetType().FullName);
+                }
             };
         }
 

@@ -27,4 +27,9 @@ public static class SimpleFunctions
         IntAdd(a, 5);
         return IntAdd(a, 20);
     }
+
+    public static int BitwiseOps(int a)
+    {
+        return (((a >> 1) | (a & 0x0F)) << 2) ^ 0xFF;
+    }
 }

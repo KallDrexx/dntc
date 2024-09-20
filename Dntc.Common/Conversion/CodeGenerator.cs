@@ -112,8 +112,18 @@ public class CodeGenerator
                 await writer.WriteLineAsync();
                 await writer.WriteLineAsync($"{OffsetLabel(instruction.Offset)}:");
             }
-            
-            await handler(context);
+
+            try
+            {
+                await handler(context);
+            }
+            catch (Exception exception)
+            {
+                var message = $"Exception handling op code '{instruction.OpCode.Code}' in method " +
+                              $"'{method.Definition.FullName}' at {OffsetLabel(instruction.Offset)}";
+
+                throw new Exception(message, exception);
+            }
         }
         
         await writer.WriteLineAsync("}");
