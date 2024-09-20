@@ -32,4 +32,9 @@ public static class SimpleFunctions
     {
         return (((a >> 1) | (a & 0x0F)) << 2) ^ 0xFF;
     }
+
+    public static float MathOps(int input)
+    {
+        return input + 3.5f * input / 3 - 2;
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-internal class LdcHandler : IOpCodeFnFactory
+internal class LdcHandlers : IOpCodeFnFactory
 {
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get() => new Dictionary<Code, OpCodeHandlerFn>
     {
@@ -18,6 +18,8 @@ internal class LdcHandler : IOpCodeFnFactory
         { Code.Ldc_I4_7, CreateldcI4Fn(7) },
         { Code.Ldc_I4_8, CreateldcI4Fn(8) },
         { Code.Ldc_I4_M1, CreateldcI4Fn(-1) },
+        
+        { Code.Ldc_R4, HandleLdcR4 },
     };
 
     private static OpCodeHandlerFn CreateldcI4Fn(int? hardCodedNumber)
@@ -55,6 +57,12 @@ internal class LdcHandler : IOpCodeFnFactory
     private static ValueTask HandleLdcI4(int number, OpCodeHandlingContext context)
     {
         context.EvaluationStack.Push(new EvaluationStackItem(number.ToString()));
+        return new ValueTask();
+    }
+
+    private static ValueTask HandleLdcR4(OpCodeHandlingContext context)
+    {
+        context.EvaluationStack.Push(new EvaluationStackItem(context.Operand.ToString()));
         return new ValueTask();
     }
 }
