@@ -10,6 +10,7 @@ internal class MathHandlers : IOpCodeFnFactory
         { Code.Sub, HandleSub },
         { Code.Mul, HandelMul },
         { Code.Div, HandleDiv },
+        { Code.Rem, HandleRem },
     };
 
     private static ValueTask HandleAdd(OpCodeHandlingContext context)
@@ -30,6 +31,11 @@ internal class MathHandlers : IOpCodeFnFactory
     private static ValueTask HandleSub(OpCodeHandlingContext context)
     {
         return PushOp("-", context.EvaluationStack);
+    }
+
+    private static ValueTask HandleRem(OpCodeHandlingContext context)
+    {
+        return PushOp("%", context.EvaluationStack);
     }
 
     private static ValueTask PushOp(string operatorString, Stack<EvaluationStackItem> evaluationStack)

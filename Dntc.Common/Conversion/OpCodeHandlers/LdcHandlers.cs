@@ -62,7 +62,7 @@ internal class LdcHandlers : IOpCodeFnFactory
 
     private static ValueTask HandleLdcR4(OpCodeHandlingContext context)
     {
-        context.EvaluationStack.Push(new EvaluationStackItem(context.Operand.ToString()));
+        context.EvaluationStack.Push(new EvaluationStackItem(context.Operand.ToString()!));
         return new ValueTask();
     }
 }

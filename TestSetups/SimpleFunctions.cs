@@ -35,7 +35,7 @@ public static class SimpleFunctions
 
     public static float MathOps(int input)
     {
-        return input + 3.5f * input / 3 - 2;
+        return input + 3.5f * input / 3 - 2 + (25 % 15);
     }
 
     public struct Vector3

@@ -12,6 +12,7 @@ internal class BitwiseHandlers : IOpCodeFnFactory
         { Code.And, CreateBitwiseFn("&") },
         { Code.Or, CreateBitwiseFn("|") },
         { Code.Xor, CreateBitwiseFn("^") },
+        { Code.Not, CreateBitwiseFn("~") },
     };
 
     private static OpCodeHandlerFn CreateBitwiseFn(string bitwiseOperator)
