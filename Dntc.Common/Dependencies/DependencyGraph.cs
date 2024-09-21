@@ -27,7 +27,7 @@ public class DependencyGraph
     private Node CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
     {
         EnsureNotCircularReference(path, methodId);
-        var method = definitionCatalog.Find(methodId);
+        var method = definitionCatalog.Get(methodId);
         if (method == null)
         {
             var message = $"No method in the catalog with the id '{methodId.Value}'";
@@ -66,7 +66,7 @@ public class DependencyGraph
     private static Node CreateNode(DefinitionCatalog definitionCatalog, IlTypeName typeName, List<Node> path)
     {
         EnsureNotCircularReference(path, typeName);
-        var type = definitionCatalog.Find(typeName);
+        var type = definitionCatalog.Get(typeName);
         if (type == null)
         {
             var message = $"No type in the catalog with the name '{typeName.Value}'";

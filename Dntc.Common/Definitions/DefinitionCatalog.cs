@@ -9,7 +9,7 @@ public class DefinitionCatalog
     
     public void Add(DefinedType type)
     {
-        if (_types.TryGetValue(type.IlName, out var existingType))
+        if (_types.TryGetValue(type.IlName, out _))
         {
             // TODO: Add better duplication logic, and possibly allow overriding
             // in some circumstances
@@ -24,7 +24,7 @@ public class DefinitionCatalog
 
     public void Add(DefinedMethod method)
     {
-        if (_methods.TryGetValue(method.Id, out var existingMethod))
+        if (_methods.TryGetValue(method.Id, out _))
         {
             // TODO: Add better duplication logic, and possibly allow overriding
             var message = $"CLR method '{method.Id.Value}' is already defined and cannot " +
@@ -59,12 +59,12 @@ public class DefinitionCatalog
         }
     }
 
-    public DefinedType? Find(IlTypeName ilName)
+    public DefinedType? Get(IlTypeName ilName)
     {
         return _types.GetValueOrDefault(ilName);
     }
 
-    public DefinedMethod? Find(IlMethodId methodId)
+    public DefinedMethod? Get(IlMethodId methodId)
     {
         return _methods.GetValueOrDefault(methodId);
     }

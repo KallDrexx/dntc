@@ -56,7 +56,7 @@ public class ConversionCatalog
     {
         if (!_types.ContainsKey(node.TypeName))
         {
-            var definition = definitionCatalog.Find(node.TypeName);
+            var definition = definitionCatalog.Get(node.TypeName);
             if (definition == null)
             {
                 var message = $"Dependency graph contained node for type '{node.TypeName.Value}' but no " +
@@ -73,7 +73,7 @@ public class ConversionCatalog
     {
         if (!_methods.ContainsKey(node.MethodId))
         {
-            var definition = definitionCatalog.Find(node.MethodId);
+            var definition = definitionCatalog.Get(node.MethodId);
             if (definition == null)
             {
                 var message = $"Dependency graph contained node for method '{node.MethodId.Value}' but no " +

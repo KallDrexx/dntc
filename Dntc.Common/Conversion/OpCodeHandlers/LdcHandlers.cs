@@ -6,23 +6,23 @@ internal class LdcHandlers : IOpCodeFnFactory
 {
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get() => new Dictionary<Code, OpCodeHandlerFn>
     {
-        { Code.Ldc_I4, CreateldcI4Fn(null) },
-        { Code.Ldc_I4_S, CreateldcI4Fn(null) },
-        { Code.Ldc_I4_0, CreateldcI4Fn(0) },
-        { Code.Ldc_I4_1, CreateldcI4Fn(1) },
-        { Code.Ldc_I4_2, CreateldcI4Fn(2) },
-        { Code.Ldc_I4_3, CreateldcI4Fn(3) },
-        { Code.Ldc_I4_4, CreateldcI4Fn(4) },
-        { Code.Ldc_I4_5, CreateldcI4Fn(5) },
-        { Code.Ldc_I4_6, CreateldcI4Fn(6) },
-        { Code.Ldc_I4_7, CreateldcI4Fn(7) },
-        { Code.Ldc_I4_8, CreateldcI4Fn(8) },
-        { Code.Ldc_I4_M1, CreateldcI4Fn(-1) },
+        { Code.Ldc_I4, CreateLdcI4Fn(null) },
+        { Code.Ldc_I4_S, CreateLdcI4Fn(null) },
+        { Code.Ldc_I4_0, CreateLdcI4Fn(0) },
+        { Code.Ldc_I4_1, CreateLdcI4Fn(1) },
+        { Code.Ldc_I4_2, CreateLdcI4Fn(2) },
+        { Code.Ldc_I4_3, CreateLdcI4Fn(3) },
+        { Code.Ldc_I4_4, CreateLdcI4Fn(4) },
+        { Code.Ldc_I4_5, CreateLdcI4Fn(5) },
+        { Code.Ldc_I4_6, CreateLdcI4Fn(6) },
+        { Code.Ldc_I4_7, CreateLdcI4Fn(7) },
+        { Code.Ldc_I4_8, CreateLdcI4Fn(8) },
+        { Code.Ldc_I4_M1, CreateLdcI4Fn(-1) },
         
         { Code.Ldc_R4, HandleLdcR4 },
     };
 
-    private static OpCodeHandlerFn CreateldcI4Fn(int? hardCodedNumber)
+    private static OpCodeHandlerFn CreateLdcI4Fn(int? hardCodedNumber)
     {
         if (hardCodedNumber == null)
         {

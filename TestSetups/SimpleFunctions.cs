@@ -54,4 +54,14 @@ public static class SimpleFunctions
             Z = z,
         };
     }
+
+    public static Vector3 StructAddTest(Vector3 first, Vector3 second)
+    {
+        return new Vector3
+        {
+            X = first.X + second.X,
+            Y = first.Y + second.Y,
+            Z = first.Z + second.Z,
+        };
+    }
 }

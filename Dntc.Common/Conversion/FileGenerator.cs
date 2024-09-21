@@ -25,7 +25,7 @@ public class FileGenerator
 
         foreach (var type in plannedHeader.DeclaredTypes)
         {
-            var definition = _definitionCatalog.Find(type.IlName);
+            var definition = _definitionCatalog.Get(type.IlName);
             if (definition == null)
             {
                 var message = $"No definition found for type `{type.IlName.Value}` in " +
@@ -93,7 +93,7 @@ public class FileGenerator
 
     private DotNetDefinedMethod GetDotNetDefinition(string fileName, MethodConversionInfo method)
     {
-        var definition = _definitionCatalog.Find(method.MethodId);
+        var definition = _definitionCatalog.Get(method.MethodId);
         if (definition == null)
         {
             var message = $"No definition found for method `{method.MethodId.Value}` in {fileName}.";

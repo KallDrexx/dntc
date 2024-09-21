@@ -10,21 +10,21 @@ public static class CatalogValidator
 
     public static IReadOnlyList<IValidationError> IsMethodImplementable(DefinitionCatalog definitionCatalog, IlMethodId id)
     {
-        var method = definitionCatalog.Find(id);
+        var method = definitionCatalog.Get(id);
         if (method == null)
         {
             return new[] { new MissingMethodDefinition(id) };
         }
 
         var missingTypes = new HashSet<IlTypeName>();
-        if (definitionCatalog.Find(method.ReturnType) == null)
+        if (definitionCatalog.Get(method.ReturnType) == null)
         {
             missingTypes.Add(method.ReturnType);
         }
 
         foreach (var param in method.Parameters)
         {
-            if (definitionCatalog.Find(param.Type) == null)
+            if (definitionCatalog.Get(param.Type) == null)
             {
                 missingTypes.Add(param.Type);
             }
@@ -32,7 +32,7 @@ public static class CatalogValidator
 
         foreach (var local in method.Locals)
         {
-            if (definitionCatalog.Find(local) == null)
+            if (definitionCatalog.Get(local) == null)
             {
                 missingTypes.Add(local);
             }

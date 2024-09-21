@@ -18,13 +18,13 @@ foreach (var type in module.Types)
     catalog.Add(type);
 }
 
-var foundType = catalog.Find(new IlTypeName("TestSetups.SimpleFunctions"));
+var foundType = catalog.Get(new IlTypeName("TestSetups.SimpleFunctions"));
 if (foundType == null)
 {
     throw new InvalidOperationException("CLR type not found");
 }
 
-var foundMethod = catalog.Find(new IlMethodId("TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::StructTest(System.Single,System.Single,System.Single)"));
+var foundMethod = catalog.Get(new IlMethodId("TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::StructAddTest(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)"));
 if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");
