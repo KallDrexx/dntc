@@ -37,4 +37,21 @@ public static class SimpleFunctions
     {
         return input + 3.5f * input / 3 - 2;
     }
+
+    public struct Vector3
+    {
+        public float X;
+        public float Y;
+        public float Z;
+    }
+
+    public static Vector3 StructTest(float x, float y, float z)
+    {
+        return new Vector3
+        {
+            X = x,
+            Y = y,
+            Z = z,
+        };
+    }
 }

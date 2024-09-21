@@ -10,19 +10,12 @@ var module = ModuleDefinition.ReadModule("TestInputs/TestSetups.dll");
 var catalog = new DefinitionCatalog();
 foreach (var type in NativeDefinedType.StandardTypes.Values)
 {
-    catalog.AddType(type);
+    catalog.Add(type);
 }
 
-foreach (var type in module.Types.Where(x => x.Name != "<Module>"))
+foreach (var type in module.Types)
 {
-    var definedType = new DotNetDefinedType(type);
-    catalog.AddType(definedType);
-
-    foreach (var method in type.Methods)
-    {
-        var definedMethod = new DotNetDefinedMethod(method);
-        catalog.AddMethod(definedMethod);
-    }
+    catalog.Add(type);
 }
 
 var foundType = catalog.Find(new IlTypeName("TestSetups.SimpleFunctions"));
@@ -31,7 +24,7 @@ if (foundType == null)
     throw new InvalidOperationException("CLR type not found");
 }
 
-var foundMethod = catalog.Find(new IlMethodId("System.Single TestSetups.SimpleFunctions::MathOps(System.Int32)"));
+var foundMethod = catalog.Find(new IlMethodId("TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::StructTest(System.Single,System.Single,System.Single)"));
 if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");

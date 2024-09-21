@@ -50,7 +50,8 @@ public class TypeConversionInfo
 
     private static string ConvertNameToC(string name)
     {
-        return name.Replace(".", "_");
+        return name.Replace(".", "_")
+            .Replace("/", "_"); // Nested types have a slash in them
     }
 
     private void SetupDotNetType(DotNetDefinedType type)
