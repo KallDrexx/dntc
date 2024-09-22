@@ -10,7 +10,7 @@ public class FileGenerator
 
     public FileGenerator(DefinitionCatalog definitionCatalog, ConversionCatalog conversionCatalog)
     {
-        _codeGenerator = new CodeGenerator(conversionCatalog);
+        _codeGenerator = new CodeGenerator(conversionCatalog, definitionCatalog);
         _definitionCatalog = definitionCatalog;
     }
 

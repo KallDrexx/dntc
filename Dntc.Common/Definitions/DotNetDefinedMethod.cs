@@ -11,10 +11,19 @@ public class DotNetDefinedMethod : DefinedMethod
         Definition = definition;
         Id = new IlMethodId(definition.FullName);
         ReturnType = new IlTypeName(definition.ReturnType.FullName);
-        Parameters = definition.Parameters
+        
+        var parameters = definition.Parameters
             .OrderBy(x => x.Index)
             .Select(x => new Parameter(new IlTypeName(x.ParameterType.FullName), x.Name))
-            .ToArray();
+            .ToList();
+
+        if (!definition.IsStatic)
+        {
+            // If this is an instance method, then the first parameter is always the declaring type
+            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), "__this"));
+        }
+
+        Parameters = parameters;
 
         Locals = definition.Body
             .Variables

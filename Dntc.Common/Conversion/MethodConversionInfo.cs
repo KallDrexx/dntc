@@ -50,7 +50,8 @@ public class MethodConversionInfo
 
     private static string ConvertNameToC(string name)
     {
-        return name.Replace(".", "_");
+        return name.Replace(".", "_")
+            .Replace("/", "__"); // Instance methods have the type name with a slash in it
     }
 
     private void SetupDotNetMethod(DotNetDefinedMethod method)

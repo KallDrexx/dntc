@@ -7,11 +7,13 @@ namespace Dntc.Common.Conversion;
 public class CodeGenerator
 {
     private readonly ConversionCatalog _conversionCatalog;
+    private readonly DefinitionCatalog _definitionCatalog;
     private readonly KnownOpcodeHandlers _opcodeHandlers = new();
 
-    public CodeGenerator(ConversionCatalog catalog)
+    public CodeGenerator(ConversionCatalog catalog, DefinitionCatalog definitionCatalog)
     {
         _conversionCatalog = catalog;
+        _definitionCatalog = definitionCatalog;
     }
 
     public static string OffsetLabel(int offset) => $"IL_{offset:X4}";
@@ -94,7 +96,8 @@ public class CodeGenerator
             method.Parameters.Select(x => x.Name).ToArray(), 
             methodVariables,
             writer,
-            _conversionCatalog);
+            _conversionCatalog,
+            _definitionCatalog);
         
         foreach (var instruction in method.Definition.Body.Instructions)
         {

@@ -15,6 +15,10 @@ internal class LdArgHandlers : IOpCodeFnFactory
             { Code.Ldarg_1, CreateHandlerFn(1) },
             { Code.Ldarg_2, CreateHandlerFn(2) },
             { Code.Ldarg_3, CreateHandlerFn(3) },
+           
+            // I think just loading the parameter name on the eval stack is ok for transpiling
+            { Code.Ldarga, CreateHandlerFn(null) },
+            { Code.Ldarga_S, CreateHandlerFn(null) },
         };
     }
 

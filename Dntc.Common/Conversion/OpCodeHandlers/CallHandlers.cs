@@ -15,28 +15,21 @@ internal class CallHandlers : IOpCodeFnFactory
     {
         var methodDefinition = (MethodDefinition)context.Operand;
         var conversionInfo = context.ConversionCatalog.Find(new IlMethodId(methodDefinition.FullName));
-        var arguments = new EvaluationStackItem[methodDefinition.Parameters.Count];
-        
-        // TODO: account for the object itself when handling instance calls
-        if (context.EvaluationStack.Count < arguments.Length)
+        var methodInfo = context.DefinitionCatalog.Get(new IlMethodId(methodDefinition.FullName));
+        if (methodInfo == null)
         {
-            var message = $"Call to method {methodDefinition.Name} cannot be performed as it requires " +
-                          $"{arguments.Length} parameters but only {context.EvaluationStack.Count} are on the " +
-                          $"evaluation stack";
+            var message = $"Could not find definition for method '{methodDefinition.FullName}'";
             throw new InvalidOperationException(message);
         }
-
-        // We need the items in the opposite order than they are in the stack, in order to pass them
-        // into the function call correctly.
-        for (var x = arguments.Length - 1; x >= 0; x--)
-        {
-            var item = context.EvaluationStack.Pop();
-            arguments[x] = item;
-        }
+        
+        var arguments = context.EvaluationStack.PopCount(methodInfo.Parameters.Count);
+        
+        // Items are passed into the method in the reverse order they were popped in
+        arguments = arguments.Reverse().ToArray();
 
         var functionCallString = new StringBuilder();
         functionCallString.Append($"{conversionInfo.NameInC.Value}(");
-        for (var x = 0; x < arguments.Length; x++)
+        for (var x = 0; x < arguments.Count; x++)
         {
             if (x > 0)
             {

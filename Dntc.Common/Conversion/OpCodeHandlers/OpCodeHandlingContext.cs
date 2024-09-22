@@ -1,4 +1,6 @@
-﻿namespace Dntc.Common.Conversion.OpCodeHandlers;
+﻿using Dntc.Common.Definitions;
+
+namespace Dntc.Common.Conversion.OpCodeHandlers;
 
 internal class OpCodeHandlingContext
 {
@@ -8,16 +10,19 @@ internal class OpCodeHandlingContext
     public VariableCollection Variables { get; }
     public StreamWriter Writer { get; }
     public ConversionCatalog ConversionCatalog { get; }
+    public DefinitionCatalog DefinitionCatalog { get; }
 
     public OpCodeHandlingContext(
         IReadOnlyList<string> argumentNames, 
         VariableCollection variables, 
         StreamWriter writer, 
-        ConversionCatalog conversionCatalog)
+        ConversionCatalog conversionCatalog, 
+        DefinitionCatalog definitionCatalog)
     {
         ArgumentNames = argumentNames;
         Variables = variables;
         Writer = writer;
         ConversionCatalog = conversionCatalog;
+        DefinitionCatalog = definitionCatalog;
     }
 }

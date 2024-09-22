@@ -43,6 +43,11 @@ public static class SimpleFunctions
         public float X;
         public float Y;
         public float Z;
+
+        public float Dot(Vector3 other)
+        {
+            return X * other.X + Y * other.Y + Z * other.Z;
+        }
     }
 
     public struct Vector2
@@ -119,5 +124,10 @@ public static class SimpleFunctions
             Second = Vector2Add(a.Second, b.Second),
             Third = Vector2Add(a.Third, b.Third),
         };
+    }
+
+    public static float StructInstanceTest(Vector3 first, Vector3 second)
+    {
+        return first.Dot(second);
     }
 }
