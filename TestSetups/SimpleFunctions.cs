@@ -78,6 +78,15 @@ public static class SimpleFunctions
         };
     }
 
+    public static Vector2 Vector2Add(Vector2 first, Vector2 second)
+    {
+        return new Vector2
+        {
+            X = first.X + second.X,
+            Y = first.Y + second.Y,
+        };
+    }
+
     public static Triangle TriangleBuilder(float x0, float y0, float x1, float y1, float x2, float y2)
     {
         return new Triangle
@@ -99,6 +108,16 @@ public static class SimpleFunctions
                 X = x2,
                 Y = y2,
             },
+        };
+    }
+
+    public static Triangle TriangleAdd(Triangle a, Triangle b)
+    {
+        return new Triangle
+        {
+            First = Vector2Add(a.First, b.First),
+            Second = Vector2Add(a.Second, b.Second),
+            Third = Vector2Add(a.Third, b.Third),
         };
     }
 }
