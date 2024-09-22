@@ -14,7 +14,14 @@ public class DotNetDefinedType : DefinedType
         _definition = definition;
         DefinedModule = definition.Module;
         IlName = new IlTypeName(definition.FullName);
-        Namespace = new IlNamespace(definition.Namespace);
+        
+        // Nested types don't have a namespace on them, so we need to go to the root
+        var rootDeclaringType = definition;
+        while (rootDeclaringType.DeclaringType != null)
+        {
+            rootDeclaringType = rootDeclaringType.DeclaringType;
+        }
+        Namespace = new IlNamespace(rootDeclaringType.Namespace);
 
         Fields = definition.Fields
             .Select(x => new Field(new IlTypeName(x.FieldType.FullName), x.Name))

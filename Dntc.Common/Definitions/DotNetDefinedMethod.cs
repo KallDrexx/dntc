@@ -30,5 +30,14 @@ public class DotNetDefinedMethod : DefinedMethod
             .OrderBy(x => x.Index)
             .Select(x => new IlTypeName(x.VariableType.FullName))
             .ToArray();
+        
+        // Nested types don't have a namespace on them, so we need to go to the root
+        var rootDeclaringType = definition.DeclaringType;
+        while (rootDeclaringType.DeclaringType != null)
+        {
+            rootDeclaringType = rootDeclaringType.DeclaringType;
+        }
+        
+        Namespace = new IlNamespace(rootDeclaringType.Namespace);
     }
 }

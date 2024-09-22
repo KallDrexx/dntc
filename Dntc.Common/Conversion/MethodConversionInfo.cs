@@ -58,7 +58,7 @@ public class MethodConversionInfo
     {
         IsPredeclared = false;
 
-        var fileNameBase = ConvertNameToC(method.Definition.DeclaringType.Namespace);
+        var fileNameBase = ConvertNameToC(method.Namespace.Value);
         Header = new HeaderName(fileNameBase + ".h");
         SourceFileName = new CSourceFileName(fileNameBase + ".c");
 
