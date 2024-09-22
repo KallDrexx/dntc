@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
 using Dntc.Common.MethodAnalysis;
+using Mono.Cecil;
 
 namespace Dntc.Common.Dependencies;
 
@@ -90,9 +91,9 @@ public class DependencyGraph
     private static void EnsureNotCircularReference(List<Node> path, IlMethodId id)
     {
         var referenceFound = false;
-        for (var x = 0; x < path.Count; x++)
+        foreach (var node in path)
         {
-            if (path[x] is MethodNode node && node.MethodId == id)
+            if (node is MethodNode methodNode && methodNode.MethodId == id)
             {
                 referenceFound = true;
                 break;
@@ -108,9 +109,9 @@ public class DependencyGraph
     private static void EnsureNotCircularReference(List<Node> path, IlTypeName typeName)
     {
         var referenceFound = false;
-        for (var x = 0; x < path.Count; x++)
+        foreach (var node in path)
         {
-            if (path[x] is TypeNode node && node.TypeName == typeName)
+            if (node is TypeNode typeNode && typeNode.TypeName == typeName)
             {
                 referenceFound = true;
                 break;
@@ -126,9 +127,8 @@ public class DependencyGraph
     private static void ThrowCircularReferenceException(List<Node> path, string finalName)
     {
         var pathString = new StringBuilder();
-        for (var x = 0; x < path.Count; x++)
+        foreach (var node in path)
         {
-            var node = path[x];
             switch (node)
             {
                 case MethodNode methodNode:

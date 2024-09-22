@@ -5,6 +5,7 @@ namespace Dntc.Common.Definitions;
 public class DotNetDefinedMethod : DefinedMethod
 {
     public MethodDefinition Definition { get; }
+    public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
 
     public DotNetDefinedMethod(MethodDefinition definition)
     {
@@ -39,5 +40,11 @@ public class DotNetDefinedMethod : DefinedMethod
         }
         
         Namespace = new IlNamespace(rootDeclaringType.Namespace);
+
+        FunctionPointerTypes = definition.Parameters
+            .Select(x => x.ParameterType)
+            .OfType<FunctionPointerType>()
+            .Concat(definition.Body.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>())
+            .ToArray();
     }
 }

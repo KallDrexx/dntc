@@ -33,14 +33,22 @@ public class FileGenerator
                 throw new InvalidOperationException(message);
             }
 
-            if (definition is not DotNetDefinedType dotNetType)
+            switch (definition)
             {
-                var message = $"Header '{plannedHeader.Name.Value}' declares type '{type.IlName.Value}', which " +
-                              $"is not a dot net type, but instead is a {definition.GetType().FullName}";
-                throw new InvalidOperationException(message);
+                case DotNetDefinedType dotNetType:
+                    await _codeGenerator.GenerateStructAsync(dotNetType, writer);
+                    break;
+                
+                case DotNetFunctionPointerType fnPtr:
+                    await _codeGenerator.GenerateFunctionPointerTypedef(fnPtr, writer);
+                    break;
+                
+                default:
+                    var message = $"Header '{plannedHeader.Name.Value}' declares type '{type.IlName.Value}', which " +
+                                  $"is a {definition.GetType().FullName}, which is not supported";
+                    throw new NotSupportedException(message);
             }
 
-            await _codeGenerator.GenerateStructAsync(dotNetType, writer);
             await writer.WriteLineAsync();
         }
 

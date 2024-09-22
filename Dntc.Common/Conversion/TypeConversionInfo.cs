@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Definitions;
+﻿using System.Text;
+using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion;
 
@@ -43,6 +44,10 @@ public class TypeConversionInfo
                 SetupDotNetType(dotNetDefinedType);
                 break;
             
+            case DotNetFunctionPointerType dotNetFunctionPointerType:
+                SetupDotNetFunctionPointer(dotNetFunctionPointerType);
+                break;
+            
             default:
                 throw new NotSupportedException(type.GetType().FullName);
         }
@@ -59,6 +64,28 @@ public class TypeConversionInfo
         IsPredeclared = false;
         Header = new HeaderName(ConvertNameToC(type.Namespace.Value) + ".h");
         NameInC = new CTypeName(ConvertNameToC(type.IlName.Value));
+    }
+
+    private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)
+    {
+        IsPredeclared = false;
+        Header = new HeaderName("fn_pointer_types.h"); // Have centralized fn pointer declarations
+
+        // Using shortnames instead of full names risks collisions, but I think it's unlikely,
+        // and worth doing until it becomes a problem, as they will be extremely bloated. 
+        // To not have bloated names we'd have to maintain a count somewhere, but that also
+        // risks names changing between code generation runs non-deterministically.
+        var cName = new StringBuilder("FnPtr");
+        foreach (var param in functionPointer.Definition.Parameters)
+        {
+            var paramName = ConvertNameToC(param.ParameterType.Name);
+            cName.Append($"_{paramName}");
+        }
+
+        var returnName = ConvertNameToC(functionPointer.Definition.ReturnType.Name);
+        cName.Append($"_Returns_{returnName}");
+
+        NameInC = new CTypeName(cName.ToString());
     }
 
     private void SetupNativeType(NativeDefinedType type)

@@ -56,6 +56,11 @@ public class DefinitionCatalog
         {
             var definedMethod = new DotNetDefinedMethod(method);
             Add(definedMethod);
+
+            foreach (var functionPointer in definedMethod.FunctionPointerTypes)
+            {
+                AddDotNetFunctionPointer(functionPointer);
+            }
         }
     }
 
@@ -67,5 +72,11 @@ public class DefinitionCatalog
     public DefinedMethod? Get(IlMethodId methodId)
     {
         return _methods.GetValueOrDefault(methodId);
+    }
+
+    private void AddDotNetFunctionPointer(FunctionPointerType functionPointer)
+    {
+        var type = new DotNetFunctionPointerType(functionPointer);
+        _types.TryAdd(type.IlName, type);
     }
 }

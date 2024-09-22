@@ -32,6 +32,28 @@ public class CodeGenerator
         await writer.WriteLineAsync($"}} {conversionInfo.NameInC.Value};");
     }
 
+    public async Task GenerateFunctionPointerTypedef(DotNetFunctionPointerType fnPtr, StreamWriter writer)
+    {
+        var conversionInfo = _conversionCatalog.Find(fnPtr.IlName);
+        var returnType = _conversionCatalog.Find(new IlTypeName(fnPtr.Definition.ReturnType.FullName));
+        
+        await writer.WriteAsync($"typedef {returnType.NameInC} (*{conversionInfo.NameInC})(");
+        for (var x = 0; x < fnPtr.Definition.Parameters.Count; x++)
+        {
+            var param = fnPtr.Definition.Parameters[x];
+            var paramType = _conversionCatalog.Find(new IlTypeName(param.ParameterType.FullName));
+
+            if (x > 0)
+            {
+                await writer.WriteAsync(", ");
+            }
+
+            await writer.WriteAsync(paramType.NameInC.Value);
+        }
+
+        await writer.WriteLineAsync(");");
+    }
+
     public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer)
     {
         var methodInfo = _conversionCatalog.Find(method.Id);
