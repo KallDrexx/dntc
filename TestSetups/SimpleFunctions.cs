@@ -146,4 +146,9 @@ public static class SimpleFunctions
     {
         return first + second;
     }
+
+    public static unsafe int FnPointerTest(delegate*<int, int, int> fn, int x, int y)
+    {
+        return fn(x, y);
+    }
 }

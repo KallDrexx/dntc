@@ -24,13 +24,13 @@ if (foundType == null)
     throw new InvalidOperationException("CLR type not found");
 }
 
-var foundMethod = catalog.Get(new IlMethodId("TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::StructOpOverload(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)"));
+var foundMethod = catalog.Get(new IlMethodId("System.Int32 TestSetups.SimpleFunctions::FnPointerTest(method System.Int32 *(System.Int32,System.Int32),System.Int32,System.Int32)"));
 if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");
 }
 
-var analysisResults = new MethodAnalyzer().Analyze((DotNetDefinedMethod)foundMethod);
+// var analysisResults = new MethodAnalyzer().Analyze((DotNetDefinedMethod)foundMethod);
 
 var graph = new DependencyGraph(catalog, foundMethod.Id);
 var conversionCatalog = new ConversionCatalog(catalog, graph);
