@@ -43,6 +43,17 @@ public static class SimpleFunctions
         public float X;
         public float Y;
         public float Z;
+        
+        public static Vector3 operator +(Vector3 first, Vector3 second)
+        {
+            // return new Vector3(first.X + second.X, first.Y + second.Y, first.Z + second.Z);
+            return new Vector3
+            { 
+                X = first.X + second.X, 
+                Y = first.Y + second.Y, 
+                Z = first.Z + second.Z
+            };
+        }
 
         public float Dot(Vector3 other)
         {
@@ -129,5 +140,10 @@ public static class SimpleFunctions
     public static float StructInstanceTest(Vector3 first, Vector3 second)
     {
         return first.Dot(second);
+    }
+
+    public static Vector3 StructOpOverload(Vector3 first, Vector3 second)
+    {
+        return first + second;
     }
 }
