@@ -45,6 +45,19 @@ public static class SimpleFunctions
         public float Z;
     }
 
+    public struct Vector2
+    {
+        public float X;
+        public float Y;
+    }
+
+    public struct Triangle
+    {
+        public Vector2 First;
+        public Vector2 Second;
+        public Vector2 Third;
+    }
+
     public static Vector3 StructTest(float x, float y, float z)
     {
         return new Vector3
@@ -62,6 +75,30 @@ public static class SimpleFunctions
             X = first.X + second.X,
             Y = first.Y + second.Y,
             Z = first.Z + second.Z,
+        };
+    }
+
+    public static Triangle TriangleBuilder(float x0, float y0, float x1, float y1, float x2, float y2)
+    {
+        return new Triangle
+        {
+            First = new Vector2
+            {
+                X = x0,
+                Y = y0,
+            },
+
+            Second = new Vector2
+            {
+                X = x1,
+                Y = y1,
+            },
+
+            Third = new Vector2
+            {
+                X = x2,
+                Y = y2,
+            },
         };
     }
 }

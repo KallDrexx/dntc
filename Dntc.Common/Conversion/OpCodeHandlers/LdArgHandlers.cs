@@ -1,4 +1,5 @@
-﻿using Mono.Cecil.Cil;
+﻿using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
@@ -9,6 +10,7 @@ internal class LdArgHandlers : IOpCodeFnFactory
         return new Dictionary<Code, OpCodeHandlerFn>
         {
             { Code.Ldarg, CreateHandlerFn(null) },
+            { Code.Ldarg_S, CreateHandlerFn(null) },
             { Code.Ldarg_0, CreateHandlerFn(0) },
             { Code.Ldarg_1, CreateHandlerFn(1) },
             { Code.Ldarg_2, CreateHandlerFn(2) },
@@ -22,13 +24,20 @@ internal class LdArgHandlers : IOpCodeFnFactory
         {
             return context =>
             {
-                if (context.Operand is not int index)
+                if (context.Operand is int index)
+                {
+                    LoadArgument(index, context);
+                }
+                else if (context.Operand is ParameterDefinition param)
+                {
+                    LoadArgument(param.Index, context);
+                }
+                else
                 {
                     var message = $"Expected ldarg operand of int, instead was '{context.Operand?.GetType().FullName}'";
                     throw new ArgumentException(message);
                 }
 
-                LoadArgument(index, context);
                 return new ValueTask();
             };
         }

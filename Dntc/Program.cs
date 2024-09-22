@@ -24,7 +24,7 @@ if (foundType == null)
     throw new InvalidOperationException("CLR type not found");
 }
 
-var foundMethod = catalog.Get(new IlMethodId("TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::StructAddTest(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)"));
+var foundMethod = catalog.Get(new IlMethodId("TestSetups.SimpleFunctions/Triangle TestSetups.SimpleFunctions::TriangleBuilder(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)"));
 if (foundMethod == null)
 {
     throw new InvalidOperationException("CLR method not found");
