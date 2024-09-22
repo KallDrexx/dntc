@@ -10,5 +10,10 @@ public class DotNetFunctionPointerType : DefinedType
     {
         Definition = functionPointer;
         IlName = new IlTypeName(functionPointer.FullName);
+
+        OtherReferencedTypes = functionPointer.Parameters
+            .Select(x => new IlTypeName(x.ParameterType.FullName))
+            .Concat([new IlTypeName(functionPointer.ReturnType.FullName)])
+            .ToArray();
     }
 }

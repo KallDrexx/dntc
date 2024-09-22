@@ -39,6 +39,10 @@ public class NativeDefinedType : DefinedType
                 new NativeDefinedType(new IlTypeName(typeof(bool).FullName!), new HeaderName("<stdbool.h>"),
                     new CTypeName("bool"))
             },
+            {
+                typeof(void), 
+                new NativeDefinedType(new IlTypeName(typeof(void).FullName!), null, new CTypeName("void"))
+            },
         };
     
     private static NativeDefinedType StdIntType(string clrName, string nativeName)

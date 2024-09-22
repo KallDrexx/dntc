@@ -77,7 +77,11 @@ public class DependencyGraph
         var node = new TypeNode(typeName);
         path.Add(node);
 
-        var subTypes = type.Fields.Select(x => x.Type).Distinct();
+        var subTypes = type.Fields
+            .Select(x => x.Type)
+            .Concat(type.OtherReferencedTypes)
+            .Distinct();
+        
         foreach (var subType in subTypes)
         {
             var subNode = CreateNode(definitionCatalog, subType, path);
