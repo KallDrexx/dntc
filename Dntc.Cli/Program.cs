@@ -1,4 +1,4 @@
-﻿namespace Dntc;
+﻿namespace Dntc.Cli;
 
 public static class Program
 {

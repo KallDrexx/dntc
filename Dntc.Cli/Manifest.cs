@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Dntc;
+namespace Dntc.Cli;
 
 public class Manifest
 {

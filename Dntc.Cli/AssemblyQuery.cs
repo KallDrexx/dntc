@@ -1,6 +1,6 @@
 ﻿using Mono.Cecil;
 
-namespace Dntc;
+namespace Dntc.Cli;
 
 public static class AssemblyQuery
 {
