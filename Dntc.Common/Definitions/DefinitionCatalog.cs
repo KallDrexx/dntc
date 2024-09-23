@@ -36,6 +36,22 @@ public class DefinitionCatalog
         _methods[method.Id] = method;
     }
 
+    public void Add(IEnumerable<TypeDefinition> types)
+    {
+        foreach (var type in types)
+        {
+            Add(type);
+        }
+    }
+
+    public void Add(IEnumerable<DefinedType> types)
+    {
+        foreach (var type in types)
+        {
+            Add(type);
+        }
+    }
+
     public void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")
