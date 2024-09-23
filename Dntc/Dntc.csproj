@@ -8,11 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="TestInputs/*" CopyToOutputDirectory="PreserveNewest" />
+        <None Include="TestManifests/*" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Dntc.Common\Dntc.Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
 </Project>
