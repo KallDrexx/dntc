@@ -118,7 +118,7 @@ public static class Program
         };
 
         var process = Process.Start(processInfo);
-        await process.WaitForExitAsync();
+        await process!.WaitForExitAsync();
         
         Console.WriteLine();
     }
