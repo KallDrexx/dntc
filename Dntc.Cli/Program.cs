@@ -1,4 +1,6 @@
-﻿namespace Dntc.Cli;
+﻿using System.Diagnostics;
+
+namespace Dntc.Cli;
 
 public static class Program
 {
@@ -30,6 +32,11 @@ public static class Program
         }
         else
         {
+            if (!string.IsNullOrWhiteSpace(manifest.DotNetProjectDirectory))
+            {
+                await BuildDotNetProjectAsync(manifest);
+            }
+            
             await transpiler.RunAsync();
         }
 
@@ -96,5 +103,23 @@ public static class Program
         }
         
         return true;
+    }
+
+    private static async Task BuildDotNetProjectAsync(Manifest manifest)
+    {
+        Console.WriteLine($"Building project located in ${manifest.DotNetProjectDirectory}");
+        var processInfo = new ProcessStartInfo
+        {
+            WorkingDirectory = manifest.DotNetProjectDirectory,
+            FileName = "dotnet",
+            Arguments = manifest.BuildInDebugMode
+                ? "build -c Debug"
+                : "build -c Release",
+        };
+
+        var process = Process.Start(processInfo);
+        await process.WaitForExitAsync();
+        
+        Console.WriteLine();
     }
 }
