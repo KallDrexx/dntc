@@ -20,7 +20,8 @@
     "TestSetups.SimpleFunctions/Triangle TestSetups.SimpleFunctions::TriangleBuilder(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)",
     "TestSetups.SimpleFunctions/Vector2 TestSetups.SimpleFunctions::Vector2Add(TestSetups.SimpleFunctions/Vector2,TestSetups.SimpleFunctions/Vector2)",
     "System.Single TestSetups.SimpleFunctions/Vector3::Dot(TestSetups.SimpleFunctions/Vector3)",
-    "TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions/Vector3::op_Addition(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)"
+    "TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions/Vector3::op_Addition(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)",
+    "System.Single TestSetups.SimpleFunctions::SquareRootTest(System.Single)"
   ],
   "OutputDirectory": "C:\\Users\\me\\CLionProjects\\scratchpad\\generated"
 }

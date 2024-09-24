@@ -43,6 +43,10 @@ public class MethodConversionInfo
                 SetupDotNetMethod(dotNetDefinedMethod);
                 break;
             
+            case NativeDefinedMethod nativeDefinedMethod:
+                SetupNativeMethod(nativeDefinedMethod);
+                break;
+            
             default:
                 throw new NotSupportedException(method.GetType().FullName);
         }
@@ -65,5 +69,12 @@ public class MethodConversionInfo
         // TOOD: Need to figure out a good way to disambiguate overloaded functions
         var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
         NameInC = new CFunctionName(ConvertNameToC(functionName));
+    }
+
+    private void SetupNativeMethod(NativeDefinedMethod method)
+    {
+        IsPredeclared = true;
+        Header = method.HeaderFile;
+        NameInC = method.NativeName;
     }
 }

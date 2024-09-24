@@ -151,4 +151,9 @@ public static class SimpleFunctions
     {
         return fn(x, y);
     }
+
+    public static float SquareRootTest(float value)
+    {
+        return (float)Math.Sqrt(value);
+    }
 }

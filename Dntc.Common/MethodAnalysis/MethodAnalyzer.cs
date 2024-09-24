@@ -45,8 +45,17 @@ public class MethodAnalyzer
             case Code.Call:
             case Code.Callvirt:
             {
-                var definition = (MethodDefinition)instruction.Operand;
-                return new IlMethodId(definition.FullName);
+                switch (instruction.Operand)
+                {
+                    case MethodDefinition definition:
+                        return new IlMethodId(definition.FullName);
+                    
+                    case MethodReference reference:
+                        return new IlMethodId(reference.FullName);
+                    
+                    default:
+                        throw new NotSupportedException(instruction.Operand.GetType().FullName);
+                }
             }
                 
             default:

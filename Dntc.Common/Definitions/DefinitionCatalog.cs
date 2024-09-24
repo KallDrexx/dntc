@@ -52,6 +52,14 @@ public class DefinitionCatalog
         }
     }
 
+    public void Add(IEnumerable<DefinedMethod> methods)
+    {
+        foreach (var method in methods)
+        {
+            Add(method);
+        }
+    }
+
     public void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")

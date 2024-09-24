@@ -21,6 +21,7 @@ public class Transpiler
         var modules = GetModules();
         var definitionCatalog = new DefinitionCatalog();
         definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
+        definitionCatalog.Add(NativeDefinedMethod.StandardMethods);
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
         var conversionCatalog = new ConversionCatalog(definitionCatalog);

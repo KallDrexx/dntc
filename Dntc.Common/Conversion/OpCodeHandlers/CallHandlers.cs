@@ -14,12 +14,29 @@ internal class CallHandlers : IOpCodeFnFactory
 
     private static async ValueTask HandleCall(OpCodeHandlingContext context)
     {
-        var methodDefinition = (MethodDefinition)context.Operand;
-        var conversionInfo = context.ConversionCatalog.Find(new IlMethodId(methodDefinition.FullName));
-        var methodInfo = context.DefinitionCatalog.Get(new IlMethodId(methodDefinition.FullName));
+        IlMethodId methodId;
+        TypeReference returnType;
+        switch (context.Operand)
+        {
+            case MethodDefinition definition:
+                methodId = new IlMethodId(definition.FullName);
+                returnType = definition.ReturnType;
+                break;
+            
+            case MethodReference reference:
+                methodId = new IlMethodId(reference.FullName);
+                returnType = reference.ReturnType;
+                break;
+            
+            default:
+                throw new NotSupportedException(context.Operand.GetType().FullName);
+        }
+
+        var conversionInfo = context.ConversionCatalog.Find(methodId);
+        var methodInfo = context.DefinitionCatalog.Get(methodId);
         if (methodInfo == null)
         {
-            var message = $"Could not find definition for method '{methodDefinition.FullName}'";
+            var message = $"Could not find definition for method '{methodId.Value}'";
             throw new InvalidOperationException(message);
         }
         
@@ -28,7 +45,7 @@ internal class CallHandlers : IOpCodeFnFactory
         // Items are passed into the method in the reverse order they were popped in
         arguments = arguments.Reverse().ToArray();
         
-        await ExecuteCallHandle(context, conversionInfo.NameInC, arguments, ReturnsVoid(methodDefinition.ReturnType));
+        await ExecuteCallHandle(context, conversionInfo.NameInC, arguments, ReturnsVoid(returnType));
     }
 
     private static async ValueTask HandleCallI(OpCodeHandlingContext context)
