@@ -8,25 +8,31 @@ namespace Dntc.Common.Conversion.Planning;
 /// </summary>
 public class ImplementationPlan
 {
+    private readonly ConversionCatalog _conversionCatalog;
     private readonly Dictionary<HeaderName, PlannedHeaderFile> _headers = new();
     private readonly Dictionary<CSourceFileName, PlannedSourceFile> _sourceFiles = new();
 
     public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
     public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
 
-    public ImplementationPlan(ConversionCatalog conversionCatalog, DependencyGraph dependencies)
+    public ImplementationPlan(ConversionCatalog conversionCatalog)
     {
-        ProcessNode(conversionCatalog, dependencies.Root);
+        _conversionCatalog = conversionCatalog;
     }
 
-    private static void AddReferencedHeaders(ConversionCatalog catalog, DependencyGraph.Node node, PlannedHeaderFile headerFile)
+    public void AddMethodGraph(DependencyGraph graph)
+    {
+        ProcessNode(graph.Root);
+    }
+
+    private void AddReferencedHeaders(DependencyGraph.Node node, PlannedHeaderFile headerFile)
     {
         foreach (var child in node.Children)
         {
             switch (child)
             {
                 case DependencyGraph.TypeNode typeNode:
-                    var childType = catalog.Find(typeNode.TypeName);
+                    var childType = _conversionCatalog.Find(typeNode.TypeName);
                     if (childType.Header != null)
                     {
                         headerFile.AddReferencedHeader(childType.Header.Value);
@@ -34,7 +40,7 @@ public class ImplementationPlan
                     break;
                 
                 case DependencyGraph.MethodNode methodNode:
-                    var childMethod = catalog.Find(methodNode.MethodId);
+                    var childMethod = _conversionCatalog.Find(methodNode.MethodId);
                     headerFile.AddReferencedHeader(childMethod.Header);
                     break;
                 
@@ -44,17 +50,14 @@ public class ImplementationPlan
         }
     }
     
-    private static void AddReferencedHeaders(
-        ConversionCatalog catalog, 
-        DependencyGraph.Node node, 
-        PlannedSourceFile sourceFile)
+    private void AddReferencedHeaders(DependencyGraph.Node node, PlannedSourceFile sourceFile)
     {
         foreach (var child in node.Children)
         {
             switch (child)
             {
                 case DependencyGraph.TypeNode typeNode:
-                    var childType = catalog.Find(typeNode.TypeName);
+                    var childType = _conversionCatalog.Find(typeNode.TypeName);
                     if (childType.Header != null )
                     {
                         sourceFile.AddReferencedHeader(childType.Header.Value);
@@ -62,7 +65,7 @@ public class ImplementationPlan
                     break;
                 
                 case DependencyGraph.MethodNode methodNode:
-                    var childMethod = catalog.Find(methodNode.MethodId);
+                    var childMethod = _conversionCatalog.Find(methodNode.MethodId);
                     sourceFile.AddReferencedHeader(childMethod.Header);
                     break;
                 
@@ -72,22 +75,22 @@ public class ImplementationPlan
         }
     }
 
-    private void ProcessNode(ConversionCatalog catalog, DependencyGraph.Node node)
+    private void ProcessNode(DependencyGraph.Node node)
     {
         foreach (var child in node.Children)
         {
-            ProcessNode(catalog, child);
+            ProcessNode(child);
         }
 
         switch (node)
         {
             case DependencyGraph.TypeNode typeNode:
-                DeclareType(catalog, typeNode);
+                DeclareType(typeNode);
                 break;
             
             case DependencyGraph.MethodNode methodNode:
-                DeclareMethod(catalog, methodNode);
-                AddMethodImplementation(catalog, methodNode);
+                DeclareMethod(methodNode);
+                AddMethodImplementation(methodNode);
                 break;
             
             default:
@@ -95,9 +98,9 @@ public class ImplementationPlan
         }
     }
 
-    private void DeclareType(ConversionCatalog catalog, DependencyGraph.TypeNode node)
+    private void DeclareType(DependencyGraph.TypeNode node)
     {
-        var type = catalog.Find(node.TypeName);
+        var type = _conversionCatalog.Find(node.TypeName);
         if (type.IsPredeclared)
         {
             // No need to touch predeclared types
@@ -116,13 +119,13 @@ public class ImplementationPlan
             _headers[header.Name] = header;
         }
         
-        AddReferencedHeaders(catalog, node, header);
+        AddReferencedHeaders(node, header);
         header.AddDeclaredType(type);
     }
 
-    private void DeclareMethod(ConversionCatalog catalog, DependencyGraph.MethodNode node)
+    private void DeclareMethod(DependencyGraph.MethodNode node)
     {
-        var method = catalog.Find(node.MethodId);
+        var method = _conversionCatalog.Find(node.MethodId);
         if (method.IsPredeclared)
         {
             // We aren't declaring this method, so nothing to do here
@@ -135,13 +138,13 @@ public class ImplementationPlan
             _headers[method.Header] = header;
         }
         
-        AddReferencedHeaders(catalog, node, header);
+        AddReferencedHeaders(node, header);
         header.AddDeclaredMethod(method);
     }
 
-    private void AddMethodImplementation(ConversionCatalog catalog, DependencyGraph.MethodNode node)
+    private void AddMethodImplementation(DependencyGraph.MethodNode node)
     {
-        var method = catalog.Find(node.MethodId);
+        var method = _conversionCatalog.Find(node.MethodId);
         if (method.IsPredeclared)
         {
             return;
@@ -159,7 +162,7 @@ public class ImplementationPlan
             _sourceFiles[sourceFile.Name] = sourceFile;
         }
         
-        AddReferencedHeaders(catalog, node, sourceFile);
+        AddReferencedHeaders(node, sourceFile);
         sourceFile.AddMethod(method);
     }
 }

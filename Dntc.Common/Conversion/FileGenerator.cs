@@ -71,6 +71,7 @@ public class FileGenerator
         {
             var definition = GetDotNetDefinition(sourceFile.Name.Value, method);
             await _codeGenerator.GenerateMethodImplementationAsync(definition, writer);
+            await writer.WriteLineAsync();
         }
     }
 

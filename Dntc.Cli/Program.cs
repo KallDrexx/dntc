@@ -22,10 +22,15 @@ public static class Program
             return 1;
         }
 
+        var transpiler = new Transpiler(manifest);
+
         if (performMethodQuery)
         {
-            AssemblyQuery.Run(manifest);
-            return 0;
+            transpiler.Query();
+        }
+        else
+        {
+            await transpiler.RunAsync();
         }
 
         return 0;

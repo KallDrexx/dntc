@@ -5,12 +5,18 @@ namespace Dntc.Common.Conversion;
 
 public class ConversionCatalog
 {
+    private readonly DefinitionCatalog _definitionCatalog;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
 
-    public ConversionCatalog(DefinitionCatalog definitionCatalog, DependencyGraph dependencies)
+    public ConversionCatalog(DefinitionCatalog definitionCatalog)
     {
-        AddNode(definitionCatalog, dependencies.Root);
+        _definitionCatalog = definitionCatalog;
+    }
+
+    public void Add(DependencyGraph dependencyGraph)
+    {
+        AddNode(dependencyGraph.Root);
     }
 
     public TypeConversionInfo Find(IlTypeName name)
@@ -35,16 +41,16 @@ public class ConversionCatalog
         throw new InvalidOperationException(message);
     }
 
-    private void AddNode(DefinitionCatalog definitionCatalog, DependencyGraph.Node node)
+    private void AddNode(DependencyGraph.Node node)
     {
         switch (node)
         {
             case DependencyGraph.TypeNode typeNode:
-                AddNode(definitionCatalog, typeNode);
+                AddNode(typeNode);
                 break;
             
             case DependencyGraph.MethodNode methodNode:
-                AddNode(definitionCatalog, methodNode);
+                AddNode(methodNode);
                 break;
             
             default:
@@ -52,11 +58,11 @@ public class ConversionCatalog
         }
     }
 
-    private void AddNode(DefinitionCatalog definitionCatalog, DependencyGraph.TypeNode node)
+    private void AddNode(DependencyGraph.TypeNode node)
     {
         if (!_types.ContainsKey(node.TypeName))
         {
-            var definition = definitionCatalog.Get(node.TypeName);
+            var definition = _definitionCatalog.Get(node.TypeName);
             if (definition == null)
             {
                 var message = $"Dependency graph contained node for type '{node.TypeName.Value}' but no " +
@@ -65,15 +71,15 @@ public class ConversionCatalog
             }
             
             _types.Add(node.TypeName, new TypeConversionInfo(definition));
-            AddChildren(definitionCatalog, node);
+            AddChildren(node);
         }
     }
 
-    private void AddNode(DefinitionCatalog definitionCatalog, DependencyGraph.MethodNode node)
+    private void AddNode(DependencyGraph.MethodNode node)
     {
         if (!_methods.ContainsKey(node.MethodId))
         {
-            var definition = definitionCatalog.Get(node.MethodId);
+            var definition = _definitionCatalog.Get(node.MethodId);
             if (definition == null)
             {
                 var message = $"Dependency graph contained node for method '{node.MethodId.Value}' but no " +
@@ -82,15 +88,15 @@ public class ConversionCatalog
             }
             
             _methods.Add(node.MethodId, new MethodConversionInfo(definition));
-            AddChildren(definitionCatalog, node);
+            AddChildren(node);
         }
     }
 
-    private void AddChildren(DefinitionCatalog definitionCatalog, DependencyGraph.Node node)
+    private void AddChildren(DependencyGraph.Node node)
     {
         foreach (var child in node.Children)
         {
-            AddNode(definitionCatalog, child);
+            AddNode(child);
         }
     }
 }
