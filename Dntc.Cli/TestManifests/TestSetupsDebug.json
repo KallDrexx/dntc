@@ -1,10 +1,10 @@
 ﻿{
-  "DotNetProjectDirectory": "../../../../TestSetups",
+  "DotNetProjectDirectory": "../../TestSetups",
   "BuildInDebugMode": true,
-  "AssemblyDirectory": "../../../../TestSetups/bin/Debug/net8.0",
+  "AssemblyDirectory": "../../TestSetups/bin/Debug/net8.0",
   "AssembliesToLoad": [
     "TestSetups.dll"
   ],
   "MethodsToTranspile": [],
-  "OutputDirectory": "output"
+  "OutputDirectory": "../../TestSetups/bin/Debug/net8.0"
 }

@@ -11,8 +11,8 @@ public static class Program
         }
 
         var performMethodQuery = args.Length >= 2 && args[1].ToLower() == "query";
-        var manifestFileName = args[0];
-        var manifest = await Manifest.ParseManifestAsync(args[0]);
+        var manifestFileName = Path.GetFullPath(args[0]);
+        var manifest = await Manifest.ParseManifestAsync(manifestFileName);
         
         ShowManifestInfo(manifestFileName, manifest);
 

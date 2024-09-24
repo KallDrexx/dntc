@@ -2,6 +2,10 @@
 
 namespace Dntc.Cli;
 
+/// <summary>
+/// Describes how the transpile process should be performed, including relevant paths. All
+/// paths should either be absolute or relative to the manifest file itself.
+/// </summary>
 public class Manifest
 {
     /// <summary>
@@ -48,13 +52,34 @@ public class Manifest
             throw new Exception($"Failed to read manifest file '{manifestFilePath}'", exception);
         }
 
+        Manifest manifest;
         try
         {
-            return JsonConvert.DeserializeObject<Manifest>(rawContents) ?? new Manifest();
+            manifest = JsonConvert.DeserializeObject<Manifest>(rawContents) ?? new Manifest();
         }
         catch (Exception exception)
         {
             throw new Exception($"Failed to parse json from manifest file `{manifestFilePath}`", exception);
         }
+        
+        // Update all directories to be absolute paths, changing relative paths to be relative to the
+        // manifest file for more predictable file placement.
+        var manifestDirectory = Path.GetDirectoryName(manifestFilePath);
+        manifest.DotNetProjectDirectory = ConvertToAbsolutePath(manifestDirectory!, manifest.DotNetProjectDirectory);
+        manifest.OutputDirectory = ConvertToAbsolutePath(manifestDirectory!, manifest.OutputDirectory);
+        manifest.AssemblyDirectory = ConvertToAbsolutePath(manifestDirectory!, manifest.AssemblyDirectory);
+        
+        return manifest;
+    }
+
+    private static string? ConvertToAbsolutePath(string manifestPath, string? filePath)
+    {
+        if (filePath == null || Path.IsPathRooted(filePath))
+        {
+            return filePath;
+        }
+
+        var combinedPath = Path.Combine(Path.GetFullPath(manifestPath), filePath);
+        return Path.GetFullPath(combinedPath);
     }
 }
