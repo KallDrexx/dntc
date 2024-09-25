@@ -10,9 +10,9 @@ public class NativeDefinedType : DefinedType
         HeaderFile = headerFile;
         NativeName = nativeName;
         IlName = ilTypeName;
-        
-        Fields = ArraySegment<Field>.Empty;
-        Methods = ArraySegment<IlMethodId>.Empty;
+
+        Fields = Array.Empty<Field>();
+        Methods = Array.Empty<IlMethodId>();
     }
 
     public static IReadOnlyDictionary<Type, NativeDefinedType> StandardTypes { get; } =

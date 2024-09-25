@@ -54,6 +54,11 @@ public class CodeGenerator
         await writer.WriteLineAsync(");");
     }
 
+    public async Task GenerateCustomDefinedHeaderData(CustomDefinedType customDefinedType, StreamWriter writer)
+    {
+        await customDefinedType.WriteHeaderContentsAsync(_conversionCatalog, writer);
+    }
+
     public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer)
     {
         var methodInfo = _conversionCatalog.Find(method.Id);

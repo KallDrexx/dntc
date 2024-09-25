@@ -8,9 +8,16 @@ internal class BranchHandlers : IOpCodeFnFactory
     {
         { Code.Br, HandleBranch },
         { Code.Br_S, HandleBranch },
-        { Code.Brfalse, HandleBranchFalse },
-        { Code.Brfalse_S, HandleBranchFalse },
+        { Code.Brfalse, CreateSimpleBoolCheckFn(false) },
+        { Code.Brfalse_S, CreateSimpleBoolCheckFn(false) },
+        { Code.Brtrue, CreateSimpleBoolCheckFn(true) },
+        { Code.Brtrue_S, CreateSimpleBoolCheckFn(true) },
     };
+
+    private static OpCodeHandlerFn CreateSimpleBoolCheckFn(bool isTrueCheck)
+    {
+        return context => HandleBranchBool(isTrueCheck, context);
+    }
 
     private static async ValueTask HandleBranch(OpCodeHandlingContext context)
     {
@@ -18,18 +25,14 @@ internal class BranchHandlers : IOpCodeFnFactory
         await context.Writer.WriteLineAsync($"\tgoto {CodeGenerator.OffsetLabel(instruction.Offset)};");
     }
 
-    private static async ValueTask HandleBranchFalse(OpCodeHandlingContext context)
+    private static async ValueTask HandleBranchBool(bool isTrueCheck, OpCodeHandlingContext context)
     {
-        if (context.EvaluationStack.Count == 0)
-        {
-            var message = "brfalse requires a value on the evaluation stack";
-            throw new NotImplementedException(message);
-        }
-        
+        var items = context.EvaluationStack.PopCount(1);
+        var item = items[0];
         var instruction = (Instruction)context.Operand;
-        var item = context.EvaluationStack.Pop();
+        var check = isTrueCheck ? "" : "!";
 
-        await context.Writer.WriteLineAsync($"\tif (!{item.Text}) {{");
+        await context.Writer.WriteLineAsync($"\tif ({check}{item.Text}) {{");
         await context.Writer.WriteLineAsync($"\t\tgoto {CodeGenerator.OffsetLabel(instruction.Offset)};");
         await context.Writer.WriteLineAsync("\t}");
     }

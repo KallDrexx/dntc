@@ -37,6 +37,11 @@ public class ImplementationPlan
                     {
                         headerFile.AddReferencedHeader(childType.Header.Value);
                     }
+
+                    foreach (var header in childType.ReferencedHeaders)
+                    {
+                        headerFile.AddReferencedHeader(header);
+                    }
                     break;
                 
                 case DependencyGraph.MethodNode methodNode:

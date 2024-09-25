@@ -26,7 +26,7 @@ public class ConversionCatalog
             return info;
         }
 
-        var message = $"Conversion catalog did not contain the type '{name.Value}";
+        var message = $"Conversion catalog did not contain the type '{name.Value}'";
         throw new InvalidOperationException(message);
     }
 

@@ -43,6 +43,10 @@ public class FileGenerator
                     await _codeGenerator.GenerateFunctionPointerTypedef(fnPtr, writer);
                     break;
                 
+                case CustomDefinedType customDefinedType:
+                    await _codeGenerator.GenerateCustomDefinedHeaderData(customDefinedType, writer);
+                    break;
+                
                 default:
                     var message = $"Header '{plannedHeader.Name.Value}' declares type '{type.IlName.Value}', which " +
                                   $"is a {definition.GetType().FullName}, which is not supported";

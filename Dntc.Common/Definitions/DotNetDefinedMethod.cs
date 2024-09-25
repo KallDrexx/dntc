@@ -6,6 +6,7 @@ public class DotNetDefinedMethod : DefinedMethod
 {
     public MethodDefinition Definition { get; }
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
+    public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
 
     public DotNetDefinedMethod(MethodDefinition definition)
     {
@@ -25,6 +26,11 @@ public class DotNetDefinedMethod : DefinedMethod
         }
 
         Parameters = parameters;
+        ReferencedArrayTypes = definition.Parameters
+            .Select(x => x.ParameterType)
+            .Where(x => x.IsArray)
+            .Distinct()
+            .ToArray();
 
         Locals = definition.Body
             .Variables

@@ -30,6 +30,12 @@ public class TypeConversionInfo
     /// </summary>
     public CTypeName NameInC { get; private set; }
 
+    /// <summary>
+    /// Headers that need to be referenced along with this type's declaration that can't be
+    /// automatically determined.
+    /// </summary>
+    public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
+
     public TypeConversionInfo(DefinedType type)
     {
         IlName = type.IlName;
@@ -46,6 +52,10 @@ public class TypeConversionInfo
             
             case DotNetFunctionPointerType dotNetFunctionPointerType:
                 SetupDotNetFunctionPointer(dotNetFunctionPointerType);
+                break;
+            
+            case CustomDefinedType customDefinedType:
+                SetupCustomType(customDefinedType);
                 break;
             
             default:
@@ -93,5 +103,13 @@ public class TypeConversionInfo
         IsPredeclared = true;
         Header = type.HeaderFile;
         NameInC = type.NativeName;
+    }
+
+    private void SetupCustomType(CustomDefinedType type)
+    {
+        IsPredeclared = false;
+        Header = type.HeaderName;
+        NameInC = type.NativeName;
+        ReferencedHeaders = type.ReferencedHeaders;
     }
 }

@@ -156,4 +156,12 @@ public static class SimpleFunctions
     {
         return (float)Math.Sqrt(value);
     }
+
+    public static void ArrayTest(ushort[] test)
+    {
+        for (var x = 0; x < test.Length; x++)
+        {
+            test[x] = (ushort)x;
+        }
+    }
 }
