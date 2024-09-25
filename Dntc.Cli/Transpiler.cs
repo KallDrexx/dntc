@@ -41,6 +41,17 @@ public class Transpiler
         }
 
         var fileGenerator = new FileGenerator(definitionCatalog, conversionCatalog);
+        
+        // Make sure the output folder is clean
+        try
+        {
+            Directory.Delete(_manifest.OutputDirectory!, true);
+        }
+        catch (IOException)
+        {
+            // Ignore if the directory doesn't exist
+        }
+        
         Directory.CreateDirectory(_manifest.OutputDirectory!);
         foreach (var header in implementationPlan.Headers)
         {
