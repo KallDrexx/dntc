@@ -4,6 +4,8 @@ public struct Camera
 {
     public Vector3 Right;
     public Vector3 Up;
+    public int PixelHeight;
+    public int PixelWidth;
 
     public static Camera Default()
     {
