@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Octahedron", "Octahedron", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dntc.Samples.Octahedron.Common", "Samples\Octahedron\Dntc.Samples.Octahedron.Common\Dntc.Samples.Octahedron.Common.csproj", "{347960D7-FD74-4F97-8963-4DE9FF1A3AF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dntc.Samples.Octahedron.Monogame", "Samples\Octahedron\Dntc.Samples.Octahedron.Monogame\Dntc.Samples.Octahedron.Monogame.csproj", "{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,9 +36,14 @@ Global
 		{347960D7-FD74-4F97-8963-4DE9FF1A3AF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{347960D7-FD74-4F97-8963-4DE9FF1A3AF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{347960D7-FD74-4F97-8963-4DE9FF1A3AF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CA66C664-57B2-40BD-983E-86B883FF3B10} = {C9F60E92-3C28-497D-B688-BDA03B48EC11}
 		{347960D7-FD74-4F97-8963-4DE9FF1A3AF5} = {CA66C664-57B2-40BD-983E-86B883FF3B10}
+		{BD2FF69D-79BA-4BB9-9C0A-FC32B91A030B} = {CA66C664-57B2-40BD-983E-86B883FF3B10}
 	EndGlobalSection
 EndGlobal
