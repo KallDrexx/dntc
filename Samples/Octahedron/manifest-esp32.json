@@ -1,0 +1,13 @@
+﻿{
+  "DotNetProjectDirectory": "./Dntc.Samples.Octahedron.Common",
+  "BuildInDebugMode": false,
+  "AssemblyDirectory": "./Dntc.Samples.Octahedron.Common/bin/Release/net8.0",
+  "AssembliesToLoad": [
+    "Dntc.Samples.Octahedron.Common.dll"
+  ],
+  "MethodsToTranspile": [
+    "Dntc.Samples.Octahedron.Common.Camera Dntc.Samples.Octahedron.Common.Camera::Default()",
+    "System.Void Dntc.Samples.Octahedron.Common.OctahedronRenderer::Render(System.UInt16[],Dntc.Samples.Octahedron.Common.Camera,System.Single)"
+  ],
+  "OutputDirectory": "./Octahedron.Esp32s3/main/generated"
+}
