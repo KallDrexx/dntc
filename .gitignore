@@ -3,3 +3,7 @@
 *.user
 [Bb]in/
 [Oo]bj/
+build/
+cmake-build-*/
+sdkconfig.ci
+sdkconfig.old
