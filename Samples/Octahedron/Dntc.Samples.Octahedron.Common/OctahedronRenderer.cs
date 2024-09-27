@@ -5,15 +5,15 @@ public static class OctahedronRenderer
     public static void Render(ushort[] pixels, Camera camera, float secondsPassed)
     {
         var light = new Vector3(1, 0, 3);
-        // var rotationsDegreesPerSecond = new Vector3(0, 100, 120);
-        var rotationsDegreesPerSecond = new Vector3(0, 0, 0);
+        var rotationsDegreesPerSecond = new Vector3(0, 100, 120);
+        // var rotationsDegreesPerSecond = new Vector3(0, 0, 0);
 
         var rotation = new Vector3(
             rotationsDegreesPerSecond.X * secondsPassed,
             rotationsDegreesPerSecond.Y * secondsPassed,
             rotationsDegreesPerSecond.Z * secondsPassed);
 
-        for (var x = 0; x < 3; x++)
+        for (var x = 0; x < 8; x++)
         {
             var triangle = GetTriangle(x);
             var rotatedV1 = triangle.V1
@@ -76,8 +76,8 @@ public static class OctahedronRenderer
             case 2:
                 return new Triangle(
                     new Vector3(1, 0, 0),
-                    new Vector3(0, 0, -1),
-                    new Vector3(0, 1, 0));
+                    new Vector3(0, 0, 1),
+                    new Vector3(0, -1, 0));
 
             case 3:
                 return new Triangle(
