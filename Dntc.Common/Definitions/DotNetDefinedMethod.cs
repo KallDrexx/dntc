@@ -16,13 +16,13 @@ public class DotNetDefinedMethod : DefinedMethod
         
         var parameters = definition.Parameters
             .OrderBy(x => x.Index)
-            .Select(x => new Parameter(new IlTypeName(x.ParameterType.FullName), x.Name))
+            .Select(x => new Parameter(new IlTypeName(x.ParameterType.GetElementType().FullName), x.Name, x.ParameterType.IsByReference))
             .ToList();
 
         if (!definition.IsStatic)
         {
             // If this is an instance method, then the first parameter is always the declaring type
-            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), "__this"));
+            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), "__this", true));
         }
 
         Parameters = parameters;
@@ -35,7 +35,7 @@ public class DotNetDefinedMethod : DefinedMethod
         Locals = definition.Body
             .Variables
             .OrderBy(x => x.Index)
-            .Select(x => new IlTypeName(x.VariableType.FullName))
+            .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference))
             .ToArray();
         
         // Nested types don't have a namespace on them, so we need to go to the root

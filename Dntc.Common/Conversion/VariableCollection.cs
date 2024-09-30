@@ -8,20 +8,20 @@ internal class VariableCollection
     public IReadOnlyList<Variable> Locals => _locals;
     public IReadOnlyList<Variable> Parameters => _parameters;
 
-    public int AddLocal(TypeConversionInfo typeInfo)
+    public int AddLocal(TypeConversionInfo typeInfo, bool isPointer)
     {
         var nextIndex = _locals.Count;
         var name = $"__local_{nextIndex}";
         
-        _locals.Add(new Variable(typeInfo, name));
+        _locals.Add(new Variable(typeInfo, name, isPointer));
 
         return nextIndex;
     }
 
-    public int AddParameter(TypeConversionInfo typeInfo, string name)
+    public int AddParameter(TypeConversionInfo typeInfo, string name, bool isPointer)
     {
         var nextIndex = _parameters.Count;
-        _parameters.Add(new Variable(typeInfo, name));
+        _parameters.Add(new Variable(typeInfo, name, isPointer));
 
         return nextIndex;
     }

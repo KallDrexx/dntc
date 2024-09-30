@@ -18,7 +18,7 @@ internal class FieldHandlers : IOpCodeFnFactory
         var value = items[0];
         var obj = items[1];
 
-        await context.Writer.WriteLineAsync($"\t{obj.Text}.{field.Name} = {value.Text};");
+        await context.Writer.WriteLineAsync($"\t{obj.TextWithAccessor}{field.Name} = {value.TextDerefed};");
     }
 
     private static ValueTask HandleLdFld(OpCodeHandlingContext context)
@@ -27,8 +27,8 @@ internal class FieldHandlers : IOpCodeFnFactory
         var items = context.EvaluationStack.PopCount(1);
         var obj = items[0];
 
-        var newItemString = $"({obj.Text}.{field.Name})";
-        context.EvaluationStack.Push(new EvaluationStackItem(newItemString));
+        var newItemString = $"({obj.TextWithAccessor}{field.Name})";
+        context.EvaluationStack.Push(new EvaluationStackItem(newItemString, false));
 
         return new ValueTask();
     }

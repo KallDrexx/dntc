@@ -22,17 +22,11 @@ internal class BitwiseHandlers : IOpCodeFnFactory
 
     private static ValueTask BitwiseHandler(string bitwiseOperator, OpCodeHandlingContext context)
     {
-        if (context.EvaluationStack.Count < 2)
-        {
-            var message = $"Bitwise operator requires 2 items on the stack, but " +
-                          $"only {context.EvaluationStack.Count} are on it";
-            throw new InvalidOperationException(message);
-        }
-
-        var amount = context.EvaluationStack.Pop();
-        var value = context.EvaluationStack.Pop();
+        var items = context.EvaluationStack.PopCount(2);
+        var amount = items[0];
+        var value = items[1];
         
-        var newItem = new EvaluationStackItem($"({value.Text} {bitwiseOperator} {amount.Text})");
+        var newItem = new EvaluationStackItem($"({value.TextDerefed} {bitwiseOperator} {amount.TextDerefed})", false);
         context.EvaluationStack.Push(newItem);
 
         return new ValueTask();

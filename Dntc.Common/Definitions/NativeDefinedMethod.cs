@@ -20,7 +20,7 @@ public class NativeDefinedMethod : DefinedMethod
         ReturnType = returnType;
         
         // Parameter names don't matter since we won't be generating code for an implementation
-        Parameters = parameterTypes.Select(x => new Parameter(x, "a")).ToArray();
+        Parameters = parameterTypes.Select(x => new Parameter(x, "a", false)).ToArray();
     }
 
     public static IReadOnlyList<NativeDefinedMethod> StandardMethods { get; } =

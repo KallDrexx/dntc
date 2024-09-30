@@ -40,7 +40,7 @@ public class DependencyGraph
 
         var allTypes = method.Parameters
             .Select(x => x.Type)
-            .Concat(method.Locals)
+            .Concat(method.Locals.Select(x => x.Type))
             .Concat([method.ReturnType])
             .Distinct();
 

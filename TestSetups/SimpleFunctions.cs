@@ -43,6 +43,13 @@ public static class SimpleFunctions
         public float X;
         public float Y;
         public float Z;
+
+        public Vector3(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
         
         public static Vector3 operator +(Vector3 first, Vector3 second)
         {
@@ -163,5 +170,18 @@ public static class SimpleFunctions
         {
             test[x] = (ushort)x;
         }
+    }
+
+    public static Vector3 ConstructorTest(float x, float y, float z)
+    {
+        return new Vector3(x, y, z);
+    }
+
+    public static void RefTest(ref Vector3 vector, ref float floatToAdd, float amount)
+    {
+        floatToAdd += amount;
+        vector.X += amount;
+        vector.Y += amount;
+        vector.Z += amount;
     }
 }

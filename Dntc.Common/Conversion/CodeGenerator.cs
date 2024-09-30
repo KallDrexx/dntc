@@ -69,8 +69,9 @@ public class CodeGenerator
         {
             var param = method.Parameters[x];
             var prefix = x > 0 ? ", " : "";
+            var pointerSymbol = param.IsReference ? "*" : "";
             var paramInfo = _conversionCatalog.Find(param.Type);
-            await writer.WriteAsync($"{prefix}{paramInfo.NameInC.Value} {param.Name}");
+            await writer.WriteAsync($"{prefix}{pointerSymbol}{paramInfo.NameInC.Value} {param.Name}");
         }
 
         await writer.WriteLineAsync(");");
@@ -88,17 +89,17 @@ public class CodeGenerator
         {
             var param = method.Parameters[x];
             var prefix = x > 0 ? ", " : "";
+            var pointerSymbol = param.IsReference ? "*" : "";
             var paramInfo = _conversionCatalog.Find(param.Type);
             
-            var index = methodVariables.AddParameter(paramInfo, param.Name);
+            var index = methodVariables.AddParameter(paramInfo, param.Name, param.IsReference);
             if (index != x)
             {
                 var message = $"Parameter ${x} was given an index of {index} in the name collection";
                 throw new InvalidOperationException(message);
             }
             
-            
-            await writer.WriteAsync($"{prefix}{paramInfo.NameInC.Value} {param.Name}");
+            await writer.WriteAsync($"{prefix}{pointerSymbol}{paramInfo.NameInC.Value} {param.Name}");
         }
 
         await writer.WriteLineAsync(") {");
@@ -106,15 +107,16 @@ public class CodeGenerator
         for (var x = 0; x < method.Locals.Count; x++)
         {
             var local = method.Locals[x];
-            var type = _conversionCatalog.Find(local);
-            var index = methodVariables.AddLocal(type);
+            var type = _conversionCatalog.Find(local.Type);
+            var index = methodVariables.AddLocal(type, local.IsReference);
             if (index != x)
             {
                 var message = $"Local ${x} was given an index of {index} in the name collection";
                 throw new InvalidOperationException(message);
             }
 
-            await writer.WriteLineAsync($"\t{type.NameInC.Value} {methodVariables.Locals[index].Name};");
+            var pointerSymbol = local.IsReference ? "*" : "";
+            await writer.WriteLineAsync($"\t{type.NameInC.Value} {pointerSymbol}{methodVariables.Locals[index].Name};");
         }
 
         await writer.WriteLineAsync();

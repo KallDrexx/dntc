@@ -20,19 +20,12 @@ internal class ComparisonHandlers : IOpCodeFnFactory
 
     private static ValueTask Handle(string operatorString, OpCodeHandlingContext context)
     {
-        if (context.EvaluationStack.Count < 2)
-        {
-            var message = $"Comparison operation required 2 items on the stack, " +
-                          $"but only {context.EvaluationStack.Count} existed";
+        var items = context.EvaluationStack.PopCount(2);
+        var item2 = items[0];
+        var item1 = items[1];
 
-            throw new InvalidOperationException(message);
-        }
-
-        var item2 = context.EvaluationStack.Pop();
-        var item1 = context.EvaluationStack.Pop();
-
-        var comparisonString = $"({item1.Text} {operatorString} {item2.Text})";
-        context.EvaluationStack.Push(new EvaluationStackItem(comparisonString));
+        var comparisonString = $"({item1.TextDerefed} {operatorString} {item2.TextDerefed})";
+        context.EvaluationStack.Push(new EvaluationStackItem(comparisonString, false));
 
         return new ValueTask();
     }

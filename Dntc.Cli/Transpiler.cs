@@ -28,7 +28,7 @@ public class Transpiler
         var implementationPlan = new ImplementationPlan(conversionCatalog);
         foreach (var methodId in _manifest.MethodsToTranspile)
         {
-            var foundMethod = definitionCatalog.Get(new IlMethodId(methodId));
+            var foundMethod = definitionCatalog.Get(new IlMethodId(methodId.Trim()));
             if (foundMethod == null)
             {
                 var message = $"No method with the id '{methodId}' could be found in any of the loaded modules";

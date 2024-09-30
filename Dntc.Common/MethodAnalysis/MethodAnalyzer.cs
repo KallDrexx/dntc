@@ -42,6 +42,7 @@ public class MethodAnalyzer
     {
         switch (instruction.OpCode.Code)
         {
+            case Code.Newobj:
             case Code.Call:
             case Code.Callvirt:
             {
