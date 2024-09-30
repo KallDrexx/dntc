@@ -23,7 +23,7 @@
     "TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions/Vector3::op_Addition(TestSetups.SimpleFunctions/Vector3,TestSetups.SimpleFunctions/Vector3)",
     "System.Single TestSetups.SimpleFunctions::SquareRootTest(System.Single)",
     "System.Void TestSetups.SimpleFunctions::ArrayTest(System.UInt16[])",
-//    "TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::ConstructorTest(System.Single,System.Single,System.Single)",
+    "TestSetups.SimpleFunctions/Vector3 TestSetups.SimpleFunctions::ConstructorTest(System.Single,System.Single,System.Single)",
     "System.Void TestSetups.SimpleFunctions::RefTest(TestSetups.SimpleFunctions/Vector3&,System.Single&,System.Single)"
   ],
   "OutputDirectory": "C:\\Users\\me\\CLionProjects\\scratchpad\\generated"

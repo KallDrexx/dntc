@@ -9,8 +9,7 @@ public class EvaluationStackItem
 
     public string WithAccessor => IsPointer ? $"{_text}->" : $"{_text}.";
     public string Dereferenced => IsPointer ? $"*{_text}" : _text;
-    public string ReferenceTo => IsPointer ? $"&{_text}" : _text;
-    public string AddressOf => IsPointer ? _text : $"&{_text}";
+    public string ReferenceTo => IsPointer ? $"{_text}" : $"&{_text}";
 
     public EvaluationStackItem(string text, bool isPointer)
     {

@@ -7,7 +7,7 @@ namespace Dntc.Common.Conversion.OpCodeHandlers;
 
 internal class CallHandlers : IOpCodeFnFactory
 {
-    private record CallArgument(EvaluationStackItem Value, bool isParameterAReference);
+    private record CallArgument(EvaluationStackItem Value, bool ParameterExpectsAReference);
     
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get() => new Dictionary<Code, OpCodeHandlerFn>
     {
@@ -68,9 +68,44 @@ internal class CallHandlers : IOpCodeFnFactory
         await ExecuteCallHandle(context, name, arguments, ReturnsVoid(callSite.ReturnType));
     }
 
-    private static ValueTask HandleNewObj(OpCodeHandlingContext context)
+    private static async ValueTask HandleNewObj(OpCodeHandlingContext context)
     {
-        throw new NotImplementedException();
+        var reference = (MethodReference)context.Operand;
+        if (!reference.DeclaringType.IsValueType)
+        {
+            var message = $"Cannot call `newobj` on {reference.DeclaringType.FullName} as it is a reference type " +
+                          $"and only value types are currently supported";
+            throw new InvalidOperationException(message);
+        }
+        
+        var methodId = new IlMethodId(reference.FullName);
+        var methodInfo = context.DefinitionCatalog.Get(methodId);
+        if (methodInfo == null)
+        {
+            var message = $"Constructor method '{methodId.Value}' is not defined";
+            throw new InvalidOperationException(message);
+        }
+        
+        var constructorConversionInfo = context.ConversionCatalog.Find(methodId);
+        var declaringTypeConversionInfo =
+            context.ConversionCatalog.Find(new IlTypeName(reference.DeclaringType.FullName));
+
+        var variableName = $"__temp_{context.CurrentInstructionOffset:X4}";
+
+        // The values on the stack are the parameters to the function in reverse order than they are called
+        // but *DOES NOT* include the instance itself.
+        var argumentsInCallOrder = context.EvaluationStack
+            .PopCount(methodInfo.Parameters.Count - 1)
+            .Reverse()
+            .Select((x, index) => new CallArgument(x, methodInfo.Parameters[index + 1].IsReference))
+            .ToList();
+        
+        argumentsInCallOrder.Insert(0, new CallArgument(new EvaluationStackItem(variableName, false), true));
+
+        await context.Writer.WriteLineAsync($"\t{declaringTypeConversionInfo.NameInC} {variableName} = {{0}};");
+        await ExecuteCallHandle(context, constructorConversionInfo.NameInC, argumentsInCallOrder, true);
+        
+        context.EvaluationStack.Push(new EvaluationStackItem(variableName, false));
     }
 
     private static async Task ExecuteCallHandle(
@@ -90,8 +125,14 @@ internal class CallHandlers : IOpCodeFnFactory
                 functionCallString.Append(", ");
             }
 
-            var argumentString = callArgument.Value.RawText;
-
+            var argumentString = (callArgument.Value.IsPointer, callArgument.ParameterExpectsAReference) switch
+            {
+                (true, true) => callArgument.Value.RawText,
+                (true, false) => callArgument.Value.Dereferenced,
+                (false, true) => callArgument.Value.ReferenceTo,
+                (false, false) => callArgument.Value.RawText,
+            };
+            
             functionCallString.Append(argumentString);
         }
 

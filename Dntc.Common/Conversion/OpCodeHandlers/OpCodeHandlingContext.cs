@@ -10,6 +10,7 @@ internal class OpCodeHandlingContext
     public StreamWriter Writer { get; }
     public ConversionCatalog ConversionCatalog { get; }
     public DefinitionCatalog DefinitionCatalog { get; }
+    public int CurrentInstructionOffset { get; set; }
 
     public OpCodeHandlingContext(
         VariableCollection variables, 

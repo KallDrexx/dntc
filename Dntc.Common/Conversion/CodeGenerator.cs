@@ -135,6 +135,7 @@ public class CodeGenerator
             }
 
             context.Operand = instruction.Operand;
+            context.CurrentInstructionOffset = instruction.Offset;
 
             if (methodAnalysis.BranchTargetOffsets.Contains(instruction.Offset))
             {
