@@ -122,7 +122,6 @@ public class CodeGenerator
         await writer.WriteLineAsync();
 
         var context = new OpCodeHandlingContext(
-            method.Parameters.Select(x => x.Name).ToArray(), 
             methodVariables,
             writer,
             _conversionCatalog,

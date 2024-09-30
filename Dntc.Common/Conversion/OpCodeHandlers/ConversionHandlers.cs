@@ -27,7 +27,7 @@ internal class ConversionHandlers : IOpCodeFnFactory
     private static ValueTask PushCast(string castString, OpCodeHandlingContext context)
     {
         var items = context.EvaluationStack.PopCount(1);
-        var newItem = new EvaluationStackItem($"(({castString}){items[0].TextDerefed})", false);
+        var newItem = new EvaluationStackItem($"(({castString}){items[0].Dereferenced})", false);
         context.EvaluationStack.Push(newItem);
 
         return new ValueTask();

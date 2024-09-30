@@ -34,15 +34,19 @@ internal class StLocOpHandlers : IOpCodeFnFactory
     
     private static async ValueTask HandleStore(int localIndex, OpCodeHandlingContext context)
     {
+        var items = context.EvaluationStack.PopCount(1);
+        
         var local = context.Variables.Locals[localIndex];
         await context.Writer.WriteAsync($"\t{local.Name} = ");
 
-        if (!context.EvaluationStack.TryPop(out var stackItem))
+        var text = (local.IsPointer, items[0].IsPointer) switch
         {
-            var message = "Store local required an item on the evaluation stack, but none existed";
-            throw new InvalidOperationException(message);
-        }
-        
-        await context.Writer.WriteLineAsync($"{stackItem.Text};");
+            (true, true) => items[0].RawText,
+            (true, false) => items[0].ReferenceTo,
+            (false, true) => items[0].Dereferenced,
+            (false, false) => items[0].RawText,
+        };
+
+        await context.Writer.WriteLineAsync($"{text};");
     }
 }

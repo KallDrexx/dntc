@@ -43,8 +43,12 @@ internal class MathHandlers : IOpCodeFnFactory
         var items = evaluationStack.PopCount(2);
         var item2 = items[0];
         var item1 = items[1];
+        
+        // In theory only values should be put on the stack before a math operation, except for the first item
+        // in an add operation. I don't know how common pointer arithmetic actually is though.
 
-        var newItem = new EvaluationStackItem($"({item1.Text} {operatorString} {item2.Text})");
+        var resultIsPointer = item1.IsPointer || item2.IsPointer; 
+        var newItem = new EvaluationStackItem($"({item1.RawText} {operatorString} {item2.RawText})", resultIsPointer);
         evaluationStack.Push(newItem);
         return new ValueTask();
     }

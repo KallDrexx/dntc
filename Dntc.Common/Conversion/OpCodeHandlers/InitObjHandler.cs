@@ -16,6 +16,6 @@ internal class InitObjHandler : IOpCodeFnFactory
         var conversionInfo = context.ConversionCatalog.Find(new IlTypeName(typeDefinition.FullName));
         
         var items = context.EvaluationStack.PopCount(1);
-        await context.Writer.WriteLineAsync($"\t{items[0].TextDerefed} = ({conversionInfo.NameInC.Value}){{0}};");
+        await context.Writer.WriteLineAsync($"\t{items[0].Dereferenced} = ({conversionInfo.NameInC.Value}){{0}};");
     }
 }

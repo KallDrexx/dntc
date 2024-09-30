@@ -14,10 +14,11 @@ internal class RetHandler : IOpCodeFnFactory
         await context.Writer.WriteAsync("\t return");
         
         // I'm assuming it's ok to have more than one item on the stack in some situations
-        // when a return is encountered.
+        // when a return is encountered. I can't find confirmation one way or another, even
+        // though it *seems* like the stack should be empty.
         if (context.EvaluationStack.TryPop(out var item))
         {
-            await context.Writer.WriteAsync($" {item.Text}");
+            await context.Writer.WriteAsync($" {item.RawText}");
         }
         
         await context.Writer.WriteLineAsync(";");

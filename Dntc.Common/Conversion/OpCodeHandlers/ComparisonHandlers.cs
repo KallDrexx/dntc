@@ -24,7 +24,7 @@ internal class ComparisonHandlers : IOpCodeFnFactory
         var item2 = items[0];
         var item1 = items[1];
 
-        var comparisonString = $"({item1.TextDerefed} {operatorString} {item2.TextDerefed})";
+        var comparisonString = $"({item1.Dereferenced} {operatorString} {item2.Dereferenced})";
         context.EvaluationStack.Push(new EvaluationStackItem(comparisonString, false));
 
         return new ValueTask();

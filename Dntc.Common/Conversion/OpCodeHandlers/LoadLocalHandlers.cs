@@ -45,7 +45,12 @@ internal class LoadLocalHandlers : IOpCodeFnFactory
             throw new InvalidOperationException(message);
         }
 
-        var item = new EvaluationStackItem(context.Variables.Locals[index].Name);
+        var local = context.Variables.Locals[index];
+        var itemText = local.IsPointer
+            ? $"(*{local.Name})"
+            : local.Name;
+        
+        var item = new EvaluationStackItem(itemText, local.IsPointer);
         context.EvaluationStack.Push(item);
 
         return new ValueTask();
@@ -61,10 +66,12 @@ internal class LoadLocalHandlers : IOpCodeFnFactory
             throw new InvalidOperationException(message);
         }
         
-        // MSIL docs say this should store an address into the evaluation stack,
-        // but I *think* for transpiling we can just store the name of the local.
         var local = context.Variables.Locals[index];
-        var item = new EvaluationStackItem(local.Name);
+        var itemText = local.IsPointer
+            ? local.Name
+            : $"(&{local.Name}";
+        
+        var item = new EvaluationStackItem(itemText, true);
         context.EvaluationStack.Push(item);
 
         return new ValueTask();

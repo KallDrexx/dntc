@@ -26,13 +26,13 @@ internal class ArrayHandlers : IOpCodeFnFactory
         var index = items[1];
         var array = items[2];
 
-        await context.Writer.WriteLineAsync($"\tif ({array.TextWithAccessor}length <= {index.TextDerefed}) {{");
+        await context.Writer.WriteLineAsync($"\tif ({array.WithAccessor}length <= {index.Dereferenced}) {{");
         await context.Writer.WriteLineAsync($"\t\tprintf(\"Attempted to write to {array}[%zu], " +
-                                            $"but only %zu items are in the array\", {index.TextDerefed}, {array.TextWithAccessor}length);");
+                                            $"but only %zu items are in the array\", {index.Dereferenced}, {array.WithAccessor}length);");
         await context.Writer.WriteLineAsync("\t\tabort();");
         await context.Writer.WriteLineAsync("\t}");
         await context.Writer.WriteLineAsync();
-        await context.Writer.WriteLineAsync($"\t{array.TextWithAccessor}items[{index.TextDerefed}] = {value.TextDerefed};");
+        await context.Writer.WriteLineAsync($"\t{array.WithAccessor}items[{index.Dereferenced}] = {value.Dereferenced};");
     }
 
     private static ValueTask HandleLdLen(OpCodeHandlingContext context)
@@ -40,7 +40,7 @@ internal class ArrayHandlers : IOpCodeFnFactory
         var items = context.EvaluationStack.PopCount(1);
         var array = items[0];
 
-        var newItem = new EvaluationStackItem($"({array.TextWithAccessor}length)", false);
+        var newItem = new EvaluationStackItem($"({array.WithAccessor}length)", false);
         context.EvaluationStack.Push(newItem);
 
         return new ValueTask();

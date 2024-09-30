@@ -11,14 +11,10 @@ internal class PopHandler : IOpCodeFnFactory
 
     private static async ValueTask Handle(OpCodeHandlingContext context)
     {
-        if (!context.EvaluationStack.TryPop(out var item))
-        {
-            var message = "Attempted to pop an empty evaluation stack. One item is required";
-            throw new InvalidOperationException(message);
-        }
+        var items = context.EvaluationStack.PopCount(1);
         
         // This is usually the case of a method call without storing the result. So just 
         // put the evaluation stack item on its own statement.
-        await context.Writer.WriteLineAsync($"\t{item.Text};");
+        await context.Writer.WriteLineAsync($"\t{items[0].RawText};");
     }
 }

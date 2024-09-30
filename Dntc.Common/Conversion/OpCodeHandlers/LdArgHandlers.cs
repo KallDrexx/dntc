@@ -9,59 +9,58 @@ internal class LdArgHandlers : IOpCodeFnFactory
     {
         return new Dictionary<Code, OpCodeHandlerFn>
         {
-            { Code.Ldarg, CreateHandlerFn(null) },
-            { Code.Ldarg_S, CreateHandlerFn(null) },
-            { Code.Ldarg_0, CreateHandlerFn(0) },
-            { Code.Ldarg_1, CreateHandlerFn(1) },
-            { Code.Ldarg_2, CreateHandlerFn(2) },
-            { Code.Ldarg_3, CreateHandlerFn(3) },
+            { Code.Ldarg, CreateHandlerFn(null, false) },
+            { Code.Ldarg_S, CreateHandlerFn(null, false) },
+            { Code.Ldarg_0, CreateHandlerFn(0, false) },
+            { Code.Ldarg_1, CreateHandlerFn(1, false) },
+            { Code.Ldarg_2, CreateHandlerFn(2, false) },
+            { Code.Ldarg_3, CreateHandlerFn(3, false) },
            
             // I think just loading the parameter name on the eval stack is ok for transpiling
-            { Code.Ldarga, CreateHandlerFn(null) },
-            { Code.Ldarga_S, CreateHandlerFn(null) },
+            { Code.Ldarga, CreateHandlerFn(null, true) },
+            { Code.Ldarga_S, CreateHandlerFn(null, true) },
         };
     }
 
-    private static OpCodeHandlerFn CreateHandlerFn(int? hardCodedIndex)
+    private static OpCodeHandlerFn CreateHandlerFn(int? hardCodedIndex, bool loadAddress)
     {
         if (hardCodedIndex == null)
         {
             return context =>
             {
-                if (context.Operand is int index)
+                var index = context.Operand switch
                 {
-                    LoadArgument(index, context);
-                }
-                else if (context.Operand is ParameterDefinition param)
-                {
-                    LoadArgument(param.Index, context);
-                }
-                else
-                {
-                    var message = $"Expected ldarg operand of int, instead was '{context.Operand?.GetType().FullName}'";
-                    throw new ArgumentException(message);
-                }
+                    int intIndex => intIndex,
+                    ParameterDefinition paramDef => paramDef.Index,
+                    _ => throw new ArgumentException(
+                        $"Unknown ldarg operand type of {context.Operand.GetType().FullName}"),
+                };
 
-                return new ValueTask();
+                return LoadArgument(index, loadAddress, context);
             };
         }
 
-        return context =>
-        {
-            LoadArgument(hardCodedIndex.Value, context);
-            return new ValueTask();
-        };
+        return context => LoadArgument(hardCodedIndex.Value, loadAddress, context);
     }
     
-    private static void LoadArgument(int index, OpCodeHandlingContext context)
+    private static ValueTask LoadArgument(int index, bool loadAddress, OpCodeHandlingContext context)
     {
-        if (context.ArgumentNames.Count <= index)
+        if (context.Variables.Parameters.Count <= index)
         {
-            var message = $"Argument index #{index} referenced, but only {context.ArgumentNames.Count} exist";
+            var message = $"Argument index #{index} referenced, but only {context.Variables.Parameters.Count} exist";
             throw new InvalidOperationException(message);
         }
 
-        var argument = context.ArgumentNames[index];
-        context.EvaluationStack.Push(new EvaluationStackItem(argument));
+        var parameter = context.Variables.Parameters[index];
+        var createdItem = (loadAddress, parameter.IsPointer) switch
+        {
+            (true, true) => new EvaluationStackItem(parameter.Name, true),
+            (true, false) => new EvaluationStackItem($"(&{parameter.Name})", true),
+            (false, true) => new EvaluationStackItem($"(*{parameter.Name})", false),
+            (false, false) => new EvaluationStackItem(parameter.Name, false),
+        };
+        
+        context.EvaluationStack.Push(createdItem);
+        return new ValueTask();
     }
 }

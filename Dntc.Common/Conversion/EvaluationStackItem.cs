@@ -18,7 +18,8 @@ public class EvaluationStackItem
         return _text;
     }
 
-    public string TextWithAccessor => IsPointer ? $"{_text}->" : $"{_text}.";
-    public string TextDerefed => IsPointer ? $"*{_text}" : _text;
-    public string TextReference => IsPointer ? $"&{_text}" : _text;
+    public string WithAccessor => IsPointer ? $"{_text}->" : $"{_text}.";
+    public string Dereferenced => IsPointer ? $"*{_text}" : _text;
+    public string ReferenceTo => IsPointer ? $"&{_text}" : _text;
+    public string AddressOf => IsPointer ? _text : $"&{_text}";
 }

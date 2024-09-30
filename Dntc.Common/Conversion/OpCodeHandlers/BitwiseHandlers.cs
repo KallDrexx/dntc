@@ -26,7 +26,7 @@ internal class BitwiseHandlers : IOpCodeFnFactory
         var amount = items[0];
         var value = items[1];
         
-        var newItem = new EvaluationStackItem($"({value.TextDerefed} {bitwiseOperator} {amount.TextDerefed})", false);
+        var newItem = new EvaluationStackItem($"({value.Dereferenced} {bitwiseOperator} {amount.Dereferenced})", false);
         context.EvaluationStack.Push(newItem);
 
         return new ValueTask();

@@ -32,7 +32,7 @@ internal class BranchHandlers : IOpCodeFnFactory
         var instruction = (Instruction)context.Operand;
         var check = isTrueCheck ? "" : "!";
 
-        await context.Writer.WriteLineAsync($"\tif ({check}{item.TextDerefed}) {{");
+        await context.Writer.WriteLineAsync($"\tif ({check}{item.Dereferenced}) {{");
         await context.Writer.WriteLineAsync($"\t\tgoto {CodeGenerator.OffsetLabel(instruction.Offset)};");
         await context.Writer.WriteLineAsync("\t}");
     }
