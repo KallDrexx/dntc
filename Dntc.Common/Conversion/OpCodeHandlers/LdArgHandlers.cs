@@ -52,12 +52,20 @@ internal class LdArgHandlers : IOpCodeFnFactory
         }
 
         var parameter = context.Variables.Parameters[index];
+        
+        // My assumption based on what I'm seeing is that if the MSIL wants an address, but an argument 
+        // is not passed by reference, then it will use ldarga (loadAddress == true). If the argument
+        // is passed by reference, then it will use ldarg (loadAddress == false) and use the indirect
+        // load bytecodes to load the value after. 
+        // 
+        // I don't know if it's ever valid to see ldarga when a passed by reference value is specified?
         var createdItem = (loadAddress, parameter.IsPointer) switch
         {
-            (true, true) => new EvaluationStackItem(parameter.Name, true),
             (true, false) => new EvaluationStackItem($"(&{parameter.Name})", true),
-            (false, true) => new EvaluationStackItem($"(*{parameter.Name})", false),
+            (false, true) => new EvaluationStackItem($"({parameter.Name})", true),
             (false, false) => new EvaluationStackItem(parameter.Name, false),
+            
+            (true, true) => throw new NotSupportedException("ldarg called for passed by ref parameter"),
         };
         
         context.EvaluationStack.Push(createdItem);

@@ -16,7 +16,7 @@ public class DotNetDefinedMethod : DefinedMethod
         
         var parameters = definition.Parameters
             .OrderBy(x => x.Index)
-            .Select(x => new Parameter(new IlTypeName(x.ParameterType.GetElementType().FullName), x.Name, x.ParameterType.IsByReference))
+            .Select(GenerateParameter)
             .ToList();
 
         if (!definition.IsStatic)
@@ -52,5 +52,19 @@ public class DotNetDefinedMethod : DefinedMethod
             .OfType<FunctionPointerType>()
             .Concat(definition.Body.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>())
             .ToArray();
+    }
+
+    private static Parameter GenerateParameter(ParameterDefinition definition)
+    {
+        if (definition.ParameterType.IsArray)
+        {
+            // This probably needs to be redone to pass by reference, but it's just a size_t and a pointer for now
+            return new Parameter(new IlTypeName(definition.ParameterType.FullName), definition.Name, false);
+        }
+
+        return new Parameter(
+            new IlTypeName(definition.ParameterType.GetElementType().FullName), 
+            definition.Name,
+           definition.ParameterType.IsByReference);
     }
 }

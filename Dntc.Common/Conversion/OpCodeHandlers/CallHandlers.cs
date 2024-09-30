@@ -90,9 +90,7 @@ internal class CallHandlers : IOpCodeFnFactory
                 functionCallString.Append(", ");
             }
 
-            var argumentString = callArgument.isParameterAReference
-                ? callArgument.Value.ReferenceTo
-                : callArgument.Value.Dereferenced;
+            var argumentString = callArgument.Value.RawText;
 
             functionCallString.Append(argumentString);
         }

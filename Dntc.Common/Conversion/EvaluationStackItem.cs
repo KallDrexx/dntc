@@ -7,6 +7,11 @@ public class EvaluationStackItem
     public bool IsPointer { get; }
     public string RawText => _text;
 
+    public string WithAccessor => IsPointer ? $"{_text}->" : $"{_text}.";
+    public string Dereferenced => IsPointer ? $"*{_text}" : _text;
+    public string ReferenceTo => IsPointer ? $"&{_text}" : _text;
+    public string AddressOf => IsPointer ? _text : $"&{_text}";
+
     public EvaluationStackItem(string text, bool isPointer)
     {
         _text = text;
@@ -18,8 +23,8 @@ public class EvaluationStackItem
         return _text;
     }
 
-    public string WithAccessor => IsPointer ? $"{_text}->" : $"{_text}.";
-    public string Dereferenced => IsPointer ? $"*{_text}" : _text;
-    public string ReferenceTo => IsPointer ? $"&{_text}" : _text;
-    public string AddressOf => IsPointer ? _text : $"&{_text}";
+    public EvaluationStackItem Clone()
+    {
+        return new EvaluationStackItem(_text, IsPointer);
+    }
 }

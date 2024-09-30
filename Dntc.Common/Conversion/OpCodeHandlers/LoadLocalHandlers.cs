@@ -69,7 +69,7 @@ internal class LoadLocalHandlers : IOpCodeFnFactory
         var local = context.Variables.Locals[index];
         var itemText = local.IsPointer
             ? local.Name
-            : $"(&{local.Name}";
+            : $"(&{local.Name})";
         
         var item = new EvaluationStackItem(itemText, true);
         context.EvaluationStack.Push(item);

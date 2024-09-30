@@ -59,7 +59,7 @@ public class CodeGenerator
         await customDefinedType.WriteHeaderContentsAsync(_conversionCatalog, writer);
     }
 
-    public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer)
+    public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer, bool hasImplementation = false)
     {
         var methodInfo = _conversionCatalog.Find(method.Id);
         var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
@@ -71,25 +71,28 @@ public class CodeGenerator
             var prefix = x > 0 ? ", " : "";
             var pointerSymbol = param.IsReference ? "*" : "";
             var paramInfo = _conversionCatalog.Find(param.Type);
-            await writer.WriteAsync($"{prefix}{pointerSymbol}{paramInfo.NameInC.Value} {param.Name}");
+            await writer.WriteAsync($"{prefix}{paramInfo.NameInC.Value} {pointerSymbol}{param.Name}");
         }
 
-        await writer.WriteLineAsync(");");
+        if (hasImplementation)
+        {
+            await writer.WriteLineAsync(") {");
+        }
+        else
+        {
+            await writer.WriteLineAsync(");");
+        }
     }
 
     public async Task GenerateMethodImplementationAsync(DotNetDefinedMethod method, StreamWriter writer)
     {
-        var methodInfo = _conversionCatalog.Find(method.Id);
-        var returnTypeInfo = _conversionCatalog.Find(method.ReturnType);
         var methodVariables = new VariableCollection();
         var methodAnalysis = new MethodAnalyzer().Analyze(method);
 
-        await writer.WriteAsync($"{returnTypeInfo.NameInC.Value} {methodInfo.NameInC.Value}(");
+        await GenerateMethodDeclarationAsync(method, writer, true);
         for (var x = 0; x < method.Parameters.Count; x++)
         {
             var param = method.Parameters[x];
-            var prefix = x > 0 ? ", " : "";
-            var pointerSymbol = param.IsReference ? "*" : "";
             var paramInfo = _conversionCatalog.Find(param.Type);
             
             var index = methodVariables.AddParameter(paramInfo, param.Name, param.IsReference);
@@ -98,11 +101,7 @@ public class CodeGenerator
                 var message = $"Parameter ${x} was given an index of {index} in the name collection";
                 throw new InvalidOperationException(message);
             }
-            
-            await writer.WriteAsync($"{prefix}{pointerSymbol}{paramInfo.NameInC.Value} {param.Name}");
         }
-
-        await writer.WriteLineAsync(") {");
 
         for (var x = 0; x < method.Locals.Count; x++)
         {
