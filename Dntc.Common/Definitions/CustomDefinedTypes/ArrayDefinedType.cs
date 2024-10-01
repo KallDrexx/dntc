@@ -1,7 +1,7 @@
 ﻿using Dntc.Common.Conversion;
 using Mono.Cecil;
 
-namespace Dntc.Common.Definitions;
+namespace Dntc.Common.Definitions.CustomDefinedTypes;
 
 public class ArrayDefinedType : CustomDefinedType
 {

@@ -38,15 +38,15 @@ public class FileGenerator
                 case DotNetDefinedType dotNetType:
                     await _codeGenerator.GenerateStructAsync(dotNetType, writer);
                     break;
-                
+
                 case DotNetFunctionPointerType fnPtr:
                     await _codeGenerator.GenerateFunctionPointerTypedef(fnPtr, writer);
                     break;
-                
+
                 case CustomDefinedType customDefinedType:
                     await _codeGenerator.GenerateCustomDefinedHeaderData(customDefinedType, writer);
                     break;
-                
+
                 default:
                     var message = $"Header '{plannedHeader.Name.Value}' declares type '{type.IlName.Value}', which " +
                                   $"is a {definition.GetType().FullName}, which is not supported";
@@ -58,9 +58,25 @@ public class FileGenerator
 
         foreach (var method in plannedHeader.DeclaredMethods)
         {
-            var dotNetMethod = GetDotNetDefinition(plannedHeader.Name.Value, method);
+            var definition = _definitionCatalog.Get(method.MethodId);
+            switch (definition)
+            {
+                case DotNetDefinedMethod dotNetDefinedMethod:
+                    await _codeGenerator.GenerateMethodDeclarationAsync(dotNetDefinedMethod, writer);
+                    break;
+                
+                case CustomDefinedMethod customDefinedMethod:
+                    await _codeGenerator.GenerateMethodDeclarationAsync(customDefinedMethod, writer);
+                    break;
+                
+                case null:
+                    var message = $"No definition found for method `{method.MethodId.Value}` in {plannedHeader.Name.Value}.";
+                    throw new InvalidOperationException(message);
+                
+                default:
+                    throw new NotSupportedException(definition.GetType().FullName);
+            }
 
-            await _codeGenerator.GenerateMethodDeclarationAsync(dotNetMethod, writer);
             await writer.WriteLineAsync();
         }
 
@@ -73,15 +89,32 @@ public class FileGenerator
 
         foreach (var method in sourceFile.ImplementedMethods)
         {
-            var definition = GetDotNetDefinition(sourceFile.Name.Value, method);
-            await _codeGenerator.GenerateMethodImplementationAsync(definition, writer);
+            var definition = _definitionCatalog.Get(method.MethodId);
+            switch (definition)
+            {
+                case DotNetDefinedMethod dotNetDefinedMethod:
+                    await _codeGenerator.GenerateMethodImplementationAsync(dotNetDefinedMethod, writer);
+                    break;
+                
+                case CustomDefinedMethod customDefinedMethod:
+                    await _codeGenerator.GenerateMethodImplementationAsync(customDefinedMethod, writer);
+                    break;
+                
+                case null:
+                    var message = $"No definition found for method `{method.MethodId.Value}` in {sourceFile.Name.Value}.";
+                    throw new InvalidOperationException(message);
+                
+                default:
+                    throw new NotSupportedException(definition.GetType().FullName);
+            }
+            
             await writer.WriteLineAsync();
         }
     }
 
     private static async Task WriteReferencedHeaders(
-        HeaderName? currentHeaderName, 
-        IReadOnlyList<HeaderName> headers, 
+        HeaderName? currentHeaderName,
+        IReadOnlyList<HeaderName> headers,
         StreamWriter writer)
     {
         foreach (var referencedHeader in headers)
@@ -90,7 +123,7 @@ public class FileGenerator
             {
                 continue;
             }
-            
+
             if (referencedHeader.Value.StartsWith('<'))
             {
                 await writer.WriteLineAsync($"#include {referencedHeader.Value}");
@@ -102,24 +135,5 @@ public class FileGenerator
         }
 
         await writer.WriteLineAsync("");
-    }
-
-    private DotNetDefinedMethod GetDotNetDefinition(string fileName, MethodConversionInfo method)
-    {
-        var definition = _definitionCatalog.Get(method.MethodId);
-        if (definition == null)
-        {
-            var message = $"No definition found for method `{method.MethodId.Value}` in {fileName}.";
-            throw new InvalidOperationException(message);
-        }
-
-        if (definition is not DotNetDefinedMethod dotNetMethod)
-        {
-            var message = $"File '{fileName}' declares method '{method.MethodId.Value}', which " +
-                          $"is not a dot net method, but instead is a {definition.GetType().FullName}";
-            throw new InvalidOperationException(message);
-        }
-
-        return dotNetMethod;
     }
 }

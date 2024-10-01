@@ -15,11 +15,12 @@
 #include "freertos/task.h"
 #include "esp_chip_info.h"
 #include "esp_flash.h"
+#include "generated/Dntc_Samples_Octahedron_Common.h"
 
 #define WIDTH (800)
 #define HEIGHT (480)
 
-uint8_t *frameBuffer;
+uint16_t *frameBuffer;
 
 void init_lcd(esp_lcd_panel_handle_t *handle) {
     esp_lcd_rgb_panel_config_t panel_config = {
@@ -69,15 +70,16 @@ void init_lcd(esp_lcd_panel_handle_t *handle) {
 
 void app_main(void)
 {
-    frameBuffer = malloc(sizeof(uint8_t) * WIDTH * HEIGHT);
+
+    frameBuffer = malloc(sizeof(uint16_t) * WIDTH * HEIGHT);
     assert(frameBuffer != NULL);
 
     esp_lcd_panel_handle_t panel = NULL;
     init_lcd(&panel);
 
-    for (int x = 0; x < WIDTH * HEIGHT; x++) {
-        frameBuffer[x] = 255;
-    }
+    Dntc_Samples_Octahedron_Common_Camera camera = Dntc_Samples_Octahedron_Common_Camera_Default();
+    SystemUInt16Array array = {.length = WIDTH * HEIGHT, .items = frameBuffer};
+    Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, 0);
 
     ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel, 0, 0, WIDTH, HEIGHT, frameBuffer));
 

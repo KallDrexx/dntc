@@ -150,15 +150,9 @@ public class ImplementationPlan
     private void AddMethodImplementation(DependencyGraph.MethodNode node)
     {
         var method = _conversionCatalog.Find(node.MethodId);
-        if (method.IsPredeclared)
+        if (method.IsPredeclared || method.SourceFileName == null)
         {
             return;
-        }
-
-        if (method.SourceFileName == null)
-        {
-            var message = $"Method `{method.MethodId.Value}` is not predeclared but has no source file named";
-            throw new InvalidOperationException(message);
         }
 
         if (!_sourceFiles.TryGetValue(method.SourceFileName.Value, out var sourceFile))

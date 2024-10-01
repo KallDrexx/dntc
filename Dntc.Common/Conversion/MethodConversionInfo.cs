@@ -47,6 +47,10 @@ public class MethodConversionInfo
                 SetupNativeMethod(nativeDefinedMethod);
                 break;
             
+            case CustomDefinedMethod customDefinedMethod:
+                SetupCustomMethod(customDefinedMethod);
+                break;
+            
             default:
                 throw new NotSupportedException(method.GetType().FullName);
         }
@@ -75,6 +79,13 @@ public class MethodConversionInfo
     {
         IsPredeclared = true;
         Header = method.HeaderFile;
+        NameInC = method.NativeName;
+    }
+
+    private void SetupCustomMethod(CustomDefinedMethod method)
+    {
+        IsPredeclared = false; // we need to write the custom code
+        Header = method.HeaderName;
         NameInC = method.NativeName;
     }
 }

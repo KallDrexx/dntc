@@ -8,7 +8,7 @@ namespace Dntc.Common.MethodAnalysis;
 public class MethodAnalyzer
 {
     private readonly KnownOpcodeHandlers _knownOpcodeHandlers = new();
-    
+
     public AnalysisResults Analyze(DotNetDefinedMethod method)
     {
         var branchTargets = new List<int>();
@@ -21,11 +21,11 @@ public class MethodAnalyzer
                               "but no handler exists for it";
                 throw new InvalidOperationException(message);
             }
-            
-            var branchTarget = GetBranchTarget(instruction);
-            if (branchTarget != null)
+
+            var targets = GetBranchTargets(instruction);
+            if (targets.Any())
             {
-                branchTargets.Add(branchTarget.Value);
+                branchTargets.AddRange(targets);
             }
 
             var callTarget = GetCallTarget(instruction);
@@ -50,21 +50,21 @@ public class MethodAnalyzer
                 {
                     case MethodDefinition definition:
                         return new IlMethodId(definition.FullName);
-                    
+
                     case MethodReference reference:
                         return new IlMethodId(reference.FullName);
-                    
+
                     default:
                         throw new NotSupportedException(instruction.Operand.GetType().FullName);
                 }
             }
-                
+
             default:
                 return null;
         }
     }
 
-    private static int? GetBranchTarget(Instruction instruction)
+    private static IReadOnlyList<int> GetBranchTargets(Instruction instruction)
     {
         switch (instruction.OpCode.Code)
         {
@@ -74,13 +74,37 @@ public class MethodAnalyzer
             case Code.Brtrue:
             case Code.Brfalse_S:
             case Code.Brtrue_S:
+            case Code.Beq:
+            case Code.Beq_S:
+            case Code.Ble:
+            case Code.Ble_S:
+            case Code.Ble_Un:
+            case Code.Ble_Un_S:
+            case Code.Blt:
+            case Code.Blt_S:
+            case Code.Blt_Un:
+            case Code.Blt_Un_S:
+            case Code.Bge:
+            case Code.Bge_S:
+            case Code.Bge_Un:
+            case Code.Bge_Un_S:
+            case Code.Bgt:
+            case Code.Bgt_S:
+            case Code.Bgt_Un:
+            case Code.Bgt_Un_S:
             {
                 var target = (Instruction)instruction.Operand;
-                return target.Offset;
+                return [target.Offset];
             }
-            
+
+            case Code.Switch:
+            {
+                var targets = (Instruction[])instruction.Operand;
+                return targets.Select(x => x.Offset).ToArray();
+            }
+
             default:
-                return null;
+                return [];
         }
     }
 }

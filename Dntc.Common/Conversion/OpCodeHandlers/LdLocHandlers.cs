@@ -2,7 +2,7 @@
 
 namespace Dntc.Common.Conversion.OpCodeHandlers;
 
-internal class LoadLocalHandlers : IOpCodeFnFactory
+internal class LdLocHandlers : IOpCodeFnFactory
 {
     public IReadOnlyDictionary<Code, OpCodeHandlerFn> Get() => new Dictionary<Code, OpCodeHandlerFn>
     {
@@ -22,13 +22,12 @@ internal class LoadLocalHandlers : IOpCodeFnFactory
         {
             return context =>
             {
-                if (context.Operand is not int index)
+                return context.Operand switch
                 {
-                    var message = $"Expected ldloc operand of int, instead was '{context.Operand?.GetType().FullName}'";
-                    throw new ArgumentException(message);
-                }
-
-                return HandleLdLoc(index, context);
+                    int intIndex => HandleLdLoc(intIndex, context),
+                    VariableDefinition variableDefinition => HandleLdLoc(variableDefinition.Index, context),
+                    _ => throw new NotSupportedException(context.Operand.GetType().FullName)
+                };
             };
         }
 

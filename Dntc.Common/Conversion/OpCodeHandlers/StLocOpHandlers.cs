@@ -11,6 +11,7 @@ internal class StLocOpHandlers : IOpCodeFnFactory
         { Code.Stloc_1, CreateFn(1) },
         { Code.Stloc_2, CreateFn(2) },
         { Code.Stloc_3, CreateFn(3) },
+        { Code.Stloc_S, CreateFn(null) },
     };
 
     private static OpCodeHandlerFn CreateFn(int? hardCodedIndex)
@@ -19,13 +20,12 @@ internal class StLocOpHandlers : IOpCodeFnFactory
         {
             return context =>
             {
-                if (context.Operand is not int index)
+                return context.Operand switch
                 {
-                    var message = $"Expected stloc operand of int, instead was '{context.Operand?.GetType().FullName}'";
-                    throw new ArgumentException(message);
-                }
-
-                return HandleStore(index, context);
+                    int intIndex => HandleStore(intIndex, context),
+                    VariableDefinition variableDefinition => HandleStore(variableDefinition.Index, context),
+                    _ => throw new NotSupportedException(context.Operand.GetType().FullName)
+                };
             };
         }
 

@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 

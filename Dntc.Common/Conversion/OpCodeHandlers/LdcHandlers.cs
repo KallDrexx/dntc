@@ -19,7 +19,8 @@ internal class LdcHandlers : IOpCodeFnFactory
         { Code.Ldc_I4_8, CreateLdcI4Fn(8) },
         { Code.Ldc_I4_M1, CreateLdcI4Fn(-1) },
         
-        { Code.Ldc_R4, HandleLdcR4 },
+        { Code.Ldc_R4, HandleLdcReal },
+        { Code.Ldc_R8, HandleLdcReal },
     };
 
     private static OpCodeHandlerFn CreateLdcI4Fn(int? hardCodedNumber)
@@ -60,7 +61,7 @@ internal class LdcHandlers : IOpCodeFnFactory
         return new ValueTask();
     }
 
-    private static ValueTask HandleLdcR4(OpCodeHandlingContext context)
+    private static ValueTask HandleLdcReal(OpCodeHandlingContext context)
     {
         context.EvaluationStack.Push(new EvaluationStackItem(context.Operand.ToString()!, false));
         return new ValueTask();

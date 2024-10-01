@@ -59,6 +59,11 @@ public class CodeGenerator
         await customDefinedType.WriteHeaderContentsAsync(_conversionCatalog, writer);
     }
 
+    public ValueTask GenerateMethodDeclarationAsync(CustomDefinedMethod customDefinedMethod, StreamWriter writer)
+    {
+        return customDefinedMethod.WriteHeaderContentsAsync(writer);
+    }
+
     public async Task GenerateMethodDeclarationAsync(DotNetDefinedMethod method, StreamWriter writer, bool hasImplementation = false)
     {
         var methodInfo = _conversionCatalog.Find(method.Id);
@@ -158,5 +163,10 @@ public class CodeGenerator
         }
         
         await writer.WriteLineAsync("}");
+    }
+
+    public ValueTask GenerateMethodImplementationAsync(CustomDefinedMethod method, StreamWriter writer)
+    {
+        return method.WriteSourceFileContentsAsync(writer);
     }
 }

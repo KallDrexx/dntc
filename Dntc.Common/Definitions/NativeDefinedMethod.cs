@@ -25,12 +25,36 @@ public class NativeDefinedMethod : DefinedMethod
 
     public static IReadOnlyList<NativeDefinedMethod> StandardMethods { get; } =
     [
-        new NativeDefinedMethod(
+        new(
             new IlMethodId("System.Double System.Math::Sqrt(System.Double)"),
             new IlTypeName("System.Double"),
             new HeaderName("<math.h>"),
             new CFunctionName("sqrt"),
             new IlNamespace("System"),
-            [new IlTypeName("System.Double")])
+            [new IlTypeName("System.Double")]),
+        
+        new(
+            new IlMethodId("System.Double System.Math::Atan2(System.Double,System.Double)"),
+            new IlTypeName("System.Double"),
+            new HeaderName("<math.h>"),
+            new CFunctionName("atan2"),
+            new IlNamespace("System"),
+            [new IlTypeName("System.Double"), new IlTypeName("System.Double")]),
+        
+        new(
+            new IlMethodId("System.Double System.Math::Cos(System.Double)"),
+            new IlTypeName("System.Double"),
+            new HeaderName("<math.h>"),
+            new CFunctionName("cos"),
+            new IlNamespace("System"),
+            [new IlTypeName("System.Double")]),
+        
+        new(
+            new IlMethodId("System.Double System.Math::Sin(System.Double)"),
+            new IlTypeName("System.Double"),
+            new HeaderName("<math.h>"),
+            new CFunctionName("sin"),
+            new IlNamespace("System"),
+            [new IlTypeName("System.Double")]),
     ];
 }
