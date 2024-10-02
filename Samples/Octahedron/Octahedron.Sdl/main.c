@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <SDL2/SDL.h>
+#include "generated/Dntc_Samples_Octahedron_Common.h"
 
 #define WIDTH (800)
 #define HEIGHT (480)
@@ -81,9 +82,8 @@ int main() {
         return 1;
     }
 
-    for (int x = 0; x < WIDTH * HEIGHT; x++) {
-        pixelBuffer[x] = 0b11111000000000000;
-    }
+    Dntc_Samples_Octahedron_Common_Camera camera = Dntc_Samples_Octahedron_Common_Camera_Default();
+    SystemUInt16Array array = {.length = HEIGHT * WIDTH, .items = pixelBuffer};
 
     uint32_t previousFrameTime = 0;
     while (isRunning) {
@@ -96,6 +96,13 @@ int main() {
         previousFrameTime = SDL_GetTicks();
 
         processEvents();
+
+        for (int x = 0; x < WIDTH * HEIGHT; x++) {
+            pixelBuffer[x] = 0;
+        }
+
+        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, 1);
+
         renderFrame();
     }
 

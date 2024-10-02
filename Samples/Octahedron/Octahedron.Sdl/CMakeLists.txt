@@ -4,7 +4,7 @@ project(Octahedron_Sdl C)
 set(CMAKE_C_STANDARD 11)
 find_package(SDL2 CONFIG REQUIRED)
 
-add_executable(Octahedron_Sdl main.c)
+add_executable(Octahedron_Sdl main.c "generated/Dntc_Samples_Octahedron_Common.c")
 
 target_link_libraries(Octahedron_Sdl
         PRIVATE
