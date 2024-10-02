@@ -74,6 +74,10 @@ void app_main(void)
     frameBuffer = malloc(sizeof(uint16_t) * WIDTH * HEIGHT);
     assert(frameBuffer != NULL);
 
+    for (int x = 0; x < WIDTH * HEIGHT; x++) {
+        frameBuffer[x] = 0;
+    }
+
     esp_lcd_panel_handle_t panel = NULL;
     init_lcd(&panel);
 

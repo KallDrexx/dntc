@@ -152,5 +152,5 @@ internal class CallHandlers : IOpCodeFnFactory
         }
     }
 
-    private static bool ReturnsVoid(TypeReference type) => type.Name == "void";
+    private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
 }

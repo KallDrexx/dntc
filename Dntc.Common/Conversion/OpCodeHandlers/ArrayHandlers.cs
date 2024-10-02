@@ -27,7 +27,7 @@ internal class ArrayHandlers : IOpCodeFnFactory
         var array = items[2];
 
         await context.Writer.WriteLineAsync($"\tif ({array.WithAccessor}length <= {index.Dereferenced}) {{");
-        await context.Writer.WriteLineAsync($"\t\tprintf(\"Attempted to write to {array}[%zu], " +
+        await context.Writer.WriteLineAsync($"\t\tprintf(\"Attempted to write to {array}[%ld], " +
                                             $"but only %zu items are in the array\", {index.Dereferenced}, {array.WithAccessor}length);");
         await context.Writer.WriteLineAsync("\t\tabort();");
         await context.Writer.WriteLineAsync("\t}");

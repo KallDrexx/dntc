@@ -92,6 +92,8 @@ public class MethodAnalyzer
             case Code.Bgt_S:
             case Code.Bgt_Un:
             case Code.Bgt_Un_S:
+            case Code.Bne_Un:
+            case Code.Bne_Un_S:
             {
                 var target = (Instruction)instruction.Operand;
                 return [target.Offset];

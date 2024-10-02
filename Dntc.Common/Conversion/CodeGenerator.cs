@@ -130,7 +130,8 @@ public class CodeGenerator
             writer,
             _conversionCatalog,
             _definitionCatalog);
-        
+       
+        Console.WriteLine($"DEBUG: {method.Id}");
         foreach (var instruction in method.Definition.Body.Instructions)
         {
             var handler = _opcodeHandlers.Get(instruction.OpCode.Code);
@@ -141,6 +142,7 @@ public class CodeGenerator
 
             context.Operand = instruction.Operand;
             context.CurrentInstructionOffset = instruction.Offset;
+            var preRunStackSize = context.EvaluationStack.Count;
 
             if (methodAnalysis.BranchTargetOffsets.Contains(instruction.Offset))
             {
@@ -160,7 +162,12 @@ public class CodeGenerator
 
                 throw new Exception(message, exception);
             }
+
+            var postStackSize = context.EvaluationStack.Count;
+            Console.WriteLine($"DEBUG: IL_{instruction.Offset:X4}, {instruction.OpCode.Code} (stack size: {preRunStackSize}->{postStackSize})");
         }
+        Console.WriteLine();
+        Console.WriteLine();
         
         await writer.WriteLineAsync("}");
     }

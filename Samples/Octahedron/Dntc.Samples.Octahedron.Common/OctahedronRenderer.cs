@@ -173,9 +173,16 @@ public static class OctahedronRenderer
             var startCol = Math.Min(shortX, longX);
             if (startCol < camera.PixelWidth)
             {
-                var diff = longX > shortX
-                    ? (longX - shortX)
-                    : (shortX - longX);
+                // var diff = longX > shortX
+                //     ? (longX - shortX)
+                //     : (shortX - longX);
+                
+                var diff = 0f;
+                if (longX > shortX) {
+                    diff = longX - shortX;
+                } else {
+                    diff = shortX - longX;
+                }
 
                 var endCol = Math.Min(startCol + diff, camera.PixelWidth - 1);
                 diff = endCol - startCol;

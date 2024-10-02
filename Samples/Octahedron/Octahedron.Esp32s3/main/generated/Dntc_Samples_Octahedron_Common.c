@@ -51,37 +51,29 @@ Dntc_Samples_Octahedron_Common_Triangle Dntc_Samples_Octahedron_Common_Octahedro
 	switch (index) {
 		case 0:
 			goto IL_002B;
-			break;
 
 		case 1:
 			goto IL_006D;
-			break;
 
 		case 2:
 			goto IL_00AF;
-			break;
 
 		case 3:
 			goto IL_00F1;
-			break;
 
 		case 4:
 			goto IL_0133;
-			break;
 
 		case 5:
 			goto IL_0175;
-			break;
 
 		case 6:
 			goto IL_01B7;
-			break;
 
 		case 7:
 			goto IL_01F9;
-			break;
 
-}
+	}
 	goto IL_023B;
 
 IL_002B:
@@ -272,9 +264,9 @@ float Dntc_Samples_Octahedron_Common_Vector3_Dot(Dntc_Samples_Octahedron_Common_
 Dntc_Samples_Octahedron_Common_Vector3 Dntc_Samples_Octahedron_Common_OctahedronRenderer_ProjectTo2d(Dntc_Samples_Octahedron_Common_Vector3 vector, Dntc_Samples_Octahedron_Common_Camera camera) {
 	float __local_0;
 
-	__local_0 = (Dntc_Samples_Octahedron_Common_Vector3_Dot((&vector), (camera.Up)) / Dntc_Samples_Octahedron_Common_Vector3_get_Length(&((&camera)->Up)));
+	__local_0 = (Dntc_Samples_Octahedron_Common_Vector3_Dot((&vector), (camera.Up)) / Dntc_Samples_Octahedron_Common_Vector3_get_Length((&((&camera)->Up))));
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_003B = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor(&__temp_003B, (Dntc_Samples_Octahedron_Common_Vector3_Dot((&vector), (camera.Right)) / Dntc_Samples_Octahedron_Common_Vector3_get_Length(&((&camera)->Right))), __local_0, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor(&__temp_003B, (Dntc_Samples_Octahedron_Common_Vector3_Dot((&vector), (camera.Right)) / Dntc_Samples_Octahedron_Common_Vector3_get_Length((&((&camera)->Right)))), __local_0, 0);
 	 return __temp_003B;
 }
 
@@ -346,13 +338,14 @@ void Dntc_Samples_Octahedron_Common_PointPair__ctor(Dntc_Samples_Octahedron_Comm
 	Dntc_Samples_Octahedron_Common_Point __temp_000E = {0};
 	Dntc_Samples_Octahedron_Common_Point__ctor(&__temp_000E, v2);
 	(__this)->Second = __temp_000E;
-	(__this)->DeltaX = (((float)(&((__this)->Second)->X)) - ((float)(&((__this)->First)->X)));
-	(__this)->DeltaY = (((float)(&((__this)->Second)->Y)) - ((float)(&((__this)->First)->Y)));
+	(__this)->DeltaX = (((float)((&((__this)->Second))->X)) - ((float)((&((__this)->First))->X)));
+	(__this)->DeltaY = (((float)((&((__this)->Second))->Y)) - ((float)((&((__this)->First))->Y)));
 	(__this)->Slope = (((__this)->DeltaX) / ((__this)->DeltaY));
 	 return;
 }
 
 void Dntc_Samples_Octahedron_Common_OctahedronRenderer_RenderTriangle(Dntc_Samples_Octahedron_Common_Triangle triangle, SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, uint16_t color) {
+    printf("rendering triangle\n");
 	Dntc_Samples_Octahedron_Common_Vector3 __local_0;
 	Dntc_Samples_Octahedron_Common_Vector3 __local_1;
 	Dntc_Samples_Octahedron_Common_Vector3 __local_2;
@@ -372,69 +365,77 @@ void Dntc_Samples_Octahedron_Common_OctahedronRenderer_RenderTriangle(Dntc_Sampl
 	__local_0 = (triangle.V1);
 	__local_1 = (triangle.V2);
 	__local_2 = (triangle.V3);
+	Dntc_Samples_Octahedron_Common_PointPair__ctor((&__local_3), __local_0, __local_1);
 	Dntc_Samples_Octahedron_Common_PointPair __temp_0029 = {0};
 	Dntc_Samples_Octahedron_Common_PointPair__ctor(&__temp_0029, __local_0, __local_2);
+	Dntc_Samples_Octahedron_Common_PointPair__ctor((&__local_4), __local_1, __local_2);
 	__local_5 = __local_3;
-	__local_6 = Dntc_Samples_Octahedron_Common_PointPair__ctor((&__local_4), __local_1, __local_2);
+	__local_6 = __temp_0029;
 	__local_7 = (__local_0.X);
 	__local_8 = (__local_0.X);
 	__local_9 = ((int32_t)(__local_0.Y));
-	goto IL_0112;
+	goto IL_011B;
 
 IL_005A:
 	if (__local_9 >= (camera.PixelHeight)) {
-		goto IL_0120;
+        printf("a\n");
+		goto IL_0129;
 	}
 	if (((float)__local_9) != (__local_1.Y)) {
 		goto IL_0085;
 	}
 	__local_5 = __local_4;
 	__local_7 = ((float)((__local_5.First).X));
+
+IL_0085:
 	__local_10 = dn_min_float(__local_7, __local_8);
 	if (__local_10 >= ((float)(camera.PixelWidth))) {
-		goto IL_00F4;
+		goto IL_00FD;
 	}
-	if (__local_8 > __local_7) {
-		goto IL_00A8;
+	__local_11 = 0;
+	if (__local_8 <= __local_7) {
+		goto IL_00B1;
 	}
-	goto IL_00AD;
-
-IL_00A8:
-
-IL_00AD:
 	__local_11 = (__local_8 - __local_7);
+	goto IL_00B8;
+
+IL_00B1:
+	__local_11 = (__local_7 - __local_8);
+
+IL_00B8:
 	__local_11 = (dn_min_float((__local_10 + __local_11), ((float)((camera.PixelWidth) - 1))) - __local_10);
 	__local_12 = ((int32_t)(((float)(__local_9 * (camera.PixelWidth))) + __local_10));
 	__local_13 = 0;
-	goto IL_00ED;
+	goto IL_00F6;
 
-IL_00DC:
+IL_00E5:
 	if (pixels.length <= __local_12) {
-		printf("Attempted to write to pixels[%zu], but only %zu items are in the array", __local_12, pixels.length);
+		printf("Attempted to write to pixels[%ld], but only %zu items are in the array", __local_12, pixels.length);
 		abort();
 	}
 
 	pixels.items[__local_12] = color;
+    printf("Setting pixel %ld to %d", __local_12, color);
 	__local_12 = (__local_12 + 1);
 	__local_13 = (__local_13 + 1);
 
-IL_00ED:
+IL_00F6:
 	if (((float)__local_13) <= __local_11) {
-		goto IL_00DC;
+		goto IL_00E5;
 	}
 
-IL_00F4:
+IL_00FD:
 	__local_7 = (__local_7 + (__local_5.Slope));
 	__local_8 = (__local_8 + (__local_6.Slope));
 	__local_9 = (__local_9 + 1);
 
-IL_0112:
+IL_011B:
 	if (((float)__local_9) <= (__local_2.Y)) {
 		goto IL_005A;
 	}
 
-IL_0120:
-	 return (__local_7 - __local_8);
+IL_0129:
+	 return;
 }
 
 void Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed) {
@@ -455,20 +456,24 @@ void Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(SystemUInt16Array 
 	Dntc_Samples_Octahedron_Common_Vector3 __local_14;
 	Dntc_Samples_Octahedron_Common_Vector3 __local_15;
 
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__local_0), 1, 0, 3);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__local_1), 0, 100, 120);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__local_2), ((__local_1.X) * secondsPassed), ((__local_1.Y) * secondsPassed), ((__local_1.Z) * secondsPassed));
 	__local_3 = 0;
 	goto IL_01B4;
 
 IL_0052:
 	__local_4 = Dntc_Samples_Octahedron_Common_OctahedronRenderer_GetTriangle(__local_3);
-	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ(&((&__local_4)->V1), (__local_2.Z));
+	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ((&((&__local_4)->V1)), (__local_2.Z));
 	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnY((&__local_10), (__local_2.Y));
 	__local_5 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnX((&__local_10), (__local_2.X));
-	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ(&((&__local_4)->V2), (__local_2.Z));
+	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ((&((&__local_4)->V2)), (__local_2.Z));
 	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnY((&__local_10), (__local_2.Y));
 	__local_6 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnX((&__local_10), (__local_2.X));
-	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ(&((&__local_4)->V3), (__local_2.Z));
+	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnZ((&((&__local_4)->V3)), (__local_2.Z));
 	__local_10 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnY((&__local_10), (__local_2.Y));
 	__local_7 = Dntc_Samples_Octahedron_Common_Vector3_RotateOnX((&__local_10), (__local_2.X));
+	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__local_8), __local_5, __local_6, __local_7);
 	__local_10 = Dntc_Samples_Octahedron_Common_Triangle_get_Normal((&__local_8));
 	__local_9 = Dntc_Samples_Octahedron_Common_Vector3_get_Unit((&__local_10));
 	if ((__local_9.Z) <= 0) {
@@ -490,6 +495,7 @@ IL_0161:
 	__local_15 = Dntc_Samples_Octahedron_Common_OctahedronRenderer_ToScreen((__temp_0138.V3), camera);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_01A2 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor(&__temp_01A2, __local_13, __local_14, __local_15);
+	Dntc_Samples_Octahedron_Common_OctahedronRenderer_RenderTriangle(__temp_01A2, pixels, camera, __local_12);
 
 IL_01B0:
 	__local_3 = (__local_3 + 1);
@@ -498,6 +504,6 @@ IL_01B4:
 	if (__local_3 < 8) {
 		goto IL_0052;
 	}
-	 return Dntc_Samples_Octahedron_Common_OctahedronRenderer_RenderTriangle(__temp_01A2, pixels, camera, __local_12);
+	 return;
 }
 

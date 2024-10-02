@@ -40,9 +40,7 @@ internal class FieldHandlers : IOpCodeFnFactory
         var items = context.EvaluationStack.PopCount(1);
         var obj = items[0];
 
-        // I think this will not work if the field itself is a pointer. I don't think ref fields are a thing
-        // in C#, so I suspect this will be ok until we support reference types.
-        var newItemString = $"&({obj.WithAccessor}{field.Name})";
+        var newItemString = $"(&({obj.WithAccessor}{field.Name}))";
         context.EvaluationStack.Push(new EvaluationStackItem(newItemString, true));
 
         return new ValueTask();

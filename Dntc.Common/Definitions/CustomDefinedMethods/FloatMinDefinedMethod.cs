@@ -21,7 +21,7 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
 
     public override async ValueTask WriteHeaderContentsAsync(StreamWriter writer)
     {
-        await writer.WriteLineAsync("float dn_min_float(float first, float second) {");
+        await writer.WriteLineAsync("static float dn_min_float(float first, float second) {");
         await writer.WriteLineAsync("\tif (first <= second) return first;");
         await writer.WriteLineAsync("\t return second;");
         await writer.WriteLineAsync("}");
