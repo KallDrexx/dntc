@@ -1,0 +1,15 @@
+{
+  "name" : "octahedron-sdl",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "f0f811770e0538fcb295a1750c0a5e0de5131d29",
+  "dependencies" : [ {
+    "name" : "sdl2",
+    "version>=" : "2.30.7"
+  }, {
+    "name" : "vcpkg-cmake-config",
+    "version>=" : "2024-05-23"
+  }, {
+    "name" : "vcpkg-cmake",
+    "version>=" : "2024-04-23"
+  } ]
+}
