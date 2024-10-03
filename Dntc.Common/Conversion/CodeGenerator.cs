@@ -120,7 +120,7 @@ public class CodeGenerator
             }
 
             var pointerSymbol = local.IsReference ? "*" : "";
-            await writer.WriteLineAsync($"\t{type.NameInC.Value} {pointerSymbol}{methodVariables.Locals[index].Name};");
+            await writer.WriteLineAsync($"\t{type.NameInC.Value} {pointerSymbol}{methodVariables.Locals[index].Name} = {{0}};");
         }
 
         await writer.WriteLineAsync();

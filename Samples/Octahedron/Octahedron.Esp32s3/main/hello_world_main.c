@@ -10,6 +10,7 @@
 #include <esp_log.h>
 #include <esp_lcd_panel_ops.h>
 #include <driver/gpio.h>
+#include <esp_timer.h>
 #include "sdkconfig.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -74,21 +75,26 @@ void app_main(void)
     frameBuffer = malloc(sizeof(uint16_t) * WIDTH * HEIGHT);
     assert(frameBuffer != NULL);
 
-    for (int x = 0; x < WIDTH * HEIGHT; x++) {
-        frameBuffer[x] = 0;
-    }
-
     esp_lcd_panel_handle_t panel = NULL;
     init_lcd(&panel);
 
     Dntc_Samples_Octahedron_Common_Camera camera = Dntc_Samples_Octahedron_Common_Camera_Default();
-    SystemUInt16Array array = {.length = WIDTH * HEIGHT, .items = frameBuffer};
-    Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, 0);
+    camera.PixelWidth = WIDTH;
+    camera.PixelHeight = HEIGHT;
 
-    ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel, 0, 0, WIDTH, HEIGHT, frameBuffer));
-
-    printf("running!\n");
+    int64_t startTime = esp_timer_get_time();
     while(true) {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        int64_t timeNow = esp_timer_get_time();
+        float secondsSinceStart = (float)(timeNow - startTime) / 1000.0f / 1000.0f;
+
+        // Clear the frame buffer
+        for (int x = 0; x < WIDTH * HEIGHT; x++) {
+            frameBuffer[x] = 0;
+        }
+
+        SystemUInt16Array array = {.length = WIDTH * HEIGHT, .items = frameBuffer};
+        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, secondsSinceStart);
+
+        ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel, 0, 0, WIDTH, HEIGHT, frameBuffer));
     }
 }

@@ -6,7 +6,7 @@
 
 #define WIDTH (800)
 #define HEIGHT (480)
-#define FRAME_TARGET_TIME (1000/30)
+#define FRAME_TARGET_TIME (1000.0/30.0)
 
 SDL_Window *window;
 SDL_Renderer *renderer;
@@ -83,9 +83,13 @@ int main() {
     }
 
     Dntc_Samples_Octahedron_Common_Camera camera = Dntc_Samples_Octahedron_Common_Camera_Default();
+    camera.PixelHeight = HEIGHT;
+    camera.PixelWidth = WIDTH;
+
     SystemUInt16Array array = {.length = HEIGHT * WIDTH, .items = pixelBuffer};
 
     uint32_t previousFrameTime = 0;
+    float totalTime = 0;
     while (isRunning) {
         int timeToWait = FRAME_TARGET_TIME - (SDL_GetTicks() - previousFrameTime);
         if (timeToWait > 0 && timeToWait <= FRAME_TARGET_TIME) {
@@ -94,6 +98,7 @@ int main() {
 
         float timeDelta = (SDL_GetTicks() - previousFrameTime) / 1000.0f;
         previousFrameTime = SDL_GetTicks();
+        totalTime += timeDelta;
 
         processEvents();
 
@@ -101,7 +106,7 @@ int main() {
             pixelBuffer[x] = 0;
         }
 
-        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, 1);
+        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, totalTime);
 
         renderFrame();
     }

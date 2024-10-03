@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <math.h>
+#include <stdbool.h>
 #include "dotnet_arrays.h"
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,7 +1,7 @@
 ﻿{
   "DotNetProjectDirectory": "./Dntc.Samples.Octahedron.Common",
-  "BuildInDebugMode": false,
-  "AssemblyDirectory": "./Dntc.Samples.Octahedron.Common/bin/Release/net8.0",
+  "BuildInDebugMode": true,
+  "AssemblyDirectory": "./Dntc.Samples.Octahedron.Common/bin/Debug/net8.0",
   "AssembliesToLoad": [
     "Dntc.Samples.Octahedron.Common.dll"
   ],
