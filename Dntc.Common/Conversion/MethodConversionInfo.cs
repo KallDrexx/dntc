@@ -7,6 +7,8 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class MethodConversionInfo
 {
+    public record Parameter(TypeConversionInfo ConversionInfo, string Name, bool IsReference);
+    
     public IlMethodId MethodId { get; private set; }
     
     /// <summary>
@@ -33,9 +35,24 @@ public class MethodConversionInfo
     /// The name of the function when defined in C
     /// </summary>
     public CFunctionName NameInC { get; private set; }
-
-    public MethodConversionInfo(DefinedMethod method)
+   
+    /// <summary>
+    /// Type conversion information for the type this method returns.
+    /// </summary>
+    public TypeConversionInfo ReturnTypeInfo { get; private set; }
+   
+    /// <summary>
+    /// Conversion info for all parameters this method is defined with.
+    /// </summary>
+    public IReadOnlyList<Parameter> Parameters { get; private set; }
+   
+    public MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
+        ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
+        Parameters = method.Parameters
+            .Select(x => new Parameter(conversionCatalog.Find(x.Type), x.Name, x.IsReference))
+            .ToArray();
+        
         MethodId = method.Id;
         switch (method)
         {
