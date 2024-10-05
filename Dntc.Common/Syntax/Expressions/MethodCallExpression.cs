@@ -3,8 +3,26 @@
 namespace Dntc.Common.Syntax.Expressions;
 
 public record MethodCallExpression(MethodConversionInfo MethodInfo, IReadOnlyList<CBaseExpression> Parameters)
-    // Right now method can only return value types. That may change depending on how reference types end up being handled
-    : CBaseExpression(false); 
+    : CBaseExpression(false)
+{
+    // Note: Right now method can only return value types. That may change depending on how
+    // reference types end up being handled
+    
+    public override async ValueTask WriteCodeString(StreamWriter writer)
+    {
+        await writer.WriteAsync($"{MethodInfo.NameInC}(");
+        
+        for (var x = 0; x < Parameters.Count; x++)
+        {
+            if (x > 0) await writer.WriteAsync(", ");
+            
+            var param = Parameters[x];
+            await param.WriteCodeString(writer);
+        }
+
+        await writer.WriteAsync(")");
+    }
+} 
 
 
     

@@ -70,8 +70,8 @@ public class ConversionCatalog
                 throw new InvalidOperationException(message);
             }
             
-            _types.Add(node.TypeName, new TypeConversionInfo(definition));
             AddChildren(node);
+            _types.Add(node.TypeName, new TypeConversionInfo(definition));
         }
     }
 
@@ -87,8 +87,8 @@ public class ConversionCatalog
                 throw new InvalidOperationException(message);
             }
             
-            _methods.Add(node.MethodId, new MethodConversionInfo(definition));
             AddChildren(node);
+            _methods.Add(node.MethodId, new MethodConversionInfo(definition, this));
         }
     }
 
