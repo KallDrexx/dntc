@@ -1,3 +1,5 @@
-﻿namespace Dntc.Common.Conversion;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common;
 
 public record Variable (TypeConversionInfo Type, string Name, bool IsPointer);
