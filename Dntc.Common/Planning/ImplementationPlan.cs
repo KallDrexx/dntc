@@ -1,7 +1,7 @@
-﻿using Dntc.Common.Definitions;
+﻿using Dntc.Common.Conversion;
 using Dntc.Common.Dependencies;
 
-namespace Dntc.Common.Conversion.Planning;
+namespace Dntc.Common.Planning;
 
 /// <summary>
 /// Describes all the files that are needed to perform a conversion.
