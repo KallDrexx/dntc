@@ -27,9 +27,22 @@ public class MethodBlock
     {
         await _methodDeclaration.WriteAsync(writer);
         await writer.WriteLineAsync("{ ");
-        
-        
 
+        var jumpOffsetIndex = 0;
+        foreach (var statement in _statements)
+        {
+            while (jumpOffsetIndex < _jumpOffsets.Count && jumpOffsetIndex <= statement.StartingIlOffset)
+            {
+                // It's rare that a jump label is in between the expressions used by statements, so
+                // this should be fine. Ternaries are the main thing this will probably break on, but
+                // that requires a more complex solution anyway that we'll handle later.
+                await writer.WriteLineAsync(); // Blank line for visual separation
+                await writer.WriteLineAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex])}:");
+                jumpOffsetIndex++;
+            }
+
+            await statement.WriteAsync(writer);
+        }
 
         await writer.WriteLineAsync("}");
     }
