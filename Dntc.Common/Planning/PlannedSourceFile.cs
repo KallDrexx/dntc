@@ -1,4 +1,6 @@
-﻿namespace Dntc.Common.Conversion.Planning;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Planning;
 
 public class PlannedSourceFile
 {

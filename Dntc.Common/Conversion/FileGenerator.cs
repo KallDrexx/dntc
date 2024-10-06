@@ -1,5 +1,5 @@
-﻿using Dntc.Common.Conversion.Planning;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
+using Dntc.Common.Planning;
 
 namespace Dntc.Common.Conversion;
 

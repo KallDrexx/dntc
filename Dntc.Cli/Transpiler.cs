@@ -1,8 +1,8 @@
 ﻿using Dntc.Common;
 using Dntc.Common.Conversion;
-using Dntc.Common.Conversion.Planning;
 using Dntc.Common.Definitions;
 using Dntc.Common.Dependencies;
+using Dntc.Common.Planning;
 using Mono.Cecil;
 
 namespace Dntc.Cli;

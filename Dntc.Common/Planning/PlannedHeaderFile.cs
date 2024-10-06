@@ -1,4 +1,6 @@
-﻿namespace Dntc.Common.Conversion.Planning;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Planning;
 
 /// <summary>
 /// Represents the plan of how a C header should be formed
