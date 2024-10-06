@@ -28,4 +28,9 @@ public class ExpressionStack
 
         return results;
     }
+
+    public void Push(CBaseExpression expression)
+    {
+        _expressions.Push(expression);
+    }
 }

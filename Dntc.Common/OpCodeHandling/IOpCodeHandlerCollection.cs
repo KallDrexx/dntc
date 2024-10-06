@@ -4,5 +4,5 @@ namespace Dntc.Common.OpCodeHandling;
 
 public interface IOpCodeHandlerCollection
 {
-    IReadOnlyDictionary<Code, IOpCodeHandler> Handlers();
+    IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; }
 }
