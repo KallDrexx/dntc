@@ -2,18 +2,18 @@
 
 public record DereferencedValueExpression(CBaseExpression Expression) : CBaseExpression(false)
 {
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         if (Expression.ProducesAPointer)
         {
             await writer.WriteAsync("(*");
-            await Expression.WriteCodeString(writer);
+            await Expression.WriteCodeStringAsync(writer);
             await writer.WriteAsync(")");
         }
         else
         {
             // Not a pointer so nothing to dereference
-            await Expression.WriteCodeString(writer);
+            await Expression.WriteCodeStringAsync(writer);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 public record LiteralValueBaseExpression(string Value) : CBaseExpression(false)
 {
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync(Value);
     }

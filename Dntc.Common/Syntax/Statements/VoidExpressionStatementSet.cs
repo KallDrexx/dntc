@@ -7,4 +7,12 @@ namespace Dntc.Common.Syntax.Statements;
 /// (e.g. void returning expression, or discarding the results for side effects).
 /// </summary>
 /// <param name="Expression"></param>
-public record VoidExpressionStatementSet(CBaseExpression Expression) : CStatementSet;
+public record VoidExpressionStatementSet(CBaseExpression Expression) : CStatementSet
+{
+    public override async Task WriteAsync(StreamWriter writer)
+    {
+        await writer.WriteAsync("\t");
+        await Expression.WriteCodeStringAsync(writer);
+        await writer.WriteLineAsync(";");
+    }
+}

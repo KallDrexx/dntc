@@ -2,10 +2,10 @@
 
 public record FieldAccessExpression(CBaseExpression OwningObject, Variable Field) : CBaseExpression(Field.IsPointer)
 {
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync("(");
-        await OwningObject.WriteCodeString(writer);
+        await OwningObject.WriteCodeStringAsync(writer);
         
         if (OwningObject.ProducesAPointer)
         {

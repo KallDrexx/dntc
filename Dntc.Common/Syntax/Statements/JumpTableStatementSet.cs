@@ -10,4 +10,19 @@ namespace Dntc.Common.Syntax.Statements;
 /// </summary>
 /// <param name="Value"></param>
 /// <param name="IlOffsets"></param>
-public record JumpTableStatementSet(CBaseExpression Value, IReadOnlyList<int> IlOffsets) : CStatementSet;
+public record JumpTableStatementSet(CBaseExpression Value, IReadOnlyList<int> IlOffsets) : CStatementSet
+{
+    public override async Task WriteAsync(StreamWriter writer)
+    {
+        await writer.WriteAsync("\tswitch(");
+        await Value.WriteCodeStringAsync(writer);
+        await writer.WriteLineAsync(") {");
+
+        for (var x = 0; x < IlOffsets.Count; x++)
+        {
+            await writer.WriteLineAsync($"\t\tcase {x}: goto {Utils.IlOffsetToLabel(IlOffsets[x])};");
+        }
+
+        await writer.WriteLineAsync();
+    }
+}

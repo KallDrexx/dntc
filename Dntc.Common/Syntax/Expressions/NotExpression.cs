@@ -5,9 +5,9 @@
 /// </summary>
 public record NotExpression(CBaseExpression Expression) : CBaseExpression(false)
 {
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync("!");
-        await Expression.WriteCodeString(writer);
+        await Expression.WriteCodeStringAsync(writer);
     }
 }

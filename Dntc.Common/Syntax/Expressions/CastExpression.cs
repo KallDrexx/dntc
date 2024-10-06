@@ -10,10 +10,10 @@ public record CastExpression(CBaseExpression Expression, TypeConversionInfo Cast
     // NOTE: Not sure if we need to determine if the type we are casting to is a pointer or not. This
     // all depends on how reference types end up looking.
 
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync($"(({CastTo.NameInC})");
-        await Expression.WriteCodeString(writer);
+        await Expression.WriteCodeStringAsync(writer);
         await writer.WriteAsync(")");
     }
 }
