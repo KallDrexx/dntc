@@ -12,5 +12,5 @@ public abstract record CBaseExpression
         ProducesAPointer = producesAPointer;
     }
 
-    public abstract ValueTask WriteCodeString(StreamWriter writer);
+    public abstract ValueTask WriteCodeStringAsync(StreamWriter writer);
 }

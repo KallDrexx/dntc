@@ -8,7 +8,7 @@ public record MethodCallExpression(MethodConversionInfo MethodInfo, IReadOnlyLis
     // Note: Right now method can only return value types. That may change depending on how
     // reference types end up being handled
     
-    public override async ValueTask WriteCodeString(StreamWriter writer)
+    public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync($"{MethodInfo.NameInC}(");
         
@@ -17,7 +17,7 @@ public record MethodCallExpression(MethodConversionInfo MethodInfo, IReadOnlyLis
             if (x > 0) await writer.WriteAsync(", ");
             
             var param = Parameters[x];
-            await param.WriteCodeString(writer);
+            await param.WriteCodeStringAsync(writer);
         }
 
         await writer.WriteAsync(")");

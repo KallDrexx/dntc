@@ -8,6 +8,8 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class TypeConversionInfo
 {
+    public record Field(TypeConversionInfo Type, string Name);
+    
     /// <summary>
     /// The name this type has when referenced in .net
     /// </summary>
@@ -36,9 +38,17 @@ public class TypeConversionInfo
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
 
-    public TypeConversionInfo(DefinedType type)
+    /// <summary>
+    /// Fields that this type includes
+    /// </summary>
+    public IReadOnlyList<Field> Fields { get; } 
+
+    public TypeConversionInfo(DefinedType type, ConversionCatalog catalog)
     {
         IlName = type.IlName;
+        Fields = type.Fields
+            .Select(x => new Field(catalog.Find(x.Type), x.Name))
+            .ToArray();
 
         switch (type)
         {

@@ -15,4 +15,6 @@ public abstract record CStatementSet
     /// The last IL offset (inclusively) that this statement encompasses
     /// </summary>
     public required int LastIlOffset { get; init; }
+
+    public abstract Task WriteAsync(StreamWriter writer);
 }
