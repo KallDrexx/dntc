@@ -8,7 +8,12 @@ namespace Dntc.Common.OpCodeHandling.Handlers;
 
 public class CallHandlers : IOpCodeHandlerCollection
 {
-    public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; }
+    public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
+    {
+        { Code.Call, new CallHandler() },
+        { Code.Calli, new CallIHandler() },
+        { Code.Newobj, new NewObjHandler() },
+    };
     
     private class CallHandler : IOpCodeHandler
     {
@@ -26,7 +31,15 @@ public class CallHandlers : IOpCodeHandlerCollection
                 .Reverse() // Items are passed into the method in the reverse order they are popped
                 .ToArray();
 
-            return FormResult(conversionInfo, arguments, expressionStack);
+            var expression = new MethodCallExpression(conversionInfo, arguments);
+            if (ReturnsVoid(methodReference.ReturnType))
+            {
+                var statement = new VoidExpressionStatementSet(expression);
+                return new OpCodeHandlingResult(statement);
+            }
+            
+            expressionStack.Push(expression);
+            return new OpCodeHandlingResult(null);
         }
     }
     
@@ -43,25 +56,57 @@ public class CallHandlers : IOpCodeHandlerCollection
             // Top of the stack contains the function name to call, followed by the arguments in 
             // reverse calling order
             var allItems = expressionStack.Pop(callSite.Parameters.Count + 1);
+            var fnPointerExpression = allItems[0];
+            var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
 
-            throw new NotImplementedException();
+            var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder);
+            if (ReturnsVoid(callSite.ReturnType))
+            {
+                var statement = new VoidExpressionStatementSet(expression);
+                return new OpCodeHandlingResult(statement);
+            }
+            
+            expressionStack.Push(expression);
+            return new OpCodeHandlingResult(null);
         }
     }
-
-    private static OpCodeHandlingResult FormResult(
-        MethodConversionInfo conversionInfo,
-        IReadOnlyList<CBaseExpression> arguments,
-        ExpressionStack expressionStack)
+    
+    private class NewObjHandler : IOpCodeHandler
     {
-        // If the method returns void, then a statement needs to be generated for it.
-        // Otherwise, some other opcode will cause it to have an expression generated.
-        var callExpression = new MethodCallExpression(conversionInfo, arguments);
-        if (conversionInfo.ReturnTypeInfo.IlName.Value == typeof(void).FullName)
+        public OpCodeHandlingResult Handle(
+            Instruction currentInstruction, 
+            ExpressionStack expressionStack,
+            MethodConversionInfo currentMethod, 
+            ConversionCatalog conversionCatalog)
         {
-            return new OpCodeHandlingResult(new VoidExpressionStatementSet(callExpression));
-        }
+            var constructor = (MethodReference)currentInstruction.Operand;
+            if (!constructor.DeclaringType.IsValueType)
+            {
+                var message = $"Cannot call `newobj` on {constructor.DeclaringType.FullName} as it " +
+                              $"is a reference type and only value types are currently supported";
+                throw new InvalidOperationException(message);
+            }
 
-        expressionStack.Push(callExpression);
-        return new OpCodeHandlingResult(null);
+            var constructorId = new IlMethodId(constructor.FullName);
+            var constructorInfo = conversionCatalog.Find(constructorId);
+            var objType = constructorInfo.ReturnTypeInfo;
+            var variable = new Variable(objType, $"__temp_{currentInstruction.Offset:x4}", false);
+
+            var argumentsInCallingOrder = expressionStack.Pop(constructorInfo.Parameters.Count - 1)
+                .Reverse()
+                .ToList();
+
+            // Add a pointer to the variable
+            var variableExpression = new AddressOfValueExpression(new VariableValueExpression(variable));
+            argumentsInCallingOrder.Insert(0, variableExpression);
+
+            var initStatement = new LocalDeclarationStatementSet(variable);
+            var methodCallStatement = new VoidExpressionStatementSet(
+                new MethodCallExpression(constructorInfo, argumentsInCallingOrder));
+
+            return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
+        }
     }
+
+    private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
 }
