@@ -35,6 +35,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
         { Code.Bgt_Un_S, new BranchComparison(">") },
         { Code.Bne_Un, new BranchComparison("!=") },
         { Code.Bne_Un_S, new BranchComparison("!=") },
+        
+        { Code.Switch, new SwitchHandler() },
     };
     
     private class SimpleBranchHandler : IOpCodeHandler
@@ -86,6 +88,23 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var condition = new TwoExpressionEvalExpression(value1, comparison, value2);
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
+        }
+    }
+    
+    private class SwitchHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(
+            Instruction currentInstruction, 
+            ExpressionStack expressionStack,
+            MethodConversionInfo currentMethod, 
+            ConversionCatalog conversionCatalog)
+        {
+            var items = expressionStack.Pop(1);
+            var targets = (Instruction[])currentInstruction.Operand;
+            var offsets = targets.Select(x => x.Offset).ToArray();
+
+            var statement = new JumpTableStatementSet(items[0], offsets);
+            return new OpCodeHandlingResult(statement);
         }
     }
 }
