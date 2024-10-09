@@ -21,6 +21,12 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
         { Code.Cgt, new OpCodeHandler(">") },
         { Code.Cgt_Un, new OpCodeHandler(">") },
         { Code.Ceq, new OpCodeHandler("==") },
+        
+        { Code.Add, new OpCodeHandler("+") },
+        { Code.Sub, new OpCodeHandler("-") },
+        { Code.Mul, new OpCodeHandler("*") },
+        { Code.Div, new OpCodeHandler("/") },
+        { Code.Rem, new OpCodeHandler("%") },
     };
     
     private class OpCodeHandler(string @operator) : IOpCodeHandler
