@@ -13,7 +13,7 @@ public class FileGenerator
         _codeGenerator = new CodeGenerator(conversionCatalog, definitionCatalog);
         _definitionCatalog = definitionCatalog;
     }
-
+    
     public async Task WriteHeaderFileAsync(PlannedHeaderFile plannedHeader, StreamWriter writer)
     {
         var guardName = plannedHeader.Name.Value.Replace(".", "_").ToUpper();

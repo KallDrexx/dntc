@@ -1,4 +1,4 @@
-﻿using Dntc.Common.Conversion;
+﻿using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.CustomDefinedMethods;
 
@@ -31,5 +31,20 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
     {
         // Header only for now
         return new ValueTask();
+    }
+
+    public override CustomCodeStatementSet? GetHeaderContent()
+    {
+        const string content = @"
+float dn_min_float(float first, float second){{
+    if (first <= second) return first;
+    return second;
+}}";
+        return new CustomCodeStatementSet(content);
+    }
+
+    public override CustomCodeStatementSet? GetSourceFileContent()
+    {
+        return null;
     }
 }

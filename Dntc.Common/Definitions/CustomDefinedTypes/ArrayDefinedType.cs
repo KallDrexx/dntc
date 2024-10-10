@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.CustomDefinedTypes;
@@ -23,6 +24,24 @@ public class ArrayDefinedType : CustomDefinedType
         }
 
         _arrayType = arrayType;
+    }
+
+    public override CustomCodeStatementSet? GetHeaderContent(ConversionCatalog catalog)
+    {
+        var elementInfo = catalog.Find(new IlTypeName(_arrayType.GetElementType().FullName));
+
+        var content = $@"
+typedef struct {{
+    size_t length;
+    {elementInfo.NameInC} *items;
+}}";
+
+        return new CustomCodeStatementSet(content);
+    }
+
+    public override CustomCodeStatementSet? GetSourceFileContent(ConversionCatalog catalog)
+    {
+        return null;
     }
 
     public override async ValueTask WriteHeaderContentsAsync(ConversionCatalog catalog, StreamWriter writer)

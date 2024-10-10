@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions;
 
@@ -34,6 +35,10 @@ public abstract class CustomDefinedMethod : DefinedMethod
     public abstract ValueTask WriteHeaderContentsAsync(StreamWriter writer);
 
     public abstract ValueTask WriteSourceFileContentsAsync(StreamWriter writer);
+
+    public abstract CustomCodeStatementSet? GetHeaderContent();
+
+    public abstract CustomCodeStatementSet? GetSourceFileContent();
 
     public static IReadOnlyList<CustomDefinedMethod> StandardCustomMethods { get; } =
     [
