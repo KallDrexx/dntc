@@ -30,10 +30,8 @@ public abstract class CustomDefinedType : DefinedType
         Fields = Array.Empty<Field>();
         Methods = Array.Empty<IlMethodId>();
     }
-
-    public abstract CustomCodeStatementSet? GetHeaderContent(ConversionCatalog catalog);
-
-    public abstract CustomCodeStatementSet? GetSourceFileContent(ConversionCatalog catalog);
+    
+    public abstract CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
 
     public abstract ValueTask WriteHeaderContentsAsync(ConversionCatalog catalog, StreamWriter writer);
 

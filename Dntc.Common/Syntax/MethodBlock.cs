@@ -10,10 +10,13 @@ public class MethodBlock
     private readonly IReadOnlyList<CStatementSet> _statements;
     private readonly IReadOnlyList<int> _jumpOffsets;
 
-    public MethodBlock(MethodConversionInfo method, IReadOnlyList<CStatementSet> statements)
+    public MethodBlock(
+        MethodConversionInfo method, 
+        IReadOnlyList<CStatementSet> statements, 
+        MethodDeclaration declaration)
     {
         _methodConversionInfo = method;
-        _methodDeclaration = new MethodDeclaration(method);
+        _methodDeclaration = declaration;
         _statements = statements
             .OrderBy(x => x.StartingIlOffset)
             .ToArray();

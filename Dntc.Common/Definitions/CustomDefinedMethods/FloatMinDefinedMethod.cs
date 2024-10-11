@@ -33,7 +33,7 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
         return new ValueTask();
     }
 
-    public override CustomCodeStatementSet? GetHeaderContent()
+    public override CustomCodeStatementSet? GetCustomDeclaration()
     {
         const string content = @"
 float dn_min_float(float first, float second){{
@@ -43,7 +43,7 @@ float dn_min_float(float first, float second){{
         return new CustomCodeStatementSet(content);
     }
 
-    public override CustomCodeStatementSet? GetSourceFileContent()
+    public override CustomCodeStatementSet? GetCustomImplementation()
     {
         return null;
     }

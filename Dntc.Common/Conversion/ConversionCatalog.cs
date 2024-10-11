@@ -71,7 +71,7 @@ public class ConversionCatalog
             }
             
             AddChildren(node);
-            _types.Add(node.TypeName, new TypeConversionInfo(definition, this));
+            _types.Add(node.TypeName, new TypeConversionInfo(definition));
         }
     }
 
