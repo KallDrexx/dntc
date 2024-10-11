@@ -8,20 +8,17 @@ public class HeaderFile
     private readonly IReadOnlyList<IncludeClause> IncludeClauses;
     private readonly IReadOnlyList<TypeDeclaration> Types;
     private readonly IReadOnlyList<MethodDeclaration> Methods;
-    private readonly IReadOnlyList<CustomCodeStatementSet> CustomCodeStatementSets;
     
     public HeaderFile(
         HeaderGuard guard, 
         IReadOnlyList<IncludeClause> includeClauses, 
         IReadOnlyList<TypeDeclaration> types, 
-        IReadOnlyList<MethodDeclaration> methods, 
-        IReadOnlyList<CustomCodeStatementSet> customCodeStatementSets)
+        IReadOnlyList<MethodDeclaration> methods)
     {
         Guard = guard;
         IncludeClauses = includeClauses;
         Types = types;
         Methods = methods;
-        CustomCodeStatementSets = customCodeStatementSets;
     }
 
     public async Task WriteAsync(StreamWriter writer)
@@ -48,13 +45,6 @@ public class HeaderFile
         foreach (var method in Methods)
         {
             await method.WriteAsync(writer);
-            await writer.WriteLineAsync();
-        }
-
-        await writer.WriteLineAsync();
-        foreach (var customCode in CustomCodeStatementSets)
-        {
-            await customCode.WriteAsync(writer);
             await writer.WriteLineAsync();
         }
     }

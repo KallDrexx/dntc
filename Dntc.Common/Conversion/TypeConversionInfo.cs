@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
+using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Conversion;
 
@@ -38,18 +39,10 @@ public class TypeConversionInfo
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
 
-    /// <summary>
-    /// Fields that this type includes
-    /// </summary>
-    public IReadOnlyList<Field> Fields { get; } 
-
-    public TypeConversionInfo(DefinedType type, ConversionCatalog catalog)
+    public TypeConversionInfo(DefinedType type)
     {
         IlName = type.IlName;
-        Fields = type.Fields
-            .Select(x => new Field(catalog.Find(x.Type), x.Name))
-            .ToArray();
-
+        
         switch (type)
         {
             case NativeDefinedType nativeDefinedType:

@@ -36,9 +36,9 @@ public abstract class CustomDefinedMethod : DefinedMethod
 
     public abstract ValueTask WriteSourceFileContentsAsync(StreamWriter writer);
 
-    public abstract CustomCodeStatementSet? GetHeaderContent();
+    public abstract CustomCodeStatementSet? GetCustomDeclaration();
 
-    public abstract CustomCodeStatementSet? GetSourceFileContent();
+    public abstract CustomCodeStatementSet? GetCustomImplementation();
 
     public static IReadOnlyList<CustomDefinedMethod> StandardCustomMethods { get; } =
     [

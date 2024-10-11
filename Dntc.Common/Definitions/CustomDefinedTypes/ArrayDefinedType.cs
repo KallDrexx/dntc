@@ -26,7 +26,7 @@ public class ArrayDefinedType : CustomDefinedType
         _arrayType = arrayType;
     }
 
-    public override CustomCodeStatementSet? GetHeaderContent(ConversionCatalog catalog)
+    public override CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)
     {
         var elementInfo = catalog.Find(new IlTypeName(_arrayType.GetElementType().FullName));
 
@@ -37,11 +37,6 @@ typedef struct {{
 }}";
 
         return new CustomCodeStatementSet(content);
-    }
-
-    public override CustomCodeStatementSet? GetSourceFileContent(ConversionCatalog catalog)
-    {
-        return null;
     }
 
     public override async ValueTask WriteHeaderContentsAsync(ConversionCatalog catalog, StreamWriter writer)
