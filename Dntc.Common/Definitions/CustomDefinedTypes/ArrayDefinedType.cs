@@ -38,24 +38,6 @@ typedef struct {{
 
         return new CustomCodeStatementSet(content);
     }
-
-    public override async ValueTask WriteHeaderContentsAsync(ConversionCatalog catalog, StreamWriter writer)
-    {
-        var elementInfo = catalog.Find(new IlTypeName(_arrayType.GetElementType().FullName));
-        
-        await writer.WriteLineAsync("typedef struct {");
-        await writer.WriteLineAsync("\tsize_t length;");
-        
-        // Can't use flexible member arrays until we support passing in as a pointer
-        await writer.WriteLineAsync($"\t{elementInfo.NameInC} *items;");
-        await writer.WriteLineAsync($"}} {NativeName};");
-    }
-
-    public override ValueTask WriteSourceFileContentsAsync(ConversionCatalog catalog, StreamWriter writer)
-    {
-        // Header only for now
-        return new ValueTask();
-    }
     
     private static CTypeName FormNativeName(TypeReference type)
     {
