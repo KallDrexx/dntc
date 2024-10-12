@@ -32,10 +32,6 @@ public abstract class CustomDefinedMethod : DefinedMethod
         NativeName = nativeName;
     }
 
-    public abstract ValueTask WriteHeaderContentsAsync(StreamWriter writer);
-
-    public abstract ValueTask WriteSourceFileContentsAsync(StreamWriter writer);
-
     public abstract CustomCodeStatementSet? GetCustomDeclaration();
 
     public abstract CustomCodeStatementSet? GetCustomImplementation();

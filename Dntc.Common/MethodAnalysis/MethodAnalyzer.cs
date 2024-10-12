@@ -1,5 +1,5 @@
-﻿using Dntc.Common.Conversion.OpCodeHandlers;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
+using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -7,15 +7,13 @@ namespace Dntc.Common.MethodAnalysis;
 
 public class MethodAnalyzer
 {
-    private readonly KnownOpcodeHandlers _knownOpcodeHandlers = new();
-
     public AnalysisResults Analyze(DotNetDefinedMethod method)
     {
         var branchTargets = new List<int>();
         var calledMethods = new HashSet<IlMethodId>();
         foreach (var instruction in method.Definition.Body.Instructions)
         {
-            if (_knownOpcodeHandlers.Get(instruction.OpCode.Code) == null)
+            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out _))
             {
                 var message = $"Method '{method.Id.Value}' contains op code '{instruction.OpCode.Code}' " +
                               "but no handler exists for it";

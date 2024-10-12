@@ -32,8 +32,4 @@ public abstract class CustomDefinedType : DefinedType
     }
     
     public abstract CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
-
-    public abstract ValueTask WriteHeaderContentsAsync(ConversionCatalog catalog, StreamWriter writer);
-
-    public abstract ValueTask WriteSourceFileContentsAsync(ConversionCatalog catalog, StreamWriter writer);
 }
