@@ -38,8 +38,8 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
             ConversionCatalog conversionCatalog)
         {
             var items = expressionStack.Pop(2);
-            var right = new DereferencedValueExpression(items[1]);
-            var left = new DereferencedValueExpression(items[0]);
+            var right = new DereferencedValueExpression(items[0]);
+            var left = new DereferencedValueExpression(items[1]);
 
             var newExpression = new TwoExpressionEvalExpression(left, @operator, right);
             expressionStack.Push(newExpression);

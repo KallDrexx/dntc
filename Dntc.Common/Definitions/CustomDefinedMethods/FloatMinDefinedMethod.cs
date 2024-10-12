@@ -36,7 +36,7 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
     public override CustomCodeStatementSet? GetCustomDeclaration()
     {
         const string content = @"
-float dn_min_float(float first, float second){{
+static float dn_min_float(float first, float second){{
     if (first <= second) return first;
     return second;
 }}";
