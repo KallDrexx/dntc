@@ -89,7 +89,7 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             var constructorId = new IlMethodId(constructor.FullName);
             var constructorInfo = conversionCatalog.Find(constructorId);
-            var objType = constructorInfo.ReturnTypeInfo;
+            var objType = conversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
             var variable = new Variable(objType, $"__temp_{currentInstruction.Offset:x4}", false);
 
             var argumentsInCallingOrder = expressionStack.Pop(constructorInfo.Parameters.Count - 1)
@@ -97,8 +97,8 @@ public class CallHandlers : IOpCodeHandlerCollection
                 .ToList();
 
             // Add a pointer to the variable
-            var variableExpression = new AddressOfValueExpression(new VariableValueExpression(variable));
-            argumentsInCallingOrder.Insert(0, variableExpression);
+            var variableExpression = new VariableValueExpression(variable);
+            argumentsInCallingOrder.Insert(0, new AddressOfValueExpression(variableExpression));
 
             var initStatement = new LocalDeclarationStatementSet(variable);
             var methodCallStatement = new VoidExpressionStatementSet(

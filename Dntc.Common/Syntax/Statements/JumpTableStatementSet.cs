@@ -23,6 +23,7 @@ public record JumpTableStatementSet(CBaseExpression Value, IReadOnlyList<int> Il
             await writer.WriteLineAsync($"\t\tcase {x}: goto {Utils.IlOffsetToLabel(IlOffsets[x])};");
         }
 
+        await writer.WriteLineAsync("\t}");
         await writer.WriteLineAsync();
     }
 }

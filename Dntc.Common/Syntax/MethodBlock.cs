@@ -23,18 +23,20 @@ public class MethodBlock
 
         _jumpOffsets = statements
             .SelectMany(GetJumpOffsets)
+            .OrderBy(x => x)
+            .Distinct()
             .ToArray();
     }
 
     public async Task WriteAsync(StreamWriter writer)
     {
         await _methodDeclaration.WriteAsync(writer);
-        await writer.WriteLineAsync("{ ");
+        await writer.WriteLineAsync(" {");
 
         var jumpOffsetIndex = 0;
         foreach (var statement in _statements)
         {
-            while (jumpOffsetIndex < _jumpOffsets.Count && jumpOffsetIndex <= statement.StartingIlOffset)
+            while (jumpOffsetIndex < _jumpOffsets.Count && _jumpOffsets[jumpOffsetIndex] <= statement.LastIlOffset)
             {
                 // It's rare that a jump label is in between the expressions used by statements, so
                 // this should be fine. Ternaries are the main thing this will probably break on, but

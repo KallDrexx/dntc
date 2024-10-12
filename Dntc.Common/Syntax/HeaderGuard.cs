@@ -14,5 +14,5 @@ public record HeaderGuard(HeaderName HeaderName)
         await writer.WriteLineAsync($"#endif // {GuardName}");
     }
 
-    private string GuardName => HeaderName.Value.ToUpper() + "_H";
+    private string GuardName => HeaderName.Value.ToUpper().Replace('.', '_') + "_H";
 }
