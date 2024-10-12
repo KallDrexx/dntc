@@ -104,6 +104,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodCallStatement = new VoidExpressionStatementSet(
                 new MethodCallExpression(constructorInfo, argumentsInCallingOrder));
 
+            expressionStack.Push(variableExpression);
+
             return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
         }
     }

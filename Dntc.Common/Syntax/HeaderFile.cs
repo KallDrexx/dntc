@@ -45,7 +45,10 @@ public class HeaderFile
         foreach (var method in Methods)
         {
             await method.WriteAsync(writer);
-            await writer.WriteLineAsync();
+            await writer.WriteLineAsync(";");
         }
+
+        await writer.WriteLineAsync();
+        await Guard.WriteEnd(writer);
     }
 }

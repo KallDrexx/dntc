@@ -10,7 +10,7 @@ public static class KnownOpCodeHandlers
             .Where(x => !x.IsAbstract)
             .Where(x => !x.IsInterface)
             .Where(x => x.IsAssignableTo(typeof(IOpCodeHandlerCollection)))
-            .Select(x => Activator.CreateInstance<IOpCodeHandlerCollection>())
+            .Select(x => (IOpCodeHandlerCollection) Activator.CreateInstance(x)!)
             .SelectMany(x => x.Handlers)
             .ToDictionary(x => x.Key, x => x.Value);
 }
