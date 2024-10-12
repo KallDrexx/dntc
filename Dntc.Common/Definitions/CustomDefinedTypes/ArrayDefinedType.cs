@@ -34,7 +34,7 @@ public class ArrayDefinedType : CustomDefinedType
 typedef struct {{
     size_t length;
     {elementInfo.NameInC} *items;
-}}";
+}} {NativeName};";
 
         return new CustomCodeStatementSet(content);
     }

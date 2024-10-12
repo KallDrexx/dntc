@@ -18,14 +18,16 @@ public class Transpiler
 
     public async Task RunAsync()
     {
-        var modules = GetModules();
         var definitionCatalog = new DefinitionCatalog();
+        var conversionCatalog = new ConversionCatalog(definitionCatalog);
+        var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, true);
+        
+        var modules = GetModules();
         definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
         definitionCatalog.Add(NativeDefinedMethod.StandardMethods);
         definitionCatalog.Add(CustomDefinedMethod.StandardCustomMethods);
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
-        var conversionCatalog = new ConversionCatalog(definitionCatalog);
         var implementationPlan = new ImplementationPlan(conversionCatalog);
         foreach (var methodId in _manifest.MethodsToTranspile)
         {
@@ -41,8 +43,6 @@ public class Transpiler
             implementationPlan.AddMethodGraph(graph);
         }
 
-        var fileGenerator = new FileGenerator(definitionCatalog, conversionCatalog);
-        
         // Make sure the output folder is clean
         try
         {
@@ -59,7 +59,9 @@ public class Transpiler
             var fullHeaderPath = Path.Combine(_manifest.OutputDirectory!, header.Name.Value);
             await using var stream = File.OpenWrite(fullHeaderPath);
             await using var writer = new StreamWriter(stream);
-            await fileGenerator.WriteHeaderFileAsync(header, writer);
+
+            var headerFile = planConverter.Convert(header);
+            await headerFile.WriteAsync(writer);
         }
 
         foreach (var sourceFile in implementationPlan.SourceFiles)
@@ -67,7 +69,9 @@ public class Transpiler
             var fullPath = Path.Combine(_manifest.OutputDirectory!, sourceFile.Name.Value);
             await using var stream = File.OpenWrite(fullPath);
             await using var writer = new StreamWriter(stream);
-            await fileGenerator.WriteSourceFileAsync(sourceFile, writer);
+
+            var source = planConverter.Convert(sourceFile);
+            await source.WriteAsync(writer);
         }
         
         Console.WriteLine($"Headers and source successfully written to {_manifest.OutputDirectory}");

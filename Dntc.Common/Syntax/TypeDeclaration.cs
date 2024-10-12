@@ -20,6 +20,10 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                 await WriteCustomDefinedType(writer, customDefinedType);
                 break;
             
+            case DotNetFunctionPointerType functionPointerType:
+                await WriteFunctionPointerType(writer, functionPointerType);
+                break;
+            
             default:
                 throw new NotSupportedException(TypeDefinition.GetType().FullName);
         }
@@ -46,5 +50,26 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         {
             await customCode.WriteAsync(writer);
         }
+    }
+
+    private async Task WriteFunctionPointerType(StreamWriter writer, DotNetFunctionPointerType fnPointer)
+    {
+        var returnType = Catalog.Find(new IlTypeName(fnPointer.Definition.ReturnType.FullName));
+        
+        await writer.WriteAsync($"typedef {returnType.NameInC} (*{TypeConversion.NameInC})(");
+        for (var x = 0; x < fnPointer.Definition.Parameters.Count; x++)
+        {
+            var param = fnPointer.Definition.Parameters[x];
+            var paramType = Catalog.Find(new IlTypeName(param.ParameterType.FullName));
+
+            if (x > 0)
+            {
+                await writer.WriteAsync(", ");
+            }
+
+            await writer.WriteAsync(paramType.NameInC.Value);
+        }
+
+        await writer.WriteLineAsync(");");
     }
 }
