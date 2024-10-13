@@ -6,4 +6,10 @@ public record VariableValueExpression(Variable Variable) : CBaseExpression(Varia
     {
         await writer.WriteAsync($"{Variable.Name}");
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        // This does not contain an expression
+        return null;
+    }
 }

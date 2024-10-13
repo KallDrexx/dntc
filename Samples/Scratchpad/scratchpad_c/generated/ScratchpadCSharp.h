@@ -48,5 +48,6 @@ void ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test);
 void ScratchpadCSharp_SimpleFunctions__Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z);
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_ConstructorTest(float x, float y, float z);
 void ScratchpadCSharp_SimpleFunctions_RefTest(ScratchpadCSharp_SimpleFunctions_Vector3 *vector, float *floatToAdd, float amount);
+int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y);
 
 #endif // SCRATCHPADCSHARP_H_H

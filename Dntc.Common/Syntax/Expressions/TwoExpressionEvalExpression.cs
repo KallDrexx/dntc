@@ -15,4 +15,14 @@ public record TwoExpressionEvalExpression(CBaseExpression Left, string Operator,
         await Right.WriteCodeStringAsync(writer);
         await writer.WriteAsync(")");
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        var left = ReplaceExpression(Left, search, replacement);
+        var right = ReplaceExpression(Right, search, replacement);
+        
+        return left != null || right != null
+            ? this with {Left = left ?? Left, Right = right ?? Right} 
+            : null;
+    }
 }

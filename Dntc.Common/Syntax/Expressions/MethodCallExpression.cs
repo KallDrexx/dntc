@@ -9,24 +9,29 @@ public record MethodCallExpression(CBaseExpression FnExpression, IReadOnlyList<C
     // reference types end up being handled
 
     public MethodCallExpression(MethodConversionInfo method, IReadOnlyList<CBaseExpression> parameters)
-        : this(new LiteralValueExpression(method.NameInC.Value), parameters) { }
+        : this(new LiteralValueExpression(method.NameInC.Value), parameters)
+    {
+    }
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await FnExpression.WriteCodeStringAsync(writer);
         await writer.WriteAsync("(");
-        
+
         for (var x = 0; x < Parameters.Count; x++)
         {
             if (x > 0) await writer.WriteAsync(", ");
-            
+
             var param = Parameters[x];
             await param.WriteCodeStringAsync(writer);
         }
 
         await writer.WriteAsync(")");
     }
-} 
 
-
-    
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        var newFn = ReplaceExpression(FnExpression, search, replacement);
+        return newFn != null ? this with {FnExpression = newFn} : null;
+    }
+}

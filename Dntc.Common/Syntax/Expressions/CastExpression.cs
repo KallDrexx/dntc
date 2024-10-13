@@ -14,4 +14,10 @@ public record CastExpression(CBaseExpression Expression, string CastTo) : CBaseE
         await Expression.WriteCodeStringAsync(writer);
         await writer.WriteAsync(")");
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        var inner = ReplaceExpression(Expression, search, replacement);
+        return inner != null ? this with { Expression = inner } : null;
+    }
 }

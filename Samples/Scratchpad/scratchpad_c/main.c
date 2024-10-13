@@ -17,11 +17,16 @@ int main(void) {
     ScratchpadCSharp_SimpleFunctions_RefTest(&first, &someFloat, 5);
     float dotResult = ScratchpadCSharp_SimpleFunctions_StructInstanceTest(first, second);
 
+    int32_t swapX = 15;
+    int32_t swapY = 20;
+    int32_t swapResult = ScratchpadCSharp_SimpleFunctions_SwapTest(swapX, swapY);
+
     printf("Hello, World! (%f, %f, %f)\n", result.X, result.Y, result.Z);
     printf("sqrt test: %f\n", ScratchpadCSharp_SimpleFunctions_SquareRootTest(25));
     printf("array test: %d %d\n", array.items[3], array.items[8]);
     printf("ref test: {%f, %f, %f) and %f\n", first.X, first.Y, first.Z, someFloat);
     printf("instance test: %f\n", dotResult);
     printf("Ctor vec: (%f, %f, %f)\n", ctorVec.X, ctorVec.Y, ctorVec.Z);
+    printf("Swap result: %d (should be 15)\n", swapResult);
     return 0;
 }
