@@ -1,0 +1,30 @@
+﻿{
+  "DotNetProjectDirectory": "ScratchpadCSharp",
+  "BuildInDebugMode": false,
+  "AssemblyDirectory": "ScratchpadCSharp/bin/Release/net8.0",
+  "AssembliesToLoad": [
+    "ScratchpadCSharp.dll"
+  ],
+  "MethodsToTranspile": [
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::BitwiseOps(System.Int32)",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::FnPointerTest(method System.Int32 *(System.Int32,System.Int32),System.Int32,System.Int32)",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::IfTest(System.Int32)",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::IntAdd(System.Int32,System.Int32)",
+    "System.Single ScratchpadCSharp.SimpleFunctions::MathOps(System.Int32)",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::StaticFunctionCall(System.Int32)",
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::StructAddTest(ScratchpadCSharp.SimpleFunctions/Vector3,ScratchpadCSharp.SimpleFunctions/Vector3)",
+    "System.Single ScratchpadCSharp.SimpleFunctions::StructInstanceTest(ScratchpadCSharp.SimpleFunctions/Vector3,ScratchpadCSharp.SimpleFunctions/Vector3)",
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::StructOpOverload(ScratchpadCSharp.SimpleFunctions/Vector3,ScratchpadCSharp.SimpleFunctions/Vector3)",
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::StructTest(System.Single,System.Single,System.Single)",
+    "ScratchpadCSharp.SimpleFunctions/Triangle ScratchpadCSharp.SimpleFunctions::TriangleAdd(ScratchpadCSharp.SimpleFunctions/Triangle,ScratchpadCSharp.SimpleFunctions/Triangle)",
+    "ScratchpadCSharp.SimpleFunctions/Triangle ScratchpadCSharp.SimpleFunctions::TriangleBuilder(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)",
+    "ScratchpadCSharp.SimpleFunctions/Vector2 ScratchpadCSharp.SimpleFunctions::Vector2Add(ScratchpadCSharp.SimpleFunctions/Vector2,ScratchpadCSharp.SimpleFunctions/Vector2)",
+    "System.Single ScratchpadCSharp.SimpleFunctions/Vector3::Dot(ScratchpadCSharp.SimpleFunctions/Vector3)",
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions/Vector3::op_Addition(ScratchpadCSharp.SimpleFunctions/Vector3,ScratchpadCSharp.SimpleFunctions/Vector3)",
+    "System.Single ScratchpadCSharp.SimpleFunctions::SquareRootTest(System.Single)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::ArrayTest(System.UInt16[])",
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::ConstructorTest(System.Single,System.Single,System.Single)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::RefTest(ScratchpadCSharp.SimpleFunctions/Vector3&,System.Single&,System.Single)"
+  ],
+  "OutputDirectory": "scratchpad_c/generated"
+}
