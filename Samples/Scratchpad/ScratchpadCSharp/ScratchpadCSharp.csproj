@@ -14,4 +14,13 @@
       <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Content Include="..\scratchpad-debug.json">
+        <Link>scratchpad-debug.json</Link>
+      </Content>
+      <Content Include="..\scratchpad-release.json">
+        <Link>scratchpad-release.json</Link>
+      </Content>
+    </ItemGroup>
+
 </Project>
