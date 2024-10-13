@@ -1,4 +1,4 @@
-﻿namespace TestSetups;
+﻿namespace ScratchpadCSharp;
 
 public static class SimpleFunctions
 {
