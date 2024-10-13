@@ -16,4 +16,10 @@ public record DereferencedValueExpression(CBaseExpression Expression) : CBaseExp
             await Expression.WriteCodeStringAsync(writer);
         }
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        var inner = ReplaceExpression(Expression, search, replacement);
+        return inner != null ? this with {Expression = inner} : null;
+    }
 }

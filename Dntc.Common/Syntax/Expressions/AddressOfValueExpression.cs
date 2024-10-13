@@ -16,4 +16,10 @@ public record AddressOfValueExpression(CBaseExpression Inner) : CBaseExpression(
             await writer.WriteAsync(")");
         }
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        var inner = ReplaceExpression(Inner, search, replacement);
+        return inner != null ? this with { Inner = inner } : null;
+    }
 }

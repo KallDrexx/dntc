@@ -30,7 +30,33 @@ public class StoreHandlers : IOpCodeHandlerCollection
         { Code.Stloc_3, new StLocHandler(3) },
         { Code.Stloc_S, new StLocHandler(null) },
     };
-    
+
+    /// <summary>
+    /// Searches if we are about to store to a variable whose value is already referenced in the
+    /// expression stack. If that's the case, we need to save the value to a temporary variable, and
+    /// replace the current variable with the temporary one for proper behavior.
+    /// </summary>
+    /// <returns>Statement sets for temp variable replacement only if one is required</returns>
+    private static CStatementSet? HandleReferencedVariable(
+        ExpressionStack expressionStack,
+        VariableValueExpression variable,
+        int currentIlOffset)
+    {
+        var name = $"__temp_{currentIlOffset:x4}";
+        var tempVariable = variable.Variable with { Name = name };
+        var tempVariableExpression = new VariableValueExpression(tempVariable);
+        
+        if (expressionStack.ReplaceExpression(variable, tempVariableExpression))
+        {
+            // At least one expression in the stack was replaced
+            var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
+            var assignment = new AssignmentStatementSet(tempVariableExpression, variable);
+            return new CompoundStatementSet([localDeclaration, assignment]);
+        }
+
+        return null;
+    }
+        
     private class StFldHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
@@ -118,14 +144,23 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
 
             var argument = currentMethod.Parameters[argIndex];
-            var left = new DereferencedValueExpression(
-                new VariableValueExpression(
-                    new Variable(argument.ConversionInfo, argument.Name, argument.IsReference)));
-
+            var storedVariableExpression = new VariableValueExpression(
+                new Variable(argument.ConversionInfo, argument.Name, argument.IsReference));
+            
+            var left = new DereferencedValueExpression(storedVariableExpression);
             var right = new DereferencedValueExpression(value);
             var statement = new AssignmentStatementSet(left, right);
 
-            return new OpCodeHandlingResult(statement);
+            var tempVariable = HandleReferencedVariable(
+                expressionStack, 
+                storedVariableExpression, 
+                currentInstruction.Offset);
+
+            CStatementSet result = tempVariable != null
+                ? new CompoundStatementSet([tempVariable, statement])
+                : statement;
+
+            return new OpCodeHandlingResult(result);
         }
     }
     
@@ -162,14 +197,20 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
 
             var local = currentMethod.Locals[localIndex];
-            var left = new DereferencedValueExpression(
-                new VariableValueExpression(
-                    new Variable(local.ConversionInfo, Utils.LocalName(localIndex), local.IsReference)));
+            var localVariable = new VariableValueExpression(
+                new Variable(local.ConversionInfo, Utils.LocalName(localIndex), local.IsReference));
 
+            var left = new DereferencedValueExpression(localVariable);
             var right = new DereferencedValueExpression(items[0]);
+
+            var tempStatement = HandleReferencedVariable(expressionStack, localVariable, currentInstruction.Offset);
             var statement = new AssignmentStatementSet(left, right);
 
-            return new OpCodeHandlingResult(statement);
+            CStatementSet result = tempStatement != null
+                ? new CompoundStatementSet([tempStatement, statement])
+                : statement;
+
+            return new OpCodeHandlingResult(result);
         }
     }
 }

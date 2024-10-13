@@ -184,4 +184,16 @@ public static class SimpleFunctions
         vector.Y += amount;
         vector.Z += amount;
     }
+
+    public static int SwapTest(int x, int y)
+    {
+        // Tests we can handle when release builds optimize out the temp variable. This code will compile
+        // down into 2 loads then 2 stores without a temp variable. This works fine with a runtime
+        // evaluation stack but breaks down when transpiling it.
+        // ReSharper disable once SwapViaDeconstruction
+        var temp = x;
+        x = y;
+        y = temp;
+        return y;
+    }
 }

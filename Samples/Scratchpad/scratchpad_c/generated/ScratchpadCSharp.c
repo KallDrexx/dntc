@@ -163,3 +163,11 @@ void ScratchpadCSharp_SimpleFunctions_RefTest(ScratchpadCSharp_SimpleFunctions_V
 	return;
 }
 
+int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y) {
+	int32_t __temp_0002 = {0};
+	__temp_0002 = x;
+	x = y;
+	y = __temp_0002;
+	return y;
+}
+

@@ -8,4 +8,10 @@ public record ZeroValuedObjectExpression(TypeConversionInfo TypeInfo) : CBaseExp
     {
         await writer.WriteAsync($"(({TypeInfo.NameInC}){{0}})");
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        // This does not contain an expression
+        return null;
+    }
 }

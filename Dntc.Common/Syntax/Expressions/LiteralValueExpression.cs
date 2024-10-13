@@ -6,4 +6,10 @@ public record LiteralValueExpression(string Value) : CBaseExpression(false)
     {
         await writer.WriteAsync(Value);
     }
+
+    public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
+    {
+        // No inner expression to replace
+        return null;
+    }
 }
