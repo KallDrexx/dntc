@@ -47,6 +47,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
             MethodConversionInfo currentMethod, 
             ConversionCatalog conversionCatalog)
         {
+            if (expressionStack.Count > 0)
+            {
+                throw new NotImplementedException("Branch encountered while expression in stack");
+            }
+            
             var target = (Instruction)currentInstruction.Operand;
             return new OpCodeHandlingResult(new GotoStatementSet(target.Offset));
         }
