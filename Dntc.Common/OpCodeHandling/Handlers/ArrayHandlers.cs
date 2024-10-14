@@ -35,11 +35,13 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var value = items[0];
             var index = items[1];
             var array = items[2];
+            var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+            var itemType = value.ResultingType;
 
             return new OpCodeHandlingResult(
                 new ArrayStoreStatementSet(
-                    new FieldAccessExpression(array, new UntypedVariable("length", false)),
-                    new FieldAccessExpression(array, new UntypedVariable("items", false)),
+                    new FieldAccessExpression(array, new Variable(int32Type, "length", false)),
+                    new FieldAccessExpression(array, new Variable(itemType, "items", false)),
                     array,
                     new DereferencedValueExpression(index),
                     new DereferencedValueExpression(value))
@@ -57,8 +59,9 @@ public class ArrayHandlers : IOpCodeHandlerCollection
         {
             var items = expressionStack.Pop(1);
             var array = items[0];
+            var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
 
-            var newItem = new FieldAccessExpression(array, new UntypedVariable("length", false));
+            var newItem = new FieldAccessExpression(array, new Variable(int32Type, "length", false));
             expressionStack.Push(newItem);
 
             return new OpCodeHandlingResult(null);

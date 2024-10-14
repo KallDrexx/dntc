@@ -2,16 +2,15 @@
 
 namespace Dntc.Common.Syntax.Expressions;
 
-public record MethodCallExpression(CBaseExpression FnExpression, IReadOnlyList<CBaseExpression> Parameters)
-    : CBaseExpression(false)
+public record MethodCallExpression(
+    CBaseExpression FnExpression,
+    IReadOnlyList<CBaseExpression> Parameters,
+    TypeConversionInfo ReturnType) : CBaseExpression(false)
 {
     // Note: Right now method can only return value types. That may change depending on how
     // reference types end up being handled
 
-    public MethodCallExpression(MethodConversionInfo method, IReadOnlyList<CBaseExpression> parameters)
-        : this(new LiteralValueExpression(method.NameInC.Value), parameters)
-    {
-    }
+    public override TypeConversionInfo ResultingType => ReturnType;
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
@@ -32,6 +31,6 @@ public record MethodCallExpression(CBaseExpression FnExpression, IReadOnlyList<C
     public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)
     {
         var newFn = ReplaceExpression(FnExpression, search, replacement);
-        return newFn != null ? this with {FnExpression = newFn} : null;
+        return newFn != null ? this with { FnExpression = newFn } : null;
     }
 }

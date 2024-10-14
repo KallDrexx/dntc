@@ -48,7 +48,32 @@ public class BranchHandlers : IOpCodeHandlerCollection
             ConversionCatalog conversionCatalog)
         {
             var target = (Instruction)currentInstruction.Operand;
-            return new OpCodeHandlingResult(new GotoStatementSet(target.Offset));
+           
+            // When you write a ternary statement in C#, the IL that gets generated ends up having 4 sections
+            // to it:
+            // * Section 1: condition statement which if true branches to section 3
+            // * Section 2: false expression bytecode, then branch to section 4
+            // * Section 3: true expression bytecode
+            // * Section 4: always expression bytecode
+            //
+            // Sections 2 and 3 both almost always put a value in the evaluation stack, and only one of the two 
+            // sections will ever be entered based on the evaluation of the condition. This works fine when using
+            // a runtime interpreter because it's maintaining an actual stack of values as it iterates the 
+            // MSIL. However, when transpiling we are storing expressions until we can form a full statement, and
+            // only section 4 generates an actual statement. However, at compile time we can't know if section 2
+            // or section 3 will generate the expressions used for the statement because we can't statically 
+            // guarantee the values into the condition. This causes the transpiler to keep an extra expression on the
+            // stack with section 4 popping the wrong one for statement generation. This also means most downstream
+            // expression stack pops are incorrect.
+            //
+            // To fix this, we can rely on the fact that section 2's branch is a simple/non-conditional branch. Since
+            // when this branch occurs we have an expression on the stack, we are fairly confident that instructions
+            // we are skipping probably are trying to push a possible replacement expression on the stack as well. So
+            // we need to instruct the transpiler to create a checkpoint of the current expression stack values, so
+            // that the correct expression is utilized when it transpiles the operation in section 4.
+            var checkpointTarget = expressionStack.Count > 0 ? (int?)target.Offset : null;
+            
+            return new OpCodeHandlingResult(new GotoStatementSet(target.Offset), checkpointTarget);
         }
     }
     
@@ -85,7 +110,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var value2 = new DereferencedValueExpression(items[0]);
             var value1 = new DereferencedValueExpression(items[1]);
             var target = (Instruction)currentInstruction.Operand;
-            var condition = new TwoExpressionEvalExpression(value1, comparison, value2);
+            var boolType = conversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
+            var condition = new TwoExpressionEvalExpression(value1, comparison, value2, boolType);
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
         }

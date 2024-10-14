@@ -1,7 +1,11 @@
-﻿namespace Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Syntax.Expressions;
 
 public record DereferencedValueExpression(CBaseExpression Expression) : CBaseExpression(false)
 {
+    public override TypeConversionInfo ResultingType => Expression.ResultingType;
+
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         if (Expression.ProducesAPointer)

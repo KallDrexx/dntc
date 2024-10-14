@@ -174,14 +174,31 @@ int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y) {
 float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1) {
 	ScratchpadCSharp_SimpleFunctions_Vector2 __local_0 = {0};
 	ScratchpadCSharp_SimpleFunctions_Vector2 __local_1 = {0};
-	(*(&__local_1)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
-	((&__local_1)->X) = x0;
-	((&__local_1)->Y) = 0;
-	__local_0 = __local_1;
-	(*(&__local_1)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
-	((&__local_1)->X) = x1;
-	((&__local_1)->Y) = 0;
-	__local_0 = __local_1;
-	return (__local_0.X);
+	ScratchpadCSharp_SimpleFunctions_Vector2 __local_2 = {0};
+	(*(&__local_2)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
+	((&__local_2)->X) = x0;
+	((&__local_2)->Y) = 0;
+	__local_0 = __local_2;
+	(*(&__local_2)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
+	((&__local_2)->X) = x1;
+	((&__local_2)->Y) = 0;
+	__local_1 = __local_0;
+	__local_0 = __local_2;
+	return (__local_1.X);
+}
+
+int32_t ScratchpadCSharp_SimpleFunctions_TernaryTest(int32_t a, int32_t b) {
+	int32_t __checkpoint_for_il000c = {0};
+	if ((a < b)) {
+		goto IL_0009;
+	}
+	__checkpoint_for_il000c = (a - b);
+	goto IL_000c;
+
+IL_0009:
+	__checkpoint_for_il000c = (b - a);
+
+IL_000c:
+	return (__checkpoint_for_il000c + 3);
 }
 
