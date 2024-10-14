@@ -14,7 +14,7 @@ public record CastExpression(CBaseExpression Expression, TypeConversionInfo Cast
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
-        await writer.WriteAsync($"(({CastTo})");
+        await writer.WriteAsync($"(({CastTo.NameInC})");
         await Expression.WriteCodeStringAsync(writer);
         await writer.WriteAsync(")");
     }

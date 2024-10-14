@@ -49,7 +49,12 @@ int main(void) {
     assert(sqrtTest == 5.0);
 
     float localSwapTest = ScratchpadCSharp_SimpleFunctions_LocalSwapTest(5, 10);
-    assert(localSwapTest == 10);
+    assert(localSwapTest == 5);
+
+    int32_t ternaryTest1 = ScratchpadCSharp_SimpleFunctions_TernaryTest(5, 6);
+    int32_t ternaryTest2 = ScratchpadCSharp_SimpleFunctions_TernaryTest(8, 5);
+    assert(ternaryTest1 == 4);
+    assert(ternaryTest2 == 6);
 
     printf("Tests passed!\n");
     return 0;

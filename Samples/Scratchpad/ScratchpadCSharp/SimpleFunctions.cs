@@ -204,7 +204,7 @@ public static class SimpleFunctions
 
         var temp = first;
         first = second;
-        second = first;
+        second = temp;
 
         return second.X;
     }
