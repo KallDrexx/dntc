@@ -107,11 +107,21 @@ public class PlannedFileConverter
             }
 
             var startStackSize = expressionStack.Count;
-            var result = handler.Handle(
-                instruction,
-                expressionStack,
-                conversionInfo,
-                _conversionCatalog);
+            OpCodeHandlingResult result;
+            try
+            {
+                result = handler.Handle(
+                    instruction,
+                    expressionStack,
+                    conversionInfo,
+                    _conversionCatalog);
+            }
+            catch (Exception exception)
+            {
+                var message = $"Exception occurred transpiling method '{dotNetDefinedMethod.Id}' on instruction " +
+                              $"IL_{instruction.Offset:x4}: {instruction.OpCode.Code} ({instruction.Operand})";
+                throw new Exception(message, exception);
+            }
 
             if (result.StatementSet != null)
             {
