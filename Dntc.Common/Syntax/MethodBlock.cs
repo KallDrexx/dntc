@@ -17,9 +17,7 @@ public class MethodBlock
     {
         _methodConversionInfo = method;
         _methodDeclaration = declaration;
-        _statements = statements
-            // .OrderBy(x => x.StartingIlOffset)
-            .ToArray();
+        _statements = statements;
 
         _jumpOffsets = statements
             .SelectMany(GetJumpOffsets)
