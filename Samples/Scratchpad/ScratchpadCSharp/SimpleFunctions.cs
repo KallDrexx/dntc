@@ -208,4 +208,13 @@ public static class SimpleFunctions
 
         return second.X;
     }
+
+    public static int TernaryTest(int a, int b)
+    {
+        var diff = a < b
+            ? b - a
+            : a - b;
+        
+        return diff + 3;
+    }
 }

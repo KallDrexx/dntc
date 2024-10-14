@@ -50,5 +50,6 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_Constr
 void ScratchpadCSharp_SimpleFunctions_RefTest(ScratchpadCSharp_SimpleFunctions_Vector3 *vector, float *floatToAdd, float amount);
 int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y);
 float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1);
+int32_t ScratchpadCSharp_SimpleFunctions_TernaryTest(int32_t a, int32_t b);
 
 #endif // SCRATCHPADCSHARP_H_H
