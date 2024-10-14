@@ -25,7 +25,8 @@
     "System.Void ScratchpadCSharp.SimpleFunctions::ArrayTest(System.UInt16[])",
     "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::ConstructorTest(System.Single,System.Single,System.Single)",
     "System.Void ScratchpadCSharp.SimpleFunctions::RefTest(ScratchpadCSharp.SimpleFunctions/Vector3&,System.Single&,System.Single)",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::SwapTest(System.Int32,System.Int32)"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::SwapTest(System.Int32,System.Int32)",
+    "System.Single ScratchpadCSharp.SimpleFunctions::LocalSwapTest(System.Single,System.Single)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

@@ -171,3 +171,17 @@ int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y) {
 	return y;
 }
 
+float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1) {
+	ScratchpadCSharp_SimpleFunctions_Vector2 __local_0 = {0};
+	ScratchpadCSharp_SimpleFunctions_Vector2 __local_1 = {0};
+	(*(&__local_1)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
+	((&__local_1)->X) = x0;
+	((&__local_1)->Y) = 0;
+	__local_0 = __local_1;
+	(*(&__local_1)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
+	((&__local_1)->X) = x1;
+	((&__local_1)->Y) = 0;
+	__local_0 = __local_1;
+	return (__local_0.X);
+}
+

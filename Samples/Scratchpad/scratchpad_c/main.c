@@ -48,6 +48,9 @@ int main(void) {
     float sqrtTest = ScratchpadCSharp_SimpleFunctions_SquareRootTest(25);
     assert(sqrtTest == 5.0);
 
+    float localSwapTest = ScratchpadCSharp_SimpleFunctions_LocalSwapTest(5, 10);
+    assert(localSwapTest == 10);
+
     printf("Tests passed!\n");
     return 0;
 }
