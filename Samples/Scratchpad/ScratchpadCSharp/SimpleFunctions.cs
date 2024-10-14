@@ -196,4 +196,16 @@ public static class SimpleFunctions
         y = temp;
         return y;
     }
+
+    public static float LocalSwapTest(float x0, float x1)
+    {
+        var first = new Vector2 { X = x0, Y = 0 };
+        var second = new Vector2 { X = x1, Y = 0 };
+
+        var temp = first;
+        first = second;
+        second = first;
+
+        return second.X;
+    }
 }
