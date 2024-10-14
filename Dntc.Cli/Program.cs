@@ -68,7 +68,7 @@ public static class Program
 
     private static bool IsManifestValid(Manifest manifest, bool allowNoMethods)
     {
-        if (string.IsNullOrWhiteSpace(manifest.AssemblyDirectory) || !Directory.Exists(manifest.AssemblyDirectory))
+        if (string.IsNullOrWhiteSpace(manifest.AssemblyDirectory))
         {
             Console.WriteLine("Error: No assembly directory provided or it does not exist");
             return false;
@@ -85,17 +85,7 @@ public static class Program
             Console.WriteLine("Error: No assemblies specified to load");
             return false;
         }
-
-        foreach (var assembly in manifest.AssembliesToLoad)
-        {
-            var path = Path.Combine(manifest.AssemblyDirectory, assembly);
-            if (!File.Exists(path))
-            {
-                Console.WriteLine($"Error: the assembly '{path}` does not exist");
-                return false;
-            }
-        }
-
+        
         if (!allowNoMethods && manifest.MethodsToTranspile.Count == 0)
         {
             Console.WriteLine("Error: No methods specified to transpile");
