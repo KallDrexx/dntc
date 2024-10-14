@@ -96,9 +96,15 @@ public class PlannedFileConverter
         
         var startingOffset = (int?) null;
         var expressionStack = new ExpressionStack();
+        var checkpoints = new Dictionary<int, Variable>();
         foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
         {
             startingOffset ??= instruction.Offset;
+
+            if (checkpoints.TryGetValue(instruction.Offset, out var checkpointVariable))
+            {
+                // We are at the target of a checkpoint. We need to create a 
+            }
 
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
             {
@@ -121,6 +127,27 @@ public class PlannedFileConverter
                 var message = $"Exception occurred transpiling method '{dotNetDefinedMethod.Id}' on instruction " +
                               $"IL_{instruction.Offset:x4}: {instruction.OpCode.Code} ({instruction.Operand})";
                 throw new Exception(message, exception);
+            }
+
+            if (result.Checkpoint != null)
+            {
+                if (!checkpoints.ContainsKey(result.Checkpoint.TargetOffset))
+                {
+                    // Assume all checkpoints for the same target have the same variable type. Not sure
+                    // how it would work if that wasn't he case. Haven't found a good IL example of 
+                    // multiple converging checkpoints yet though.
+                    statements.Insert(0, new LocalDeclarationStatementSet(result.Checkpoint.Variable));
+                    checkpoints.Add(result.Checkpoint.TargetOffset, result.Checkpoint.Variable);
+                }
+                
+                // Save the current expression stack item to the checkpoint variable
+                var statement = SaveCheckpointValue(expressionStack, result.Checkpoint.Variable);
+                
+                // We need to give this an offset of one before the current instruction, to make sure
+                // it comes before any statements this instruction may have created
+                statement.StartingIlOffset = instruction.Offset - 1;
+                statement.LastIlOffset = instruction.Offset - 1;
+                statements.Add(statement);
             }
 
             if (result.StatementSet != null)
@@ -153,5 +180,18 @@ public class PlannedFileConverter
         return statementSet != null
             ? [statementSet]
             : [];
+    }
+
+    private (CStatementSet statement, Variable variable) SaveCheckpointValue(ExpressionStack stack, int targetOffset)
+    {
+        if (stack.Count != 1)
+        {
+            var message = $"Expected a checkpoint with only one value in the expression stack, but the stack " +
+                          $"had a count of {stack.Count}";
+            throw new InvalidOperationException(message);
+        }
+
+        var item = stack.Pop(1)[0];
+
     }
 }

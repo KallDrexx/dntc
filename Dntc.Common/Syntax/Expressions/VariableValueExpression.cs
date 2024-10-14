@@ -1,7 +1,11 @@
-﻿namespace Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Syntax.Expressions;
 
 public record VariableValueExpression(Variable Variable) : CBaseExpression(Variable.IsPointer)
 {
+    public override TypeConversionInfo ResultingType => Variable.Type;
+
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync($"{Variable.Name}");

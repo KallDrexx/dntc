@@ -90,7 +90,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var value2 = new DereferencedValueExpression(items[0]);
             var value1 = new DereferencedValueExpression(items[1]);
             var target = (Instruction)currentInstruction.Operand;
-            var condition = new TwoExpressionEvalExpression(value1, comparison, value2);
+            var boolType = conversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
+            var condition = new TwoExpressionEvalExpression(value1, comparison, value2, boolType);
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
         }

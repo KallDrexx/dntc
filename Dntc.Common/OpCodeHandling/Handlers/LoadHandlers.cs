@@ -71,12 +71,13 @@ public class LoadHandlers : IOpCodeHandlerCollection
             ConversionCatalog conversionCatalog)
         {
             var field = (FieldDefinition)currentInstruction.Operand;
+            var fieldType = conversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
             var items = expressionStack.Pop(1);
             var objectExpression = items[0];
-
+            
             CBaseExpression newExpression = new FieldAccessExpression(
                 objectExpression,
-                new UntypedVariable(field.Name, field.FieldType.IsByReference));
+                new Variable(fieldType, field.Name, field.FieldType.IsByReference));
 
             if (getAddress)
             {
@@ -163,9 +164,12 @@ public class LoadHandlers : IOpCodeHandlerCollection
             ConversionCatalog conversionCatalog)
         {
             string numericLiteral;
+            TypeConversionInfo typeInfo;
+            
             if (hardCodedNumber != null)
             {
                 numericLiteral = hardCodedNumber.Value.ToString();
+                typeInfo = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
             }
             else
             {
@@ -173,30 +177,52 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 {
                     case sbyte sbyteValue:
                         numericLiteral = sbyteValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(sbyte).FullName!));
                         break;
 
                     case byte byteValue:
                         numericLiteral = byteValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(byte).FullName!));
                         break;
 
                     case short shortValue:
                         numericLiteral = shortValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(short).FullName!));
                         break;
 
                     case ushort ushortValue:
                         numericLiteral = ushortValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(ushort).FullName!));
                         break;
 
                     case int intValue:
                         numericLiteral = intValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+                        break;
+
+                    case uint uintValue:
+                        numericLiteral = uintValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(uint).FullName!));
+                        break;
+
+                    case long longValue:
+                        numericLiteral = longValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(long).FullName!));
+                        break;
+
+                    case ulong ulongValue:
+                        numericLiteral = ulongValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(ulong).FullName!));
                         break;
 
                     case float floatValue:
                         numericLiteral = floatValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(float).FullName!));
                         break;
 
                     case double doubleValue:
                         numericLiteral = doubleValue.ToString();
+                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(double).FullName!));
                         break;
 
                     default:
@@ -204,7 +230,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 }
             }
 
-            var expression = new LiteralValueExpression(numericLiteral);
+            var expression = new LiteralValueExpression(numericLiteral, typeInfo);
             expressionStack.Push(expression);
 
             return new OpCodeHandlingResult(null);

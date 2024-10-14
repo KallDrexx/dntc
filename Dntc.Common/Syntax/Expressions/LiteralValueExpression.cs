@@ -1,7 +1,11 @@
-﻿namespace Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
 
-public record LiteralValueExpression(string Value) : CBaseExpression(false)
+namespace Dntc.Common.Syntax.Expressions;
+
+public record LiteralValueExpression(string Value, TypeConversionInfo TypeInfo) : CBaseExpression(false)
 {
+    public override TypeConversionInfo ResultingType => TypeInfo;
+
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync(Value);

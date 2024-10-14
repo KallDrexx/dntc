@@ -1,9 +1,13 @@
-﻿namespace Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Syntax.Expressions;
 
 public record FieldAccessExpression(
     CBaseExpression OwningObject,
-    UntypedVariable Field) : CBaseExpression(Field.IsPointer)
+    Variable Field) : CBaseExpression(Field.IsPointer)
 {
+    public override TypeConversionInfo ResultingType => Field.Type;
+
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync("(");
