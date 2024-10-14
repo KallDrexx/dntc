@@ -12,6 +12,11 @@ public class ConversionCatalog
     public ConversionCatalog(DefinitionCatalog definitionCatalog)
     {
         _definitionCatalog = definitionCatalog;
+
+        foreach (var type in NativeDefinedType.StandardTypes.Values)
+        {
+            _types[type.IlName] = new TypeConversionInfo(type);
+        }
     }
 
     public void Add(DependencyGraph dependencyGraph)

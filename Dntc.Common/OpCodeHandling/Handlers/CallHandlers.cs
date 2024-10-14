@@ -26,12 +26,16 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodReference = (MethodReference)currentInstruction.Operand;
             var methodId = new IlMethodId(methodReference.FullName);
             var conversionInfo = conversionCatalog.Find(methodId);
+            var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            var returnType = conversionCatalog.Find(new IlTypeName(methodReference.ReturnType.FullName));
 
             var arguments = expressionStack.Pop(conversionInfo.Parameters.Count)
                 .Reverse() // Items are passed into the method in the reverse order they are popped
                 .ToArray();
 
-            var expression = new MethodCallExpression(conversionInfo, arguments);
+            var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
+            var expression = new MethodCallExpression(fnExpression, arguments, returnType);
+            
             if (ReturnsVoid(methodReference.ReturnType))
             {
                 var statement = new VoidExpressionStatementSet(expression);
@@ -58,8 +62,9 @@ public class CallHandlers : IOpCodeHandlerCollection
             var allItems = expressionStack.Pop(callSite.Parameters.Count + 1);
             var fnPointerExpression = allItems[0];
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
+            var returnType = conversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
 
-            var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder);
+            var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder, returnType);
             if (ReturnsVoid(callSite.ReturnType))
             {
                 var statement = new VoidExpressionStatementSet(expression);
@@ -91,6 +96,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             var constructorInfo = conversionCatalog.Find(constructorId);
             var objType = conversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
             var variable = new Variable(objType, $"__temp_{currentInstruction.Offset:x4}", false);
+            var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
 
             var argumentsInCallingOrder = expressionStack.Pop(constructorInfo.Parameters.Count - 1)
                 .Reverse()
@@ -101,8 +107,9 @@ public class CallHandlers : IOpCodeHandlerCollection
             argumentsInCallingOrder.Insert(0, new AddressOfValueExpression(variableExpression));
 
             var initStatement = new LocalDeclarationStatementSet(variable);
-            var methodCallStatement = new VoidExpressionStatementSet(
-                new MethodCallExpression(constructorInfo, argumentsInCallingOrder));
+            var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
+            var methodCall = new MethodCallExpression(fnExpression, argumentsInCallingOrder, voidType);
+            var methodCallStatement = new VoidExpressionStatementSet(methodCall);
 
             expressionStack.Push(variableExpression);
 

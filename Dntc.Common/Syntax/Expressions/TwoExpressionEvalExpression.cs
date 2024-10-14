@@ -1,12 +1,19 @@
-﻿namespace Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+
+namespace Dntc.Common.Syntax.Expressions;
 
 /// <summary>
 /// Applies an operator (such as `+`, `>`, `==`) to two expressions for evaluation.
 /// </summary>
-public record TwoExpressionEvalExpression(CBaseExpression Left, string Operator, CBaseExpression Right) 
+public record TwoExpressionEvalExpression(
+    CBaseExpression Left, 
+    string Operator, 
+    CBaseExpression Right,
+    TypeConversionInfo TypeAfterOperation) 
     : CBaseExpression(false)
 {
-    // NOTE: I don't think any math operations would end up doing pointer arithmetic, but not completely sure.
+    public override TypeConversionInfo ResultingType => TypeAfterOperation;
+
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
         await writer.WriteAsync("(");
