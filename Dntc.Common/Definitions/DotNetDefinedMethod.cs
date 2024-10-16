@@ -7,13 +7,14 @@ public class DotNetDefinedMethod : DefinedMethod
     public MethodDefinition Definition { get; }
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
+    public IReadOnlyList<IlTypeName> GenericArgumentTypes { get; } = Array.Empty<IlTypeName>();
 
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
         Id = new IlMethodId(definition.FullName);
         ReturnType = new IlTypeName(definition.ReturnType.FullName);
-        
+
         var parameters = definition.Parameters
             .OrderBy(x => x.Index)
             .Select(GenerateParameter)
@@ -37,14 +38,14 @@ public class DotNetDefinedMethod : DefinedMethod
             .OrderBy(x => x.Index)
             .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference))
             .ToArray();
-        
+
         // Nested types don't have a namespace on them, so we need to go to the root
         var rootDeclaringType = definition.DeclaringType;
         while (rootDeclaringType.DeclaringType != null)
         {
             rootDeclaringType = rootDeclaringType.DeclaringType;
         }
-        
+
         Namespace = new IlNamespace(rootDeclaringType.Namespace);
 
         FunctionPointerTypes = definition.Parameters
@@ -52,6 +53,20 @@ public class DotNetDefinedMethod : DefinedMethod
             .OfType<FunctionPointerType>()
             .Concat(definition.Body.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>())
             .ToArray();
+    }
+
+    private DotNetDefinedMethod(
+        MethodDefinition method, 
+        IlMethodId methodId,
+        IReadOnlyList<IlTypeName> genericArgumentTypes) : this(method)
+    {
+        Id = methodId;
+        GenericArgumentTypes = genericArgumentTypes;
+    }
+
+    public DotNetDefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
+    {
+        return new DotNetDefinedMethod(Definition, methodId, genericArguments);
     }
 
     private static Parameter GenerateParameter(ParameterDefinition definition)
@@ -63,8 +78,13 @@ public class DotNetDefinedMethod : DefinedMethod
         }
 
         return new Parameter(
-            new IlTypeName(definition.ParameterType.GetElementType().FullName), 
+            new IlTypeName(definition.ParameterType.GetElementType().FullName),
             definition.Name,
-           definition.ParameterType.IsByReference);
+            definition.ParameterType.IsByReference);
     }
+
+    protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>
+        ReferencedArrayTypes.Select(x => new IlTypeName(x.FullName))
+            .Concat(GenericArgumentTypes)
+            .ToArray();
 }

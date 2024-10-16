@@ -2,12 +2,10 @@
 
 public class AnalysisResults
 {
-    public IReadOnlySet<int> BranchTargetOffsets { get; }
-    public IReadOnlySet<IlMethodId> CalledMethods { get; }
+    public IReadOnlyList<InvokedMethod> CalledMethods { get; }
     
-    public AnalysisResults(IReadOnlyList<int> branchTargetOffsets, IReadOnlySet<IlMethodId> calledMethods)
+    public AnalysisResults(IReadOnlyList<InvokedMethod> calledMethods)
     {
         CalledMethods = calledMethods;
-        BranchTargetOffsets = branchTargetOffsets.ToHashSet();
     }
 }

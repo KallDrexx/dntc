@@ -9,8 +9,7 @@ public class MethodAnalyzer
 {
     public AnalysisResults Analyze(DotNetDefinedMethod method)
     {
-        var branchTargets = new List<int>();
-        var calledMethods = new HashSet<IlMethodId>();
+        var calledMethods = new Dictionary<IlMethodId, InvokedMethod>();
         foreach (var instruction in method.Definition.Body.Instructions)
         {
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out _))
@@ -20,23 +19,17 @@ public class MethodAnalyzer
                 throw new InvalidOperationException(message);
             }
 
-            var targets = GetBranchTargets(instruction);
-            if (targets.Any())
-            {
-                branchTargets.AddRange(targets);
-            }
-
             var callTarget = GetCallTarget(instruction);
             if (callTarget != null)
             {
-                calledMethods.Add(callTarget.Value);
+                calledMethods.TryAdd(callTarget.MethodId, callTarget);
             }
         }
 
-        return new AnalysisResults(branchTargets, calledMethods);
+        return new AnalysisResults(calledMethods.Values.ToArray());
     }
 
-    private static IlMethodId? GetCallTarget(Instruction instruction)
+    private static InvokedMethod? GetCallTarget(Instruction instruction)
     {
         switch (instruction.OpCode.Code)
         {
@@ -44,67 +37,23 @@ public class MethodAnalyzer
             case Code.Call:
             case Code.Callvirt:
             {
-                switch (instruction.Operand)
+                if (instruction.Operand is GenericInstanceMethod generic)
                 {
-                    case MethodDefinition definition:
-                        return new IlMethodId(definition.FullName);
-
-                    case MethodReference reference:
-                        return new IlMethodId(reference.FullName);
-
-                    default:
-                        throw new NotSupportedException(instruction.Operand.GetType().FullName);
+                    return new GenericInvokedMethod(
+                        new IlMethodId(generic.FullName),
+                        new IlMethodId(generic.ElementMethod.FullName),
+                        generic.GenericArguments.Select(x => new IlTypeName(x.FullName)).ToArray());
                 }
-            }
 
-            default:
-                return null;
+                if (instruction.Operand is MethodReference reference)
+                {
+                    return new InvokedMethod(new IlMethodId(reference.FullName));
+                }
+
+                break;
+            }
         }
-    }
 
-    private static IReadOnlyList<int> GetBranchTargets(Instruction instruction)
-    {
-        switch (instruction.OpCode.Code)
-        {
-            case Code.Br:
-            case Code.Br_S:
-            case Code.Brfalse:
-            case Code.Brtrue:
-            case Code.Brfalse_S:
-            case Code.Brtrue_S:
-            case Code.Beq:
-            case Code.Beq_S:
-            case Code.Ble:
-            case Code.Ble_S:
-            case Code.Ble_Un:
-            case Code.Ble_Un_S:
-            case Code.Blt:
-            case Code.Blt_S:
-            case Code.Blt_Un:
-            case Code.Blt_Un_S:
-            case Code.Bge:
-            case Code.Bge_S:
-            case Code.Bge_Un:
-            case Code.Bge_Un_S:
-            case Code.Bgt:
-            case Code.Bgt_S:
-            case Code.Bgt_Un:
-            case Code.Bgt_Un_S:
-            case Code.Bne_Un:
-            case Code.Bne_Un_S:
-            {
-                var target = (Instruction)instruction.Operand;
-                return [target.Offset];
-            }
-
-            case Code.Switch:
-            {
-                var targets = (Instruction[])instruction.Operand;
-                return targets.Select(x => x.Offset).ToArray();
-            }
-
-            default:
-                return [];
-        }
+        return null;
     }
 }
