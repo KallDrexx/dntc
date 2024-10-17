@@ -62,6 +62,28 @@ public class DotNetDefinedMethod : DefinedMethod
     {
         Id = methodId;
         GenericArgumentTypes = genericArgumentTypes;
+        
+        // Replace any referenced generic types with the corresponding argument type
+        var genericParameters = Definition.GenericParameters
+            .Select((param, index) => new { Name = param.FullName, Index = index })
+            .ToDictionary(x => x.Name, x => x.Index);
+
+        if (genericParameters.TryGetValue(ReturnType.Value, out var typeIndex))
+        {
+            ReturnType = genericArgumentTypes[typeIndex];
+        }
+
+        Parameters = Parameters
+            .Select(x =>
+            {
+                if (genericParameters.TryGetValue(x.Type.Value, out typeIndex))
+                {
+                    return x with { Type = genericArgumentTypes[typeIndex] };
+                }
+
+                return x;
+            })
+            .ToArray();
     }
 
     public DotNetDefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
