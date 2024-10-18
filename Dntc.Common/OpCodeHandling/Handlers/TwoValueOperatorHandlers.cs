@@ -34,21 +34,18 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
         private static readonly HashSet<string> BoolOperators = [">", "<", "<=", ">=", "==", "!="];
         
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            var items = expressionStack.Pop(2);
+            var items = context.ExpressionStack.Pop(2);
             var right = new DereferencedValueExpression(items[0]);
             var left = new DereferencedValueExpression(items[1]);
 
             var resultingType = BoolOperators.Contains(@operator)
-                ? conversionCatalog.Find(new IlTypeName(typeof(bool).FullName!))
+                ? context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!))
                 : left.ResultingType; // Assume non-bool operators use the same type. This is probably incomplete.
 
             var newExpression = new TwoExpressionEvalExpression(left, @operator, right, resultingType);
-            expressionStack.Push(newExpression);
+            context.ExpressionStack.Push(newExpression);
 
             return new OpCodeHandlingResult(null);
         }

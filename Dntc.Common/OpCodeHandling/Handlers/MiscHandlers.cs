@@ -23,14 +23,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
     private class InitObjHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            var typeDefinition = (TypeDefinition)currentInstruction.Operand;
-            var conversionInfo = conversionCatalog.Find(new IlTypeName(typeDefinition.FullName));
-            var items = expressionStack.Pop(1);
+            var typeDefinition = (TypeDefinition)context.CurrentInstruction.Operand;
+            var conversionInfo = context.ConversionCatalog.Find(new IlTypeName(typeDefinition.FullName));
+            var items = context.ExpressionStack.Pop(1);
 
             var left = new DereferencedValueExpression(items[0]);
             var right = new ZeroValuedObjectExpression(conversionInfo);
@@ -42,10 +39,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
     private class NopHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
             // do nothing
             return new OpCodeHandlingResult(null);
@@ -55,14 +49,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
     private class DupHandler: IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            var items = expressionStack.Pop(1);
-            expressionStack.Push(items[0] with { });
-            expressionStack.Push(items[0]);
+            var items = context.ExpressionStack.Pop(1);
+            context.ExpressionStack.Push(items[0] with { });
+            context.ExpressionStack.Push(items[0]);
 
             return new OpCodeHandlingResult(null);
         }
@@ -71,12 +62,9 @@ public class MiscHandlers : IOpCodeHandlerCollection
     private class PopHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             
             // this is usually the case of a method call without storing the 
             // result. So just make it its own statement
@@ -88,20 +76,17 @@ public class MiscHandlers : IOpCodeHandlerCollection
     private class RetHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            if (expressionStack.Count > 1)
+            if (context.ExpressionStack.Count > 1)
             {
-                var message = $"Encountered return statement with {expressionStack.Count} items in it, but " +
+                var message = $"Encountered return statement with {context.ExpressionStack.Count} items in it, but " +
                               $"only 0 or 1 is expected";
                 throw new InvalidOperationException(message);
             }
 
-            var innerExpression = expressionStack.Count == 1
-                ? expressionStack.Pop(1)[0]
+            var innerExpression = context.ExpressionStack.Count == 1
+                ? context.ExpressionStack.Pop(1)[0]
                 : null;
 
             return new OpCodeHandlingResult(new ReturnStatementSet(innerExpression));

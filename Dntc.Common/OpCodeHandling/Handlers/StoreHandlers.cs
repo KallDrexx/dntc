@@ -59,14 +59,10 @@ public class StoreHandlers : IOpCodeHandlerCollection
         
     private class StFldHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var field = (FieldDefinition)currentInstruction.Operand;
-            var items = expressionStack.Pop(2);
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var items = context.ExpressionStack.Pop(2);
             var value = items[0];
             var obj = items[1];
 
@@ -80,13 +76,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
     
     private class StIndHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(2);
+            var items = context.ExpressionStack.Pop(2);
             var value = items[0];
             var address = items[1];
 
@@ -100,13 +92,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
     
     private class StObjHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(2);
+            var items = context.ExpressionStack.Pop(2);
             var objectValue = items[0];
             var address = items[1];
 
@@ -120,30 +108,26 @@ public class StoreHandlers : IOpCodeHandlerCollection
     
     private class StArgHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             var value = items[0];
 
-            var argIndex = currentInstruction.Operand switch
+            var argIndex = context.CurrentInstruction.Operand switch
             {
                 int intOperand => intOperand,
                 ParameterDefinition parameterDefinition => parameterDefinition.Index,
-                _ => throw new NotSupportedException(currentInstruction.Operand.GetType().FullName),
+                _ => throw new NotSupportedException(context.CurrentInstruction.Operand.GetType().FullName),
             };
 
-            if (currentMethod.Parameters.Count < argIndex)
+            if (context.CurrentMethodConversion.Parameters.Count < argIndex)
             {
                 var message = $"starg on argument index {argIndex} is beyond the argument " +
-                              $"count of {currentMethod.Parameters.Count}";
+                              $"count of {context.CurrentMethodConversion.Parameters.Count}";
                 throw new InvalidOperationException(message);
             }
 
-            var argument = currentMethod.Parameters[argIndex];
+            var argument = context.CurrentMethodConversion.Parameters[argIndex];
             var storedVariableExpression = new VariableValueExpression(
                 new Variable(argument.ConversionInfo, argument.Name, argument.IsReference));
             
@@ -152,9 +136,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var statement = new AssignmentStatementSet(left, right);
 
             var tempVariable = HandleReferencedVariable(
-                expressionStack, 
+                context.ExpressionStack, 
                 storedVariableExpression, 
-                currentInstruction.Offset);
+                context.CurrentInstruction.Offset);
 
             CStatementSet result = tempVariable != null
                 ? new CompoundStatementSet([tempVariable, statement])
@@ -166,13 +150,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
     
     private class StLocHandler(int? index) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
 
             int localIndex;
             if (index != null)
@@ -181,29 +161,29 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
             else
             {
-                localIndex = currentInstruction.Operand switch
+                localIndex = context.CurrentInstruction.Operand switch
                 {
                     int intIndex => intIndex,
                     VariableDefinition variableDefinition => variableDefinition.Index,
-                    _ => throw new NotSupportedException(currentInstruction.Operand.GetType().FullName),
+                    _ => throw new NotSupportedException(context.CurrentInstruction.Operand.GetType().FullName),
                 };
             }
 
-            if (currentMethod.Locals.Count <= localIndex)
+            if (context.CurrentMethodConversion.Locals.Count <= localIndex)
             {
                 var message = $"stloc for local index {localIndex} but method only has " +
-                              $"{currentMethod.Locals.Count} locals";
+                              $"{context.CurrentMethodConversion.Locals.Count} locals";
                 throw new InvalidOperationException(message);
             }
 
-            var local = currentMethod.Locals[localIndex];
+            var local = context.CurrentMethodConversion.Locals[localIndex];
             var localVariable = new VariableValueExpression(
                 new Variable(local.ConversionInfo, Utils.LocalName(localIndex), local.IsReference));
 
             var left = new DereferencedValueExpression(localVariable);
             var right = new DereferencedValueExpression(items[0]);
 
-            var tempStatement = HandleReferencedVariable(expressionStack, localVariable, currentInstruction.Offset);
+            var tempStatement = HandleReferencedVariable(context.ExpressionStack, localVariable, context.CurrentInstruction.Offset);
             var statement = new AssignmentStatementSet(left, right);
 
             CStatementSet result = tempStatement != null

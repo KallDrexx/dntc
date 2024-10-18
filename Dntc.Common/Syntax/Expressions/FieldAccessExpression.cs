@@ -22,7 +22,7 @@ public record FieldAccessExpression(
             await writer.WriteAsync(".");
         }
 
-        await writer.WriteAsync($"{Field.Name})");
+        await writer.WriteAsync($"{Utils.MakeValidCName(Field.Name)})");
     }
 
     public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)

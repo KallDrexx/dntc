@@ -28,12 +28,12 @@ typedef struct {
 } ScratchpadCSharp_SimpleFunctions_Triangle;
 
 typedef struct {
-	int32_t <first>P;
-	int32_t <second>P;
+	int32_t _first_P;
+	int32_t _second_P;
 } ScratchpadCSharp_GenericTests_AddNumberGetter;
 
 typedef struct {
-	int32_t <number>P;
+	int32_t _number_P;
 } ScratchpadCSharp_GenericTests_StaticNumberGetter;
 
 
