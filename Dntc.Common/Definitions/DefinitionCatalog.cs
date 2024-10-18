@@ -63,11 +63,6 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            if (method.IsAbstract || type.IsInterface)
-            {
-                continue;
-            }
-            
             var definedMethod = new DotNetDefinedMethod(method);
             Add(definedMethod);
 

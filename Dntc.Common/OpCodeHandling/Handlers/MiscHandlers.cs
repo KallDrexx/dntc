@@ -15,6 +15,9 @@ public class MiscHandlers : IOpCodeHandlerCollection
         { Code.Dup, new DupHandler() },
         { Code.Pop, new PopHandler() },
         { Code.Ret, new RetHandler() },
+       
+        // Constrained op code can be handled by a look behind with callvirt
+        { Code.Constrained, new NopHandler()},
     };
     
     private class InitObjHandler : IOpCodeHandler

@@ -27,6 +27,15 @@ typedef struct {
 	ScratchpadCSharp_SimpleFunctions_Vector2 Third;
 } ScratchpadCSharp_SimpleFunctions_Triangle;
 
+typedef struct {
+	int32_t <first>P;
+	int32_t <second>P;
+} ScratchpadCSharp_GenericTests_AddNumberGetter;
+
+typedef struct {
+	int32_t <number>P;
+} ScratchpadCSharp_GenericTests_StaticNumberGetter;
+
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);
@@ -51,5 +60,13 @@ void ScratchpadCSharp_SimpleFunctions_RefTest(ScratchpadCSharp_SimpleFunctions_V
 int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y);
 float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1);
 int32_t ScratchpadCSharp_SimpleFunctions_TernaryTest(int32_t a, int32_t b);
+void ScratchpadCSharp_GenericTests__AddNumberGetter__ctor(ScratchpadCSharp_GenericTests_AddNumberGetter *__this, int32_t first, int32_t second);
+int32_t ScratchpadCSharp_GenericTests__AddNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_AddNumberGetter *__this);
+int32_t ScratchpadCSharp_GenericTests_Run(ScratchpadCSharp_GenericTests_AddNumberGetter getter);
+int32_t ScratchpadCSharp_GenericTests_GetAddedNumber(int32_t x, int32_t y);
+void ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this, int32_t number);
+int32_t ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this);
+int32_t ScratchpadCSharp_GenericTests_Run(ScratchpadCSharp_GenericTests_StaticNumberGetter getter);
+int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x);
 
 #endif // SCRATCHPADCSHARP_H_H

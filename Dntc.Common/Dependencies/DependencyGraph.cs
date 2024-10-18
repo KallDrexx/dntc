@@ -78,6 +78,13 @@ public class DependencyGraph
 
         if (method is DotNetDefinedMethod dotNetDefinedMethod)
         {
+            if (dotNetDefinedMethod.Definition.Body == null)
+            {
+                var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
+                              $"calls to concrete methods can be invoked";
+                throw new InvalidOperationException(message);
+            }
+            
             var analysisResults = _methodAnalyzer.Analyze(dotNetDefinedMethod);
             foreach (var calledMethod in analysisResults.CalledMethods)
             {

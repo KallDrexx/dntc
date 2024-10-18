@@ -7,7 +7,7 @@ public class DotNetDefinedMethod : DefinedMethod
     public MethodDefinition Definition { get; }
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
-    public IReadOnlyList<IlTypeName> GenericArgumentTypes { get; } = Array.Empty<IlTypeName>();
+    public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
 
     public DotNetDefinedMethod(MethodDefinition definition)
     {
@@ -33,11 +33,13 @@ public class DotNetDefinedMethod : DefinedMethod
             .Distinct()
             .ToArray();
 
-        Locals = definition.Body
-            .Variables
-            .OrderBy(x => x.Index)
-            .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference))
-            .ToArray();
+        Locals = definition.Body != null
+            ? definition.Body
+                .Variables
+                .OrderBy(x => x.Index)
+                .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference))
+                .ToArray()
+            : [];
 
         // Nested types don't have a namespace on them, so we need to go to the root
         var rootDeclaringType = definition.DeclaringType;
@@ -51,7 +53,7 @@ public class DotNetDefinedMethod : DefinedMethod
         FunctionPointerTypes = definition.Parameters
             .Select(x => x.ParameterType)
             .OfType<FunctionPointerType>()
-            .Concat(definition.Body.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>())
+            .Concat(definition.Body?.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>() ?? [])
             .ToArray();
     }
 
@@ -61,7 +63,10 @@ public class DotNetDefinedMethod : DefinedMethod
         IReadOnlyList<IlTypeName> genericArgumentTypes) : this(method)
     {
         Id = methodId;
-        GenericArgumentTypes = genericArgumentTypes;
+
+        GenericArgumentTypes = genericArgumentTypes
+            .Select((arg, index) => new { ParamName = Definition.GenericParameters[index].FullName, ArgName = arg })
+            .ToDictionary(x => x.ParamName, x => x.ArgName);
         
         // Replace any referenced generic types with the corresponding argument type
         var genericParameters = Definition.GenericParameters
@@ -107,6 +112,6 @@ public class DotNetDefinedMethod : DefinedMethod
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>
         ReferencedArrayTypes.Select(x => new IlTypeName(x.FullName))
-            .Concat(GenericArgumentTypes)
+            .Concat(GenericArgumentTypes.Values)
             .ToArray();
 }

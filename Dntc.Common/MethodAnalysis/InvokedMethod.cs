@@ -1,6 +1,4 @@
-﻿using Mono.Cecil;
-
-namespace Dntc.Common.MethodAnalysis;
+﻿namespace Dntc.Common.MethodAnalysis;
 
 public record InvokedMethod(IlMethodId MethodId);
 

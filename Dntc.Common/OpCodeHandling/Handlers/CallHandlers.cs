@@ -13,6 +13,7 @@ public class CallHandlers : IOpCodeHandlerCollection
         { Code.Call, new CallHandler() },
         { Code.Calli, new CallIHandler() },
         { Code.Newobj, new NewObjHandler() },
+        { Code.Callvirt, new CallVirtHandler() },
     };
     
     private class CallHandler : IOpCodeHandler
@@ -114,6 +115,19 @@ public class CallHandlers : IOpCodeHandlerCollection
             expressionStack.Push(variableExpression);
 
             return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
+        }
+    }
+    
+    private class CallVirtHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(
+            Instruction currentInstruction, 
+            ExpressionStack expressionStack,
+            MethodConversionInfo currentMethod, 
+            ConversionCatalog conversionCatalog)
+        {
+            var methodToCall = VirtualCallConverter.Convert(currentInstruction, currentMethod);
+            
         }
     }
 
