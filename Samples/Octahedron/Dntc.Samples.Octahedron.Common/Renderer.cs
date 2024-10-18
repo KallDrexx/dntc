@@ -1,9 +1,16 @@
 ﻿namespace Dntc.Samples.Octahedron.Common;
 
-public static class OctahedronRenderer
+public static class Renderer
 {
-    public static void Render(ushort[] pixels, Camera camera, float secondsPassed)
+    public static void RenderOctahedron(ushort[] pixels, Camera camera, float secondsPassed)
     {
+        Render<OctahedronShape>(pixels, camera, secondsPassed);
+    }
+    
+    private static void Render<TShape>(ushort[] pixels, Camera camera, float secondsPassed)
+        where TShape : IShape, new()
+    {
+        var shape = new TShape();
         var light = new Vector3(1, 0, 3);
         var rotationsDegreesPerSecond = new Vector3(0, 100, 120);
         // var rotationsDegreesPerSecond = new Vector3(0, 0, 0);
@@ -13,9 +20,9 @@ public static class OctahedronRenderer
             rotationsDegreesPerSecond.Y * secondsPassed,
             rotationsDegreesPerSecond.Z * secondsPassed);
 
-        for (var x = 0; x < 8; x++)
+        for (var x = 0; x < shape.TriangleCount; x++)
         {
-            var triangle = GetTriangle(x);
+            var triangle = shape.GetTriangle(x);
             var rotatedV1 = triangle.V1
                 .RotateOnZ(rotation.Z)
                 .RotateOnY(rotation.Y)
@@ -54,63 +61,6 @@ public static class OctahedronRenderer
                 var triangleToDraw = new Triangle(p1, p2, p3);
                 RenderTriangle(triangleToDraw, pixels, camera, color);
             }
-        }
-    }
-
-    private static Triangle GetTriangle(int index)
-    {
-        switch (index)
-        {
-            case 0:
-                return new Triangle(
-                    new Vector3(1, 0, 0),
-                    new Vector3(0, 1, 0),
-                    new Vector3(0, 0, 1));
-
-            case 1:
-                return new Triangle(
-                    new Vector3(1, 0, 0),
-                    new Vector3(0, 0, -1),
-                    new Vector3(0, 1, 0));
-
-            case 2:
-                return new Triangle(
-                    new Vector3(1, 0, 0),
-                    new Vector3(0, 0, 1),
-                    new Vector3(0, -1, 0));
-
-            case 3:
-                return new Triangle(
-                    new Vector3(1, 0, 0),
-                    new Vector3(0, -1, 0),
-                    new Vector3(0, 0, -1));
-
-            case 4:
-                return new Triangle(
-                    new Vector3(-1, 0, 0),
-                    new Vector3(0, 0, 1),
-                    new Vector3(0, 1, 0));
-
-            case 5:
-                return new Triangle(
-                    new Vector3(-1, 0, 0),
-                    new Vector3(0, 1, 0),
-                    new Vector3(0, 0, -1));
-
-            case 6:
-                return new Triangle(
-                    new Vector3(-1, 0, 0),
-                    new Vector3(0, -1, 0),
-                    new Vector3(0, 0, 1));
-
-            case 7:
-                return new Triangle(
-                    new Vector3(-1, 0, 0),
-                    new Vector3(0, 0, -1),
-                    new Vector3(0, -1, 0));
-
-            // Should throw an error 
-            default: return new Triangle();
         }
     }
 
