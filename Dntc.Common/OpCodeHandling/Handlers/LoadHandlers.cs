@@ -64,15 +64,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
     private class LdFldHandler(bool getAddress) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var field = (FieldDefinition)currentInstruction.Operand;
-            var fieldType = conversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
-            var items = expressionStack.Pop(1);
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+            var items = context.ExpressionStack.Pop(1);
             var objectExpression = items[0];
             
             CBaseExpression newExpression = new FieldAccessExpression(
@@ -84,20 +80,16 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 newExpression = new AddressOfValueExpression(newExpression);
             }
 
-            expressionStack.Push(newExpression);
+            context.ExpressionStack.Push(newExpression);
             return new OpCodeHandlingResult(null);
         }
     }
 
     private class LdIndHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             if (!items[0].ProducesAPointer)
             {
                 var message = "Expected top most expression to produce a pointer, but it does not";
@@ -105,7 +97,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             }
 
             var dereferencedExpression = new DereferencedValueExpression(items[0]);
-            expressionStack.Push(dereferencedExpression);
+            context.ExpressionStack.Push(dereferencedExpression);
 
             return new OpCodeHandlingResult(null);
         }
@@ -113,21 +105,17 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
     private class LdArgHandler(int? argIndex, bool loadAddress) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
             var index = 0;
             if (argIndex == null)
             {
-                index = currentInstruction.Operand switch
+                index = context.CurrentInstruction.Operand switch
                 {
                     int intIndex => intIndex,
                     ParameterDefinition paramDef => paramDef.Index,
                     _ => throw new ArgumentException(
-                        $"Unknown ldarg operand type of {currentInstruction.Operand.GetType().FullName}"),
+                        $"Unknown ldarg operand type of {context.CurrentInstruction.Operand.GetType().FullName}"),
                 };
             }
             else
@@ -135,14 +123,14 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 index = argIndex.Value;
             }
 
-            if (currentMethod.Parameters.Count <= index)
+            if (context.CurrentMethodConversion.Parameters.Count <= index)
             {
                 var message = $"Argument index #{index} referenced but method only " +
-                              $"has ${currentMethod.Parameters.Count} parameters";
+                              $"has ${context.CurrentMethodConversion.Parameters.Count} parameters";
                 throw new InvalidOperationException(message);
             }
 
-            var parameter = currentMethod.Parameters[index];
+            var parameter = context.CurrentMethodConversion.Parameters[index];
             var variable = new Variable(parameter.ConversionInfo, parameter.Name, parameter.IsReference);
             CBaseExpression newExpression = new VariableValueExpression(variable);
             if (loadAddress)
@@ -150,18 +138,14 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 newExpression = new AddressOfValueExpression(newExpression);
             }
 
-            expressionStack.Push(newExpression);
+            context.ExpressionStack.Push(newExpression);
             return new OpCodeHandlingResult(null);
         }
     }
 
     private class LdCHandler(int? hardCodedNumber) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
             string numericLiteral;
             TypeConversionInfo typeInfo;
@@ -169,69 +153,69 @@ public class LoadHandlers : IOpCodeHandlerCollection
             if (hardCodedNumber != null)
             {
                 numericLiteral = hardCodedNumber.Value.ToString();
-                typeInfo = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+                typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
             }
             else
             {
-                switch (currentInstruction.Operand)
+                switch (context.CurrentInstruction.Operand)
                 {
                     case sbyte sbyteValue:
                         numericLiteral = sbyteValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(sbyte).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(sbyte).FullName!));
                         break;
 
                     case byte byteValue:
                         numericLiteral = byteValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(byte).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(byte).FullName!));
                         break;
 
                     case short shortValue:
                         numericLiteral = shortValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(short).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(short).FullName!));
                         break;
 
                     case ushort ushortValue:
                         numericLiteral = ushortValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(ushort).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(ushort).FullName!));
                         break;
 
                     case int intValue:
                         numericLiteral = intValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
                         break;
 
                     case uint uintValue:
                         numericLiteral = uintValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(uint).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(uint).FullName!));
                         break;
 
                     case long longValue:
                         numericLiteral = longValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(long).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(long).FullName!));
                         break;
 
                     case ulong ulongValue:
                         numericLiteral = ulongValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(ulong).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(ulong).FullName!));
                         break;
 
                     case float floatValue:
                         numericLiteral = floatValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(float).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(float).FullName!));
                         break;
 
                     case double doubleValue:
                         numericLiteral = doubleValue.ToString();
-                        typeInfo = conversionCatalog.Find(new IlTypeName(typeof(double).FullName!));
+                        typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(double).FullName!));
                         break;
 
                     default:
-                        throw new NotSupportedException(currentInstruction.Operand.GetType().FullName);
+                        throw new NotSupportedException(context.CurrentInstruction.Operand.GetType().FullName);
                 }
             }
 
             var expression = new LiteralValueExpression(numericLiteral, typeInfo);
-            expressionStack.Push(expression);
+            context.ExpressionStack.Push(expression);
 
             return new OpCodeHandlingResult(null);
         }
@@ -239,11 +223,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
     private class LdLocHandler(int? index, bool getAddress) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
             var localIndex = 0;
             if (index != null)
@@ -252,18 +232,18 @@ public class LoadHandlers : IOpCodeHandlerCollection
             }
             else
             {
-                var variable = (VariableDefinition)currentInstruction.Operand;
+                var variable = (VariableDefinition)context.CurrentInstruction.Operand;
                 localIndex = variable.Index;
             }
 
-            if (currentMethod.Locals.Count <= localIndex)
+            if (context.CurrentMethodConversion.Locals.Count <= localIndex)
             {
                 var message = $"Requested to load local #{localIndex} but only " +
-                              $"{currentMethod.Locals.Count} are defined";
+                              $"{context.CurrentMethodConversion.Locals.Count} are defined";
                 throw new InvalidOperationException(message);
             }
 
-            var local = currentMethod.Locals[localIndex];
+            var local = context.CurrentMethodConversion.Locals[localIndex];
             var expression = new VariableValueExpression(
                 new Variable(
                     local.ConversionInfo,
@@ -274,7 +254,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 ? new AddressOfValueExpression(expression)
                 : new DereferencedValueExpression(expression);
 
-            expressionStack.Push(newExpression);
+            context.ExpressionStack.Push(newExpression);
             
             return new OpCodeHandlingResult(null);
         }
@@ -283,15 +263,12 @@ public class LoadHandlers : IOpCodeHandlerCollection
     private class LdObjHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+            HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             var objectAddress = items[0];
             
-            expressionStack.Push(new DereferencedValueExpression(objectAddress));
+            context.ExpressionStack.Push(new DereferencedValueExpression(objectAddress));
             
             return new OpCodeHandlingResult(null);
         }

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
 using Dntc.Common.MethodAnalysis;
-using Mono.Cecil;
 
 namespace Dntc.Common.Dependencies;
 
@@ -25,6 +24,39 @@ public class DependencyGraph
         Root = CreateNode(definitionCatalog, rootMethod, new List<Node>());
     }
 
+    private Node CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
+    {
+        var invokedDefinition = definitionCatalog.Get(invokedMethod.MethodId);
+        if (invokedDefinition == null)
+        {
+            // This generic with these specific type arguments is new, so we need to add a definition for it
+            var sourceMethod = definitionCatalog.Get(invokedMethod.OriginalMethodId);
+            if (sourceMethod == null)
+            {
+                var message = $"Generic method '{invokedMethod.MethodId}' refers to the original method " +
+                              $"'{invokedMethod.OriginalMethodId}', but that method's definition isn't known";
+                throw new InvalidOperationException(message);
+            }
+
+            // Clone the method for this particular use case
+            if (sourceMethod is not DotNetDefinedMethod dotNetDefinedMethod)
+            {
+                var message = $"Generic method '{invokedMethod.MethodId}' refers to the original method " +
+                              $"'{invokedMethod.OriginalMethodId}', but that method is not a dot net defined method, " +
+                              $"but is instead a {sourceMethod.GetType().FullName}";
+                throw new InvalidOperationException(message);
+            }
+
+            var newMethod = dotNetDefinedMethod.MakeGenericInstance(
+                invokedMethod.MethodId, 
+                invokedMethod.GenericArguments);
+            
+            definitionCatalog.Add([newMethod]);
+        }
+
+        return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
+    }
+
     private Node CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
     {
         EnsureNotCircularReference(path, methodId);
@@ -38,13 +70,7 @@ public class DependencyGraph
         var node = new MethodNode(methodId);
         path.Add(node);
 
-        var allTypes = method.Parameters
-            .Select(x => x.Type)
-            .Concat(method.Locals.Select(x => x.Type))
-            .Concat([method.ReturnType])
-            .Distinct();
-
-        foreach (var type in allTypes)
+        foreach (var type in method.GetReferencedTypes)
         {
             var typeNode = CreateNode(definitionCatalog, type, path);
             node.Children.Add(typeNode);
@@ -52,10 +78,26 @@ public class DependencyGraph
 
         if (method is DotNetDefinedMethod dotNetDefinedMethod)
         {
+            if (dotNetDefinedMethod.Definition.Body == null)
+            {
+                var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
+                              $"calls to concrete methods can be invoked";
+                throw new InvalidOperationException(message);
+            }
+            
             var analysisResults = _methodAnalyzer.Analyze(dotNetDefinedMethod);
             foreach (var calledMethod in analysisResults.CalledMethods)
             {
-                var methodNode = CreateNode(definitionCatalog, calledMethod, path);
+                Node methodNode;
+                if (calledMethod is GenericInvokedMethod generic)
+                {
+                    methodNode = CreateNode(definitionCatalog, generic, path);
+                }
+                else
+                {
+                    methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
+                }
+
                 node.Children.Add(methodNode);
             }
         }

@@ -27,7 +27,9 @@
     "System.Void ScratchpadCSharp.SimpleFunctions::RefTest(ScratchpadCSharp.SimpleFunctions/Vector3&,System.Single&,System.Single)",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::SwapTest(System.Int32,System.Int32)",
     "System.Single ScratchpadCSharp.SimpleFunctions::LocalSwapTest(System.Single,System.Single)",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::TernaryTest(System.Int32,System.Int32)"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::TernaryTest(System.Int32,System.Int32)",
+    "System.Int32 ScratchpadCSharp.GenericTests::GetAddedNumber(System.Int32,System.Int32)",
+    "System.Int32 ScratchpadCSharp.GenericTests::GetStaticNumber(System.Int32)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

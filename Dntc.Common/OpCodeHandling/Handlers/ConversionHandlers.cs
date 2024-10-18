@@ -28,17 +28,13 @@ public class ConversionHandlers : IOpCodeHandlerCollection
 
     private class ConversionHandler(Type castToType) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction,
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod,
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var typeConversion = conversionCatalog.Find(new IlTypeName(castToType.FullName!));
-            var items = expressionStack.Pop(1);
+            var typeConversion = context.ConversionCatalog.Find(new IlTypeName(castToType.FullName!));
+            var items = context.ExpressionStack.Pop(1);
             var item = new DereferencedValueExpression(items[0]);
             var expession = new CastExpression(item, typeConversion);
-            expressionStack.Push(expession);
+            context.ExpressionStack.Push(expession);
 
             return new OpCodeHandlingResult(null);
         }

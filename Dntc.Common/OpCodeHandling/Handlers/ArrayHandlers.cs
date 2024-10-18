@@ -25,17 +25,13 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     
     private class StElemHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(3);
+            var items = context.ExpressionStack.Pop(3);
             var value = items[0];
             var index = items[1];
             var array = items[2];
-            var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+            var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
             var itemType = value.ResultingType;
 
             return new OpCodeHandlingResult(
@@ -51,18 +47,14 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
     private class LdLenHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             var array = items[0];
-            var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+            var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
 
             var newItem = new FieldAccessExpression(array, new Variable(int32Type, "length", false));
-            expressionStack.Push(newItem);
+            context.ExpressionStack.Push(newItem);
 
             return new OpCodeHandlingResult(null);
         }

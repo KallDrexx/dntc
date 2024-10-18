@@ -202,3 +202,42 @@ IL_000c:
 	return (__checkpoint_for_il000c + 3);
 }
 
+void ScratchpadCSharp_GenericTests__AddNumberGetter__ctor(ScratchpadCSharp_GenericTests_AddNumberGetter *__this, int32_t first, int32_t second) {
+	(__this->_first_P) = first;
+	(__this->_second_P) = second;
+	return;
+}
+
+int32_t ScratchpadCSharp_GenericTests__AddNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_AddNumberGetter *__this) {
+	return ((__this->_first_P) + (__this->_second_P));
+}
+
+int32_t ScratchpadCSharp_GenericTests_Run(ScratchpadCSharp_GenericTests_AddNumberGetter getter) {
+	return ScratchpadCSharp_GenericTests__AddNumberGetter_GetNumber((&getter));
+}
+
+int32_t ScratchpadCSharp_GenericTests_GetAddedNumber(int32_t x, int32_t y) {
+	ScratchpadCSharp_GenericTests_AddNumberGetter __temp_0002 = {0};
+	ScratchpadCSharp_GenericTests__AddNumberGetter__ctor((&__temp_0002), x, y);
+	return ScratchpadCSharp_GenericTests_Run(__temp_0002);
+}
+
+void ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this, int32_t number) {
+	(__this->_number_P) = number;
+	return;
+}
+
+int32_t ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this) {
+	return (__this->_number_P);
+}
+
+int32_t ScratchpadCSharp_GenericTests_Run(ScratchpadCSharp_GenericTests_StaticNumberGetter getter) {
+	return ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber((&getter));
+}
+
+int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x) {
+	ScratchpadCSharp_GenericTests_StaticNumberGetter __temp_0001 = {0};
+	ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor((&__temp_0001), x);
+	return ScratchpadCSharp_GenericTests_Run(__temp_0001);
+}
+
