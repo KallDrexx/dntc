@@ -57,4 +57,6 @@ public class NativeDefinedMethod : DefinedMethod
             new IlNamespace("System"),
             [new IlTypeName("System.Double")]),
     ];
+
+    protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() => [];
 }

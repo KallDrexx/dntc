@@ -13,56 +13,63 @@ public class CallHandlers : IOpCodeHandlerCollection
         { Code.Call, new CallHandler() },
         { Code.Calli, new CallIHandler() },
         { Code.Newobj, new NewObjHandler() },
+        { Code.Callvirt, new CallVirtHandler() },
     };
+
+    private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
+    private static bool ReturnsVoid(IlTypeName type) => type.Value == typeof(void).FullName;
+    
+    private static OpCodeHandlingResult CallMethodReference(
+        HandleContext context, 
+        IlMethodId methodId, 
+        IlTypeName returnTypeName)
+    {
+        var conversionInfo = context.ConversionCatalog.Find(methodId);
+        var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+        var returnType = context.ConversionCatalog.Find(returnTypeName);
+
+        // Arguments (including the instance if this isn't a static call) are pushed onto the stack in the order
+        // they are called, which means they are popped in the reverse order needed. So we need to revers the
+        // order of popped items before building a method call expression
+        var arguments = context.ExpressionStack.Pop(conversionInfo.Parameters.Count)
+            .Reverse() 
+            .ToArray();
+
+        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
+        var expression = new MethodCallExpression(fnExpression, arguments, returnType);
+        
+        if (ReturnsVoid(returnTypeName))
+        {
+            var statement = new VoidExpressionStatementSet(expression);
+            return new OpCodeHandlingResult(statement);
+        }
+        
+        context.ExpressionStack.Push(expression);
+        return new OpCodeHandlingResult(null);
+    }
     
     private class CallHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var methodReference = (MethodReference)currentInstruction.Operand;
+            var methodReference = (MethodReference)context.CurrentInstruction.Operand;
             var methodId = new IlMethodId(methodReference.FullName);
-            var conversionInfo = conversionCatalog.Find(methodId);
-            var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
-            var returnType = conversionCatalog.Find(new IlTypeName(methodReference.ReturnType.FullName));
-
-            var arguments = expressionStack.Pop(conversionInfo.Parameters.Count)
-                .Reverse() // Items are passed into the method in the reverse order they are popped
-                .ToArray();
-
-            var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
-            var expression = new MethodCallExpression(fnExpression, arguments, returnType);
-            
-            if (ReturnsVoid(methodReference.ReturnType))
-            {
-                var statement = new VoidExpressionStatementSet(expression);
-                return new OpCodeHandlingResult(statement);
-            }
-            
-            expressionStack.Push(expression);
-            return new OpCodeHandlingResult(null);
+            return CallMethodReference(context, methodId, new IlTypeName(methodReference.ReturnType.FullName));
         }
     }
     
     private class CallIHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var callSite = (CallSite)currentInstruction.Operand;
+            var callSite = (CallSite)context.CurrentInstruction.Operand;
             
             // Top of the stack contains the function name to call, followed by the arguments in 
             // reverse calling order
-            var allItems = expressionStack.Pop(callSite.Parameters.Count + 1);
+            var allItems = context.ExpressionStack.Pop(callSite.Parameters.Count + 1);
             var fnPointerExpression = allItems[0];
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
-            var returnType = conversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
+            var returnType = context.ConversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
 
             var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder, returnType);
             if (ReturnsVoid(callSite.ReturnType))
@@ -71,20 +78,16 @@ public class CallHandlers : IOpCodeHandlerCollection
                 return new OpCodeHandlingResult(statement);
             }
             
-            expressionStack.Push(expression);
+            context.ExpressionStack.Push(expression);
             return new OpCodeHandlingResult(null);
         }
     }
     
     private class NewObjHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var constructor = (MethodReference)currentInstruction.Operand;
+            var constructor = (MethodReference)context.CurrentInstruction.Operand;
             if (!constructor.DeclaringType.IsValueType)
             {
                 var message = $"Cannot call `newobj` on {constructor.DeclaringType.FullName} as it " +
@@ -93,12 +96,12 @@ public class CallHandlers : IOpCodeHandlerCollection
             }
 
             var constructorId = new IlMethodId(constructor.FullName);
-            var constructorInfo = conversionCatalog.Find(constructorId);
-            var objType = conversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
-            var variable = new Variable(objType, $"__temp_{currentInstruction.Offset:x4}", false);
-            var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            var constructorInfo = context.ConversionCatalog.Find(constructorId);
+            var objType = context.ConversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
+            var variable = new Variable(objType, $"__temp_{context.CurrentInstruction.Offset:x4}", false);
+            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
 
-            var argumentsInCallingOrder = expressionStack.Pop(constructorInfo.Parameters.Count - 1)
+            var argumentsInCallingOrder = context.ExpressionStack.Pop(constructorInfo.Parameters.Count - 1)
                 .Reverse()
                 .ToList();
 
@@ -111,11 +114,25 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodCall = new MethodCallExpression(fnExpression, argumentsInCallingOrder, voidType);
             var methodCallStatement = new VoidExpressionStatementSet(methodCall);
 
-            expressionStack.Push(variableExpression);
+            context.ExpressionStack.Push(variableExpression);
 
             return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
         }
     }
+    
+    private class CallVirtHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
+            var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
+            if (targetMethodDefinition == null)
+            {
+                var message = $"No known definition for the method '{methodToCall}'";
+                throw new InvalidOperationException(message);
+            }
 
-    private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType);
+        }
+    }
 }

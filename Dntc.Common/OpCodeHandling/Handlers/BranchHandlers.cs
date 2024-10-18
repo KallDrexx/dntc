@@ -41,13 +41,9 @@ public class BranchHandlers : IOpCodeHandlerCollection
     
     private class SimpleBranchHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var target = (Instruction)currentInstruction.Operand;
+            var target = (Instruction)context.CurrentInstruction.Operand;
            
             // When you write a ternary statement in C#, the IL that gets generated ends up having 4 sections
             // to it:
@@ -71,7 +67,7 @@ public class BranchHandlers : IOpCodeHandlerCollection
             // we are skipping probably are trying to push a possible replacement expression on the stack as well. So
             // we need to instruct the transpiler to create a checkpoint of the current expression stack values, so
             // that the correct expression is utilized when it transpiles the operation in section 4.
-            var checkpointTarget = expressionStack.Count > 0 ? (int?)target.Offset : null;
+            var checkpointTarget = context.ExpressionStack.Count > 0 ? (int?)target.Offset : null;
             
             return new OpCodeHandlingResult(new GotoStatementSet(target.Offset), checkpointTarget);
         }
@@ -79,15 +75,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
     
     private class BranchOnBool(bool isTrueCheck) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
+            var items = context.ExpressionStack.Pop(1);
             var item = items[0];
-            var target = (Instruction)currentInstruction.Operand;
+            var target = (Instruction)context.CurrentInstruction.Operand;
             CBaseExpression condition = new DereferencedValueExpression(item);
             if (!isTrueCheck)
             {
@@ -100,17 +92,13 @@ public class BranchHandlers : IOpCodeHandlerCollection
     
     private class BranchComparison(string comparison) : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(2);
+            var items = context.ExpressionStack.Pop(2);
             var value2 = new DereferencedValueExpression(items[0]);
             var value1 = new DereferencedValueExpression(items[1]);
-            var target = (Instruction)currentInstruction.Operand;
-            var boolType = conversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
+            var target = (Instruction)context.CurrentInstruction.Operand;
+            var boolType = context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
             var condition = new TwoExpressionEvalExpression(value1, comparison, value2, boolType);
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
@@ -119,14 +107,10 @@ public class BranchHandlers : IOpCodeHandlerCollection
     
     private class SwitchHandler : IOpCodeHandler
     {
-        public OpCodeHandlingResult Handle(
-            Instruction currentInstruction, 
-            ExpressionStack expressionStack,
-            MethodConversionInfo currentMethod, 
-            ConversionCatalog conversionCatalog)
+        public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var items = expressionStack.Pop(1);
-            var targets = (Instruction[])currentInstruction.Operand;
+            var items = context.ExpressionStack.Pop(1);
+            var targets = (Instruction[])context.CurrentInstruction.Operand;
             var offsets = targets.Select(x => x.Offset).ToArray();
 
             var statement = new JumpTableStatementSet(items[0], offsets);

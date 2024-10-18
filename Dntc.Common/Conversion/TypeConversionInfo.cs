@@ -9,8 +9,6 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class TypeConversionInfo
 {
-    public record Field(TypeConversionInfo Type, string Name);
-    
     /// <summary>
     /// The name this type has when referenced in .net
     /// </summary>

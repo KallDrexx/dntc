@@ -56,6 +56,11 @@ int main(void) {
     assert(ternaryTest1 == 4);
     assert(ternaryTest2 == 6);
 
+    int32_t genericStaticTest = ScratchpadCSharp_GenericTests_GetStaticNumber(5);
+    int32_t genericAddedTest = ScratchpadCSharp_GenericTests_GetAddedNumber(8, 10);
+    assert(genericStaticTest == 5);
+    assert(genericAddedTest == 18);
+
     printf("Tests passed!\n");
     return 0;
 }

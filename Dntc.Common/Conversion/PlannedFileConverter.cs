@@ -128,11 +128,13 @@ public class PlannedFileConverter
             OpCodeHandlingResult result;
             try
             {
-                result = handler.Handle(
+                result = handler.Handle(new HandleContext(
                     instruction,
                     expressionStack,
                     conversionInfo,
-                    _conversionCatalog);
+                    dotNetDefinedMethod,
+                    _conversionCatalog,
+                    _definitionCatalog));
             }
             catch (Exception exception)
             {

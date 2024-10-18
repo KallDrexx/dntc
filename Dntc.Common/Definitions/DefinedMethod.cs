@@ -1,4 +1,6 @@
-﻿namespace Dntc.Common.Definitions;
+﻿using Mono.Cecil;
+
+namespace Dntc.Common.Definitions;
 
 public abstract class DefinedMethod
 {
@@ -11,4 +13,12 @@ public abstract class DefinedMethod
     public IlNamespace Namespace { get; protected set; }
     public IReadOnlyList<Parameter> Parameters { get; protected set; } = ArraySegment<Parameter>.Empty;
     public IReadOnlyList<Local> Locals { get; protected set; } = ArraySegment<Local>.Empty;
+    
+    public IReadOnlyList<IlTypeName> GetReferencedTypes => Locals.Select(x => x.Type)
+        .Concat(Parameters.Select(x => x.Type))
+        .Concat([ReturnType])
+        .Concat(GetReferencedTypesInternal())
+        .ToArray();
+
+    protected abstract IReadOnlyList<IlTypeName> GetReferencedTypesInternal();
 }

@@ -40,4 +40,6 @@ public abstract class CustomDefinedMethod : DefinedMethod
     [
         new FloatMinDefinedMethod(),
     ];
+
+    protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() => [];
 }
