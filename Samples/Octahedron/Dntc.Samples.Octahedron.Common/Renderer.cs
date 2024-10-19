@@ -2,18 +2,28 @@
 
 public static class Renderer
 {
-    public static void RenderOctahedron(ushort[] pixels, Camera camera, float secondsPassed)
+    public static void Render(ushort[] pixels, Camera camera, float secondsPassed)
     {
-        Render<OctahedronShape>(pixels, camera, secondsPassed);
+        var fullSeconds = (int)(secondsPassed / 1.5);
+        if (fullSeconds % 3 == 0)
+        {
+            PerformRender(pixels, camera, secondsPassed, new OctahedronShape());
+        }
+        else if (fullSeconds % 3 == 1)
+        {
+            PerformRender(pixels, camera, secondsPassed, new PyramidShape());
+        }
+        else
+        {
+            PerformRender(pixels, camera, secondsPassed, new CubeShape());
+        }
     }
     
-    private static void Render<TShape>(ushort[] pixels, Camera camera, float secondsPassed)
+    private static void PerformRender<TShape>(ushort[] pixels, Camera camera, float secondsPassed, TShape shape)
         where TShape : IShape, new()
     {
-        var shape = new TShape();
         var light = new Vector3(1, 0, 3);
         var rotationsDegreesPerSecond = new Vector3(0, 100, 120);
-        // var rotationsDegreesPerSecond = new Vector3(0, 0, 0);
 
         var rotation = new Vector3(
             rotationsDegreesPerSecond.X * secondsPassed,
