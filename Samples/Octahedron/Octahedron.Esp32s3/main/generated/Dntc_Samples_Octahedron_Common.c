@@ -621,11 +621,11 @@ Dntc_Samples_Octahedron_Common_Triangle Dntc_Samples_Octahedron_Common_PyramidSh
 
 IL_0028:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0037 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0037), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0037), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_004b = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_004b), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_004b), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_005f = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_005f), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_005f), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0064 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0064), __temp_0037, __temp_004b, __temp_005f);
 	__local_2 = __temp_0064;
@@ -633,11 +633,11 @@ IL_0028:
 
 IL_006f:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_007e = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_007e), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_007e), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0092 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0092), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0092), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00a6 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00a6), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00a6), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_00ab = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_00ab), __temp_007e, __temp_0092, __temp_00a6);
 	__local_2 = __temp_00ab;
@@ -645,11 +645,11 @@ IL_006f:
 
 IL_00b6:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00c5 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00c5), 0, 2, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00c5), 0, 1, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00d9 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00d9), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00d9), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00ed = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00ed), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00ed), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_00f2 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_00f2), __temp_00c5, __temp_00d9, __temp_00ed);
 	__local_2 = __temp_00f2;
@@ -657,11 +657,11 @@ IL_00b6:
 
 IL_00fd:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_010c = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_010c), 0, 2, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_010c), 0, 1, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0120 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0120), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0120), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0134 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0134), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0134), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0139 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0139), __temp_010c, __temp_0120, __temp_0134);
 	__local_2 = __temp_0139;
@@ -669,11 +669,11 @@ IL_00fd:
 
 IL_0144:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0153 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0153), 0, 2, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0153), 0, 1, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0167 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0167), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0167), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_017b = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_017b), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_017b), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0180 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0180), __temp_0153, __temp_0167, __temp_017b);
 	__local_2 = __temp_0180;
@@ -681,11 +681,11 @@ IL_0144:
 
 IL_0188:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0197 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0197), 0, 2, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0197), 0, 1, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01ab = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01ab), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01ab), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01bf = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01bf), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01bf), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_01c4 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_01c4), __temp_0197, __temp_01ab, __temp_01bf);
 	__local_2 = __temp_01c4;
@@ -806,11 +806,11 @@ Dntc_Samples_Octahedron_Common_Triangle Dntc_Samples_Octahedron_Common_CubeShape
 
 IL_0040:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_004f = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_004f), 1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_004f), 0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0063 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0063), -1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0063), -0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0077 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0077), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0077), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_007c = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_007c), __temp_004f, __temp_0063, __temp_0077);
 	__local_2 = __temp_007c;
@@ -818,11 +818,11 @@ IL_0040:
 
 IL_0087:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0096 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0096), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0096), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00aa = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00aa), -1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00aa), -0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00be = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00be), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00be), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_00c3 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_00c3), __temp_0096, __temp_00aa, __temp_00be);
 	__local_2 = __temp_00c3;
@@ -830,11 +830,11 @@ IL_0087:
 
 IL_00ce:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00dd = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00dd), 1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00dd), 0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00f1 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00f1), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00f1), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0105 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0105), 1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0105), 0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_010a = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_010a), __temp_00dd, __temp_00f1, __temp_0105);
 	__local_2 = __temp_010a;
@@ -842,11 +842,11 @@ IL_00ce:
 
 IL_0115:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0124 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0124), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0124), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0138 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0138), 1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0138), 0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_014c = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_014c), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_014c), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0151 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0151), __temp_0124, __temp_0138, __temp_014c);
 	__local_2 = __temp_0151;
@@ -854,11 +854,11 @@ IL_0115:
 
 IL_015c:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_016b = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_016b), 1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_016b), 0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_017f = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_017f), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_017f), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0193 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0193), -1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0193), -0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0198 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0198), __temp_016b, __temp_017f, __temp_0193);
 	__local_2 = __temp_0198;
@@ -866,11 +866,11 @@ IL_015c:
 
 IL_01a3:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01b2 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01b2), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01b2), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01c6 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01c6), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01c6), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01da = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01da), -1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01da), -0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_01df = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_01df), __temp_01b2, __temp_01c6, __temp_01da);
 	__local_2 = __temp_01df;
@@ -878,11 +878,11 @@ IL_01a3:
 
 IL_01ea:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01f9 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01f9), 1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01f9), 0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_020d = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_020d), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_020d), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0221 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0221), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0221), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0226 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0226), __temp_01f9, __temp_020d, __temp_0221);
 	__local_2 = __temp_0226;
@@ -890,11 +890,11 @@ IL_01ea:
 
 IL_0231:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0240 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0240), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0240), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0254 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0254), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0254), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0268 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0268), 1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0268), 0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_026d = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_026d), __temp_0240, __temp_0254, __temp_0268);
 	__local_2 = __temp_026d;
@@ -902,11 +902,11 @@ IL_0231:
 
 IL_0278:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0287 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0287), -1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0287), -0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_029b = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_029b), -1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_029b), -0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_02af = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02af), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02af), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_02b4 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_02b4), __temp_0287, __temp_029b, __temp_02af);
 	__local_2 = __temp_02b4;
@@ -914,11 +914,11 @@ IL_0278:
 
 IL_02bf:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_02ce = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02ce), -1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02ce), -0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_02e2 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02e2), -1, -1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02e2), -0.5, -0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_02f6 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02f6), -1, -1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_02f6), -0.5, -0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_02fb = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_02fb), __temp_02ce, __temp_02e2, __temp_02f6);
 	__local_2 = __temp_02fb;
@@ -926,11 +926,11 @@ IL_02bf:
 
 IL_0306:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0315 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0315), -1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0315), -0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0329 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0329), 1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0329), 0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_033d = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_033d), 1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_033d), 0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0342 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0342), __temp_0315, __temp_0329, __temp_033d);
 	__local_2 = __temp_0342;
@@ -938,11 +938,11 @@ IL_0306:
 
 IL_034a:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0359 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0359), 1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0359), 0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_036d = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_036d), -1, 1, -1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_036d), -0.5, 0.5, -0.5);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0381 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0381), -1, 1, 1);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0381), -0.5, 0.5, 0.5);
 	Dntc_Samples_Octahedron_Common_Triangle __temp_0386 = {0};
 	Dntc_Samples_Octahedron_Common_Triangle__ctor((&__temp_0386), __temp_0359, __temp_036d, __temp_0381);
 	__local_2 = __temp_0386;

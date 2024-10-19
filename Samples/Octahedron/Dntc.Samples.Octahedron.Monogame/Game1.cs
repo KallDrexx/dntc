@@ -6,8 +6,8 @@ namespace Dntc.Samples.Octahedron.Monogame;
 
 public class Game1 : Game
 {
-    private const int Width = 800;
-    private const int Height = 480;
+    private const int Width = 480;
+    private const int Height = 272;
     
     private readonly GraphicsDeviceManager _graphics;
     private readonly ushort[] _rawBuffer = new ushort[Width * Height];
@@ -28,7 +28,7 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _texture = new Texture2D(_graphics.GraphicsDevice, 800, 480);
+        _texture = new Texture2D(_graphics.GraphicsDevice, Width, Height);
     }
 
     protected override void Update(GameTime gameTime)

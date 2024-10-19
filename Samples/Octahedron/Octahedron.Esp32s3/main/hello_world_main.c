@@ -18,8 +18,8 @@
 #include "esp_flash.h"
 #include "generated/Dntc_Samples_Octahedron_Common.h"
 
-#define WIDTH (800)
-#define HEIGHT (480)
+#define WIDTH (480)
+#define HEIGHT (272)
 
 uint16_t *frameBuffer;
 
@@ -32,16 +32,15 @@ void init_lcd(esp_lcd_panel_handle_t *handle) {
             .clk_src = LCD_CLK_SRC_DEFAULT,
             .disp_gpio_num = -1,
             .pclk_gpio_num = 42,
-            .vsync_gpio_num = 40,
+            .vsync_gpio_num = 41,
             .hsync_gpio_num = 39,
-            .de_gpio_num = 41,
+            .de_gpio_num = 40,
             .data_gpio_nums = {
-                    15, 7, 6, 5, 4, 9, 46,
-                    3, 8, 16, 1, 14, 21,
-                    47, 48, 45
+					8, 3, 46, 9, 1, 5, 6, 7,
+					15, 16, 4, 45, 48, 47, 21, 14
             },
             .timings = {
-                    .pclk_hz = (18 * 1000 * 1000),
+                    .pclk_hz = (12 * 1000 * 1000),
                     .h_res = WIDTH,
                     .v_res = HEIGHT,
                     // The following parameters should refer to LCD spec
