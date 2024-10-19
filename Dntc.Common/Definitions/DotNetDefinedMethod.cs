@@ -89,6 +89,17 @@ public class DotNetDefinedMethod : DefinedMethod
                 return x;
             })
             .ToArray();
+
+        Locals = Locals
+            .Select(x =>
+            {
+                if (genericParameters.TryGetValue(x.Type.Value, out typeIndex))
+                {
+                    return x with { Type = genericArgumentTypes[typeIndex] };
+                }
+
+                return x;
+            }).ToArray();
     }
 
     public DotNetDefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)

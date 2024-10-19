@@ -38,7 +38,7 @@ public class Game1 : Game
             _rawBuffer[x] = 0;
         }
         
-        Renderer.RenderOctahedron(_rawBuffer, _camera, (float) gameTime.TotalGameTime.TotalSeconds);
+        Renderer.Render(_rawBuffer, _camera, (float) gameTime.TotalGameTime.TotalSeconds);
         
         base.Update(gameTime);
     }
