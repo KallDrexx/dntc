@@ -4,8 +4,8 @@
 #include <SDL2/SDL.h>
 #include "generated/Dntc_Samples_Octahedron_Common.h"
 
-#define WIDTH (800)
-#define HEIGHT (480)
+#define WIDTH (480)
+#define HEIGHT (272)
 #define FRAME_TARGET_TIME (1000.0/30.0)
 
 SDL_Window *window;
