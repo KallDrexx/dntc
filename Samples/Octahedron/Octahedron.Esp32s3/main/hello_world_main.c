@@ -27,7 +27,7 @@ void init_lcd(esp_lcd_panel_handle_t *handle) {
     esp_lcd_rgb_panel_config_t panel_config = {
             .data_width = 16,
             .psram_trans_align = 64,
-            .num_fbs = 1,
+            .num_fbs = 2,
             .bounce_buffer_size_px = 8 * WIDTH,
             .clk_src = LCD_CLK_SRC_DEFAULT,
             .disp_gpio_num = -1,
@@ -93,7 +93,7 @@ void app_main(void)
         }
 
         SystemUInt16Array array = {.length = WIDTH * HEIGHT, .items = frameBuffer};
-        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, secondsSinceStart);
+        Dntc_Samples_Octahedron_Common_Renderer_Render(array, camera, secondsSinceStart);
 
         ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(panel, 0, 0, WIDTH, HEIGHT, frameBuffer));
     }
