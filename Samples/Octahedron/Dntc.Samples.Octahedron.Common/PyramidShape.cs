@@ -24,28 +24,28 @@ public struct PyramidShape : IShape
             // Front
             case 2:
                 return new Triangle(
-                    new Vector3(0, 1, 0),
+                    new Vector3(0, 2, 0),
                     new Vector3(-1, -1, 1),
                     new Vector3(1, -1, 1));
             
             // Right
             case 3:
                 return new Triangle(
-                    new Vector3(0, 1, 0),
+                    new Vector3(0, 2, 0),
                     new Vector3(1, -1, 1),
                     new Vector3(1, -1, -1));
             
             // Back
             case 4:
                 return new Triangle(
-                    new Vector3(0, 1, 0),
+                    new Vector3(0, 2, 0),
                     new Vector3(1, -1, -1),
                     new Vector3(-1, -1, -1));
             
             // Left
             case 5:
                 return new Triangle(
-                    new Vector3(0, 1, 0),
+                    new Vector3(0, 2, 0),
                     new Vector3(-1, -1, -1),
                     new Vector3(-1, -1, 1));
         }

@@ -101,6 +101,15 @@ public class MethodConversionInfo
 
         // TOOD: Need to figure out a good way to disambiguate overloaded functions
         var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
+        if (method.GenericArgumentTypes.Any())
+        {
+            var argTypeNames = method.GenericArgumentTypes
+                .Select(x => x.Value.Value)
+                .Aggregate((x, y) => $"{x}_{y}");
+
+            functionName += $"_{argTypeNames}";
+        }
+        
         NameInC = new CFunctionName(ConvertNameToC(functionName));
     }
 

@@ -38,6 +38,12 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteLineAsync($"\t{fieldType.NameInC} {Utils.MakeValidCName(field.Name)};");
         }
 
+        if (dotNetDefinedType.Fields.Count == 0)
+        {
+            // C doesn't allow empty structs
+            await writer.WriteLineAsync("\tchar __dummy;");
+        }
+
         await writer.WriteLineAsync($"}} {TypeConversion.NameInC};");
     }
 

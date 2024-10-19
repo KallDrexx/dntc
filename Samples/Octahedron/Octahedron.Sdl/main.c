@@ -106,7 +106,7 @@ int main() {
             pixelBuffer[x] = 0;
         }
 
-        Dntc_Samples_Octahedron_Common_OctahedronRenderer_Render(array, camera, totalTime);
+        Dntc_Samples_Octahedron_Common_Renderer_Render(array, camera, totalTime);
 
         renderFrame();
     }

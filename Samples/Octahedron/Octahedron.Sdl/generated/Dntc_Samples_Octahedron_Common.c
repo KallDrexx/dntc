@@ -525,7 +525,7 @@ int32_t Dntc_Samples_Octahedron_Common_OctahedronShape_get_TriangleCount(Dntc_Sa
 	return 8;
 }
 
-void Dntc_Samples_Octahedron_Common_Renderer_PerformRender(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_OctahedronShape shape) {
+void Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_OctahedronShape(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_OctahedronShape shape) {
 	Dntc_Samples_Octahedron_Common_Vector3 __local_0 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_1 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_2 = {0};
@@ -645,7 +645,7 @@ IL_006f:
 
 IL_00b6:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00c5 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00c5), 0, 1, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00c5), 0, 2, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00d9 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_00d9), -1, -1, 1);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_00ed = {0};
@@ -657,7 +657,7 @@ IL_00b6:
 
 IL_00fd:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_010c = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_010c), 0, 1, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_010c), 0, 2, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0120 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0120), 1, -1, 1);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0134 = {0};
@@ -669,7 +669,7 @@ IL_00fd:
 
 IL_0144:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0153 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0153), 0, 1, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0153), 0, 2, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0167 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0167), 1, -1, -1);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_017b = {0};
@@ -681,7 +681,7 @@ IL_0144:
 
 IL_0188:
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_0197 = {0};
-	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0197), 0, 1, 0);
+	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_0197), 0, 2, 0);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01ab = {0};
 	Dntc_Samples_Octahedron_Common_Vector3__ctor((&__temp_01ab), -1, -1, -1);
 	Dntc_Samples_Octahedron_Common_Vector3 __temp_01bf = {0};
@@ -704,7 +704,7 @@ int32_t Dntc_Samples_Octahedron_Common_PyramidShape_get_TriangleCount(Dntc_Sampl
 	return 6;
 }
 
-void Dntc_Samples_Octahedron_Common_Renderer_PerformRender(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_PyramidShape shape) {
+void Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_PyramidShape(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_PyramidShape shape) {
 	Dntc_Samples_Octahedron_Common_Vector3 __local_0 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_1 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_2 = {0};
@@ -961,7 +961,7 @@ int32_t Dntc_Samples_Octahedron_Common_CubeShape_get_TriangleCount(Dntc_Samples_
 	return 12;
 }
 
-void Dntc_Samples_Octahedron_Common_Renderer_PerformRender(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_CubeShape shape) {
+void Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_CubeShape(SystemUInt16Array pixels, Dntc_Samples_Octahedron_Common_Camera camera, float secondsPassed, Dntc_Samples_Octahedron_Common_CubeShape shape) {
 	Dntc_Samples_Octahedron_Common_Vector3 __local_0 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_1 = {0};
 	Dntc_Samples_Octahedron_Common_Vector3 __local_2 = {0};
@@ -1050,7 +1050,7 @@ void Dntc_Samples_Octahedron_Common_Renderer_Render(SystemUInt16Array pixels, Dn
 		goto IL_002f;
 	}
 	(*(&__local_2)) = ((Dntc_Samples_Octahedron_Common_OctahedronShape){0});
-	Dntc_Samples_Octahedron_Common_Renderer_PerformRender(pixels, camera, secondsPassed, __local_2);
+	Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_OctahedronShape(pixels, camera, secondsPassed, __local_2);
 	goto IL_0065;
 
 IL_002f:
@@ -1059,12 +1059,12 @@ IL_002f:
 		goto IL_0050;
 	}
 	(*(&__local_4)) = ((Dntc_Samples_Octahedron_Common_PyramidShape){0});
-	Dntc_Samples_Octahedron_Common_Renderer_PerformRender(pixels, camera, secondsPassed, __local_4);
+	Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_PyramidShape(pixels, camera, secondsPassed, __local_4);
 	goto IL_0065;
 
 IL_0050:
 	(*(&__local_5)) = ((Dntc_Samples_Octahedron_Common_CubeShape){0});
-	Dntc_Samples_Octahedron_Common_Renderer_PerformRender(pixels, camera, secondsPassed, __local_5);
+	Dntc_Samples_Octahedron_Common_Renderer_PerformRender_Dntc_Samples_Octahedron_Common_CubeShape(pixels, camera, secondsPassed, __local_5);
 
 IL_0065:
 	return;

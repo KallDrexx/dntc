@@ -7,7 +7,7 @@
   ],
   "MethodsToTranspile": [
     "Dntc.Samples.Octahedron.Common.Camera Dntc.Samples.Octahedron.Common.Camera::Default()",
-    "System.Void Dntc.Samples.Octahedron.Common.OctahedronRenderer::Render(System.UInt16[],Dntc.Samples.Octahedron.Common.Camera,System.Single)"
+    "System.Void Dntc.Samples.Octahedron.Common.Renderer::Render(System.UInt16[],Dntc.Samples.Octahedron.Common.Camera,System.Single)"
   ],
   "OutputDirectory": "./Octahedron.Esp32s3/main/generated"
 }
