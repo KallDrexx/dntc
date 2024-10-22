@@ -1,5 +1,7 @@
-﻿using Dntc.Common.Definitions;
+﻿using Dntc.Attributes;
+using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Statements;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion;
 
@@ -25,7 +27,7 @@ public class MethodConversionInfo
     /// <summary>
     /// The header the function is declared in.
     /// </summary>
-    public HeaderName Header { get; private set; }
+    public HeaderName? Header { get; private set; }
    
     /// <summary>
     /// The file that the function is implemented in. If null, then it is
@@ -93,6 +95,16 @@ public class MethodConversionInfo
 
     private void SetupDotNetMethod(DotNetDefinedMethod method)
     {
+        var nativeTranspileAttribute = method.Definition
+            .CustomAttributes
+            .FirstOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallOnTranspileAttribute).FullName);
+
+        if (nativeTranspileAttribute != null)
+        {
+            SetupNativeOnTranspiledMethod(method, nativeTranspileAttribute);
+            return;
+        }
+        
         IsPredeclared = false;
 
         var fileNameBase = ConvertNameToC(method.Namespace.Value);
@@ -111,6 +123,40 @@ public class MethodConversionInfo
         }
         
         NameInC = new CFunctionName(ConvertNameToC(functionName));
+    }
+
+    private void SetupNativeOnTranspiledMethod(DotNetDefinedMethod method, CustomAttribute nativeTranspileAttribute)
+    {
+        var arguments = nativeTranspileAttribute.ConstructorArguments.ToArray();
+        if (arguments.Length != 2)
+        {
+            var message = $"Method '{method.Id}' is marked as a native call on transpile, but the attribute had " +
+                          $"{arguments.Length} arguments when 2 were expected";
+            throw new InvalidOperationException(message);
+        }
+
+        if (arguments[0].Value?.GetType() != typeof(string))
+        {
+            var message = $"Method '{method.Id}' is marked as a native call on transpile, but the first attribute " +
+                          $"had a value type of '{arguments[0].Value?.GetType().FullName}', but only non-null " +
+                          $"strings are allowed.";
+
+            throw new InvalidOperationException(message);
+
+        }
+
+        if (arguments[1].Value != null && arguments[1].Value?.GetType() != typeof(string))
+        {
+            var message = $"Method '{method.Id}' is marked as a native call on transpile, but the second " +
+                          $"attribute had a value type of '{arguments[0].Value?.GetType().FullName}', but " +
+                          $"only null or strings are allowed.";
+
+            throw new InvalidOperationException(message);
+        }
+
+        IsPredeclared = true;
+        NameInC = new CFunctionName(arguments[0].Value.ToString()!);
+        Header = arguments[1].Value != null ? new HeaderName(arguments[1].Value.ToString()!) : null;
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)

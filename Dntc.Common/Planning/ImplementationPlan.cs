@@ -46,7 +46,11 @@ public class ImplementationPlan
                 
                 case DependencyGraph.MethodNode methodNode:
                     var childMethod = _conversionCatalog.Find(methodNode.MethodId);
-                    headerFile.AddReferencedHeader(childMethod.Header);
+                    if (childMethod.Header != null)
+                    {
+                        headerFile.AddReferencedHeader(childMethod.Header.Value);
+                    }
+
                     break;
                 
                 default:
@@ -71,7 +75,10 @@ public class ImplementationPlan
                 
                 case DependencyGraph.MethodNode methodNode:
                     var childMethod = _conversionCatalog.Find(methodNode.MethodId);
-                    sourceFile.AddReferencedHeader(childMethod.Header);
+                    if (childMethod.Header != null)
+                    {
+                        sourceFile.AddReferencedHeader(childMethod.Header.Value);
+                    }
                     break;
                 
                 default:
@@ -136,11 +143,11 @@ public class ImplementationPlan
             // We aren't declaring this method, so nothing to do here
             return;
         }
-        
-        if (!_headers.TryGetValue(method.Header, out var header))
+       
+        if (!_headers.TryGetValue(method.Header!.Value, out var header))
         {
-            header = new PlannedHeaderFile(method.Header);
-            _headers[method.Header] = header;
+            header = new PlannedHeaderFile(method.Header.Value);
+            _headers[method.Header.Value] = header;
         }
         
         AddReferencedHeaders(node, header);

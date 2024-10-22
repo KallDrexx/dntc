@@ -22,7 +22,11 @@ public class PlannedSourceFile
         if (!_implementedMethods.Contains(method))
         {
             _implementedMethods.Add(method);
-            AddReferencedHeader(method.Header);
+
+            if (method.Header != null)
+            {
+                AddReferencedHeader(method.Header.Value);
+            }
         }
     }
 

@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "../native_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
@@ -68,5 +69,6 @@ void ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor(ScratchpadCSharp_Ge
 int32_t ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this);
 int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests__StaticNumberGetter(ScratchpadCSharp_GenericTests_StaticNumberGetter getter);
 int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x);
+uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod();
 
 #endif // SCRATCHPADCSHARP_H_H
