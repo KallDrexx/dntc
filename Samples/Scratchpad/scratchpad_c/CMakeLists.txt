@@ -4,4 +4,6 @@ project(scratchpad_c C)
 set(CMAKE_C_STANDARD 11)
 
 AUX_SOURCE_DIRECTORY(generated GeneratedSources)
-add_executable(scratchpad_c main.c ${GeneratedSources})
+add_executable(scratchpad_c main.c ${GeneratedSources}
+        native_test.c
+        native_test.h)

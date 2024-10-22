@@ -61,6 +61,9 @@ int main(void) {
     assert(genericStaticTest == 5);
     assert(genericAddedTest == 18);
 
+    uint32_t nativeMethodTest = ScratchpadCSharp_AttributeTests_GetNumberMethod();
+    assert(nativeMethodTest == 42);
+
     printf("Tests passed!\n");
     return 0;
 }
