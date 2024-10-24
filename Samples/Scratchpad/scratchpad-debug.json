@@ -30,7 +30,8 @@
     "System.Int32 ScratchpadCSharp.SimpleFunctions::TernaryTest(System.Int32,System.Int32)",
     "System.Int32 ScratchpadCSharp.GenericTests::GetAddedNumber(System.Int32,System.Int32)",
     "System.Int32 ScratchpadCSharp.GenericTests::GetStaticNumber(System.Int32)",
-    "System.UInt32 ScratchpadCSharp.AttributeTests::GetNumberMethod()"
+    "System.UInt32 ScratchpadCSharp.AttributeTests::GetNumberMethod()",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::IncrementStaticInt()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

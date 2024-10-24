@@ -8,17 +8,20 @@ public class HeaderFile
     private readonly IReadOnlyList<IncludeClause> IncludeClauses;
     private readonly IReadOnlyList<TypeDeclaration> Types;
     private readonly IReadOnlyList<MethodDeclaration> Methods;
+    private readonly IReadOnlyList<GlobalVariableDeclaration> Globals;
     
     public HeaderFile(
         HeaderGuard guard, 
         IReadOnlyList<IncludeClause> includeClauses, 
         IReadOnlyList<TypeDeclaration> types, 
-        IReadOnlyList<MethodDeclaration> methods)
+        IReadOnlyList<MethodDeclaration> methods, 
+        IReadOnlyList<GlobalVariableDeclaration> globals)
     {
         Guard = guard;
         IncludeClauses = includeClauses;
         Types = types;
         Methods = methods;
+        Globals = globals;
     }
 
     public async Task WriteAsync(StreamWriter writer)
@@ -32,6 +35,12 @@ public class HeaderFile
         foreach (var include in orderedIncludes)
         {
             await include.WriteAsync(writer);
+        }
+        
+        await writer.WriteLineAsync();
+        foreach (var global in Globals)
+        {
+            await global.WriteAsync(writer);
         }
 
         await writer.WriteLineAsync();

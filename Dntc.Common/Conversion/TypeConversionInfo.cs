@@ -27,6 +27,11 @@ public class TypeConversionInfo
     public HeaderName? Header { get; private set; }
    
     /// <summary>
+    /// The file that any static fields/globals are implemented in. Null 
+    /// </summary>
+    public CSourceFileName? SourceFileName { get; private set; }
+   
+    /// <summary>
     /// What name this type will have in C
     /// </summary>
     public CTypeName NameInC { get; private set; }
@@ -64,24 +69,22 @@ public class TypeConversionInfo
         }
     }
 
-    private static string ConvertNameToC(string name)
-    {
-        return name.Replace(".", "_")
-            .Replace("/", "_"); // Nested types have a slash in them
-    }
-
     private void SetupDotNetType(DotNetDefinedType type)
     {
         IsPredeclared = false;
-        Header = new HeaderName(ConvertNameToC(type.Namespace.Value) + ".h");
-        NameInC = new CTypeName(ConvertNameToC(type.IlName.Value));
+        Header = Utils.GetHeaderName(type.Namespace);
+        NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
+
+        SourceFileName = type.Fields.Any(x => x.isStatic)
+            ? Utils.GetSourceFileName(type.Namespace)
+            : null;
     }
 
     private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)
     {
         IsPredeclared = false;
         Header = new HeaderName("fn_pointer_types.h"); // Have centralized fn pointer declarations
-
+        
         // Using shortnames instead of full names risks collisions, but I think it's unlikely,
         // and worth doing until it becomes a problem, as they will be extremely bloated. 
         // To not have bloated names we'd have to maintain a count somewhere, but that also
@@ -89,11 +92,11 @@ public class TypeConversionInfo
         var cName = new StringBuilder("FnPtr");
         foreach (var param in functionPointer.Definition.Parameters)
         {
-            var paramName = ConvertNameToC(param.ParameterType.Name);
+            var paramName = Utils.MakeValidCName(param.ParameterType.Name);
             cName.Append($"_{paramName}");
         }
 
-        var returnName = ConvertNameToC(functionPointer.Definition.ReturnType.Name);
+        var returnName = Utils.MakeValidCName(functionPointer.Definition.ReturnType.Name);
         cName.Append($"_Returns_{returnName}");
 
         NameInC = new CTypeName(cName.ToString());
@@ -103,6 +106,7 @@ public class TypeConversionInfo
     {
         IsPredeclared = true;
         Header = type.HeaderFile;
+        SourceFileName = null;
         NameInC = type.NativeName;
     }
 
@@ -110,6 +114,7 @@ public class TypeConversionInfo
     {
         IsPredeclared = false;
         Header = type.HeaderName;
+        SourceFileName = null;
         NameInC = type.NativeName;
         ReferencedHeaders = type.ReferencedHeaders;
     }

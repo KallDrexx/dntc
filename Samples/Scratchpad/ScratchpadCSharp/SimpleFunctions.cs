@@ -217,4 +217,12 @@ public static class SimpleFunctions
         
         return diff + 3;
     }
+
+    private static int SomeStaticInt;
+
+    public static int IncrementStaticInt()
+    {
+        SomeStaticInt++;
+        return SomeStaticInt;
+    }
 }
