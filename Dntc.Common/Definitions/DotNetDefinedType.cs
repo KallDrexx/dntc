@@ -30,5 +30,7 @@ public class DotNetDefinedType : DefinedType
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))
             .ToArray();
+        
+        
     }
 }
