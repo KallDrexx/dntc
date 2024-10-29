@@ -1,4 +1,4 @@
-﻿namespace Dntc.Common.MethodAnalysis;
+﻿namespace Dntc.Common.OpCodeHandling;
 
 public record InvokedMethod(IlMethodId MethodId);
 

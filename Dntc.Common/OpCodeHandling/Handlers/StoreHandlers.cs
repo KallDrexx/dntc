@@ -72,6 +72,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(statement);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class StIndHandler : IOpCodeHandler
@@ -88,6 +93,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(statement);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class StObjHandler : IOpCodeHandler
@@ -103,6 +113,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var statement = new AssignmentStatementSet(left, right);
 
             return new OpCodeHandlingResult(statement);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -145,6 +160,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 : statement;
 
             return new OpCodeHandlingResult(result);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -191,6 +211,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 : statement;
 
             return new OpCodeHandlingResult(result);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }

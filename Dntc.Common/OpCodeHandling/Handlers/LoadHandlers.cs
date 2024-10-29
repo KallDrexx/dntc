@@ -83,6 +83,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
             context.ExpressionStack.Push(newExpression);
             return new OpCodeHandlingResult(null);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
 
     private class LdIndHandler : IOpCodeHandler
@@ -100,6 +105,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
             context.ExpressionStack.Push(dereferencedExpression);
 
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 
@@ -140,6 +150,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             context.ExpressionStack.Push(newExpression);
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 
@@ -219,6 +234,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(null);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
 
     private class LdLocHandler(int? index, bool getAddress) : IOpCodeHandler
@@ -258,6 +278,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
             
             return new OpCodeHandlingResult(null);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class LdObjHandler : IOpCodeHandler
@@ -271,6 +296,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
             context.ExpressionStack.Push(new DereferencedValueExpression(objectAddress));
             
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }

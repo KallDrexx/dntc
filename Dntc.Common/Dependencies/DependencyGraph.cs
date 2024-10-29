@@ -1,13 +1,11 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
-using Dntc.Common.MethodAnalysis;
+using Dntc.Common.OpCodeHandling;
 
 namespace Dntc.Common.Dependencies;
 
 public class DependencyGraph
 {
-    private readonly MethodAnalyzer _methodAnalyzer = new();
-    
     public abstract record Node
     {
         public List<Node> Children { get; } = new();
@@ -84,9 +82,24 @@ public class DependencyGraph
                               $"calls to concrete methods can be invoked";
                 throw new InvalidOperationException(message);
             }
+
+            var calledMethods = new List<InvokedMethod>();
+            foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
+            {
+                if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+                {
+                    var message = $"No handler for op code '{instruction.OpCode.Code}'";
+                    throw new InvalidOperationException(message);
+                }
+
+                var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
+                if (results.CalledMethod != null)
+                {
+                    calledMethods.Add(results.CalledMethod);
+                }
+            }
             
-            var analysisResults = _methodAnalyzer.Analyze(dotNetDefinedMethod);
-            foreach (var calledMethod in analysisResults.CalledMethods)
+            foreach (var calledMethod in calledMethods)
             {
                 Node methodNode;
                 if (calledMethod is GenericInvokedMethod generic)

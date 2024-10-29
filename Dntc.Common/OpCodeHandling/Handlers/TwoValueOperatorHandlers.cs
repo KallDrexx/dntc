@@ -49,5 +49,10 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(null);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
 }

@@ -71,6 +71,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
             
             return new OpCodeHandlingResult(new GotoStatementSet(target.Offset), checkpointTarget);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class BranchOnBool(bool isTrueCheck) : IOpCodeHandler
@@ -88,6 +93,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class BranchComparison(string comparison) : IOpCodeHandler
@@ -103,6 +113,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class SwitchHandler : IOpCodeHandler
@@ -115,6 +130,11 @@ public class BranchHandlers : IOpCodeHandlerCollection
 
             var statement = new JumpTableStatementSet(items[0], offsets);
             return new OpCodeHandlingResult(statement);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }

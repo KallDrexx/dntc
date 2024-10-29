@@ -34,6 +34,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
             var assignment = new AssignmentStatementSet(left, right);
             return new OpCodeHandlingResult(assignment);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class NopHandler : IOpCodeHandler
@@ -43,6 +48,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
         {
             // do nothing
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -57,6 +67,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(null);
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
     
     private class PopHandler : IOpCodeHandler
@@ -70,6 +85,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
             // result. So just make it its own statement
             var expression = new VoidExpressionStatementSet(items[0]);
             return new OpCodeHandlingResult(expression);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -90,6 +110,11 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 : null;
 
             return new OpCodeHandlingResult(new ReturnStatementSet(innerExpression));
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }
