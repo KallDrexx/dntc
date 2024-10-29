@@ -12,7 +12,11 @@ public record HandleContext(
     ConversionCatalog ConversionCatalog,
     DefinitionCatalog DefinitionCatalog);
 
+public record AnalyzeContext(Instruction CurrentInstruction, DotNetDefinedMethod CurrentMethod);
+
 public interface IOpCodeHandler
 {
     OpCodeHandlingResult Handle(HandleContext context);
+
+    OpCodeAnalysisResult Analyze(AnalyzeContext context);
 }

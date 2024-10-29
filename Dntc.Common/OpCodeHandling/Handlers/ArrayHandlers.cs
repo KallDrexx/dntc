@@ -1,6 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Syntax;
-using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil.Cil;
 
@@ -43,6 +41,11 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                     new DereferencedValueExpression(value))
             );
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
     }
 
     private class LdLenHandler : IOpCodeHandler
@@ -57,6 +60,11 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             context.ExpressionStack.Push(newItem);
 
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }

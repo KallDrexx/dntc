@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -18,6 +19,21 @@ public class CallHandlers : IOpCodeHandlerCollection
 
     private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
     private static bool ReturnsVoid(IlTypeName type) => type.Value == typeof(void).FullName;
+
+    private static InvokedMethod? GetCallTarget(Instruction instruction, DotNetDefinedMethod method)
+    {
+        return instruction.Operand switch
+        {
+            GenericInstanceMethod generic => 
+                new GenericInvokedMethod(
+                    new IlMethodId(generic.FullName),
+                    new IlMethodId(generic.ElementMethod.FullName),
+                    generic.GenericArguments.Select(x => new IlTypeName(x.FullName)).ToArray()),
+            
+            MethodReference reference => new InvokedMethod(new IlMethodId(reference.FullName)),
+            _ => null
+        };
+    }
     
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
@@ -56,6 +72,14 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodId = new IlMethodId(methodReference.FullName);
             return CallMethodReference(context, methodId, new IlTypeName(methodReference.ReturnType.FullName));
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult(
+                GetCallTarget(
+                    context.CurrentInstruction,
+                    context.CurrentMethod));
+        }
     }
     
     private class CallIHandler : IOpCodeHandler
@@ -80,6 +104,14 @@ public class CallHandlers : IOpCodeHandlerCollection
             
             context.ExpressionStack.Push(expression);
             return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            // Since it's calling a function pointer, we don't have a concrete
+            // call target
+
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -118,6 +150,14 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
         }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult(
+                GetCallTarget(
+                    context.CurrentInstruction,
+                    context.CurrentMethod));
+        }
     }
     
     private class CallVirtHandler : IOpCodeHandler
@@ -133,6 +173,15 @@ public class CallHandlers : IOpCodeHandlerCollection
             }
 
             return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult(
+                new InvokedMethod(
+                    VirtualCallConverter.Convert(
+                        context.CurrentInstruction, 
+                        context.CurrentMethod)));
         }
     }
 }
