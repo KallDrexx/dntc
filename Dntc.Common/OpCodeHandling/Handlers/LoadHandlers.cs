@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using Dntc.Common.Conversion;
-using Dntc.Common.Syntax;
+﻿using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -13,6 +11,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
     {
         { Code.Ldfld, new LdFldHandler(false) },
         { Code.Ldflda, new LdFldHandler(true) },
+        { Code.Ldsfld, new LdFldHandler(false) },
+        { Code.Ldsflda, new LdFldHandler(true) },
 
         { Code.Ldind_I, new LdIndHandler() },
         { Code.Ldind_I1, new LdIndHandler() },
@@ -68,12 +68,35 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
-            var items = context.ExpressionStack.Pop(1);
-            var objectExpression = items[0];
-            
-            CBaseExpression newExpression = new FieldAccessExpression(
-                objectExpression,
-                new Variable(fieldType, field.Name, field.FieldType.IsByReference));
+
+            CBaseExpression newExpression;
+            if (field.IsStatic)
+            {
+                var containedType = context.ConversionCatalog.Find(new IlTypeName(field.DeclaringType.FullName));
+                var definedType = context.DefinitionCatalog.Get(new IlTypeName(field.DeclaringType.FullName));
+                if (definedType == null)
+                {
+                    var message = $"No definition for type {field.DeclaringType.FullName}";
+                    throw new InvalidOperationException(message);
+                }
+
+                var staticFieldDefinition = definedType.Fields
+                    .Where(x => x.Name == field.Name)
+                    .Single(x => x.isStatic);
+
+                var staticFieldName = Utils.StaticFieldName(containedType, staticFieldDefinition);
+                var variable = new Variable(fieldType, staticFieldName, false);
+                newExpression = new VariableValueExpression(variable);
+            }
+            else
+            {
+                var items = context.ExpressionStack.Pop(1);
+                var objectExpression = items[0];
+
+                newExpression = new FieldAccessExpression(
+                    objectExpression,
+                    new Variable(fieldType, field.Name, field.FieldType.IsByReference));
+            }
 
             if (getAddress)
             {
@@ -86,7 +109,9 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            return new OpCodeAnalysisResult([declaringType]);
         }
     }
 

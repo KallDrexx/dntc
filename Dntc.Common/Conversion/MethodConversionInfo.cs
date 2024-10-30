@@ -87,12 +87,6 @@ public class MethodConversionInfo
         }
     }
 
-    private static string ConvertNameToC(string name)
-    {
-        return name.Replace(".", "_")
-            .Replace("/", "__"); // Instance methods have the type name with a slash in it
-    }
-
     private void SetupDotNetMethod(DotNetDefinedMethod method)
     {
         var nativeTranspileAttribute = method.Definition
@@ -107,9 +101,8 @@ public class MethodConversionInfo
         
         IsPredeclared = false;
 
-        var fileNameBase = ConvertNameToC(method.Namespace.Value);
-        Header = new HeaderName(fileNameBase + ".h");
-        SourceFileName = new CSourceFileName(fileNameBase + ".c");
+        Header = Utils.GetHeaderName(method.Namespace);
+        SourceFileName = Utils.GetSourceFileName(method.Namespace);
 
         // TOOD: Need to figure out a good way to disambiguate overloaded functions
         var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
@@ -122,7 +115,7 @@ public class MethodConversionInfo
             functionName += $"_{argTypeNames}";
         }
         
-        NameInC = new CFunctionName(ConvertNameToC(functionName));
+        NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
     }
 
     private void SetupNativeOnTranspiledMethod(DotNetDefinedMethod method, CustomAttribute nativeTranspileAttribute)

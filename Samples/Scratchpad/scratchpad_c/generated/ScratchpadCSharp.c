@@ -5,6 +5,8 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
 
+ int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
 }
@@ -53,15 +55,15 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_Struct
 	return __local_0;
 }
 
-float ScratchpadCSharp_SimpleFunctions__Vector3_Dot(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, ScratchpadCSharp_SimpleFunctions_Vector3 other) {
+float ScratchpadCSharp_SimpleFunctions_Vector3_Dot(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, ScratchpadCSharp_SimpleFunctions_Vector3 other) {
 	return ((((__this->X) * (other.X)) + ((__this->Y) * (other.Y))) + ((__this->Z) * (other.Z)));
 }
 
 float ScratchpadCSharp_SimpleFunctions_StructInstanceTest(ScratchpadCSharp_SimpleFunctions_Vector3 first, ScratchpadCSharp_SimpleFunctions_Vector3 second) {
-	return ScratchpadCSharp_SimpleFunctions__Vector3_Dot((&first), second);
+	return ScratchpadCSharp_SimpleFunctions_Vector3_Dot((&first), second);
 }
 
-ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions__Vector3_op_Addition(ScratchpadCSharp_SimpleFunctions_Vector3 first, ScratchpadCSharp_SimpleFunctions_Vector3 second) {
+ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_Vector3_op_Addition(ScratchpadCSharp_SimpleFunctions_Vector3 first, ScratchpadCSharp_SimpleFunctions_Vector3 second) {
 	ScratchpadCSharp_SimpleFunctions_Vector3 __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_SimpleFunctions_Vector3){0});
 	((&__local_0)->X) = ((first.X) + (second.X));
@@ -71,7 +73,7 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions__Vecto
 }
 
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_StructOpOverload(ScratchpadCSharp_SimpleFunctions_Vector3 first, ScratchpadCSharp_SimpleFunctions_Vector3 second) {
-	return ScratchpadCSharp_SimpleFunctions__Vector3_op_Addition(first, second);
+	return ScratchpadCSharp_SimpleFunctions_Vector3_op_Addition(first, second);
 }
 
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_StructTest(float x, float y, float z) {
@@ -143,7 +145,7 @@ IL_000d:
 	return;
 }
 
-void ScratchpadCSharp_SimpleFunctions__Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z) {
+void ScratchpadCSharp_SimpleFunctions_Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z) {
 	(__this->X) = x;
 	(__this->Y) = y;
 	(__this->Z) = z;
@@ -152,7 +154,7 @@ void ScratchpadCSharp_SimpleFunctions__Vector3__ctor(ScratchpadCSharp_SimpleFunc
 
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_ConstructorTest(float x, float y, float z) {
 	ScratchpadCSharp_SimpleFunctions_Vector3 __temp_0003 = {0};
-	ScratchpadCSharp_SimpleFunctions__Vector3__ctor((&__temp_0003), x, y, z);
+	ScratchpadCSharp_SimpleFunctions_Vector3__ctor((&__temp_0003), x, y, z);
 	return __temp_0003;
 }
 
@@ -203,46 +205,51 @@ IL_000c:
 	return (__checkpoint_for_il000c + 3);
 }
 
-void ScratchpadCSharp_GenericTests__AddNumberGetter__ctor(ScratchpadCSharp_GenericTests_AddNumberGetter *__this, int32_t first, int32_t second) {
+void ScratchpadCSharp_GenericTests_AddNumberGetter__ctor(ScratchpadCSharp_GenericTests_AddNumberGetter *__this, int32_t first, int32_t second) {
 	(__this->_first_P) = first;
 	(__this->_second_P) = second;
 	return;
 }
 
-int32_t ScratchpadCSharp_GenericTests__AddNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_AddNumberGetter *__this) {
+int32_t ScratchpadCSharp_GenericTests_AddNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_AddNumberGetter *__this) {
 	return ((__this->_first_P) + (__this->_second_P));
 }
 
-int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests__AddNumberGetter(ScratchpadCSharp_GenericTests_AddNumberGetter getter) {
-	return ScratchpadCSharp_GenericTests__AddNumberGetter_GetNumber((&getter));
+int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_AddNumberGetter(ScratchpadCSharp_GenericTests_AddNumberGetter getter) {
+	return ScratchpadCSharp_GenericTests_AddNumberGetter_GetNumber((&getter));
 }
 
 int32_t ScratchpadCSharp_GenericTests_GetAddedNumber(int32_t x, int32_t y) {
 	ScratchpadCSharp_GenericTests_AddNumberGetter __temp_0002 = {0};
-	ScratchpadCSharp_GenericTests__AddNumberGetter__ctor((&__temp_0002), x, y);
-	return ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests__AddNumberGetter(__temp_0002);
+	ScratchpadCSharp_GenericTests_AddNumberGetter__ctor((&__temp_0002), x, y);
+	return ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_AddNumberGetter(__temp_0002);
 }
 
-void ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this, int32_t number) {
+void ScratchpadCSharp_GenericTests_StaticNumberGetter__ctor(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this, int32_t number) {
 	(__this->_number_P) = number;
 	return;
 }
 
-int32_t ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this) {
+int32_t ScratchpadCSharp_GenericTests_StaticNumberGetter_GetNumber(ScratchpadCSharp_GenericTests_StaticNumberGetter *__this) {
 	return (__this->_number_P);
 }
 
-int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests__StaticNumberGetter(ScratchpadCSharp_GenericTests_StaticNumberGetter getter) {
-	return ScratchpadCSharp_GenericTests__StaticNumberGetter_GetNumber((&getter));
+int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_StaticNumberGetter(ScratchpadCSharp_GenericTests_StaticNumberGetter getter) {
+	return ScratchpadCSharp_GenericTests_StaticNumberGetter_GetNumber((&getter));
 }
 
 int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x) {
 	ScratchpadCSharp_GenericTests_StaticNumberGetter __temp_0001 = {0};
-	ScratchpadCSharp_GenericTests__StaticNumberGetter__ctor((&__temp_0001), x);
-	return ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests__StaticNumberGetter(__temp_0001);
+	ScratchpadCSharp_GenericTests_StaticNumberGetter__ctor((&__temp_0001), x);
+	return ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_StaticNumberGetter(__temp_0001);
 }
 
 uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod() {
 	return get_number();
+}
+
+int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt() {
+	ScratchpadCSharp_SimpleFunctions_SomeStaticInt = (ScratchpadCSharp_SimpleFunctions_SomeStaticInt + 1);
+	return ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 }
 

@@ -40,7 +40,15 @@ public class PlannedFileConverter
             .Select(x => new MethodDeclaration(x.ConversionInfo, x.Definition!, _conversionCatalog))
             .ToArray();
 
-        return new HeaderFile(guard, includes, typeDeclarations, methodDeclarations);
+        var globals = plannedHeaderFile.DeclaredTypes
+            .Select(x => _definitionCatalog.Get(x.IlName))
+            .Where(x => x != null)
+            .SelectMany(x => x!.Fields
+                .Where(y => y.isStatic)
+                .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, true)))
+            .ToArray();
+
+        return new HeaderFile(guard, includes, typeDeclarations, methodDeclarations, globals);
     }
 
     public SourceFile Convert(PlannedSourceFile plannedSourceFile)
@@ -59,7 +67,15 @@ public class PlannedFileConverter
             })
             .ToArray();
 
-        return new SourceFile(includes, methodBlocks);
+        var globals = plannedSourceFile.TypesWithGlobals
+            .Select(x => _definitionCatalog.Get(x.IlName))
+            .Where(x => x != null)
+            .SelectMany(x => x!.Fields
+                .Where(y => y.isStatic)
+                .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, false)))
+            .ToArray();
+
+        return new SourceFile(includes, methodBlocks, globals);
     }
 
     private IReadOnlyList<CStatementSet> GetMethodStatements(

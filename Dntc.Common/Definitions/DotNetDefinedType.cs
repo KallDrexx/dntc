@@ -24,11 +24,13 @@ public class DotNetDefinedType : DefinedType
         Namespace = new IlNamespace(rootDeclaringType.Namespace);
 
         Fields = definition.Fields
-            .Select(x => new Field(new IlTypeName(x.FieldType.FullName), x.Name))
+            .Select(x => new Field(new IlTypeName(x.FieldType.FullName), x.Name, x.IsStatic))
             .ToArray();
 
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))
             .ToArray();
+        
+        
     }
 }
