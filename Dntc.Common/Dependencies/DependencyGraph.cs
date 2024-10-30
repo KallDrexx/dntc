@@ -84,20 +84,8 @@ public class DependencyGraph
             }
 
             var calledMethods = new List<InvokedMethod>();
-            foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
-            {
-                if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
-                {
-                    var message = $"No handler for op code '{instruction.OpCode.Code}'";
-                    throw new InvalidOperationException(message);
-                }
-
-                var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
-                if (results.CalledMethod != null)
-                {
-                    calledMethods.Add(results.CalledMethod);
-                }
-            }
+            var referencedTypes = new HashSet<IlTypeName>();
+            AnalyzeMethod(dotNetDefinedMethod, calledMethods, referencedTypes);
             
             foreach (var calledMethod in calledMethods)
             {
@@ -113,12 +101,17 @@ public class DependencyGraph
 
                 node.Children.Add(methodNode);
             }
+
+            foreach (var type in referencedTypes)
+            {
+                var typeNode = CreateNode(definitionCatalog, type, path);
+                node.Children.Add(typeNode);
+            }
         }
         
         path.RemoveAt(path.Count - 1);
         return node;
     }
-
     private static Node CreateNode(DefinitionCatalog definitionCatalog, IlTypeName typeName, List<Node> path)
     {
         EnsureNotCircularReference(path, typeName);
@@ -146,6 +139,33 @@ public class DependencyGraph
         path.RemoveAt(path.Count - 1);
         return node;
     }
+
+    private static void AnalyzeMethod(
+        DotNetDefinedMethod dotNetDefinedMethod, 
+        List<InvokedMethod> calledMethods, 
+        HashSet<IlTypeName> referencedTypes)
+    {
+        foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
+        {
+            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+            {
+                var message = $"No handler for op code '{instruction.OpCode.Code}'";
+                throw new InvalidOperationException(message);
+            }
+
+            var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
+            if (results.CalledMethod != null)
+            {
+                calledMethods.Add(results.CalledMethod);
+            }
+
+            foreach (var referencedType in results.ReferencedTypes)
+            {
+                referencedTypes.Add(referencedType);
+            }
+        }
+    }
+
 
     private static void EnsureNotCircularReference(List<Node> path, IlMethodId id)
     {

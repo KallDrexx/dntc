@@ -6,11 +6,13 @@ public class PlannedSourceFile
 {
     private readonly List<MethodConversionInfo> _implementedMethods = [];
     private readonly List<HeaderName> _referencedHeaders = [];
+    private readonly List<TypeConversionInfo> _typesWithGlobals = [];
     
     public CSourceFileName Name { get; }
 
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
+    public IReadOnlyList<TypeConversionInfo> TypesWithGlobals => _typesWithGlobals;
 
     public PlannedSourceFile(CSourceFileName name)
     {
@@ -35,6 +37,14 @@ public class PlannedSourceFile
         if (!_referencedHeaders.Contains(headerName))
         {
             _referencedHeaders.Add(headerName);
+        }
+    }
+
+    public void AddTypeWithStaticField(TypeConversionInfo type)
+    {
+        if (!_typesWithGlobals.Contains(type))
+        {
+            _typesWithGlobals.Add(type);
         }
     }
 }

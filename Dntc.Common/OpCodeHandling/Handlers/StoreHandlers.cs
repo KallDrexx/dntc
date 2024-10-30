@@ -12,6 +12,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
         { Code.Stfld, new StFldHandler() },
+        { Code.Stsfld, new StFldHandler() },
         { Code.Stobj, new StObjHandler() },
         { Code.Starg, new StArgHandler() },
         { Code.Starg_S, new StArgHandler() },
@@ -62,20 +63,53 @@ public class StoreHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
-            var items = context.ExpressionStack.Pop(2);
-            var value = items[0];
-            var obj = items[1];
 
-            var left = new FieldAccessExpression(obj, new Variable(value.ResultingType, field.Name, field.FieldType.IsPointer));
-            var right = new DereferencedValueExpression(value);
-            var statement = new AssignmentStatementSet(left, right);
+            AssignmentStatementSet statement;
+            if (field.IsStatic)
+            {
+                var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+                var items = context.ExpressionStack.Pop(1);
+                var value = items[0];
+                
+                var containedType = context.ConversionCatalog.Find(new IlTypeName(field.DeclaringType.FullName));
+                var definedType = context.DefinitionCatalog.Get(new IlTypeName(field.DeclaringType.FullName));
+                if (definedType == null)
+                {
+                    var message = $"No definition for type {field.DeclaringType.FullName}";
+                    throw new InvalidOperationException(message);
+                }
+
+                var staticFieldDefinition = definedType.Fields
+                    .Where(x => x.Name == field.Name)
+                    .Single(x => x.isStatic);
+
+                var staticFieldName = Utils.StaticFieldName(containedType, staticFieldDefinition);
+                var variable = new Variable(fieldType, staticFieldName, false);
+                var left = new VariableValueExpression(variable);
+                var right = new DereferencedValueExpression(value);
+                statement = new AssignmentStatementSet(left, right);
+            }
+            else
+            {
+                var items = context.ExpressionStack.Pop(2);
+                var value = items[0];
+                var obj = items[1];
+
+                var left = new FieldAccessExpression(obj,
+                    new Variable(value.ResultingType, field.Name, field.FieldType.IsPointer));
+                
+                var right = new DereferencedValueExpression(value);
+                statement = new AssignmentStatementSet(left, right);
+            }
 
             return new OpCodeHandlingResult(statement);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            return new OpCodeAnalysisResult([declaringType]);
         }
     }
     

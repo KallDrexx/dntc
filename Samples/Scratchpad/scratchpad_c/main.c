@@ -64,6 +64,13 @@ int main(void) {
     uint32_t nativeMethodTest = ScratchpadCSharp_AttributeTests_GetNumberMethod();
     assert(nativeMethodTest == 42);
 
+    ScratchpadCSharp_SimpleFunctions_SomeStaticInt = 5;
+    uint32_t staticTest1 = ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
+    assert(staticTest1 == 6);
+
+    staticTest1 = ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
+    assert(staticTest1 == 7);
+
     printf("Tests passed!\n");
     return 0;
 }
