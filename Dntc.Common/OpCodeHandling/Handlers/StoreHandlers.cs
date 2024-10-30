@@ -80,7 +80,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 }
 
                 var staticFieldDefinition = definedType.Fields
-                    .Where(x => x.Name == field.FullName)
+                    .Where(x => x.Name == field.Name)
                     .Single(x => x.isStatic);
 
                 var staticFieldName = Utils.StaticFieldName(containedType, staticFieldDefinition);
@@ -97,6 +97,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
                 var left = new FieldAccessExpression(obj,
                     new Variable(value.ResultingType, field.Name, field.FieldType.IsPointer));
+                
                 var right = new DereferencedValueExpression(value);
                 statement = new AssignmentStatementSet(left, right);
             }
@@ -106,7 +107,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            return new OpCodeAnalysisResult([declaringType]);
         }
     }
     

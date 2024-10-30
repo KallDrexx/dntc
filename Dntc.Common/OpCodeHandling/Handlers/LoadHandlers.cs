@@ -81,7 +81,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 }
 
                 var staticFieldDefinition = definedType.Fields
-                    .Where(x => x.Name == field.FullName)
+                    .Where(x => x.Name == field.Name)
                     .Single(x => x.isStatic);
 
                 var staticFieldName = Utils.StaticFieldName(containedType, staticFieldDefinition);
@@ -109,7 +109,9 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            return new OpCodeAnalysisResult([declaringType]);
         }
     }
 

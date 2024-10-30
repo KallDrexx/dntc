@@ -35,6 +35,6 @@ public static class Utils
         return name.Replace('<', '_')
             .Replace('>', '_')
             .Replace(".", "_")
-            .Replace("/", "__"); // Instance methods have the type name with a slash in it
+            .Replace("/", "_"); // Instance methods have the type name with a slash in it
     }
 }
