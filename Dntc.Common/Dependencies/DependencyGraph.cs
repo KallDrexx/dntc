@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
 using Dntc.Common.OpCodeHandling;
+using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.Dependencies;
 
@@ -19,7 +20,7 @@ public class DependencyGraph
 
     public DependencyGraph(DefinitionCatalog definitionCatalog, IlMethodId rootMethod)
     {
-        Root = CreateNode(definitionCatalog, rootMethod, new List<Node>());
+        Root = CreateNode(definitionCatalog, rootMethod, []);
     }
 
     private Node CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
@@ -85,7 +86,8 @@ public class DependencyGraph
 
             var calledMethods = new List<InvokedMethod>();
             var referencedTypes = new HashSet<IlTypeName>();
-            AnalyzeMethod(dotNetDefinedMethod, calledMethods, referencedTypes);
+            var typesRequiringStaticConstruction = new HashSet<IlTypeName>();
+            AnalyzeMethod(dotNetDefinedMethod, calledMethods, referencedTypes, typesRequiringStaticConstruction);
             
             foreach (var calledMethod in calledMethods)
             {
@@ -107,11 +109,39 @@ public class DependencyGraph
                 var typeNode = CreateNode(definitionCatalog, type, path);
                 node.Children.Add(typeNode);
             }
+
+            foreach (var type in typesRequiringStaticConstruction)
+            {
+                var definition = definitionCatalog.Get(type);
+                if (definition == null)
+                {
+                    var message = $"Type '{type}' requires static construction, but no definition found";
+                    throw new InvalidOperationException(message);
+                }
+
+                if (definition is DotNetDefinedType dotNetDefinedType)
+                {
+                    var staticConstructor = dotNetDefinedType.Definition.GetStaticConstructor();
+                    if (staticConstructor != null)
+                    {
+                        var constructorId = new IlMethodId(staticConstructor.FullName);
+                        if (constructorId == dotNetDefinedMethod.Id)
+                        {
+                            // Don't add a constructor as a dependency if we are currently in that constructor
+                            continue;
+                        }
+                        
+                        var methodNode = CreateNode(definitionCatalog, constructorId, path);
+                        node.Children.Add(methodNode);
+                    }
+                }
+            }
         }
         
         path.RemoveAt(path.Count - 1);
         return node;
     }
+    
     private static Node CreateNode(DefinitionCatalog definitionCatalog, IlTypeName typeName, List<Node> path)
     {
         EnsureNotCircularReference(path, typeName);
@@ -143,7 +173,8 @@ public class DependencyGraph
     private static void AnalyzeMethod(
         DotNetDefinedMethod dotNetDefinedMethod, 
         List<InvokedMethod> calledMethods, 
-        HashSet<IlTypeName> referencedTypes)
+        HashSet<IlTypeName> referencedTypes,
+        HashSet<IlTypeName> typesRequiringStaticConstruction)
     {
         foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
         {
@@ -162,6 +193,11 @@ public class DependencyGraph
             foreach (var referencedType in results.ReferencedTypes)
             {
                 referencedTypes.Add(referencedType);
+            }
+
+            foreach (var type in results.TypesRequiringStaticConstruction)
+            {
+                typesRequiringStaticConstruction.Add(type);
             }
         }
     }

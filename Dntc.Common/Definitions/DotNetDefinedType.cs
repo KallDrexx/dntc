@@ -4,14 +4,14 @@ namespace Dntc.Common.Definitions;
 
 public class DotNetDefinedType : DefinedType
 {
-    private readonly TypeDefinition _definition;
+    public TypeDefinition Definition { get; }
     
     public ModuleDefinition DefinedModule { get; }
     public IlNamespace Namespace { get; }
 
     public DotNetDefinedType(TypeDefinition definition)
     {
-        _definition = definition;
+        Definition = definition;
         DefinedModule = definition.Module;
         IlName = new IlTypeName(definition.FullName);
         

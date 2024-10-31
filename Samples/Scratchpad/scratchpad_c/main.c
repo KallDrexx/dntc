@@ -71,6 +71,12 @@ int main(void) {
     staticTest1 = ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
     assert(staticTest1 == 7);
 
+    ScratchpadCSharp_SimpleFunctions__cctor();
+    ScratchpadCSharp_SimpleFunctions_Vector3 staticVector = ScratchpadCSharp_SimpleFunctions_GetStaticVector();
+    assert(staticVector.X == 10);
+    assert(staticVector.Y == 11);
+    assert(staticVector.Z == 12);
+
     printf("Tests passed!\n");
     return 0;
 }
