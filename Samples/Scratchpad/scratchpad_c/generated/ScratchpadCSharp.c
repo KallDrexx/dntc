@@ -6,6 +6,7 @@
 #include "ScratchpadCSharp.h"
 
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -248,8 +249,19 @@ uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod() {
 	return get_number();
 }
 
+void ScratchpadCSharp_SimpleFunctions__cctor() {
+	ScratchpadCSharp_SimpleFunctions_Vector3 __temp_000f = {0};
+	ScratchpadCSharp_SimpleFunctions_Vector3__ctor((&__temp_000f), 10, 11, 12);
+	ScratchpadCSharp_SimpleFunctions_AStaticVector = __temp_000f;
+	return;
+}
+
 int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt() {
 	ScratchpadCSharp_SimpleFunctions_SomeStaticInt = (ScratchpadCSharp_SimpleFunctions_SomeStaticInt + 1);
 	return ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+}
+
+ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector() {
+	return ScratchpadCSharp_SimpleFunctions_AStaticVector;
 }
 

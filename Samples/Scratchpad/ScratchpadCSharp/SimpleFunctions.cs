@@ -225,4 +225,11 @@ public static class SimpleFunctions
         SomeStaticInt++;
         return SomeStaticInt;
     }
+
+    public static Vector3 AStaticVector = new Vector3(10, 11, 12);
+
+    public static Vector3 GetStaticVector()
+    {
+        return AStaticVector;
+    }
 }

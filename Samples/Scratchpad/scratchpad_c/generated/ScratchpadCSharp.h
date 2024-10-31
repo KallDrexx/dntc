@@ -11,8 +11,6 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
 
-extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
-
 typedef struct {
 	float X;
 	float Y;
@@ -42,6 +40,9 @@ typedef struct {
 typedef struct {
 } ScratchpadCSharp_SimpleFunctions;
 
+
+extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);
@@ -75,6 +76,8 @@ int32_t ScratchpadCSharp_GenericTests_StaticNumberGetter_GetNumber(ScratchpadCSh
 int32_t ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_StaticNumberGetter(ScratchpadCSharp_GenericTests_StaticNumberGetter getter);
 int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x);
 uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod();
+void ScratchpadCSharp_SimpleFunctions__cctor();
 int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
+ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector();
 
 #endif // SCRATCHPADCSHARP_H_H

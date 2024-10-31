@@ -111,7 +111,10 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
-            return new OpCodeAnalysisResult([declaringType]);
+
+            List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
+            
+            return new OpCodeAnalysisResult([declaringType], staticTypes);
         }
     }
 

@@ -36,18 +36,18 @@ public class HeaderFile
         {
             await include.WriteAsync(writer);
         }
-        
-        await writer.WriteLineAsync();
-        foreach (var global in Globals)
-        {
-            await global.WriteAsync(writer);
-        }
 
         await writer.WriteLineAsync();
         foreach (var type in Types)
         {
             await type.WriteAsync(writer);
             await writer.WriteLineAsync();
+        }
+        
+        await writer.WriteLineAsync();
+        foreach (var global in Globals)
+        {
+            await global.WriteAsync(writer);
         }
 
         await writer.WriteLineAsync();
