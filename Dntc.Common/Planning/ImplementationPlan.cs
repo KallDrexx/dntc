@@ -183,4 +183,28 @@ public class ImplementationPlan
         AddReferencedHeaders(node, sourceFile);
         sourceFile.AddMethod(method);
     }
+
+    private void AddStaticConstructor(DependencyGraph.MethodNode node)
+    {
+        if (!node.MethodId.Value.EndsWith(".cctor()"))
+        {
+            // Not a static constructor
+            return;
+        }
+
+        var method = _conversionCatalog.Find(node.MethodId);
+        const string baseName = "dntc_utils";
+        var headerName = new HeaderName($"{baseName}.h");
+        var sourceFileName = new CSourceFileName($"{baseName}.h");
+
+        if (!_headers.TryGetValue(headerName, out var headerFile))
+        {
+            headerFile = new PlannedHeaderFile(headerName);
+            _headers.Add(headerName, headerFile);
+        }
+        
+        if (method.Header != null)
+        {
+        }
+    }
 }
