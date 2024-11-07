@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Dependencies;
 
 namespace Dntc.Common.Planning;
@@ -11,6 +12,7 @@ public class ImplementationPlan
     private readonly ConversionCatalog _conversionCatalog;
     private readonly Dictionary<HeaderName, PlannedHeaderFile> _headers = new();
     private readonly Dictionary<CSourceFileName, PlannedSourceFile> _sourceFiles = new();
+    private bool _staticConstructorInitializerAdded = false;
 
     public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
     public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
@@ -103,6 +105,12 @@ public class ImplementationPlan
             case DependencyGraph.MethodNode methodNode:
                 DeclareMethod(methodNode);
                 AddMethodImplementation(methodNode);
+
+                if (methodNode.IsStaticConstructor)
+                {
+                    AddStaticConstructorInitializer();
+                }
+                
                 break;
             
             default:
@@ -184,27 +192,15 @@ public class ImplementationPlan
         sourceFile.AddMethod(method);
     }
 
-    private void AddStaticConstructor(DependencyGraph.MethodNode node)
+    private void AddStaticConstructorInitializer()
     {
-        if (!node.MethodId.Value.EndsWith(".cctor()"))
+        if (_staticConstructorInitializerAdded)
         {
-            // Not a static constructor
-            return;
+            return; // Already added
         }
 
-        var method = _conversionCatalog.Find(node.MethodId);
-        const string baseName = "dntc_utils";
-        var headerName = new HeaderName($"{baseName}.h");
-        var sourceFileName = new CSourceFileName($"{baseName}.h");
-
-        if (!_headers.TryGetValue(headerName, out var headerFile))
-        {
-            headerFile = new PlannedHeaderFile(headerName);
-            _headers.Add(headerName, headerFile);
-        }
-        
-        if (method.Header != null)
-        {
-        }
+        _staticConstructorInitializerAdded = true;
+        var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false);
+        ProcessNode(node);
     }
 }

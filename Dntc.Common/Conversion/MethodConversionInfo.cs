@@ -164,5 +164,6 @@ public class MethodConversionInfo
         IsPredeclared = false; // we need to write the custom code
         Header = method.HeaderName;
         NameInC = method.NativeName;
+        SourceFileName = method.SourceFileName;
     }
 }

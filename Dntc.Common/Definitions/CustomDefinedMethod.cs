@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Definitions.CustomDefinedMethods;
+﻿using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions;
@@ -39,6 +38,7 @@ public abstract class CustomDefinedMethod : DefinedMethod
     public static IReadOnlyList<CustomDefinedMethod> StandardCustomMethods { get; } =
     [
         new FloatMinDefinedMethod(),
+        new StaticConstructorInitializerDefinedMethod(),
     ];
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() => [];
