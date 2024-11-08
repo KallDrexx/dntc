@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Dependencies;
 
 namespace Dntc.Common.Conversion;
@@ -93,7 +94,34 @@ public class ConversionCatalog
             }
             
             AddChildren(node);
-            _methods.Add(node.MethodId, new MethodConversionInfo(definition, this));
+            var conversionInfo = new MethodConversionInfo(definition, this);
+            _methods.Add(node.MethodId, conversionInfo);
+
+            if (node.IsStaticConstructor)
+            {
+                var initializerDefinition =
+                    _definitionCatalog.Get(StaticConstructorInitializerDefinedMethod.MethodId);
+
+                if (initializerDefinition == null)
+                {
+                    var message = "No static constructor initializer definition found.";
+                    throw new InvalidOperationException(message);
+                }
+
+                if (initializerDefinition is not StaticConstructorInitializerDefinedMethod initMethodDefinition)
+                {
+                    var message = $"Unexpected type of static constructor initialization method " +
+                                  $"of {initializerDefinition.GetType().FullName}";
+
+                    throw new InvalidOperationException(message);
+                }
+
+                _methods.TryAdd(
+                    initializerDefinition.Id,
+                    new MethodConversionInfo(initializerDefinition, this));
+                
+                initMethodDefinition.AddStaticConstructor(conversionInfo);
+            }
         }
     }
 

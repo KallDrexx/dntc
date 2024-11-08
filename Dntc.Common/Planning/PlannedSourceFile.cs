@@ -7,12 +7,14 @@ public class PlannedSourceFile
     private readonly List<MethodConversionInfo> _implementedMethods = [];
     private readonly List<HeaderName> _referencedHeaders = [];
     private readonly List<TypeConversionInfo> _typesWithGlobals = [];
+    private readonly List<MethodConversionInfo> _staticConstructors = [];
     
     public CSourceFileName Name { get; }
 
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
     public IReadOnlyList<TypeConversionInfo> TypesWithGlobals => _typesWithGlobals;
+    public IReadOnlyList<MethodConversionInfo> StaticConstructors => _staticConstructors;
 
     public PlannedSourceFile(CSourceFileName name)
     {

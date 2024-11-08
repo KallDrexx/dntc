@@ -1,6 +1,7 @@
 ﻿using Dntc.Common;
 using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Dependencies;
 using Dntc.Common.Planning;
 using Mono.Cecil;
@@ -28,7 +29,7 @@ public class Transpiler
         definitionCatalog.Add(CustomDefinedMethod.StandardCustomMethods);
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
-        var implementationPlan = new ImplementationPlan(conversionCatalog);
+        var implementationPlan = new ImplementationPlan(conversionCatalog, definitionCatalog);
         foreach (var methodId in _manifest.MethodsToTranspile)
         {
             var foundMethod = definitionCatalog.Get(new IlMethodId(methodId.Trim()));
