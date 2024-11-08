@@ -14,6 +14,12 @@ public abstract class DefinedMethod
     public IReadOnlyList<Parameter> Parameters { get; protected set; } = ArraySegment<Parameter>.Empty;
     public IReadOnlyList<Local> Locals { get; protected set; } = ArraySegment<Local>.Empty;
     
+    /// <summary>
+    /// Headers that are referenced by this method but cannot be inferred from static analysis. This is
+    /// mostly required for custom defined types.
+    /// </summary>
+    public IReadOnlyList<HeaderName> ManuallyReferencedHeaders { get; protected set; } = ArraySegment<HeaderName>.Empty;
+    
     public IReadOnlyList<IlTypeName> GetReferencedTypes => Locals.Select(x => x.Type)
         .Concat(Parameters.Select(x => x.Type))
         .Concat([ReturnType])

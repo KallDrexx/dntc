@@ -11,6 +11,8 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
     private const string BaseFileName = "dntc_utils";
     private const string FunctionName = "dntc_utils_init_static_constructors";
 
+    private readonly HashSet<HeaderName> _referencedHeaders = [];
+
     public static IlMethodId MethodId = new($"{Namespace}.{MethodName}()");
     
     private readonly List<MethodConversionInfo> _staticConstructors = [];
@@ -29,41 +31,27 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
     
     public override CustomCodeStatementSet GetCustomDeclaration()
     {
-        var headers = _staticConstructors.Select(x => x.Header)
-            .Where(x => x != null)
-            .Distinct()
-            .OrderBy(x => x!.Value)
-            .ToArray();
-
-        var content = new StringBuilder();
-        foreach (var header in headers)
-        {
-            content.AppendLine($"#include \"{header}\"");
-        }
-
-        content.AppendLine();
-        content.AppendLine($"void {FunctionName}(void);");
-
-        return new CustomCodeStatementSet(content.ToString());
+        return new CustomCodeStatementSet($"void {FunctionName}(void)");
     }
 
     public override CustomCodeStatementSet GetCustomImplementation()
     {
         var content = new StringBuilder();
-        content.AppendLine($"void {FunctionName}(void) {{");
-
         foreach (var constructor in _staticConstructors)
         {
             content.AppendLine($"\t{constructor.NameInC}();");
         }
         
-        content.AppendLine("}");
-
         return new CustomCodeStatementSet(content.ToString());
     }
 
     public void AddStaticConstructor(MethodConversionInfo method)
     {
         _staticConstructors.Add(method);
+        if (method.Header != null)
+        {
+            _referencedHeaders.Add(method.Header.Value);
+            ManuallyReferencedHeaders = _referencedHeaders.OrderBy(x => x.Value).ToArray();
+        }
     }
 }

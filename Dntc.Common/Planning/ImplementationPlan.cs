@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Dependencies;
 
@@ -10,6 +11,7 @@ namespace Dntc.Common.Planning;
 public class ImplementationPlan
 {
     private readonly ConversionCatalog _conversionCatalog;
+    private readonly DefinitionCatalog _definitionCatalog;
     private readonly Dictionary<HeaderName, PlannedHeaderFile> _headers = new();
     private readonly Dictionary<CSourceFileName, PlannedSourceFile> _sourceFiles = new();
     private bool _staticConstructorInitializerAdded = false;
@@ -17,9 +19,10 @@ public class ImplementationPlan
     public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
     public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
 
-    public ImplementationPlan(ConversionCatalog conversionCatalog)
+    public ImplementationPlan(ConversionCatalog conversionCatalog, DefinitionCatalog definitionCatalog)
     {
         _conversionCatalog = conversionCatalog;
+        _definitionCatalog = definitionCatalog;
     }
 
     public void AddMethodGraph(DependencyGraph graph)
@@ -186,6 +189,12 @@ public class ImplementationPlan
         {
             sourceFile = new PlannedSourceFile(method.SourceFileName.Value);
             _sourceFiles[sourceFile.Name] = sourceFile;
+        }
+
+        var methodDefinition = _definitionCatalog.Get(node.MethodId);
+        foreach (var referencedHeader in methodDefinition!.ManuallyReferencedHeaders)
+        {
+            sourceFile.AddReferencedHeader(referencedHeader);
         }
         
         AddReferencedHeaders(node, sourceFile);
