@@ -49,17 +49,4 @@ public class PlannedSourceFile
             _typesWithGlobals.Add(type);
         }
     }
-
-    public void AddStaticConstructor(MethodConversionInfo constructor)
-    {
-        if (!_staticConstructors.Contains(constructor))
-        {
-            if (constructor.Header != null)
-            {
-                AddReferencedHeader(constructor.Header.Value);
-            }
-
-            _staticConstructors.Add(constructor);
-        }
-    }
 }

@@ -5,7 +5,6 @@
 
 
 
-void dntc_utils_init_static_constructors(void)
-;
+void dntc_utils_init_static_constructors(void);
 
 #endif // DNTC_UTILS_H_H
