@@ -2,10 +2,13 @@
 #include <stdio.h>
 #include "generated/fn_pointer_types.h"
 #include "generated/ScratchpadCSharp.h"
+#include "generated/dntc_utils.h"
 
 #define ARRAY_ITEM_COUNT (10)
 
 int main(void) {
+    dntc_utils_init_static_constructors();
+
     ScratchpadCSharp_SimpleFunctions_Vector3 first = {.X = 1, .Y = 2, .Z = 3};
     ScratchpadCSharp_SimpleFunctions_Vector3 second = {.X = 4, .Y = 5, .Z = 6};
     ScratchpadCSharp_SimpleFunctions_Vector3 result = ScratchpadCSharp_SimpleFunctions_StructOpOverload(first, second);
@@ -71,7 +74,6 @@ int main(void) {
     staticTest1 = ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
     assert(staticTest1 == 7);
 
-    ScratchpadCSharp_SimpleFunctions__cctor();
     ScratchpadCSharp_SimpleFunctions_Vector3 staticVector = ScratchpadCSharp_SimpleFunctions_GetStaticVector();
     assert(staticVector.X == 10);
     assert(staticVector.Y == 11);

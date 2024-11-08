@@ -7,6 +7,6 @@ public record CustomCodeStatementSet(string RawCode) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {
-        await writer.WriteLineAsync(RawCode);
+        await writer.WriteAsync(RawCode);
     }
 }

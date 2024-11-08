@@ -12,5 +12,4 @@ typedef struct {
 
 
 
-
 #endif // DOTNET_ARRAYS_H_H

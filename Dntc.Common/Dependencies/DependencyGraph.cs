@@ -14,7 +14,7 @@ public class DependencyGraph
 
     public record TypeNode(IlTypeName TypeName) : Node;
 
-    public record MethodNode(IlMethodId MethodId) : Node;
+    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor) : Node;
     
     public Node Root { get; private set; }
 
@@ -56,7 +56,11 @@ public class DependencyGraph
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }
 
-    private Node CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
+    private Node CreateNode(
+        DefinitionCatalog definitionCatalog, 
+        IlMethodId methodId, 
+        List<Node> path, 
+        bool isStaticConstructor = false)
     {
         EnsureNotCircularReference(path, methodId);
         var method = definitionCatalog.Get(methodId);
@@ -66,7 +70,7 @@ public class DependencyGraph
             throw new InvalidOperationException(message);
         }
 
-        var node = new MethodNode(methodId);
+        var node = new MethodNode(methodId, isStaticConstructor);
         path.Add(node);
 
         foreach (var type in method.GetReferencedTypes)
@@ -122,18 +126,20 @@ public class DependencyGraph
                 if (definition is DotNetDefinedType dotNetDefinedType)
                 {
                     var staticConstructor = dotNetDefinedType.Definition.GetStaticConstructor();
-                    if (staticConstructor != null)
+                    if (staticConstructor == null)
                     {
-                        var constructorId = new IlMethodId(staticConstructor.FullName);
-                        if (constructorId == dotNetDefinedMethod.Id)
-                        {
-                            // Don't add a constructor as a dependency if we are currently in that constructor
-                            continue;
-                        }
-                        
-                        var methodNode = CreateNode(definitionCatalog, constructorId, path);
-                        node.Children.Add(methodNode);
+                        continue;
                     }
+                    
+                    var constructorId = new IlMethodId(staticConstructor.FullName);
+                    if (constructorId == dotNetDefinedMethod.Id)
+                    {
+                        // Don't add a constructor as a dependency if we are currently in that constructor
+                        continue;
+                    }
+                        
+                    var methodNode = CreateNode(definitionCatalog, constructorId, path, true);
+                    node.Children.Add(methodNode);
                 }
             }
         }
