@@ -24,6 +24,7 @@ public class ArrayDefinedType : CustomDefinedType
         }
 
         _arrayType = arrayType;
+        ManuallyReferencedHeaders = [new HeaderName("<stddef.h>")];
     }
 
     public override CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)

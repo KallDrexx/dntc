@@ -11,7 +11,7 @@ public abstract class CustomDefinedType : DefinedType
     public HeaderName HeaderName { get; }
     public CSourceFileName? SourceFileName { get; }
     public CTypeName NativeName { get; }
-
+    
     protected CustomDefinedType(
         IlTypeName ilTypeName, 
         HeaderName headerName, 

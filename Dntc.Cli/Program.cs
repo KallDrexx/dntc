@@ -97,11 +97,25 @@ public static class Program
 
     private static async Task BuildDotNetProjectAsync(Manifest manifest)
     {
+        var dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
+        if (dotnetRoot == null)
+        {
+            var message = "No DOTNET_ROOT environment variable found (needed to locate dotnet executable";
+            throw new InvalidOperationException(message);
+        }
+        
+        var dotnetExecutable = Path.Combine(dotnetRoot, "dotnet");
+        if (!File.Exists(dotnetExecutable))
+        {
+            var message = $"dotnet executable not found in {dotnetExecutable}";
+            throw new InvalidOperationException(message);
+        }
+        
         Console.WriteLine($"Building project located in ${manifest.DotNetProjectDirectory}");
         var processInfo = new ProcessStartInfo
         {
             WorkingDirectory = manifest.DotNetProjectDirectory,
-            FileName = "dotnet",
+            FileName = dotnetExecutable,
             Arguments = manifest.BuildInDebugMode
                 ? "build -c Debug"
                 : "build -c Release",
