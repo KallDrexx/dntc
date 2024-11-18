@@ -7,6 +7,8 @@
 
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
+ uint32_t ScratchpadCSharp_AttributeTests_StaticNumberField;
+ uint32_t ScratchpadCSharp_AttributeTests__StaticNumberProperty_k__BackingField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -263,5 +265,17 @@ int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt() {
 
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector() {
 	return ScratchpadCSharp_SimpleFunctions_AStaticVector;
+}
+
+uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField() {
+	return static_number;
+}
+
+uint32_t ScratchpadCSharp_AttributeTests_get_StaticNumberProperty() {
+	return ScratchpadCSharp_AttributeTests__StaticNumberProperty_k__BackingField;
+}
+
+uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberProperty() {
+	return ScratchpadCSharp_AttributeTests_get_StaticNumberProperty();
 }
 

@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Conversion;
+﻿using Dntc.Attributes;
+using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -68,9 +69,29 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+            var nativeGlobalAttribute = field.CustomAttributes
+                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalOnTranspileAttribute).FullName);
 
             CBaseExpression newExpression;
-            if (field.IsStatic)
+
+            if (nativeGlobalAttribute != null)
+            {
+                if (nativeGlobalAttribute.ConstructorArguments.Count != 2)
+                {
+                    var message =
+                        $"Expected {field.FullName}'s {typeof(NativeGlobalOnTranspileAttribute).FullName}'s " +
+                        $"specification 2 have 2 arguments, but only 1 was present";
+
+                    throw new InvalidOperationException(message);
+                }
+
+                var name = nativeGlobalAttribute.ConstructorArguments[0];
+                var variable = new Variable(fieldType, name.Value.ToString()!, false);
+                newExpression = new VariableValueExpression(variable);
+                
+                // TODO: Add header reference somewhere
+            }
+            else if (field.IsStatic)
             {
                 var containedType = context.ConversionCatalog.Find(new IlTypeName(field.DeclaringType.FullName));
                 var definedType = context.DefinitionCatalog.Get(new IlTypeName(field.DeclaringType.FullName));
