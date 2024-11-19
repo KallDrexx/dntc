@@ -165,7 +165,8 @@ public class DotNetDefinedMethod : DefinedMethod
         {
             return;
         }
-        
+
+        var referencedHeaders = new HashSet<HeaderName>();
         foreach (var instruction in Definition.Body.Instructions)
         {
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
@@ -189,8 +190,14 @@ public class DotNetDefinedMethod : DefinedMethod
             {
                 _typesRequiringStaticConstruction.Add(type);
             }
+
+            foreach (var header in results.ReferencedHeaders)
+            {
+                referencedHeaders.Add(header);
+            }
         }
 
+        ReferencedHeaders = ReferencedHeaders.Union(referencedHeaders).ToArray();
         _hasBeenAnalyzed = true;
     }
 }

@@ -13,8 +13,8 @@ public abstract class DefinedMethod
     public IReadOnlyList<Local> Locals { get; protected set; } = ArraySegment<Local>.Empty;
     
     /// <summary>
-    /// Headers that are referenced by this method but cannot be inferred from static analysis. This is
-    /// mostly required for custom defined types.
+    /// Headers that are referenced by this method but cannot be inferred from initial static analysis. This is
+    /// mostly required for custom defined types, or headers due to customizations found during method analysis..
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; protected set; } = ArraySegment<HeaderName>.Empty;
     

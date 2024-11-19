@@ -35,8 +35,8 @@ public record NativeGlobalOnTranspileInfo
             throw new InvalidOperationException(message);
         }
 
-        var nativeName = attribute.ConstructorArguments[0].ToString();
-        var header = attribute.ConstructorArguments[1].ToString();
+        var nativeName = attribute.ConstructorArguments[0].Value.ToString();
+        var header = attribute.ConstructorArguments[1].Value.ToString();
         
         if (nativeName == null)
         {
