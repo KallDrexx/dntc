@@ -88,12 +88,7 @@ public class DependencyGraph
                 throw new InvalidOperationException(message);
             }
 
-            var calledMethods = new List<InvokedMethod>();
-            var referencedTypes = new HashSet<IlTypeName>();
-            var typesRequiringStaticConstruction = new HashSet<IlTypeName>();
-            AnalyzeMethod(dotNetDefinedMethod, calledMethods, referencedTypes, typesRequiringStaticConstruction);
-            
-            foreach (var calledMethod in calledMethods)
+            foreach (var calledMethod in dotNetDefinedMethod.InvokedMethods)
             {
                 Node methodNode;
                 if (calledMethod is GenericInvokedMethod generic)
@@ -108,13 +103,13 @@ public class DependencyGraph
                 node.Children.Add(methodNode);
             }
 
-            foreach (var type in referencedTypes)
+            foreach (var type in dotNetDefinedMethod.ReferencedTypes)
             {
                 var typeNode = CreateNode(definitionCatalog, type, path);
                 node.Children.Add(typeNode);
             }
 
-            foreach (var type in typesRequiringStaticConstruction)
+            foreach (var type in dotNetDefinedMethod.TypesRequiringStaticConstruction)
             {
                 var definition = definitionCatalog.Get(type);
                 if (definition == null)
@@ -175,39 +170,6 @@ public class DependencyGraph
         path.RemoveAt(path.Count - 1);
         return node;
     }
-
-    private static void AnalyzeMethod(
-        DotNetDefinedMethod dotNetDefinedMethod, 
-        List<InvokedMethod> calledMethods, 
-        HashSet<IlTypeName> referencedTypes,
-        HashSet<IlTypeName> typesRequiringStaticConstruction)
-    {
-        foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
-        {
-            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
-            {
-                var message = $"No handler for op code '{instruction.OpCode.Code}'";
-                throw new InvalidOperationException(message);
-            }
-
-            var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
-            if (results.CalledMethod != null)
-            {
-                calledMethods.Add(results.CalledMethod);
-            }
-
-            foreach (var referencedType in results.ReferencedTypes)
-            {
-                referencedTypes.Add(referencedType);
-            }
-
-            foreach (var type in results.TypesRequiringStaticConstruction)
-            {
-                typesRequiringStaticConstruction.Add(type);
-            }
-        }
-    }
-
 
     private static void EnsureNotCircularReference(List<Node> path, IlMethodId id)
     {
