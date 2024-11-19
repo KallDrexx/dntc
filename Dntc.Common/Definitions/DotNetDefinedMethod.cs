@@ -1,14 +1,47 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.OpCodeHandling;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
 public class DotNetDefinedMethod : DefinedMethod
 {
+    private readonly List<InvokedMethod> _invokedMethods = [];
+    private readonly HashSet<IlTypeName> _referencedTypes = [];
+    private readonly HashSet<IlTypeName> _typesRequiringStaticConstruction = [];
+    private bool _hasBeenAnalyzed;
+    
     public MethodDefinition Definition { get; }
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
     public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
 
+    public List<InvokedMethod> InvokedMethods
+    {
+        get
+        {
+            Analyze();
+            return _invokedMethods;
+        }
+    }
+
+    public IReadOnlySet<IlTypeName> ReferencedTypes
+    {
+        get
+        {
+            Analyze();
+            return _referencedTypes;
+        }
+    }
+
+    public IReadOnlySet<IlTypeName> TypesRequiringStaticConstruction
+    {
+        get
+        {
+            Analyze();
+            return _typesRequiringStaticConstruction;
+        }
+    }
+    
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
@@ -125,4 +158,39 @@ public class DotNetDefinedMethod : DefinedMethod
         ReferencedArrayTypes.Select(x => new IlTypeName(x.FullName))
             .Concat(GenericArgumentTypes.Values)
             .ToArray();
+
+    private void Analyze()
+    {
+        if (_hasBeenAnalyzed)
+        {
+            return;
+        }
+        
+        foreach (var instruction in Definition.Body.Instructions)
+        {
+            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+            {
+                var message = $"No handler for op code '{instruction.OpCode.Code}'";
+                throw new InvalidOperationException(message);
+            }
+
+            var results = handler.Analyze(new AnalyzeContext(instruction, this));
+            if (results.CalledMethod != null)
+            {
+                _invokedMethods.Add(results.CalledMethod);
+            }
+
+            foreach (var referencedType in results.ReferencedTypes)
+            {
+                _referencedTypes.Add(referencedType);
+            }
+
+            foreach (var type in results.TypesRequiringStaticConstruction)
+            {
+                _typesRequiringStaticConstruction.Add(type);
+            }
+        }
+
+        _hasBeenAnalyzed = true;
+    }
 }
