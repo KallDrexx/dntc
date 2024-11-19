@@ -75,10 +75,10 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult(
-                GetCallTarget(
-                    context.CurrentInstruction,
-                    context.CurrentMethod));
+            return new OpCodeAnalysisResult
+            {
+                CalledMethod = GetCallTarget(context.CurrentInstruction, context.CurrentMethod),
+            };
         }
     }
     
@@ -153,10 +153,10 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult(
-                GetCallTarget(
-                    context.CurrentInstruction,
-                    context.CurrentMethod));
+            return new OpCodeAnalysisResult
+            {
+                CalledMethod = GetCallTarget(context.CurrentInstruction, context.CurrentMethod),
+            };
         }
     }
     
@@ -177,11 +177,13 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult(
-                new InvokedMethod(
+            return new OpCodeAnalysisResult
+            {
+                CalledMethod = new InvokedMethod(
                     VirtualCallConverter.Convert(
-                        context.CurrentInstruction, 
-                        context.CurrentMethod)));
+                        context.CurrentInstruction,
+                        context.CurrentMethod))
+            };
         }
     }
 }

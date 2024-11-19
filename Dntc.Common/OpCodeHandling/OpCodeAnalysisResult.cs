@@ -2,32 +2,7 @@
 
 public class OpCodeAnalysisResult
 {
-    public InvokedMethod? CalledMethod { get; }
-    public HashSet<IlTypeName> ReferencedTypes { get; } = [];
-    public HashSet<IlTypeName> TypesRequiringStaticConstruction { get; } = [];
-
-    public OpCodeAnalysisResult()
-    {
-        CalledMethod = null;
-    }
-    
-    public OpCodeAnalysisResult(InvokedMethod? calledMethod)
-    {
-        CalledMethod = calledMethod;
-    }
-
-    public OpCodeAnalysisResult(
-        IReadOnlyList<IlTypeName> referencedTypes, 
-        IReadOnlyList<IlTypeName> typesForStaticConstructors)
-    {
-        foreach (var type in referencedTypes)
-        {
-            ReferencedTypes.Add(type);
-        }
-
-        foreach (var type in typesForStaticConstructors)
-        {
-            TypesRequiringStaticConstruction.Add(type);
-        }
-    }
+    public InvokedMethod? CalledMethod { get; init; }
+    public IReadOnlySet<IlTypeName> ReferencedTypes { get; init; } = new HashSet<IlTypeName>();
+    public IReadOnlySet<IlTypeName> TypesRequiringStaticConstruction { get; init; } = new HashSet<IlTypeName>();
 }

@@ -1,6 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Syntax;
-using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -111,8 +109,12 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
 
             List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
-            
-            return new OpCodeAnalysisResult([declaringType], staticTypes);
+
+            return new OpCodeAnalysisResult
+            {
+                ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
+                TypesRequiringStaticConstruction = new HashSet<IlTypeName>(staticTypes),
+            };
         }
     }
     
