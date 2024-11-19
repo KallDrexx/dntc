@@ -199,7 +199,7 @@ public class ImplementationPlan
         }
 
         var methodDefinition = _definitionCatalog.Get(node.MethodId);
-        foreach (var referencedHeader in methodDefinition!.ManuallyReferencedHeaders)
+        foreach (var referencedHeader in methodDefinition!.ReferencedHeaders)
         {
             sourceFile.AddReferencedHeader(referencedHeader);
         }

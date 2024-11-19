@@ -51,7 +51,7 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
         if (method.Header != null)
         {
             _referencedHeaders.Add(method.Header.Value);
-            ManuallyReferencedHeaders = _referencedHeaders.OrderBy(x => x.Value).ToArray();
+            ReferencedHeaders = _referencedHeaders.OrderBy(x => x.Value).ToArray();
         }
     }
 }

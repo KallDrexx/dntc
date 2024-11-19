@@ -69,24 +69,13 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
-            var nativeGlobalAttribute = field.CustomAttributes
-                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalOnTranspileAttribute).FullName);
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             CBaseExpression newExpression;
 
-            if (nativeGlobalAttribute != null)
+            if (nativeGlobalInfo != null)
             {
-                if (nativeGlobalAttribute.ConstructorArguments.Count != 2)
-                {
-                    var message =
-                        $"Expected {field.FullName}'s {typeof(NativeGlobalOnTranspileAttribute).FullName}'s " +
-                        $"specification 2 have 2 arguments, but only 1 was present";
-
-                    throw new InvalidOperationException(message);
-                }
-
-                var name = nativeGlobalAttribute.ConstructorArguments[0];
-                var variable = new Variable(fieldType, name.Value.ToString()!, false);
+                var variable = new Variable(fieldType, nativeGlobalInfo.NativeName, false);
                 newExpression = new VariableValueExpression(variable);
                 
                 // TODO: Add header reference somewhere
@@ -132,13 +121,19 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
+            var headers = new HashSet<HeaderName>(
+                nativeGlobalInfo?.HeaderName != null 
+                    ? [nativeGlobalInfo.HeaderName.Value]
+                    : []);
 
             return new OpCodeAnalysisResult
             {
                 ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
                 TypesRequiringStaticConstruction = new HashSet<IlTypeName>(staticTypes),
+                ReferencedHeaders = headers,
             };
         }
     }
