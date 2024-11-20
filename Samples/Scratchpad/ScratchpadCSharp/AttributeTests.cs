@@ -27,4 +27,9 @@ public static class AttributeTests
     {
         return StaticNumberProperty;
     }
+
+    public static void SetStaticNumberField(uint num)
+    {
+        StaticNumberField = num;
+    }
 }

@@ -8,7 +8,7 @@ public record NativeGlobalOnTranspileInfo
     public string NativeName { get; }
     public HeaderName? HeaderName { get; }
 
-    public NativeGlobalOnTranspileInfo(string nativeName, string? headerName)
+    private NativeGlobalOnTranspileInfo(string nativeName, string? headerName)
     {
         NativeName = nativeName;
         HeaderName = headerName != null ? new HeaderName(headerName) : null;

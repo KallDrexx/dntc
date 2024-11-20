@@ -271,6 +271,11 @@ uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField() {
 	return static_number;
 }
 
+void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num) {
+	static_number = num;
+	return;
+}
+
 uint32_t ScratchpadCSharp_AttributeTests_get_StaticNumberProperty() {
 	return ScratchpadCSharp_AttributeTests__StaticNumberProperty_k__BackingField;
 }
