@@ -85,6 +85,9 @@ int main(void) {
     ScratchpadCSharp_AttributeTests_SetStaticNumberField(23);
     assert(static_number == 23);
 
+    uint32_t staticNumber3 = ScratchpadCSharp_AttributeTests_GetStaticNumberProperty();
+    assert(staticNumber3 == 23);
+
     printf("Tests passed!\n");
     return 0;
 }

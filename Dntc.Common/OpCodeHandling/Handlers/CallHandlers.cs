@@ -63,11 +63,54 @@ public class CallHandlers : IOpCodeHandlerCollection
         context.ExpressionStack.Push(expression);
         return new OpCodeHandlingResult(null);
     }
+
+    private static NativeGlobalOnTranspileInfo? GetNativeGlobalOnTranspileInfo(object operand)
+    {
+        if (operand is not MethodDefinition definition)
+        {
+            return null;
+        }
+        
+        // TODO: find the backing field and pull attribute off of that???
+        throw 
+    }
     
     private class CallHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
+            var nativeGlobalInfo = GetNativeGlobalOnTranspileInfo(context.CurrentInstruction.Operand);
+            if (nativeGlobalInfo != null)
+            {
+                // This is either a getter or a setter for a global. We know based on its return type.
+                var methodDefinition = (MethodDefinition)context.CurrentInstruction.Operand;
+                var conversionInfo = context.ConversionCatalog.Find(new IlMethodId(methodDefinition.FullName));
+                if (methodDefinition.IsSetter)
+                {
+                    var items = context.ExpressionStack.Pop(1);
+                    var value = items[0];
+
+                    var fieldType = conversionInfo.Parameters[0].ConversionInfo;
+                    var left = new VariableValueExpression(new Variable(fieldType, nativeGlobalInfo.NativeName, false));
+                    var right = new DereferencedValueExpression(value);
+                    var statement = new AssignmentStatementSet(left, right);
+
+                    return new OpCodeHandlingResult(statement);
+                }
+
+                if (methodDefinition.IsGetter)
+                {
+                    var variable = new Variable(conversionInfo.ReturnTypeInfo, nativeGlobalInfo.NativeName, false);
+                    context.ExpressionStack.Push(new VariableValueExpression(variable));
+                    return new OpCodeHandlingResult(null);
+                }
+
+                var message = $"{methodDefinition.FullName} had a NativeGlobalOnTranspileInfo attribute on it, but " +
+                              $"it was not a getter or setter. Globals are not methods so this is not expected.";
+
+                throw new InvalidOperationException(message);
+            }
+            
             var methodReference = (MethodReference)context.CurrentInstruction.Operand;
             var methodId = new IlMethodId(methodReference.FullName);
             return CallMethodReference(context, methodId, new IlTypeName(methodReference.ReturnType.FullName));
@@ -75,6 +118,19 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
+            var nativeGlobalInfo = GetNativeGlobalOnTranspileInfo(context.CurrentInstruction.Operand);
+            if (nativeGlobalInfo != null)
+            {
+                HashSet<HeaderName> headers = nativeGlobalInfo.HeaderName != null
+                    ? [nativeGlobalInfo.HeaderName.Value]
+                    : [];
+
+                return new OpCodeAnalysisResult
+                {
+                    ReferencedHeaders = new HashSet<HeaderName>(headers),
+                };
+            }
+            
             return new OpCodeAnalysisResult
             {
                 CalledMethod = GetCallTarget(context.CurrentInstruction, context.CurrentMethod),
