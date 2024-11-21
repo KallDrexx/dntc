@@ -84,5 +84,6 @@ int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector();
 uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
 void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
+int32_t some_named_function();
 
 #endif // SCRATCHPADCSHARP_H_H

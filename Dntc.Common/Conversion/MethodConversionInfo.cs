@@ -98,23 +98,35 @@ public class MethodConversionInfo
             SetupNativeOnTranspiledMethod(method, nativeTranspileAttribute);
             return;
         }
+
+        var customNameAttribute = method.Definition
+            .CustomAttributes
+            .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomNameOnTranspileAttribute).FullName);
         
         IsPredeclared = false;
 
         Header = Utils.GetHeaderName(method.Namespace);
         SourceFileName = Utils.GetSourceFileName(method.Namespace);
 
-        // TOOD: Need to figure out a good way to disambiguate overloaded functions
-        var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
-        if (method.GenericArgumentTypes.Any())
+        string functionName;
+        if (customNameAttribute != null)
         {
-            var argTypeNames = method.GenericArgumentTypes
-                .Select(x => x.Value.Value)
-                .Aggregate((x, y) => $"{x}_{y}");
-
-            functionName += $"_{argTypeNames}";
+            functionName = customNameAttribute.ConstructorArguments[0].Value.ToString()!;
         }
-        
+        else
+        {
+            // TODO: Need to figure out a good way to disambiguate overloaded functions
+            functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
+            if (method.GenericArgumentTypes.Any())
+            {
+                var argTypeNames = method.GenericArgumentTypes
+                    .Select(x => x.Value.Value)
+                    .Aggregate((x, y) => $"{x}_{y}");
+
+                functionName += $"_{argTypeNames}";
+            }
+        }
+
         NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
     }
 

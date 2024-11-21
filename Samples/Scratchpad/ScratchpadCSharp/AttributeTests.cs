@@ -24,4 +24,10 @@ public static class AttributeTests
     {
         StaticNumberField = num;
     }
+
+    [CustomNameOnTranspile("some_named_function")]
+    public static int RenamedMethodTest()
+    {
+        return 94;
+    }
 }

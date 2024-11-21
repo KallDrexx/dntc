@@ -274,3 +274,7 @@ void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num) {
 	return;
 }
 
+int32_t some_named_function() {
+	return 94;
+}
+

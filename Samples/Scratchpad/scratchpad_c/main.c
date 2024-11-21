@@ -85,6 +85,9 @@ int main(void) {
     ScratchpadCSharp_AttributeTests_SetStaticNumberField(23);
     assert(static_number == 23);
 
+    int32_t renamedFunctionValue = some_named_function();
+    assert(renamedFunctionValue == 94);
+
     printf("Tests passed!\n");
     return 0;
 }
