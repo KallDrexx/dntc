@@ -265,3 +265,12 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetSta
 	return ScratchpadCSharp_SimpleFunctions_AStaticVector;
 }
 
+uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField() {
+	return static_number;
+}
+
+void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num) {
+	static_number = num;
+	return;
+}
+

@@ -11,4 +11,17 @@ public static class AttributeTests
     {
         return 99;
     }
+
+    [NativeGlobalOnTranspile("static_number", "../native_test.h")]
+    public static uint StaticNumberField;
+    
+    public static uint GetStaticNumberField()
+    {
+        return StaticNumberField;
+    }
+
+    public static void SetStaticNumberField(uint num)
+    {
+        StaticNumberField = num;
+    }
 }
