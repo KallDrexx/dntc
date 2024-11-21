@@ -171,6 +171,39 @@ public class DependencyGraph
         return node;
     }
 
+    private static void AnalyzeMethod(
+        DotNetDefinedMethod dotNetDefinedMethod, 
+        List<InvokedMethod> calledMethods, 
+        HashSet<IlTypeName> referencedTypes,
+        HashSet<IlTypeName> typesRequiringStaticConstruction)
+    {
+        foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
+        {
+            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+            {
+                var message = $"No handler for op code '{instruction.OpCode.Code}'";
+                throw new InvalidOperationException(message);
+            }
+
+            var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
+            if (results.CalledMethod != null)
+            {
+                calledMethods.Add(results.CalledMethod);
+            }
+
+            foreach (var referencedType in results.ReferencedTypes)
+            {
+                referencedTypes.Add(referencedType);
+            }
+
+            foreach (var type in results.TypesRequiringStaticConstruction)
+            {
+                typesRequiringStaticConstruction.Add(type);
+            }
+        }
+    }
+
+
     private static void EnsureNotCircularReference(List<Node> path, IlMethodId id)
     {
         var referenceFound = false;

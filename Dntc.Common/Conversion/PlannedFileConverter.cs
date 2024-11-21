@@ -45,6 +45,7 @@ public class PlannedFileConverter
             .Where(x => x != null)
             .SelectMany(x => x!.Fields
                 .Where(y => y.isStatic)
+                .Where(y => !y.IsNativelyDefined)
                 .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, true)))
             .ToArray();
 
@@ -72,6 +73,7 @@ public class PlannedFileConverter
             .Where(x => x != null)
             .SelectMany(x => x!.Fields
                 .Where(y => y.isStatic)
+                .Where(y => !y.IsNativelyDefined)
                 .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, false)))
             .ToArray();
 

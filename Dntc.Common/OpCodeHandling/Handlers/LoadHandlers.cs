@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Conversion;
+﻿using Dntc.Attributes;
+using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -68,9 +69,18 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             CBaseExpression newExpression;
-            if (field.IsStatic)
+
+            if (nativeGlobalInfo != null)
+            {
+                var variable = new Variable(fieldType, nativeGlobalInfo.NativeName, false);
+                newExpression = new VariableValueExpression(variable);
+                
+                // TODO: Add header reference somewhere
+            }
+            else if (field.IsStatic)
             {
                 var containedType = context.ConversionCatalog.Find(new IlTypeName(field.DeclaringType.FullName));
                 var definedType = context.DefinitionCatalog.Get(new IlTypeName(field.DeclaringType.FullName));
@@ -111,13 +121,19 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
+            var headers = new HashSet<HeaderName>(
+                nativeGlobalInfo?.HeaderName != null 
+                    ? [nativeGlobalInfo.HeaderName.Value]
+                    : []);
 
             return new OpCodeAnalysisResult
             {
                 ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
                 TypesRequiringStaticConstruction = new HashSet<IlTypeName>(staticTypes),
+                ReferencedHeaders = headers,
             };
         }
     }

@@ -61,11 +61,20 @@ public class StoreHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             AssignmentStatementSet statement;
-            if (field.IsStatic)
+            if (nativeGlobalInfo != null)
             {
-                var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+                var items = context.ExpressionStack.Pop(1);
+                var value = items[0];
+                var left = new VariableValueExpression(new Variable(fieldType, nativeGlobalInfo.NativeName, false));
+                var right = new DereferencedValueExpression(value);
+                statement = new AssignmentStatementSet(left, right);
+            }
+            else if (field.IsStatic)
+            {
                 var items = context.ExpressionStack.Pop(1);
                 var value = items[0];
                 
@@ -107,13 +116,19 @@ public class StoreHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
+            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
+            var headers = new HashSet<HeaderName>(
+                nativeGlobalInfo?.HeaderName != null 
+                    ? [nativeGlobalInfo.HeaderName.Value]
+                    : []);
 
             return new OpCodeAnalysisResult
             {
                 ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
                 TypesRequiringStaticConstruction = new HashSet<IlTypeName>(staticTypes),
+                ReferencedHeaders = headers,
             };
         }
     }

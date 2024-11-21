@@ -40,6 +40,9 @@ typedef struct {
 typedef struct {
 } ScratchpadCSharp_SimpleFunctions;
 
+typedef struct {
+} ScratchpadCSharp_AttributeTests;
+
 
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
@@ -79,5 +82,7 @@ uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod();
 void ScratchpadCSharp_SimpleFunctions__cctor();
 int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt();
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector();
+uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
+void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
 
 #endif // SCRATCHPADCSHARP_H_H

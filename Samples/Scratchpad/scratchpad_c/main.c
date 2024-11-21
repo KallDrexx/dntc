@@ -79,6 +79,12 @@ int main(void) {
     assert(staticVector.Y == 11);
     assert(staticVector.Z == 12);
 
+    uint32_t staticNumber1 = ScratchpadCSharp_AttributeTests_GetStaticNumberField();
+    assert(staticNumber1 == 55);
+
+    ScratchpadCSharp_AttributeTests_SetStaticNumberField(23);
+    assert(static_number == 23);
+
     printf("Tests passed!\n");
     return 0;
 }

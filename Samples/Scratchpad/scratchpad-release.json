@@ -32,7 +32,9 @@
     "System.Int32 ScratchpadCSharp.GenericTests::GetStaticNumber(System.Int32)",
     "System.UInt32 ScratchpadCSharp.AttributeTests::GetNumberMethod()",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::IncrementStaticInt()",
-    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::GetStaticVector()"
+    "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::GetStaticVector()",
+    "System.UInt32 ScratchpadCSharp.AttributeTests::GetStaticNumberField()",
+    "System.Void ScratchpadCSharp.AttributeTests::SetStaticNumberField(System.UInt32)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

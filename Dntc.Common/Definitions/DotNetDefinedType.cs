@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.OpCodeHandling;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
@@ -24,13 +25,21 @@ public class DotNetDefinedType : DefinedType
         Namespace = new IlNamespace(rootDeclaringType.Namespace);
 
         Fields = definition.Fields
-            .Select(x => new Field(new IlTypeName(x.FieldType.FullName), x.Name, x.IsStatic))
+            .Select(ConvertToField)
             .ToArray();
 
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))
             .ToArray();
-        
-        
+    }
+
+    private static Field ConvertToField(FieldDefinition fieldDefinition)
+    {
+        var type = new IlTypeName(fieldDefinition.FieldType.FullName);
+        var name = fieldDefinition.Name;
+        var isStatic = fieldDefinition.IsStatic;
+        var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(fieldDefinition.CustomAttributes, type.Value);
+
+        return new Field(type, name, isStatic, nativeGlobalInfo != null);
     }
 }
