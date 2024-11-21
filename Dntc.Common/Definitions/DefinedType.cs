@@ -2,7 +2,7 @@
 
 public abstract class DefinedType
 {
-    public record Field(IlTypeName Type, string Name, bool isStatic);
+    public record Field(IlTypeName Type, string Name, bool isStatic, bool IsNativelyDefined);
     
     public IlTypeName IlName { get; protected set; }
     
