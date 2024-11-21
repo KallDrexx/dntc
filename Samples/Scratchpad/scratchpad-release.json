@@ -34,8 +34,7 @@
     "System.Int32 ScratchpadCSharp.SimpleFunctions::IncrementStaticInt()",
     "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::GetStaticVector()",
     "System.UInt32 ScratchpadCSharp.AttributeTests::GetStaticNumberField()",
-    "System.Void ScratchpadCSharp.AttributeTests::SetStaticNumberField(System.UInt32)",
-    "System.UInt32 ScratchpadCSharp.AttributeTests::GetStaticNumberProperty()"
+    "System.Void ScratchpadCSharp.AttributeTests::SetStaticNumberField(System.UInt32)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }
