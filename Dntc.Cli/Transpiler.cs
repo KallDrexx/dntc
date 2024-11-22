@@ -44,6 +44,74 @@ public class Transpiler
             implementationPlan.AddMethodGraph(graph);
         }
 
+        var headers = implementationPlan.Headers;
+        var sourceFiles = implementationPlan.SourceFiles;
+
+        if (_manifest.SingleGeneratedSourceFileName != null)
+        {
+            var mergedSourceFile = PlannedSourceFile.CreateMerged(
+                new CSourceFileName(_manifest.SingleGeneratedSourceFileName),
+                headers,
+                sourceFiles);
+
+            headers = [];
+            sourceFiles = [mergedSourceFile];
+        }
+        else
+        {
+            // Only clean the output directory if we aren't creating a single file. When generating a single
+            // file, it's probably the case where different files exist in a directory from multiple 
+            // transpiler calls, or it's a `main.c` and other files exist for cmake and other utilities.
+            // So in that case we are less sure the remaining files in the directory are free to delete. 
+            //
+            // Also, when transpiling to a single file it's a lot easier to know when a file has been left 
+            // behind and is no longer relevant, which is the main reason we are cleaning the output directory
+            // anyway.
+            CleanOutputDirectory();
+        }
+
+        await WriteHeaderAndSourceFiles(headers, sourceFiles, planConverter);
+
+        if (_manifest.SingleGeneratedSourceFileName != null)
+        {
+            var path = Path.Combine(_manifest.OutputDirectory!, _manifest.SingleGeneratedSourceFileName);
+            Console.WriteLine($"Source successfully written to {path}");
+        }
+        else
+        {
+            Console.WriteLine($"Headers and source successfully written to {_manifest.OutputDirectory}");
+        }
+    }
+
+    public void Query()
+    {
+        Console.WriteLine("Assembly query results:");
+        var modules = GetModules();
+        
+        foreach (var module in modules)
+        {
+            Console.WriteLine($"{module.FileName}:");
+            
+            var methods = new HashSet<MethodDefinition>();
+            foreach (var type in module.Types)
+            {
+                FindTypesAndMethods(type, methods);
+            }
+
+            var orderedMethods = methods
+                .OrderBy(x => x.DeclaringType.FullName)
+                .ThenBy(x => x.Name)
+                .ToArray();
+
+            foreach (var method in orderedMethods)
+            {
+                Console.WriteLine($"\t- {method.FullName}");
+            }
+        }
+    }
+
+    private void CleanOutputDirectory()
+    {
         // Make sure the output folder is clean. We don't want old header and source files to be around
         // if the code has changed to not require them anymore. Only delete the folder if it exists and
         // only contains header and source files. 
@@ -69,8 +137,14 @@ public class Transpiler
         {
             Directory.CreateDirectory(_manifest.OutputDirectory!);
         }
-        
-        foreach (var header in implementationPlan.Headers)
+    }
+
+    private async Task WriteHeaderAndSourceFiles(
+        IEnumerable<PlannedHeaderFile> headers,
+        IEnumerable<PlannedSourceFile> sourceFiles,
+        PlannedFileConverter planConverter)
+    {
+        foreach (var header in headers)
         {
             var fullHeaderPath = Path.Combine(_manifest.OutputDirectory!, header.Name.Value);
             
@@ -85,48 +159,19 @@ public class Transpiler
             await headerFile.WriteAsync(writer);
         }
 
-        foreach (var sourceFile in implementationPlan.SourceFiles)
+        foreach (var sourceFile in sourceFiles)
         {
             var fullPath = Path.Combine(_manifest.OutputDirectory!, sourceFile.Name.Value);
             
             // In case we didn't clear the directory, we definitely need to make sure
             // that the file is deleted before we write to it. It will never work to just
             // append to it.
-            
+            File.Delete(fullPath);
             await using var stream = File.OpenWrite(fullPath);
             await using var writer = new StreamWriter(stream);
 
             var source = planConverter.Convert(sourceFile);
             await source.WriteAsync(writer);
-        }
-        
-        Console.WriteLine($"Headers and source successfully written to {_manifest.OutputDirectory}");
-    }
-    
-    public void Query()
-    {
-        Console.WriteLine("Assembly query results:");
-        var modules = GetModules();
-        
-        foreach (var module in modules)
-        {
-            Console.WriteLine($"{module.FileName}:");
-            
-            var methods = new HashSet<MethodDefinition>();
-            foreach (var type in module.Types)
-            {
-                FindTypesAndMethods(type, methods);
-            }
-
-            var orderedMethods = methods
-                .OrderBy(x => x.DeclaringType.FullName)
-                .ThenBy(x => x.Name)
-                .ToArray();
-
-            foreach (var method in orderedMethods)
-            {
-                Console.WriteLine($"\t- {method.FullName}");
-            }
         }
     }
 
