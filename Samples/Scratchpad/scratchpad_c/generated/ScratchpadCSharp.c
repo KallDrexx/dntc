@@ -5,6 +5,7 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
 
+
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 

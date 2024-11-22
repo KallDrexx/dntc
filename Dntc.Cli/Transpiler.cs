@@ -71,6 +71,16 @@ public class Transpiler
         }
 
         await WriteHeaderAndSourceFiles(headers, sourceFiles, planConverter);
+
+        if (_manifest.SingleGeneratedSourceFileName != null)
+        {
+            var path = Path.Combine(_manifest.OutputDirectory!, _manifest.SingleGeneratedSourceFileName);
+            Console.WriteLine($"Source successfully written to {path}");
+        }
+        else
+        {
+            Console.WriteLine($"Headers and source successfully written to {_manifest.OutputDirectory}");
+        }
     }
 
     public void Query()
@@ -163,8 +173,6 @@ public class Transpiler
             var source = planConverter.Convert(sourceFile);
             await source.WriteAsync(writer);
         }
-        
-        Console.WriteLine($"Headers and source successfully written to {_manifest.OutputDirectory}");
     }
 
     private static void FindTypesAndMethods(TypeDefinition type, HashSet<MethodDefinition> methods)
