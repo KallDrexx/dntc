@@ -21,7 +21,7 @@ public class Transpiler
     {
         var definitionCatalog = new DefinitionCatalog();
         var conversionCatalog = new ConversionCatalog(definitionCatalog);
-        var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, true);
+        var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
         var modules = GetModules();
         definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
@@ -44,20 +44,40 @@ public class Transpiler
             implementationPlan.AddMethodGraph(graph);
         }
 
-        // Make sure the output folder is clean
-        try
+        // Make sure the output folder is clean. We don't want old header and source files to be around
+        // if the code has changed to not require them anymore. Only delete the folder if it exists and
+        // only contains header and source files. 
+        if (Directory.Exists(_manifest.OutputDirectory))
         {
-            Directory.Delete(_manifest.OutputDirectory!, true);
+            var containsOtherFiles = Directory
+                .GetFiles(_manifest.OutputDirectory)
+                .Where(x => !x.EndsWith(".c"))
+                .Any(x => !x.EndsWith(".h"));
+
+            if (containsOtherFiles)
+            {
+                Console.WriteLine("WARNING: Not deleting files in output directory, as non header and non-source " +
+                                  "files are present");
+            }
+            else
+            {
+                Directory.Delete(_manifest.OutputDirectory, true);
+                Directory.CreateDirectory(_manifest.OutputDirectory!);
+            }
         }
-        catch (IOException)
+        else
         {
-            // Ignore if the directory doesn't exist
+            Directory.CreateDirectory(_manifest.OutputDirectory!);
         }
         
-        Directory.CreateDirectory(_manifest.OutputDirectory!);
         foreach (var header in implementationPlan.Headers)
         {
             var fullHeaderPath = Path.Combine(_manifest.OutputDirectory!, header.Name.Value);
+            
+            // In case we didn't clear the directory, we definitely need to make sure
+            // that the file is deleted before we write to it. It will never work to just
+            // append to it.
+            File.Delete(fullHeaderPath);
             await using var stream = File.OpenWrite(fullHeaderPath);
             await using var writer = new StreamWriter(stream);
 
@@ -68,6 +88,11 @@ public class Transpiler
         foreach (var sourceFile in implementationPlan.SourceFiles)
         {
             var fullPath = Path.Combine(_manifest.OutputDirectory!, sourceFile.Name.Value);
+            
+            // In case we didn't clear the directory, we definitely need to make sure
+            // that the file is deleted before we write to it. It will never work to just
+            // append to it.
+            
             await using var stream = File.OpenWrite(fullPath);
             await using var writer = new StreamWriter(stream);
 
