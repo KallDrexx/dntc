@@ -11,7 +11,7 @@ namespace Dntc.Attributes;
 /// The header that needs to be referenced to access the global
 /// </param>
 [AttributeUsage(AttributeTargets.Field)]
-public class NativeGlobalOnTranspileAttribute(string globalName, string? headerName) : Attribute
+public class NativeGlobalAttribute(string globalName, string? headerName) : Attribute
 {
     public string GlobalName => globalName;
     public string? HeaderName => headerName;

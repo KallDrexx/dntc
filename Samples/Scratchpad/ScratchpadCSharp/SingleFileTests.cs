@@ -9,7 +9,7 @@ public static class SingleFileTests
         public int Value;
     }
     
-    [CustomNameOnTranspile("main")]
+    [CustomFunctionName("main")]
     public static int MainFunction()
     {
         var test = new SomeStruct
