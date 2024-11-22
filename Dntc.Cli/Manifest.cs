@@ -39,6 +39,11 @@ public class Manifest
     /// Directory to place all generated header and source files in
     /// </summary>
     public string? OutputDirectory { get; set; }
+   
+    /// <summary>
+    /// If specified, directs all transpiled code to a single source file with no 
+    /// </summary>
+    public string? SingleGeneratedSourceFileName { get; set; }
 
     public static async Task<Manifest> ParseManifestAsync(string manifestFilePath)
     {
