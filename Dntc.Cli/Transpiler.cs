@@ -44,8 +44,33 @@ public class Transpiler
             implementationPlan.AddMethodGraph(graph);
         }
 
-        CleanOutputDirectory();
-        await WriteHeaderAndSourceFiles(implementationPlan.Headers, implementationPlan.SourceFiles, planConverter);
+        var headers = implementationPlan.Headers;
+        var sourceFiles = implementationPlan.SourceFiles;
+
+        if (_manifest.SingleGeneratedSourceFileName != null)
+        {
+            var mergedSourceFile = PlannedSourceFile.CreateMerged(
+                new CSourceFileName(_manifest.SingleGeneratedSourceFileName),
+                headers,
+                sourceFiles);
+
+            headers = [];
+            sourceFiles = [mergedSourceFile];
+        }
+        else
+        {
+            // Only clean the output directory if we aren't creating a single file. When generating a single
+            // file, it's probably the case where different files exist in a directory from multiple 
+            // transpiler calls, or it's a `main.c` and other files exist for cmake and other utilities.
+            // So in that case we are less sure the remaining files in the directory are free to delete. 
+            //
+            // Also, when transpiling to a single file it's a lot easier to know when a file has been left 
+            // behind and is no longer relevant, which is the main reason we are cleaning the output directory
+            // anyway.
+            CleanOutputDirectory();
+        }
+
+        await WriteHeaderAndSourceFiles(headers, sourceFiles, planConverter);
     }
 
     public void Query()
@@ -131,7 +156,7 @@ public class Transpiler
             // In case we didn't clear the directory, we definitely need to make sure
             // that the file is deleted before we write to it. It will never work to just
             // append to it.
-            
+            File.Delete(fullPath);
             await using var stream = File.OpenWrite(fullPath);
             await using var writer = new StreamWriter(stream);
 

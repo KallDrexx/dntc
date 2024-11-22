@@ -77,7 +77,12 @@ public class PlannedFileConverter
                 .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, false)))
             .ToArray();
 
-        return new SourceFile(includes, methodBlocks, globals);
+        var typeDeclarations = plannedSourceFile.DeclaredTypes
+            .Select(x => new { ConversionInfo = x, Definition = _definitionCatalog.Get(x.IlName) })
+            .Select(x => new TypeDeclaration(x.ConversionInfo, x.Definition!, _conversionCatalog))
+            .ToArray();
+
+        return new SourceFile(includes, methodBlocks, globals, typeDeclarations);
     }
 
     private IReadOnlyList<CStatementSet> GetMethodStatements(

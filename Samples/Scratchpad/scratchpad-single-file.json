@@ -8,5 +8,6 @@
   "MethodsToTranspile": [
     "System.Int32 ScratchpadCSharp.SingleFileTests::MainFunction()"
   ],
-  "OutputDirectory": "scratchpad_c_single_file/generated"
+  "OutputDirectory": "scratchpad_c_single_file",
+  "SingleGeneratedSourceFileName": "main.c"
 }

@@ -4,9 +4,19 @@ namespace ScratchpadCSharp;
 
 public static class SingleFileTests
 {
+    public struct SomeStruct
+    {
+        public int Value;
+    }
+    
     [CustomNameOnTranspile("main")]
     public static int MainFunction()
     {
-        return 0;
+        var test = new SomeStruct
+        {
+            Value = 33
+        };
+
+        return test.Value;
     }
 }
