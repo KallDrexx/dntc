@@ -21,6 +21,9 @@
       <Content Include="..\scratchpad-release.json">
         <Link>scratchpad-release.json</Link>
       </Content>
+      <Content Include="..\scratchpad-single-file.json">
+        <Link>scratchpad-single-file.json</Link>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
