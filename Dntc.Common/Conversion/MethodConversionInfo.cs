@@ -91,7 +91,7 @@ public class MethodConversionInfo
     {
         var nativeTranspileAttribute = method.Definition
             .CustomAttributes
-            .FirstOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallOnTranspileAttribute).FullName);
+            .FirstOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallAttribute).FullName);
 
         if (nativeTranspileAttribute != null)
         {
@@ -101,7 +101,7 @@ public class MethodConversionInfo
 
         var customNameAttribute = method.Definition
             .CustomAttributes
-            .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomNameOnTranspileAttribute).FullName);
+            .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomFunctionNameAttribute).FullName);
         
         IsPredeclared = false;
 

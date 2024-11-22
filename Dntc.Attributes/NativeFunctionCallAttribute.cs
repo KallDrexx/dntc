@@ -5,7 +5,7 @@
 /// call the natively defined function call. 
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public class NativeFunctionCallOnTranspileAttribute(string functionName, string? headerName) : Attribute
+public class NativeFunctionCallAttribute(string functionName, string? headerName) : Attribute
 {
     public string FunctionName => functionName;
     public string? HeaderName => headerName;

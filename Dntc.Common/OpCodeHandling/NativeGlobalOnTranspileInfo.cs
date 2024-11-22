@@ -19,7 +19,7 @@ public record NativeGlobalOnTranspileInfo
         string fieldName)
     {
         var attribute = customAttributes
-            .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalOnTranspileAttribute).FullName);
+            .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
 
         if (attribute == null)
         {
@@ -29,7 +29,7 @@ public record NativeGlobalOnTranspileInfo
         if (attribute.ConstructorArguments.Count != 2)
         {
             var message =
-                $"Expected {fieldName}'s {typeof(NativeGlobalOnTranspileAttribute).FullName}'s " +
+                $"Expected {fieldName}'s {typeof(NativeGlobalAttribute).FullName}'s " +
                 $"specification 2 have 2 arguments, but only 1 was present";
 
             throw new InvalidOperationException(message);
@@ -40,7 +40,7 @@ public record NativeGlobalOnTranspileInfo
         
         if (nativeName == null)
         {
-            var message = $"{fieldName}'s {typeof(NativeGlobalOnTranspileAttribute).FullName}'s had a null native name";
+            var message = $"{fieldName}'s {typeof(NativeGlobalAttribute).FullName}'s had a null native name";
             throw new InvalidOperationException(message);
         }
 

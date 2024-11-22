@@ -6,13 +6,13 @@ public static class AttributeTests
 {
     public static uint GetNumberMethod() => GetNumber();
 
-    [NativeFunctionCallOnTranspile("get_number", "../native_test.h")]
+    [NativeFunctionCall("get_number", "../native_test.h")]
     private static uint GetNumber()
     {
         return 99;
     }
 
-    [NativeGlobalOnTranspile("static_number", "../native_test.h")]
+    [NativeGlobal("static_number", "../native_test.h")]
     public static uint StaticNumberField;
     
     public static uint GetStaticNumberField()
@@ -25,7 +25,7 @@ public static class AttributeTests
         StaticNumberField = num;
     }
 
-    [CustomNameOnTranspile("some_named_function")]
+    [CustomFunctionName("some_named_function")]
     public static int RenamedMethodTest()
     {
         return 94;

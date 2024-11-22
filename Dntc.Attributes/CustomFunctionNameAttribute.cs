@@ -4,7 +4,7 @@ namespace Dntc.Attributes;
 /// Specifies that the method should have a custom name when transpiled
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public class CustomNameOnTranspileAttribute(string nativeName) : Attribute
+public class CustomFunctionNameAttribute(string nativeName) : Attribute
 {
     public string NativeName => nativeName;
 }
