@@ -30,4 +30,20 @@ public static class AttributeTests
     {
         return 94;
     }
+
+    [CustomFileName("custom_file_test.c", "custom_file_test.h")]
+    public struct CustomFileTestStruct
+    {
+        public int Value;
+    }
+
+    [CustomFileName("custom_file_test.c", "custom_file_test.h")]
+    public static CustomFileTestStruct TestStructField;
+
+    [CustomFileName("custom_file_test.c", "custom_file_test.h")]
+    public static int CustomFileTestMethod()
+    {
+        TestStructField.Value += 1;
+        return TestStructField.Value;
+    }
 }
