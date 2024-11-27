@@ -6,15 +6,15 @@ public class PlannedSourceFile
 {
     private readonly List<MethodConversionInfo> _implementedMethods = [];
     private readonly List<HeaderName> _referencedHeaders = [];
-    private readonly List<TypeConversionInfo> _typesWithGlobals = [];
     private readonly List<TypeConversionInfo> _declaredTypes = [];
+    private readonly List<GlobalConversionInfo> _globals = [];
     
     public CSourceFileName Name { get; }
 
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
-    public IReadOnlyList<TypeConversionInfo> TypesWithGlobals => _typesWithGlobals;
     public IReadOnlyList<TypeConversionInfo> DeclaredTypes => _declaredTypes;
+    public IReadOnlyList<GlobalConversionInfo> ImplementedGlobls => _globals;
 
     public PlannedSourceFile(CSourceFileName name)
     {
@@ -58,7 +58,7 @@ public class PlannedSourceFile
             }
 
             newSourceFile._implementedMethods.AddRange(sourceFile.ImplementedMethods);
-            newSourceFile._typesWithGlobals.AddRange(sourceFile.TypesWithGlobals);
+            newSourceFile._globals.AddRange(sourceFile._globals);
         }
         
         // Resolve which headers are actually required to be referenced (we shouldn't reference
@@ -92,11 +92,11 @@ public class PlannedSourceFile
         }
     }
 
-    public void AddTypeWithStaticField(TypeConversionInfo type)
+    public void AddImplementedGlobal(GlobalConversionInfo global)
     {
-        if (!_typesWithGlobals.Contains(type))
+        if (!_globals.Contains(global))
         {
-            _typesWithGlobals.Add(type);
+            _globals.Add(global);
         }
     }
 }

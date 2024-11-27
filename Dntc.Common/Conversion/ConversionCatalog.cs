@@ -9,6 +9,7 @@ public class ConversionCatalog
     private readonly DefinitionCatalog _definitionCatalog;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
+    private readonly Dictionary<IlFieldId, GlobalConversionInfo> _globals = new();
 
     public ConversionCatalog(DefinitionCatalog definitionCatalog)
     {
@@ -44,6 +45,17 @@ public class ConversionCatalog
         }
 
         var message = $"Conversion catalog did not contain the type '{method.Value}'";
+        throw new InvalidOperationException(message);
+    }
+
+    public GlobalConversionInfo Find(IlFieldId fieldId)
+    {
+        if (_globals.TryGetValue(fieldId, out var info))
+        {
+            return info;
+        }
+
+        var message = $"Conversion catalog did not have did not contain a global for the field '{fieldId}'";
         throw new InvalidOperationException(message);
     }
 

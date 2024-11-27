@@ -15,6 +15,8 @@ public class DependencyGraph
     public record TypeNode(IlTypeName TypeName) : Node;
 
     public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor) : Node;
+
+    public record GlobalNode(IlFieldId FieldId) : Node;
     
     public Node Root { get; private set; }
 
@@ -23,7 +25,7 @@ public class DependencyGraph
         Root = CreateNode(definitionCatalog, rootMethod, []);
     }
 
-    private Node CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
+    private static Node CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
     {
         var invokedDefinition = definitionCatalog.Get(invokedMethod.MethodId);
         if (invokedDefinition == null)
@@ -56,7 +58,7 @@ public class DependencyGraph
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }
 
-    private Node CreateNode(
+    private static Node CreateNode(
         DefinitionCatalog definitionCatalog, 
         IlMethodId methodId, 
         List<Node> path, 
@@ -109,33 +111,10 @@ public class DependencyGraph
                 node.Children.Add(typeNode);
             }
 
-            foreach (var type in dotNetDefinedMethod.TypesRequiringStaticConstruction)
+            foreach (var global in dotNetDefinedMethod.ReferencedGlobals)
             {
-                var definition = definitionCatalog.Get(type);
-                if (definition == null)
-                {
-                    var message = $"Type '{type}' requires static construction, but no definition found";
-                    throw new InvalidOperationException(message);
-                }
-
-                if (definition is DotNetDefinedType dotNetDefinedType)
-                {
-                    var staticConstructor = dotNetDefinedType.Definition.GetStaticConstructor();
-                    if (staticConstructor == null)
-                    {
-                        continue;
-                    }
-                    
-                    var constructorId = new IlMethodId(staticConstructor.FullName);
-                    if (constructorId == dotNetDefinedMethod.Id)
-                    {
-                        // Don't add a constructor as a dependency if we are currently in that constructor
-                        continue;
-                    }
-                        
-                    var methodNode = CreateNode(definitionCatalog, constructorId, path, true);
-                    node.Children.Add(methodNode);
-                }
+                var globalNode = CreateNode(definitionCatalog, global, path);
+                node.Children.Add(globalNode);
             }
         }
         
@@ -156,7 +135,7 @@ public class DependencyGraph
         var node = new TypeNode(typeName);
         path.Add(node);
 
-        var subTypes = type.Fields
+        var subTypes = type.InstanceFields
             .Select(x => x.Type)
             .Concat(type.OtherReferencedTypes)
             .Distinct();
@@ -171,39 +150,40 @@ public class DependencyGraph
         return node;
     }
 
-    private static void AnalyzeMethod(
-        DotNetDefinedMethod dotNetDefinedMethod, 
-        List<InvokedMethod> calledMethods, 
-        HashSet<IlTypeName> referencedTypes,
-        HashSet<IlTypeName> typesRequiringStaticConstruction)
+    public static Node CreateNode(DefinitionCatalog definitionCatalog, IlFieldId fieldId, List<Node> path)
     {
-        foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
+        EnsureNotCircularReference(path, fieldId);
+        var field = definitionCatalog.Get(fieldId);
+        if (field == null)
         {
-            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
-            {
-                var message = $"No handler for op code '{instruction.OpCode.Code}'";
-                throw new InvalidOperationException(message);
-            }
+            var message = $"No global defined for the field '{fieldId}'";
+            throw new InvalidOperationException(message);
+        }
 
-            var results = handler.Analyze(new AnalyzeContext(instruction, dotNetDefinedMethod));
-            if (results.CalledMethod != null)
-            {
-                calledMethods.Add(results.CalledMethod);
-            }
+        var node = new GlobalNode(fieldId);
+        path.Add(node);
+        
+        // If the declaring type has a static constructor, we need to depend on that. This will miss
+        // any other types with static constructors that modify this static value, but there's not an
+        // easy way to do that without analyzing *every* static constructor in the assembly.
+        if (field is DotNetDefinedGlobal dotNetGlobal)
+        {
+            var staticConstructor = dotNetGlobal.Definition
+                .DeclaringType
+                .GetStaticConstructor();
 
-            foreach (var referencedType in results.ReferencedTypes)
+            if (staticConstructor != null)
             {
-                referencedTypes.Add(referencedType);
-            }
-
-            foreach (var type in results.TypesRequiringStaticConstruction)
-            {
-                typesRequiringStaticConstruction.Add(type);
+                var newNode = CreateNode(definitionCatalog, new IlMethodId(staticConstructor.FullName), path);
+                node.Children.Add(newNode);
             }
         }
+
+        path.Remove(node);
+        return node;
     }
 
-
+    // TODO: Don't exception on circular references, just stop going down them.
     private static void EnsureNotCircularReference(List<Node> path, IlMethodId id)
     {
         var referenceFound = false;
@@ -237,6 +217,24 @@ public class DependencyGraph
         if (referenceFound)
         {
             ThrowCircularReferenceException(path, typeName.Value);
+        }
+    }
+    
+    private static void EnsureNotCircularReference(List<Node> path, IlFieldId id)
+    {
+        var referenceFound = false;
+        foreach (var node in path)
+        {
+            if (node is GlobalNode fieldNode && fieldNode.FieldId == id)
+            {
+                referenceFound = true;
+                break;
+            }
+        }
+
+        if (referenceFound)
+        {
+            ThrowCircularReferenceException(path, id.Value);
         }
     }
 

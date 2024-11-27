@@ -40,13 +40,9 @@ public class PlannedFileConverter
             .Select(x => new MethodDeclaration(x.ConversionInfo, x.Definition!, _conversionCatalog))
             .ToArray();
 
-        var globals = plannedHeaderFile.DeclaredTypes
-            .Select(x => _definitionCatalog.Get(x.IlName))
-            .Where(x => x != null)
-            .SelectMany(x => x!.Fields
-                .Where(y => y.isStatic)
-                .Where(y => !y.IsNativelyDefined)
-                .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, true)))
+        var globals = plannedHeaderFile.DeclaredGlobals
+            .Select(x => new { GlobalInfo = x, TypeInfo = _conversionCatalog.Find(x.Type)})
+            .Select(x => new GlobalVariableDeclaration(x.GlobalInfo, x.TypeInfo, true))
             .ToArray();
 
         return new HeaderFile(guard, includes, typeDeclarations, methodDeclarations, globals);
@@ -68,13 +64,9 @@ public class PlannedFileConverter
             })
             .ToArray();
 
-        var globals = plannedSourceFile.TypesWithGlobals
-            .Select(x => _definitionCatalog.Get(x.IlName))
-            .Where(x => x != null)
-            .SelectMany(x => x!.Fields
-                .Where(y => y.isStatic)
-                .Where(y => !y.IsNativelyDefined)
-                .Select(y => new GlobalVariableDeclaration(x, y, _conversionCatalog, false)))
+        var globals = plannedSourceFile.ImplementedGlobls
+            .Select(x => new { GlobalInfo = x, TypeInfo = _conversionCatalog.Find(x.Type)})
+            .Select(x => new GlobalVariableDeclaration(x.GlobalInfo, x.TypeInfo, false))
             .ToArray();
 
         var typeDeclarations = plannedSourceFile.DeclaredTypes

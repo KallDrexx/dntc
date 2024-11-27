@@ -16,7 +16,23 @@ public readonly record struct IlMethodId(string Value)
     }
 }
 
+public readonly record struct IlFieldId(string Value)
+{
+    public override string ToString()
+    {
+        return Value;
+    }
+}
+
 public readonly record struct CTypeName(string Value)
+{
+    public override string ToString()
+    {
+        return Value;
+    }
+}
+
+public readonly record struct CGlobalName(string Value)
 {
     public override string ToString()
     {

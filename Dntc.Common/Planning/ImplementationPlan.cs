@@ -151,18 +151,6 @@ public class ImplementationPlan
         }
         
         header.AddDeclaredType(type);
-
-        if (type.SourceFileName != null)
-        {
-            if (!_sourceFiles.TryGetValue(type.SourceFileName.Value, out var sourceFile))
-            {
-                sourceFile = new PlannedSourceFile(type.SourceFileName.Value);
-                _sourceFiles[type.SourceFileName.Value] = sourceFile;
-            }
-            
-            AddReferencedHeaders(node, sourceFile);
-            sourceFile.AddTypeWithStaticField(type);
-        }
     }
 
     private void DeclareMethod(DependencyGraph.MethodNode node)

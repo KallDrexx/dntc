@@ -32,13 +32,13 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
     private async Task WriteDotNetDefinedTypeAsync(StreamWriter writer, DotNetDefinedType dotNetDefinedType)
     {
         await writer.WriteLineAsync("typedef struct {");
-        foreach (var field in dotNetDefinedType.Fields.Where(x => !x.isStatic))
+        foreach (var field in dotNetDefinedType.InstanceFields)
         {
             var fieldType = Catalog.Find(field.Type);
             await writer.WriteLineAsync($"\t{fieldType.NameInC} {Utils.MakeValidCName(field.Name)};");
         }
 
-        if (dotNetDefinedType.Fields.Count == 0)
+        if (dotNetDefinedType.InstanceFields.Count == 0)
         {
             // C doesn't allow empty structs
             await writer.WriteLineAsync("\tchar __dummy;");

@@ -7,6 +7,7 @@ public class DefinitionCatalog
 {
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
+    private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
 
     /// <summary>
     /// Adds the specified type to the catalog, along with all of its methods and nested types
@@ -45,6 +46,11 @@ public class DefinitionCatalog
         return _methods.GetValueOrDefault(methodId);
     }
 
+    public DefinedGlobal? Get(IlFieldId fieldId)
+    {
+        return _globals.GetValueOrDefault(fieldId);
+    }
+
     private void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")
@@ -75,6 +81,12 @@ public class DefinitionCatalog
             {
                 AddDotNetFunctionPointer(functionPointer);
             }
+        }
+
+        foreach (var staticField in type.Fields.Where(x => x.IsStatic))
+        {
+            var global = new DotNetDefinedGlobal(staticField);
+            Add(global);
         }
     }
 
@@ -117,5 +129,17 @@ public class DefinitionCatalog
         }
 
         _methods[method.Id] = method;
+    }
+
+    private void Add(DefinedGlobal global)
+    {
+        if (_globals.TryAdd(global.IlName, global))
+        {
+            return;
+        }
+        
+        // TODO: Add better duplication logic, and possibly allow overriding
+        var message = $"Global '{global.IlName}' is already defined and cannot be redefined";
+        throw new InvalidOperationException(message);
     }
 }
