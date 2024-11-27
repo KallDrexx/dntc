@@ -10,6 +10,7 @@ public class PlannedHeaderFile
     private readonly List<HeaderName> _referencedHeaders = [];
     private readonly List<TypeConversionInfo> _declaredTypes = [];
     private readonly List<MethodConversionInfo> _declaredMethods = [];
+    private readonly List<GlobalConversionInfo> _declaredGlobals = [];
     
     public HeaderName Name { get; }
 
@@ -29,6 +30,11 @@ public class PlannedHeaderFile
     /// in the order presented in this list.
     /// </summary>
     public IReadOnlyList<MethodConversionInfo> DeclaredMethods => _declaredMethods;
+
+    /// <summary>
+    /// Globals that are declared in this header.
+    /// </summary>
+    public IReadOnlyList<GlobalConversionInfo> DeclaredGlobals => _declaredGlobals;
 
     public PlannedHeaderFile(HeaderName name)
     {
@@ -56,6 +62,14 @@ public class PlannedHeaderFile
         if (!_declaredMethods.Contains(method))
         {
             _declaredMethods.Add(method);
+        }
+    }
+
+    public void AddDeclaredGlobal(GlobalConversionInfo global)
+    {
+        if (!_declaredGlobals.Contains(global))
+        {
+            _declaredGlobals.Add(global);
         }
     }
 }

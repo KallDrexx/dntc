@@ -82,20 +82,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
             }
             else if (field.IsStatic)
             {
-                var containedType = context.ConversionCatalog.Find(new IlTypeName(field.DeclaringType.FullName));
-                var definedType = context.DefinitionCatalog.Get(new IlTypeName(field.DeclaringType.FullName));
-                if (definedType == null)
-                {
-                    var message = $"No definition for type {field.DeclaringType.FullName}";
-                    throw new InvalidOperationException(message);
-                }
-
-                var staticFieldDefinition = definedType.Fields
-                    .Where(x => x.Name == field.Name)
-                    .Single(x => x.isStatic);
-
-                var staticFieldName = Utils.StaticFieldName(containedType, staticFieldDefinition);
-                var variable = new Variable(fieldType, staticFieldName, false);
+                var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
+                var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
                 newExpression = new VariableValueExpression(variable);
             }
             else
@@ -121,19 +109,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var declaringType = new IlTypeName(field.DeclaringType.FullName);
-            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
-
-            List<IlTypeName> staticTypes = field.IsStatic ? [declaringType] : [];
-            var headers = new HashSet<HeaderName>(
-                nativeGlobalInfo?.HeaderName != null 
-                    ? [nativeGlobalInfo.HeaderName.Value]
-                    : []);
 
             return new OpCodeAnalysisResult
             {
                 ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
-                TypesRequiringStaticConstruction = new HashSet<IlTypeName>(staticTypes),
-                ReferencedHeaders = headers,
+                ReferencedGlobal = field.IsStatic ? field : null,
             };
         }
     }

@@ -9,6 +9,7 @@ public class ConversionCatalog
     private readonly DefinitionCatalog _definitionCatalog;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
+    private readonly Dictionary<IlFieldId, GlobalConversionInfo> _globals = new();
 
     public ConversionCatalog(DefinitionCatalog definitionCatalog)
     {
@@ -47,6 +48,17 @@ public class ConversionCatalog
         throw new InvalidOperationException(message);
     }
 
+    public GlobalConversionInfo Find(IlFieldId fieldId)
+    {
+        if (_globals.TryGetValue(fieldId, out var info))
+        {
+            return info;
+        }
+
+        var message = $"Conversion catalog did not have did not contain a global for the field '{fieldId}'";
+        throw new InvalidOperationException(message);
+    }
+
     private void AddNode(DependencyGraph.Node node)
     {
         switch (node)
@@ -57,6 +69,10 @@ public class ConversionCatalog
             
             case DependencyGraph.MethodNode methodNode:
                 AddNode(methodNode);
+                break;
+            
+            case DependencyGraph.GlobalNode globalNode:
+                AddNode(globalNode);
                 break;
             
             default:
@@ -79,6 +95,25 @@ public class ConversionCatalog
             AddChildren(node);
             _types.Add(node.TypeName, new TypeConversionInfo(definition));
         }
+    }
+
+    private void AddNode(DependencyGraph.GlobalNode node)
+    {
+        if (_globals.ContainsKey(node.FieldId))
+        {
+            return;
+        }
+
+        var definition = _definitionCatalog.Get(node.FieldId);
+        if (definition == null)
+        {
+            var message = $"Dependency graph contained a node for global `{node.FieldId}` but no " +
+                          $"definition exists for it";
+            throw new InvalidOperationException(message);
+        }
+        
+        _globals.Add(node.FieldId, new GlobalConversionInfo(definition));
+        AddChildren(node);
     }
 
     private void AddNode(DependencyGraph.MethodNode node)

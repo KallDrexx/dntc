@@ -11,7 +11,7 @@ public class NativeDefinedType : DefinedType
         NativeName = nativeName;
         IlName = ilTypeName;
 
-        Fields = Array.Empty<Field>();
+        InstanceFields = Array.Empty<Field>();
         Methods = Array.Empty<IlMethodId>();
     }
 

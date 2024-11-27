@@ -27,11 +27,6 @@ public class TypeConversionInfo
     public HeaderName? Header { get; private set; }
    
     /// <summary>
-    /// The file that any static fields/globals are implemented in. Null 
-    /// </summary>
-    public CSourceFileName? SourceFileName { get; private set; }
-   
-    /// <summary>
     /// What name this type will have in C
     /// </summary>
     public CTypeName NameInC { get; private set; }
@@ -74,10 +69,6 @@ public class TypeConversionInfo
         IsPredeclared = false;
         Header = Utils.GetHeaderName(type.Namespace);
         NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
-
-        SourceFileName = type.Fields.Any(x => x.isStatic)
-            ? Utils.GetSourceFileName(type.Namespace)
-            : null;
     }
 
     private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)
@@ -106,7 +97,6 @@ public class TypeConversionInfo
     {
         IsPredeclared = true;
         Header = type.HeaderFile;
-        SourceFileName = null;
         NameInC = type.NativeName;
     }
 
@@ -114,7 +104,6 @@ public class TypeConversionInfo
     {
         IsPredeclared = false;
         Header = type.HeaderName;
-        SourceFileName = null;
         NameInC = type.NativeName;
         ReferencedHeaders = type.ReferencedHeaders;
     }
