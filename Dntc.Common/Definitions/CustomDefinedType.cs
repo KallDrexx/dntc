@@ -27,7 +27,7 @@ public abstract class CustomDefinedType : DefinedType
         NativeName = nativeName;
         ReferencedHeaders = referencedHeaders;
 
-        Fields = Array.Empty<Field>();
+        InstanceFields = Array.Empty<Field>();
         Methods = Array.Empty<IlMethodId>();
     }
     

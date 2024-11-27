@@ -58,6 +58,25 @@ public class ImplementationPlan
 
                     break;
                 
+                case DependencyGraph.GlobalNode globalNode:
+                    var global = _conversionCatalog.Find(globalNode.FieldId);
+                    if (global.Header != null)
+                    {
+                        headerFile.AddReferencedHeader(global.Header.Value);
+                    }
+
+                    var globalDefinition = _definitionCatalog.Get(globalNode.FieldId);
+                    if (globalDefinition != null)
+                    {
+                        var type = _conversionCatalog.Find(globalDefinition.IlType);
+                        if (type.Header != null)
+                        {
+                            headerFile.AddReferencedHeader(type.Header.Value);
+                        }
+                    }
+
+                    break;
+                
                 default:
                     throw new NotSupportedException(child.GetType().FullName);
             }
@@ -84,6 +103,25 @@ public class ImplementationPlan
                     {
                         sourceFile.AddReferencedHeader(childMethod.Header.Value);
                     }
+                    break;
+                
+                case DependencyGraph.GlobalNode globalNode:
+                    var global = _conversionCatalog.Find(globalNode.FieldId);
+                    if (global.Header != null)
+                    {
+                        sourceFile.AddReferencedHeader(global.Header.Value);
+                    }
+
+                    var globalDefinition = _definitionCatalog.Get(globalNode.FieldId);
+                    if (globalDefinition != null)
+                    {
+                        var type = _conversionCatalog.Find(globalDefinition.IlType);
+                        if (type.Header != null)
+                        {
+                            sourceFile.AddReferencedHeader(type.Header.Value);
+                        }
+                    }
+
                     break;
                 
                 default:
@@ -114,6 +152,11 @@ public class ImplementationPlan
                     AddStaticConstructorInitializer();
                 }
                 
+                break;
+            
+            case DependencyGraph.GlobalNode globalNode:
+                AddGlobalDeclaration(globalNode);
+                AddGlobalImplementation(globalNode);
                 break;
             
             default:
@@ -151,18 +194,6 @@ public class ImplementationPlan
         }
         
         header.AddDeclaredType(type);
-
-        if (type.SourceFileName != null)
-        {
-            if (!_sourceFiles.TryGetValue(type.SourceFileName.Value, out var sourceFile))
-            {
-                sourceFile = new PlannedSourceFile(type.SourceFileName.Value);
-                _sourceFiles[type.SourceFileName.Value] = sourceFile;
-            }
-            
-            AddReferencedHeaders(node, sourceFile);
-            sourceFile.AddTypeWithStaticField(type);
-        }
     }
 
     private void DeclareMethod(DependencyGraph.MethodNode node)
@@ -218,5 +249,41 @@ public class ImplementationPlan
         _staticConstructorInitializerAdded = true;
         var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false);
         ProcessNode(node);
+    }
+
+    private void AddGlobalDeclaration(DependencyGraph.GlobalNode node)
+    {
+        var global = _conversionCatalog.Find(node.FieldId);
+        if (global.IsPredeclared || global.Header == null)
+        {
+            return;
+        }
+        
+        if (!_headers.TryGetValue(global.Header.Value, out var header))
+        {
+            header = new PlannedHeaderFile(global.Header.Value);
+            _headers[global.Header.Value] = header;
+        }
+        
+        AddReferencedHeaders(node, header);
+        header.AddDeclaredGlobal(global);
+    }
+
+    private void AddGlobalImplementation(DependencyGraph.GlobalNode node)
+    {
+        var global = _conversionCatalog.Find(node.FieldId);
+        if (global.IsPredeclared || global.SourceFileName == null)
+        {
+            return;
+        }
+
+        if (!_sourceFiles.TryGetValue(global.SourceFileName.Value, out var sourceFile))
+        {
+            sourceFile = new PlannedSourceFile(global.SourceFileName.Value);
+            _sourceFiles[global.SourceFileName.Value] = sourceFile;
+        }
+        
+        AddReferencedHeaders(node, sourceFile);
+        sourceFile.AddImplementedGlobal(global);
     }
 }

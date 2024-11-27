@@ -7,7 +7,7 @@ public class DotNetDefinedMethod : DefinedMethod
 {
     private readonly List<InvokedMethod> _invokedMethods = [];
     private readonly HashSet<IlTypeName> _referencedTypes = [];
-    private readonly HashSet<IlTypeName> _typesRequiringStaticConstruction = [];
+    private readonly HashSet<IlFieldId> _referencedGlobals = [];
     private bool _hasBeenAnalyzed;
     
     public MethodDefinition Definition { get; }
@@ -15,6 +15,8 @@ public class DotNetDefinedMethod : DefinedMethod
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
     public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
 
+    // We don't want to bother analyzing methods we aren't going to transpile, so only analyze
+    // if we enter a code path looking for globals, types, and other methods this method utilizes.
     public List<InvokedMethod> InvokedMethods
     {
         get
@@ -33,12 +35,12 @@ public class DotNetDefinedMethod : DefinedMethod
         }
     }
 
-    public IReadOnlySet<IlTypeName> TypesRequiringStaticConstruction
+    public IReadOnlySet<IlFieldId> ReferencedGlobals
     {
         get
         {
             Analyze();
-            return _typesRequiringStaticConstruction;
+            return _referencedGlobals;
         }
     }
     
@@ -186,14 +188,14 @@ public class DotNetDefinedMethod : DefinedMethod
                 _referencedTypes.Add(referencedType);
             }
 
-            foreach (var type in results.TypesRequiringStaticConstruction)
-            {
-                _typesRequiringStaticConstruction.Add(type);
-            }
-
             foreach (var header in results.ReferencedHeaders)
             {
                 referencedHeaders.Add(header);
+            }
+
+            if (results.ReferencedGlobal != null)
+            {
+                _referencedGlobals.Add(new IlFieldId(results.ReferencedGlobal.FullName));
             }
         }
 

@@ -24,7 +24,8 @@ public class DotNetDefinedType : DefinedType
         }
         Namespace = new IlNamespace(rootDeclaringType.Namespace);
 
-        Fields = definition.Fields
+        InstanceFields = definition.Fields
+            .Where(x => !x.IsStatic)
             .Select(ConvertToField)
             .ToArray();
 
@@ -37,9 +38,7 @@ public class DotNetDefinedType : DefinedType
     {
         var type = new IlTypeName(fieldDefinition.FieldType.FullName);
         var name = fieldDefinition.Name;
-        var isStatic = fieldDefinition.IsStatic;
-        var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(fieldDefinition.CustomAttributes, type.Value);
 
-        return new Field(type, name, isStatic, nativeGlobalInfo != null);
+        return new Field(type, name);
     }
 }

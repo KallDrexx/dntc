@@ -6,8 +6,9 @@
 #include "ScratchpadCSharp.h"
 
 
- int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
+ int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+ uint32_t ScratchpadCSharp_AttributeTests_StaticNumberField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);

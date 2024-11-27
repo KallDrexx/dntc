@@ -6,14 +6,14 @@ namespace Dntc.Common.Definitions.CustomDefinedMethods;
 
 public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
 {
-    private const string Namespace = "Dntc.Utils";
+    private const string NamespaceName = "Dntc.Utils";
     private const string MethodName = "InitStaticConstructors";
     private const string BaseFileName = "dntc_utils";
     private const string FunctionName = "dntc_utils_init_static_constructors";
 
     private readonly HashSet<HeaderName> _referencedHeaders = [];
 
-    public static IlMethodId MethodId = new($"{Namespace}.{MethodName}()");
+    public static IlMethodId MethodId = new($"{NamespaceName}.{MethodName}()");
     
     private readonly List<MethodConversionInfo> _staticConstructors = [];
     
@@ -21,7 +21,7 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
         : base(
             MethodId,
             new IlTypeName(typeof(void).FullName!), 
-            new IlNamespace(Namespace), 
+            new IlNamespace(NamespaceName), 
             new HeaderName($"{BaseFileName}.h"), 
             new CSourceFileName($"{BaseFileName}.c"), 
             new CFunctionName(FunctionName), 
