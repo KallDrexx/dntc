@@ -64,9 +64,10 @@ public class GlobalConversionInfo
         IsPredeclared = false;
         
         var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
+        var fieldName = $"{global.Definition.DeclaringType.FullName}_{global.Definition.Name}";
         Header = Utils.GetHeaderName(declaringNamespace);
         SourceFileName = Utils.GetSourceFileName(declaringNamespace);
-        NameInC = new CGlobalName(Utils.MakeValidCName(global.IlName.Value));
+        NameInC = new CGlobalName(Utils.MakeValidCName(fieldName));
     }
 
     private void SetupNativeGlobal(NativeDefinedGlobal global)

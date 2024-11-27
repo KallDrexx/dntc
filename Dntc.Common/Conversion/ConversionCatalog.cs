@@ -71,6 +71,10 @@ public class ConversionCatalog
                 AddNode(methodNode);
                 break;
             
+            case DependencyGraph.GlobalNode globalNode:
+                AddNode(globalNode);
+                break;
+            
             default:
                 throw new NotSupportedException(node.GetType().FullName);
         }
@@ -91,6 +95,25 @@ public class ConversionCatalog
             AddChildren(node);
             _types.Add(node.TypeName, new TypeConversionInfo(definition));
         }
+    }
+
+    private void AddNode(DependencyGraph.GlobalNode node)
+    {
+        if (_globals.ContainsKey(node.FieldId))
+        {
+            return;
+        }
+
+        var definition = _definitionCatalog.Get(node.FieldId);
+        if (definition == null)
+        {
+            var message = $"Dependency graph contained a node for global `{node.FieldId}` but no " +
+                          $"definition exists for it";
+            throw new InvalidOperationException(message);
+        }
+        
+        _globals.Add(node.FieldId, new GlobalConversionInfo(definition));
+        AddChildren(node);
     }
 
     private void AddNode(DependencyGraph.MethodNode node)

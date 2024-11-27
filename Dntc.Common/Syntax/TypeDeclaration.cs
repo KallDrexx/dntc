@@ -41,7 +41,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         if (dotNetDefinedType.InstanceFields.Count == 0)
         {
             // C doesn't allow empty structs
-            await writer.WriteLineAsync("\tchar __dummy;");
+            await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
         }
 
         await writer.WriteLineAsync($"}} {TypeConversion.NameInC};");
