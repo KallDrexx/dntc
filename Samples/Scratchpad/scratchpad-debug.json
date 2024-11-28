@@ -35,7 +35,9 @@
     "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::GetStaticVector()",
     "System.UInt32 ScratchpadCSharp.AttributeTests::GetStaticNumberField()",
     "System.Void ScratchpadCSharp.AttributeTests::SetStaticNumberField(System.UInt32)",
-    "System.Int32 ScratchpadCSharp.AttributeTests::RenamedMethodTest()"
+    "System.Int32 ScratchpadCSharp.AttributeTests::RenamedMethodTest()",
+    "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileTestMethod()",
+    "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileReferenceTestMethod()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

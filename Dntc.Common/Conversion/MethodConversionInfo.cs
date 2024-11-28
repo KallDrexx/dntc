@@ -94,8 +94,17 @@ public class MethodConversionInfo
         
         IsPredeclared = false;
 
-        Header = Utils.GetHeaderName(method.Namespace);
-        SourceFileName = Utils.GetSourceFileName(method.Namespace);
+        var customNaming = Utils.GetCustomFileName(method.Definition.CustomAttributes, method.Definition.FullName);
+        if (customNaming != null)
+        {
+            SourceFileName = customNaming.Value.Item1;
+            Header = customNaming.Value.Item2;
+        }
+        else
+        {
+            Header = Utils.GetHeaderName(method.Namespace);
+            SourceFileName = Utils.GetSourceFileName(method.Namespace);
+        }
 
         string functionName;
         if (customNameAttribute != null)

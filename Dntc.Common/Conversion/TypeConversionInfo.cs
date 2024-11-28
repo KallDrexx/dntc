@@ -67,8 +67,17 @@ public class TypeConversionInfo
     private void SetupDotNetType(DotNetDefinedType type)
     {
         IsPredeclared = false;
-        Header = Utils.GetHeaderName(type.Namespace);
         NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
+
+        var customNaming = Utils.GetCustomFileName(type.Definition.CustomAttributes, type.IlName.Value);
+        if (customNaming != null)
+        {
+            Header = customNaming.Value.Item2;
+        }
+        else
+        {
+            Header = Utils.GetHeaderName(type.Namespace);
+        }
     }
 
     private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)

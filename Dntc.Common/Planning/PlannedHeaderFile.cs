@@ -43,7 +43,7 @@ public class PlannedHeaderFile
 
     public void AddReferencedHeader(HeaderName headerName)
     {
-        if (!_referencedHeaders.Contains(headerName))
+        if (headerName != Name && !_referencedHeaders.Contains(headerName))
         {
             _referencedHeaders.Add(headerName);
         }
