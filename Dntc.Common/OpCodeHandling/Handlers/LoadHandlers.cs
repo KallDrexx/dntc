@@ -69,18 +69,10 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
-            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             CBaseExpression newExpression;
 
-            if (nativeGlobalInfo != null)
-            {
-                var variable = new Variable(fieldType, nativeGlobalInfo.NativeName, false);
-                newExpression = new VariableValueExpression(variable);
-                
-                // TODO: Add header reference somewhere
-            }
-            else if (field.IsStatic)
+            if (field.IsStatic)
             {
                 var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
                 var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
