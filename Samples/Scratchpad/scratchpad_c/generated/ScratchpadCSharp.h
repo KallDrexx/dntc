@@ -7,9 +7,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../native_test.h"
+#include "custom_file_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"
-#include "ScratchpadCSharp.h"
 
 typedef struct {
 	float X;
@@ -87,5 +87,6 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetSta
 uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
 void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
 int32_t some_named_function();
+int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
 
 #endif // SCRATCHPADCSHARP_H_H
