@@ -2,13 +2,13 @@
 
 public class NativeDefinedMethod : DefinedMethod
 {
-    public HeaderName HeaderFile { get; }
+    public HeaderName? HeaderFile { get; }
     public CFunctionName NativeName { get; }
 
     public NativeDefinedMethod(
         IlMethodId methodId, 
         IlTypeName returnType,
-        HeaderName headerFile, 
+        HeaderName? headerFile, 
         CFunctionName nativeName,
         IlNamespace ilNamespace,
         IReadOnlyList<IlTypeName> parameterTypes)

@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+﻿using Dntc.Attributes;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
@@ -69,6 +70,38 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
+            var nativeTranspileAttribute = method.CustomAttributes
+                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallAttribute).FullName);
+
+            if (nativeTranspileAttribute != null)
+            {
+                if (nativeTranspileAttribute.ConstructorArguments.Count < 1)
+                {
+                    var message = $"NativeTranspileAttribute on '{method.FullName}' expected to have at least " +
+                                  $"1 constructor arguments but none were found";
+
+                    throw new InvalidOperationException(message);
+                }
+
+                var hasHeaderSpecified = nativeTranspileAttribute.ConstructorArguments.Count > 1 &&
+                                         nativeTranspileAttribute.ConstructorArguments[1].Value != null;
+
+                var header = hasHeaderSpecified
+                    ? new HeaderName(nativeTranspileAttribute.ConstructorArguments[1].Value.ToString()!)
+                    : (HeaderName?) null;
+                
+                var nativeDefinedMethod = new NativeDefinedMethod(
+                    new IlMethodId(method.FullName),
+                    new IlTypeName(method.ReturnType.FullName),
+                    header,
+                    new CFunctionName(nativeTranspileAttribute.ConstructorArguments[0].Value.ToString()!),
+                    new IlNamespace(method.DeclaringType.Namespace),
+                    method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());
+
+                Add(nativeDefinedMethod);
+                continue;
+            }
+            
             var definedMethod = new DotNetDefinedMethod(method);
             Add(definedMethod);
 
