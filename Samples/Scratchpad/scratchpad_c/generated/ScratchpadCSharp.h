@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../native_test.h"
-#include "custom_file_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
@@ -49,6 +48,7 @@ typedef struct {
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+extern ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);

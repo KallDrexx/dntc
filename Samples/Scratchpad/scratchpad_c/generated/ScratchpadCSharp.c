@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdint.h>
 #include "../native_test.h"
-#include "custom_file_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
@@ -9,6 +8,7 @@
 
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+ ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
