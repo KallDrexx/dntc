@@ -52,6 +52,60 @@ public class DefinitionCatalog
         return _globals.GetValueOrDefault(fieldId);
     }
 
+    private static NativeDefinedGlobal ConvertToNativeDefinedGlobal(
+        FieldDefinition field, 
+        CustomAttribute nativeGlobalAttribute)
+    {
+        if (nativeGlobalAttribute.ConstructorArguments.Count < 1)
+        {
+            var message = $"NativeGlobalAttribute on '{field.FullName}' expected to have at least " +
+                          $"1 constructor arguments but none were found";
+
+            throw new InvalidOperationException(message);
+        }
+
+        var hasHeaderSpecified = nativeGlobalAttribute.ConstructorArguments.Count > 1 &&
+                                 nativeGlobalAttribute.ConstructorArguments[1].Value != null;
+
+        var header = hasHeaderSpecified
+            ? new HeaderName(nativeGlobalAttribute.ConstructorArguments[1].Value.ToString()!)
+            : (HeaderName?) null;
+
+        return new NativeDefinedGlobal(
+            new IlFieldId(field.FullName),
+            new IlTypeName(field.FieldType.FullName),
+            new CGlobalName(nativeGlobalAttribute.ConstructorArguments[0].Value.ToString()!),
+            header);
+    }
+
+    private static NativeDefinedMethod ConvertToNativeDefinedMethod(
+        MethodDefinition method, 
+        CustomAttribute nativeFunctionCallAttribute)
+    {
+        if (nativeFunctionCallAttribute.ConstructorArguments.Count < 1)
+        {
+            var message = $"NativeFunctionCallAttribute on '{method.FullName}' expected to have at least " +
+                          $"1 constructor arguments but none were found";
+
+            throw new InvalidOperationException(message);
+        }
+
+        var hasHeaderSpecified = nativeFunctionCallAttribute.ConstructorArguments.Count > 1 &&
+                                 nativeFunctionCallAttribute.ConstructorArguments[1].Value != null;
+
+        var header = hasHeaderSpecified
+            ? new HeaderName(nativeFunctionCallAttribute.ConstructorArguments[1].Value.ToString()!)
+            : (HeaderName?) null;
+                
+        return new NativeDefinedMethod(
+            new IlMethodId(method.FullName),
+            new IlTypeName(method.ReturnType.FullName),
+            header,
+            new CFunctionName(nativeFunctionCallAttribute.ConstructorArguments[0].Value.ToString()!),
+            new IlNamespace(method.DeclaringType.Namespace),
+            method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());
+    }
+
     private void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")
@@ -70,34 +124,12 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            var nativeTranspileAttribute = method.CustomAttributes
+            var nativeFunctionCallAttribute = method.CustomAttributes
                 .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallAttribute).FullName);
 
-            if (nativeTranspileAttribute != null)
+            if (nativeFunctionCallAttribute != null)
             {
-                if (nativeTranspileAttribute.ConstructorArguments.Count < 1)
-                {
-                    var message = $"NativeTranspileAttribute on '{method.FullName}' expected to have at least " +
-                                  $"1 constructor arguments but none were found";
-
-                    throw new InvalidOperationException(message);
-                }
-
-                var hasHeaderSpecified = nativeTranspileAttribute.ConstructorArguments.Count > 1 &&
-                                         nativeTranspileAttribute.ConstructorArguments[1].Value != null;
-
-                var header = hasHeaderSpecified
-                    ? new HeaderName(nativeTranspileAttribute.ConstructorArguments[1].Value.ToString()!)
-                    : (HeaderName?) null;
-                
-                var nativeDefinedMethod = new NativeDefinedMethod(
-                    new IlMethodId(method.FullName),
-                    new IlTypeName(method.ReturnType.FullName),
-                    header,
-                    new CFunctionName(nativeTranspileAttribute.ConstructorArguments[0].Value.ToString()!),
-                    new IlNamespace(method.DeclaringType.Namespace),
-                    method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());
-
+                var nativeDefinedMethod = ConvertToNativeDefinedMethod(method, nativeFunctionCallAttribute);
                 Add(nativeDefinedMethod);
                 continue;
             }
@@ -118,7 +150,13 @@ public class DefinitionCatalog
 
         foreach (var staticField in type.Fields.Where(x => x.IsStatic))
         {
-            var global = new DotNetDefinedGlobal(staticField);
+            var nativeGlobalAttribute = staticField.CustomAttributes
+                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
+
+            DefinedGlobal global = nativeGlobalAttribute != null
+                ? ConvertToNativeDefinedGlobal(staticField, nativeGlobalAttribute)
+                : new DotNetDefinedGlobal(staticField);
+            
             Add(global);
         }
     }

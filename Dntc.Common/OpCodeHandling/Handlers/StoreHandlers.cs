@@ -62,18 +62,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
-            var nativeGlobalInfo = NativeGlobalOnTranspileInfo.FromAttributes(field.CustomAttributes, field.FullName);
 
             AssignmentStatementSet statement;
-            if (nativeGlobalInfo != null)
-            {
-                var items = context.ExpressionStack.Pop(1);
-                var value = items[0];
-                var left = new VariableValueExpression(new Variable(fieldType, nativeGlobalInfo.NativeName, false));
-                var right = new DereferencedValueExpression(value);
-                statement = new AssignmentStatementSet(left, right);
-            }
-            else if (field.IsStatic)
+            if (field.IsStatic)
             {
                 var items = context.ExpressionStack.Pop(1);
                 var value = items[0];
