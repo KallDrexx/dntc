@@ -63,11 +63,21 @@ public class GlobalConversionInfo
     {
         IsPredeclared = false;
         
-        var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
         var fieldName = $"{global.Definition.DeclaringType.FullName}_{global.Definition.Name}";
-        Header = Utils.GetHeaderName(declaringNamespace);
-        SourceFileName = Utils.GetSourceFileName(declaringNamespace);
         NameInC = new CGlobalName(Utils.MakeValidCName(fieldName));
+        
+        var customNaming = Utils.GetCustomFileName(global.Definition.CustomAttributes, global.Definition.FullName);
+        if (customNaming != null)
+        {
+            SourceFileName = customNaming.Value.Item1;
+            Header = customNaming.Value.Item2;
+        }
+        else
+        {
+            var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
+            Header = Utils.GetHeaderName(declaringNamespace);
+            SourceFileName = Utils.GetSourceFileName(declaringNamespace);
+        }
     }
 
     private void SetupNativeGlobal(NativeDefinedGlobal global)

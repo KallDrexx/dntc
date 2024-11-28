@@ -3,7 +3,6 @@
 
 
 #include <stdint.h>
-#include "custom_file_test.h"
 #include "ScratchpadCSharp.h"
 
 typedef struct {
@@ -11,6 +10,7 @@ typedef struct {
 } ScratchpadCSharp_AttributeTests_CustomFileTestStruct;
 
 
+extern ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField;
 
 int32_t ScratchpadCSharp_AttributeTests_CustomFileTestMethod();
 

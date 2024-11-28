@@ -46,4 +46,9 @@ public static class AttributeTests
         TestStructField.Value += 1;
         return TestStructField.Value;
     }
+
+    public static int CustomFileReferenceTestMethod()
+    {
+        return TestStructField.Value;
+    }
 }

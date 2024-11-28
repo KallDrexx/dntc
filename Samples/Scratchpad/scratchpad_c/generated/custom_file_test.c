@@ -3,6 +3,7 @@
 #include "ScratchpadCSharp.h"
 
 
+ ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField;
 
 int32_t ScratchpadCSharp_AttributeTests_CustomFileTestMethod() {
 	(*(&((&ScratchpadCSharp_AttributeTests_TestStructField)->Value))) = ((*(&((&ScratchpadCSharp_AttributeTests_TestStructField)->Value))) + 1);
