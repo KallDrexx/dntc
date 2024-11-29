@@ -14,7 +14,7 @@ public abstract class DefinedMethod
     
     /// <summary>
     /// Headers that are referenced by this method but cannot be inferred from initial static analysis. This is
-    /// mostly required for custom defined types, or headers due to customizations found during method analysis..
+    /// mostly required for custom defined types, or headers due to customizations found during method analysis.
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; protected set; } = ArraySegment<HeaderName>.Empty;
     

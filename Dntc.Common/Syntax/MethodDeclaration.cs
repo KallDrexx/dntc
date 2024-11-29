@@ -12,14 +12,14 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
             case DotNetDefinedMethod dotNetDefinedMethod:
                 await WriteAsync(writer, dotNetDefinedMethod);
                 break;
-            
+
             case CustomDefinedMethod customDefinedMethod:
                 await WriteAsync(writer, customDefinedMethod);
                 break;
-            
+
             case NativeDefinedMethod:
                 break; // Predefined method, so nothing to do
-            
+
             default:
                 throw new NotSupportedException(Definition.GetType().FullName);
         }
@@ -27,19 +27,26 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
 
     private async Task WriteAsync(StreamWriter writer, DotNetDefinedMethod dotNetDefinedMethod)
     {
-        await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
-        for (var x = 0; x < dotNetDefinedMethod.Parameters.Count; x++)
+        if (Method.CustomDeclaration != null)
         {
-            if (x > 0) await writer.WriteAsync(", ");
-
-            var param = dotNetDefinedMethod.Parameters[x];
-            var paramType = Catalog.Find(param.Type);
-            
-            var pointerSymbol = param.IsReference ? "*" : "";
-            await writer.WriteAsync($"{paramType.NameInC} {pointerSymbol}{param.Name}");
+            await writer.WriteAsync(Method.CustomDeclaration);
         }
+        else
+        {
+            await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
+            for (var x = 0; x < dotNetDefinedMethod.Parameters.Count; x++)
+            {
+                if (x > 0) await writer.WriteAsync(", ");
 
-        await writer.WriteAsync(")");
+                var param = dotNetDefinedMethod.Parameters[x];
+                var paramType = Catalog.Find(param.Type);
+
+                var pointerSymbol = param.IsReference ? "*" : "";
+                await writer.WriteAsync($"{paramType.NameInC} {pointerSymbol}{param.Name}");
+            }
+
+            await writer.WriteAsync(")");
+        }
     }
 
     private async Task WriteAsync(StreamWriter writer, CustomDefinedMethod customDefinedMethod)

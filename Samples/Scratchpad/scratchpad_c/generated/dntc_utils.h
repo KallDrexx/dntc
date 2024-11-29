@@ -2,6 +2,7 @@
 #define DNTC_UTILS_H_H
 
 
+#include "ScratchpadCSharp.h"
 
 
 

@@ -88,6 +88,9 @@ int main(void) {
     int32_t renamedFunctionValue = some_named_function();
     assert(renamedFunctionValue == 94);
 
+    int32_t declareTest = ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
+    assert(declareTest == 929);
+
     printf("Tests passed!\n");
     return 0;
 }
