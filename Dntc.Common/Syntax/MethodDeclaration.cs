@@ -27,7 +27,15 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
 
     private async Task WriteAsync(StreamWriter writer, DotNetDefinedMethod dotNetDefinedMethod)
     {
-        await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
+        if (Method.CustomDeclaration != null)
+        {
+            await writer.WriteAsync(Method.CustomDeclaration);
+        }
+        else
+        {
+            await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
+        }
+
         for (var x = 0; x < dotNetDefinedMethod.Parameters.Count; x++)
         {
             if (x > 0) await writer.WriteAsync(", ");

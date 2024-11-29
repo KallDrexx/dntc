@@ -88,5 +88,7 @@ uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
 void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
 int32_t some_named_function();
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
+DECLARE_TEST(custom_declared_method));
+int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
 
 #endif // SCRATCHPADCSHARP_H_H

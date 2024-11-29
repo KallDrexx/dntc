@@ -51,4 +51,15 @@ public static class AttributeTests
     {
         return TestStructField.Value;
     }
+
+    [CustomDeclaration("DECLARE_TEST(custom_declared_method)", "custom_declared_method", "../macros.h")]
+    public static int CustomDeclaredMethod()
+    {
+        return 929;
+    }
+
+    public static int ReferToCustomDeclaredMethod()
+    {
+        return CustomDeclaredMethod();
+    }
 }

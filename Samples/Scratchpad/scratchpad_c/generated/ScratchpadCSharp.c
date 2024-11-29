@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdint.h>
+#include "../macros.h"
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"
@@ -282,5 +283,13 @@ int32_t some_named_function() {
 
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod() {
 	return ((&ScratchpadCSharp_AttributeTests_TestStructField)->Value);
+}
+
+DECLARE_TEST(custom_declared_method)) {
+	return 929;
+}
+
+int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod() {
+	return custom_declared_method();
 }
 
