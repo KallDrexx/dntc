@@ -1,10 +1,13 @@
-﻿using Dntc.Common.OpCodeHandling;
+﻿using Dntc.Attributes;
+using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
 public class DotNetDefinedMethod : DefinedMethod
 {
+    public record CustomDeclarationInfo(string Declaration, CFunctionName? ReferredBy);
+    
     private readonly List<InvokedMethod> _invokedMethods = [];
     private readonly HashSet<IlTypeName> _referencedTypes = [];
     private readonly HashSet<IlFieldId> _referencedGlobals = [];
@@ -14,6 +17,7 @@ public class DotNetDefinedMethod : DefinedMethod
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
     public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
+    public CustomDeclarationInfo? CustomDeclaration { get; private set; }
 
     // We don't want to bother analyzing methods we aren't going to transpile, so only analyze
     // if we enter a code path looking for globals, types, and other methods this method utilizes.
@@ -90,6 +94,8 @@ public class DotNetDefinedMethod : DefinedMethod
             .OfType<FunctionPointerType>()
             .Concat(definition.Body?.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>() ?? [])
             .ToArray();
+        
+        HandleCustomDeclarationAttribute(definition);
     }
 
     private DotNetDefinedMethod(
@@ -201,5 +207,43 @@ public class DotNetDefinedMethod : DefinedMethod
 
         ReferencedHeaders = ReferencedHeaders.Union(referencedHeaders).ToArray();
         _hasBeenAnalyzed = true;
+    }
+
+    private void HandleCustomDeclarationAttribute(MethodDefinition method)
+    {
+        var attribute = method.CustomAttributes
+            .SingleOrDefault(x => x.AttributeType.FullName == typeof(CustomDeclarationAttribute).FullName);
+
+        if (attribute == null)
+        {
+            return;
+        }
+
+        if (attribute.ConstructorArguments.Count != 3)
+        {
+            var message = $"Expected 3 arguments on the CustomDeclarationAttribute on {method.FullName}, but " +
+                          $"only {attribute.ConstructorArguments.Count} were provided";
+
+            throw new InvalidOperationException(message);
+        }
+
+        var declaration = attribute.ConstructorArguments[0].Value?.ToString();
+        var referredBy = attribute.ConstructorArguments[1].Value?.ToString();
+        var referencedHeader = attribute.ConstructorArguments[2].Value?.ToString();
+
+        if (declaration == null)
+        {
+            var message = $"CustomDeclarationAttribute on {method.FullName} had a null declaration argument";
+            throw new InvalidOperationException(message);
+        }
+
+        CustomDeclaration = new CustomDeclarationInfo(
+            declaration,
+            referredBy != null ? new CFunctionName(referredBy) : null);
+
+        if (referencedHeader != null)
+        {
+            ReferencedHeaders = [new HeaderName(referencedHeader)];
+        }
     }
 }

@@ -212,6 +212,13 @@ public class ImplementationPlan
         }
         
         AddReferencedHeaders(node, header);
+        
+        var methodDefinition = _definitionCatalog.Get(node.MethodId);
+        foreach (var referencedHeader in methodDefinition!.ReferencedHeaders)
+        {
+            header.AddReferencedHeader(referencedHeader);
+        }
+        
         header.AddDeclaredMethod(method);
     }
 

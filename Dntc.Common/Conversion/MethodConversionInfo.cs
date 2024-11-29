@@ -1,6 +1,5 @@
 ﻿using Dntc.Attributes;
 using Dntc.Common.Definitions;
-using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Conversion;
 
@@ -54,6 +53,11 @@ public class MethodConversionInfo
     /// Conversion info for all locals used
     /// </summary>
     public IReadOnlyList<Local> Locals { get; private set; }
+   
+    /// <summary>
+    /// If present, the method should be declared with this string
+    /// </summary>
+    public string? CustomDeclaration { get; private set; }
    
     public MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
@@ -125,7 +129,12 @@ public class MethodConversionInfo
             }
         }
 
-        NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
+        if (method.CustomDeclaration != null)
+        {
+            CustomDeclaration = method.CustomDeclaration.Declaration;
+        }
+        
+        NameInC = method.CustomDeclaration?.ReferredBy ?? new CFunctionName(Utils.MakeValidCName(functionName));
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)

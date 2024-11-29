@@ -37,7 +37,9 @@
     "System.Void ScratchpadCSharp.AttributeTests::SetStaticNumberField(System.UInt32)",
     "System.Int32 ScratchpadCSharp.AttributeTests::RenamedMethodTest()",
     "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileTestMethod()",
-    "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileReferenceTestMethod()"
+    "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileReferenceTestMethod()",
+    "System.Int32 ScratchpadCSharp.AttributeTests::CustomDeclaredMethod()",
+    "System.Int32 ScratchpadCSharp.AttributeTests::ReferToCustomDeclaredMethod()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }
