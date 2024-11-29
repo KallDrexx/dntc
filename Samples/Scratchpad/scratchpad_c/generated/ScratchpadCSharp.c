@@ -285,7 +285,7 @@ int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod() {
 	return ((&ScratchpadCSharp_AttributeTests_TestStructField)->Value);
 }
 
-DECLARE_TEST(custom_declared_method)) {
+DECLARE_TEST(custom_declared_method) {
 	return 929;
 }
 
