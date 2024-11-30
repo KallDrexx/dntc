@@ -10,6 +10,7 @@
 
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+ int32_t ScratchpadCSharp_AttributeTests_NonHeaderField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -281,6 +282,11 @@ int32_t some_named_function() {
 	return 94;
 }
 
+void ScratchpadCSharp_AttributeTests__cctor() {
+	ScratchpadCSharp_AttributeTests_NonHeaderField = 1010;
+	return;
+}
+
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod() {
 	return ((&ScratchpadCSharp_AttributeTests_TestStructField)->Value);
 }
@@ -291,5 +297,9 @@ DECLARE_TEST(custom_declared_method) {
 
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod() {
 	return custom_declared_method();
+}
+
+int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderField() {
+	return ScratchpadCSharp_AttributeTests_NonHeaderField;
 }
 

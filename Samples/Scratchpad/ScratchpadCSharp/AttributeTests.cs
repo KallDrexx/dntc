@@ -63,4 +63,11 @@ public static class AttributeTests
     {
         return CustomDeclaredMethod();
     }
+
+    [IgnoreInHeader] public static int NonHeaderField = 1010;
+
+    public static int GetNonHeaderField()
+    {
+        return NonHeaderField;
+    }
 }

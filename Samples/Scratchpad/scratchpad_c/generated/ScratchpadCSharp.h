@@ -87,7 +87,9 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetSta
 uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
 void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
 int32_t some_named_function();
+void ScratchpadCSharp_AttributeTests__cctor();
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
+int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderField();
 
 #endif // SCRATCHPADCSHARP_H_H
