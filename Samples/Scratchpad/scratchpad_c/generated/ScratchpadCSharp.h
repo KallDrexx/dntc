@@ -90,6 +90,6 @@ int32_t some_named_function();
 void ScratchpadCSharp_AttributeTests__cctor();
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
-int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderField();
+int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue();
 
 #endif // SCRATCHPADCSHARP_H_H

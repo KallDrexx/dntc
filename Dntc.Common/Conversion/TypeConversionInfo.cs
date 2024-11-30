@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Dntc.Attributes;
 using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Statements;
 
@@ -22,9 +23,16 @@ public class TypeConversionInfo
     
     /// <summary>
     /// The header this type will be declared in. If `null`, this is a type that does
-    /// not require a header reference (mostly for native types, like `float`).
+    /// not require a header reference (mostly for native types, like `float`), or
+    /// it's defined in a source file instead of a header.
     /// </summary>
     public HeaderName? Header { get; private set; }
+   
+    /// <summary>
+    /// The source file this type will be declared in. If `null`, this type is not
+    /// declared in a source file and is most likely declared in a header file instead.
+    /// </summary>
+    public CSourceFileName? SourceFileName { get; private set; }
    
     /// <summary>
     /// What name this type will have in C
@@ -69,14 +77,36 @@ public class TypeConversionInfo
         IsPredeclared = false;
         NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
 
+        var ignoredInheader = type.Definition
+            .CustomAttributes
+            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
+        
         var customNaming = Utils.GetCustomFileName(type.Definition.CustomAttributes, type.IlName.Value);
         if (customNaming != null)
         {
-            Header = customNaming.Value.Item2;
+            if (ignoredInheader)
+            {
+                Header = null;
+                SourceFileName = customNaming.Value.Item1;
+            }
+            else
+            {
+                Header = customNaming.Value.Item2;
+                SourceFileName = null;
+            }
         }
         else
         {
-            Header = Utils.GetHeaderName(type.Namespace);
+            if (ignoredInheader)
+            {
+                Header = null;
+                SourceFileName = Utils.GetSourceFileName(type.Namespace);
+            }
+            else
+            {
+                Header = Utils.GetHeaderName(type.Namespace);
+                SourceFileName = null;
+            }
         }
     }
 
@@ -84,6 +114,7 @@ public class TypeConversionInfo
     {
         IsPredeclared = false;
         Header = new HeaderName("fn_pointer_types.h"); // Have centralized fn pointer declarations
+        SourceFileName = null;
         
         // Using shortnames instead of full names risks collisions, but I think it's unlikely,
         // and worth doing until it becomes a problem, as they will be extremely bloated. 
@@ -107,12 +138,14 @@ public class TypeConversionInfo
         IsPredeclared = true;
         Header = type.HeaderFile;
         NameInC = type.NativeName;
+        SourceFileName = null;
     }
 
     private void SetupCustomType(CustomDefinedType type)
     {
         IsPredeclared = false;
         Header = type.HeaderName;
+        SourceFileName = null;
         NameInC = type.NativeName;
         ReferencedHeaders = type.ReferencedHeaders;
     }

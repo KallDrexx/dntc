@@ -63,11 +63,18 @@ public static class AttributeTests
     {
         return CustomDeclaredMethod();
     }
-
-    [IgnoreInHeader] public static int NonHeaderField = 1010;
-
-    public static int GetNonHeaderField()
+   
+    [IgnoreInHeader]
+    public struct NonHeaderStruct
     {
-        return NonHeaderField;
+        public int Value;
+    }
+
+    [IgnoreInHeader]
+    public static NonHeaderStruct NonHeaderStructGlobal = new() { Value = 1020 };
+
+    public static int GetNonHeaderStructValue()
+    {
+        return NonHeaderStructGlobal.Value;
     }
 }

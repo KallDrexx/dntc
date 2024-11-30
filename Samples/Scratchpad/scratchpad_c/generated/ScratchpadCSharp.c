@@ -7,10 +7,13 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
 
+typedef struct {
+	int32_t Value;
+} ScratchpadCSharp_AttributeTests_NonHeaderStruct;
 
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
- int32_t ScratchpadCSharp_AttributeTests_NonHeaderField;
+ ScratchpadCSharp_AttributeTests_NonHeaderStruct ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -283,7 +286,10 @@ int32_t some_named_function() {
 }
 
 void ScratchpadCSharp_AttributeTests__cctor() {
-	ScratchpadCSharp_AttributeTests_NonHeaderField = 1010;
+	ScratchpadCSharp_AttributeTests_NonHeaderStruct __local_0 = {0};
+	(*(&__local_0)) = ((ScratchpadCSharp_AttributeTests_NonHeaderStruct){0});
+	((&__local_0)->Value) = 1020;
+	ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal = __local_0;
 	return;
 }
 
@@ -299,7 +305,7 @@ int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod() {
 	return custom_declared_method();
 }
 
-int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderField() {
-	return ScratchpadCSharp_AttributeTests_NonHeaderField;
+int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue() {
+	return ((&ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal)->Value);
 }
 

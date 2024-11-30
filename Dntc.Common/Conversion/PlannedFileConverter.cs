@@ -64,7 +64,7 @@ public class PlannedFileConverter
             })
             .ToArray();
 
-        var globals = plannedSourceFile.ImplementedGlobls
+        var globals = plannedSourceFile.ImplementedGlobals
             .Select(x => new { GlobalInfo = x, TypeInfo = _conversionCatalog.Find(x.Type)})
             .Select(x => new GlobalVariableDeclaration(x.GlobalInfo, x.TypeInfo, false))
             .ToArray();

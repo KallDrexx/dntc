@@ -47,8 +47,9 @@ public class ImplementationPlan
                     {
                         headerFile.AddReferencedHeader(header);
                     }
+
                     break;
-                
+
                 case DependencyGraph.MethodNode methodNode:
                     var childMethod = _conversionCatalog.Find(methodNode.MethodId);
                     if (childMethod.Header != null)
@@ -57,7 +58,7 @@ public class ImplementationPlan
                     }
 
                     break;
-                
+
                 case DependencyGraph.GlobalNode globalNode:
                     var global = _conversionCatalog.Find(globalNode.FieldId);
                     if (global.Header != null)
@@ -76,13 +77,13 @@ public class ImplementationPlan
                     }
 
                     break;
-                
+
                 default:
                     throw new NotSupportedException(child.GetType().FullName);
             }
         }
     }
-    
+
     private void AddReferencedHeaders(DependencyGraph.Node node, PlannedSourceFile sourceFile)
     {
         foreach (var child in node.Children)
@@ -91,20 +92,22 @@ public class ImplementationPlan
             {
                 case DependencyGraph.TypeNode typeNode:
                     var childType = _conversionCatalog.Find(typeNode.TypeName);
-                    if (childType.Header != null )
+                    if (childType.Header != null)
                     {
                         sourceFile.AddReferencedHeader(childType.Header.Value);
                     }
+
                     break;
-                
+
                 case DependencyGraph.MethodNode methodNode:
                     var childMethod = _conversionCatalog.Find(methodNode.MethodId);
                     if (childMethod.Header != null)
                     {
                         sourceFile.AddReferencedHeader(childMethod.Header.Value);
                     }
+
                     break;
-                
+
                 case DependencyGraph.GlobalNode globalNode:
                     var global = _conversionCatalog.Find(globalNode.FieldId);
                     if (global.Header != null)
@@ -123,7 +126,7 @@ public class ImplementationPlan
                     }
 
                     break;
-                
+
                 default:
                     throw new NotSupportedException(child.GetType().FullName);
             }
@@ -142,7 +145,7 @@ public class ImplementationPlan
             case DependencyGraph.TypeNode typeNode:
                 DeclareType(typeNode);
                 break;
-            
+
             case DependencyGraph.MethodNode methodNode:
                 DeclareMethod(methodNode);
                 AddMethodImplementation(methodNode);
@@ -151,14 +154,14 @@ public class ImplementationPlan
                 {
                     AddStaticConstructorInitializer();
                 }
-                
+
                 break;
-            
+
             case DependencyGraph.GlobalNode globalNode:
                 AddGlobalDeclaration(globalNode);
                 AddGlobalImplementation(globalNode);
                 break;
-            
+
             default:
                 throw new NotSupportedException(node.GetType().FullName);
         }
@@ -173,27 +176,55 @@ public class ImplementationPlan
             return;
         }
 
-        if (type.Header == null)
+        if (type.Header != null && type.SourceFileName != null)
         {
-            var message = $"Type '{type.IlName}' is not predeclared but has no header";
+            var message = $"Type '{type.IlName}' has both a header and source file specified, but only " +
+                          $"one should be set";
+
             throw new InvalidOperationException(message);
         }
 
-        if (!_headers.TryGetValue(type.Header.Value, out var header))
+        if (type.Header != null)
         {
-            header = new PlannedHeaderFile(type.Header.Value);
-            _headers[header.Name] = header;
-        }
-        
-        AddReferencedHeaders(node, header);
+            if (!_headers.TryGetValue(type.Header.Value, out var header))
+            {
+                header = new PlannedHeaderFile(type.Header.Value);
+                _headers[header.Name] = header;
+            }
 
-        var typeDefinition = _definitionCatalog.Get(node.TypeName);
-        foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
+            AddReferencedHeaders(node, header);
+
+            var typeDefinition = _definitionCatalog.Get(node.TypeName);
+            foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
+            {
+                header.AddReferencedHeader(referencedHeader);
+            }
+
+            header.AddDeclaredType(type);
+        } 
+        else if (type.SourceFileName != null)
         {
-            header.AddReferencedHeader(referencedHeader);
+            if (!_sourceFiles.TryGetValue(type.SourceFileName.Value, out var sourceFile))
+            {
+                sourceFile = new PlannedSourceFile(type.SourceFileName.Value);
+                _sourceFiles[sourceFile.Name] = sourceFile;
+            }
+
+            AddReferencedHeaders(node, sourceFile);
+
+            var typeDefinition = _definitionCatalog.Get(node.TypeName);
+            foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
+            {
+                sourceFile.AddReferencedHeader(referencedHeader);
+            }
+
+            sourceFile.AddDeclaredType(type);
         }
-        
-        header.AddDeclaredType(type);
+        else
+        {
+            var message = $"Type '{type.IlName}' is not predeclared and has no header or source file set";
+            throw new InvalidOperationException(message);
+        }
     }
 
     private void DeclareMethod(DependencyGraph.MethodNode node)
@@ -204,21 +235,21 @@ public class ImplementationPlan
             // We aren't declaring this method, so nothing to do here
             return;
         }
-       
+
         if (!_headers.TryGetValue(method.Header!.Value, out var header))
         {
             header = new PlannedHeaderFile(method.Header.Value);
             _headers[method.Header.Value] = header;
         }
-        
+
         AddReferencedHeaders(node, header);
-        
+
         var methodDefinition = _definitionCatalog.Get(node.MethodId);
         foreach (var referencedHeader in methodDefinition!.ReferencedHeaders)
         {
             header.AddReferencedHeader(referencedHeader);
         }
-        
+
         header.AddDeclaredMethod(method);
     }
 
@@ -241,7 +272,7 @@ public class ImplementationPlan
         {
             sourceFile.AddReferencedHeader(referencedHeader);
         }
-        
+
         AddReferencedHeaders(node, sourceFile);
         sourceFile.AddMethod(method);
     }
@@ -265,13 +296,13 @@ public class ImplementationPlan
         {
             return;
         }
-        
+
         if (!_headers.TryGetValue(global.Header.Value, out var header))
         {
             header = new PlannedHeaderFile(global.Header.Value);
             _headers[global.Header.Value] = header;
         }
-        
+
         AddReferencedHeaders(node, header);
         header.AddDeclaredGlobal(global);
     }
@@ -289,7 +320,7 @@ public class ImplementationPlan
             sourceFile = new PlannedSourceFile(global.SourceFileName.Value);
             _sourceFiles[global.SourceFileName.Value] = sourceFile;
         }
-        
+
         AddReferencedHeaders(node, sourceFile);
         sourceFile.AddImplementedGlobal(global);
     }
