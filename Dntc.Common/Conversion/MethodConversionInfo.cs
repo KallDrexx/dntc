@@ -135,6 +135,15 @@ public class MethodConversionInfo
         }
         
         NameInC = method.CustomDeclaration?.ReferredBy ?? new CFunctionName(Utils.MakeValidCName(functionName));
+
+        var ignoreInHeader = method.Definition
+            .CustomAttributes
+            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
+
+        if (ignoreInHeader)
+        {
+            Header = null;
+        }
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)

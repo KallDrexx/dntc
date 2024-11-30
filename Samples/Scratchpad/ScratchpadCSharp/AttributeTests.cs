@@ -52,6 +52,7 @@ public static class AttributeTests
         return TestStructField.Value;
     }
 
+    [IgnoreInHeader]
     [CustomDeclaration("DECLARE_TEST(custom_declared_method)", "custom_declared_method", "../macros.h")]
     public static int CustomDeclaredMethod()
     {
@@ -61,5 +62,19 @@ public static class AttributeTests
     public static int ReferToCustomDeclaredMethod()
     {
         return CustomDeclaredMethod();
+    }
+   
+    [IgnoreInHeader]
+    public struct NonHeaderStruct
+    {
+        public int Value;
+    }
+
+    [IgnoreInHeader]
+    public static NonHeaderStruct NonHeaderStructGlobal = new() { Value = 1020 };
+
+    public static int GetNonHeaderStructValue()
+    {
+        return NonHeaderStructGlobal.Value;
     }
 }

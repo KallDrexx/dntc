@@ -14,7 +14,7 @@ public class PlannedSourceFile
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
     public IReadOnlyList<TypeConversionInfo> DeclaredTypes => _declaredTypes;
-    public IReadOnlyList<GlobalConversionInfo> ImplementedGlobls => _globals;
+    public IReadOnlyList<GlobalConversionInfo> ImplementedGlobals => _globals;
 
     public PlannedSourceFile(CSourceFileName name)
     {
@@ -97,6 +97,14 @@ public class PlannedSourceFile
         if (!_globals.Contains(global))
         {
             _globals.Add(global);
+        }
+    }
+
+    public void AddDeclaredType(TypeConversionInfo type)
+    {
+        if (!_declaredTypes.Contains(type))
+        {
+            _declaredTypes.Add(type);
         }
     }
 }

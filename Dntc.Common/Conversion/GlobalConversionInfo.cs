@@ -1,3 +1,4 @@
+using Dntc.Attributes;
 using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion;
@@ -77,6 +78,15 @@ public class GlobalConversionInfo
             var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
             Header = Utils.GetHeaderName(declaringNamespace);
             SourceFileName = Utils.GetSourceFileName(declaringNamespace);
+        }
+
+        var ignoreInHeader = global.Definition
+            .CustomAttributes
+            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
+
+        if (ignoreInHeader)
+        {
+            Header = null;
         }
     }
 
