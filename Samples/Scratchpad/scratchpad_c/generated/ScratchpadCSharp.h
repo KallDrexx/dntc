@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../macros.h"
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"
@@ -89,7 +88,6 @@ uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField();
 void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num);
 int32_t some_named_function();
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
-DECLARE_TEST(custom_declared_method);
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
 
 #endif // SCRATCHPADCSHARP_H_H

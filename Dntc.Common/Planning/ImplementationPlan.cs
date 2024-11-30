@@ -199,7 +199,7 @@ public class ImplementationPlan
     private void DeclareMethod(DependencyGraph.MethodNode node)
     {
         var method = _conversionCatalog.Find(node.MethodId);
-        if (method.IsPredeclared)
+        if (method.IsPredeclared || method.Header == null)
         {
             // We aren't declaring this method, so nothing to do here
             return;
