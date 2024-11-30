@@ -11,8 +11,7 @@ namespace Dntc.Attributes;
 [AttributeUsage(
     AttributeTargets.Field | 
     AttributeTargets.Struct | 
-    AttributeTargets.Method | 
-    AttributeTargets.Property)]
+    AttributeTargets.Method)]
 public class IgnoreInHeaderAttribute : Attribute
 {
     
