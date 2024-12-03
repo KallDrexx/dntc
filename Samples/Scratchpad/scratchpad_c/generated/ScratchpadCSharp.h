@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"
@@ -91,5 +92,6 @@ void ScratchpadCSharp_AttributeTests__cctor();
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod();
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
 int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue();
+void ScratchpadCSharp_StringTests_LogStaticString();
 
 #endif // SCRATCHPADCSHARP_H_H
