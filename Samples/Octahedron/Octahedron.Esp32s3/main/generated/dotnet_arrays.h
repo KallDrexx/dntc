@@ -2,6 +2,7 @@
 #define DOTNET_ARRAYS_H_H
 
 
+#include <stddef.h>
 #include <stdint.h>
 
 

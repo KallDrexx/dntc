@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Dntc_Samples_Octahedron_Common.h"
 #include "dotnet_arrays.h"
 #include "dotnet_math.h"
 
@@ -25,15 +24,15 @@ typedef struct {
 } Dntc_Samples_Octahedron_Common_Camera;
 
 typedef struct {
-	char __dummy;
+	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_OctahedronShape;
 
 typedef struct {
-	char __dummy;
+	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_PyramidShape;
 
 typedef struct {
-	char __dummy;
+	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_CubeShape;
 
 typedef struct {
@@ -54,6 +53,7 @@ typedef struct {
 	float DeltaY;
 	float Slope;
 } Dntc_Samples_Octahedron_Common_PointPair;
+
 
 
 void Dntc_Samples_Octahedron_Common_Vector3__ctor(Dntc_Samples_Octahedron_Common_Vector3 *__this, float x, float y, float z);
