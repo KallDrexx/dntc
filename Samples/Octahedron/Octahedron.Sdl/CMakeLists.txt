@@ -11,4 +11,5 @@ add_executable(Octahedron_Sdl main.c ${generated_src})
 target_link_libraries(Octahedron_Sdl
         PRIVATE
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>)
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+        m)
