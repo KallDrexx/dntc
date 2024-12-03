@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdint.h>
+#include <string.h>
 #include "../macros.h"
 #include "../native_test.h"
 #include "custom_file_test.h"
@@ -307,5 +308,10 @@ int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod() {
 
 int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue() {
 	return ((&ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal)->Value);
+}
+
+void ScratchpadCSharp_StringTests_LogStaticString() {
+	printf("abcdefg\n");
+	return;
 }
 

@@ -94,6 +94,8 @@ int main(void) {
     int32_t declareTest = ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod();
     assert(declareTest == 929);
 
+    ScratchpadCSharp_StringTests_LogStaticString();
+
     printf("Tests passed!\n");
     return 0;
 }

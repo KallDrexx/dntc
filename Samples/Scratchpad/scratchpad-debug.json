@@ -40,7 +40,8 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::CustomFileReferenceTestMethod()",
     "System.Int32 ScratchpadCSharp.AttributeTests::CustomDeclaredMethod()",
     "System.Int32 ScratchpadCSharp.AttributeTests::ReferToCustomDeclaredMethod()",
-    "System.Int32 ScratchpadCSharp.AttributeTests::GetNonHeaderStructValue()"
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetNonHeaderStructValue()",
+    "System.Void ScratchpadCSharp.StringTests::LogStaticString()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

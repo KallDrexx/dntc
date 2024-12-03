@@ -61,6 +61,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         { Code.Ldloca_S, new LdLocHandler(null, true) },
         
         { Code.Ldobj, new LdObjHandler() },
+        { Code.Ldstr, new LdStrHandler() },
     };
 
     private class LdFldHandler(bool getAddress) : IOpCodeHandler
@@ -321,6 +322,34 @@ public class LoadHandlers : IOpCodeHandlerCollection
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             return new OpCodeAnalysisResult();
+        }
+    }
+
+    private class LdStrHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var stringType = context.ConversionCatalog.Find(new IlTypeName(typeof(string).FullName!));
+            var stringValue = EscapeString((string)context.CurrentInstruction.Operand);
+            var expression = new LiteralValueExpression($"\"{stringValue}\"", stringType);
+            context.ExpressionStack.Push(expression);
+
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
+
+        private static string EscapeString(string input)
+        {
+            return input
+                .Replace("\\", "\\\\") // slashes must be escaped first
+                .Replace("\n", "\\n")
+                .Replace("\r", "\\r")
+                .Replace("\t", "\\t")
+                .Replace("\"", "\\\"");
         }
     }
 }
