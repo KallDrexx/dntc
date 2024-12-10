@@ -88,7 +88,7 @@ This project is mostly to verify the C# works as expected and does not utilize t
 
 ### SDL Project
 
-The [Octahedron SDL sammple](Samples/Octahedron/Octahedron.Sdl) utilizes the transpiler to compile
+The [Octahedron SDL sample](Samples/Octahedron/Octahedron.Sdl) utilizes the transpiler to compile
 the sample common project into C code that can be utilized in a standard C SDL project.
 
 The transpilation process uses [its own dntc manifiest](Samples/Octahedron/manifest-sdl.json) to
