@@ -10,6 +10,15 @@ customized on a method by method basis.
 * [Execution](#execution)
   * [File Deletion Warning](#file-deletion-warning)
   * [Method Querying](#method-querying)
+* [How It Works](#how-it-works)
+  * [Limitations](#limitations)
+  * [Pipeline](#pipeline)
+    * [1 - Read All Assemblies](#1---read-all-assemblies)
+    * [2 - Form Dependency Graphs](#2---form-dependency-graphs)
+    * [3 - Determine Conversion Requirements For Each Dependency](#3---determine-conversion-requirements-for-each-dependency)
+    * [4 - Generate an Implementation Plan](#4---generate-an-implementation-plan)
+    * [5 - Abstract Syntax Tree Creation](#5---abstract-syntax-tree-creation)
+    * [6 - Final Output Generation](#6---final-output-generation)
 * [Samples](#samples)
   * [Octahedron](#octahedron)
     * [SDL Project](#sdl-project)
@@ -66,6 +75,65 @@ followed by the `query` command (e.g. `dntc manifest.json query`).
 
 This will load all assemblies that were listed in the manifest and print out all method ids it finds.
 You can find any root methods you are interested in transpiling and copy/paste them into the manifest.
+
+# How It Works
+
+## Limitations
+
+While the transpiler is still in development, it has some note-worthy limitations to keep in mind.
+The following functionality is not supported:
+
+* Most reference types. 
+* Interfaces (outside of generic type parameters)
+* Casting between non-primitive types (including struct inheritance)
+* Most string operations
+* Generic functions as a root method for transpilation
+  * Any function that takes a generic must have a concrete type for its arguments that can be
+    statically guaranteed.
+* mscorlib and native types/methods in the .net framework.
+
+Most of these limitations have plans for solving in the future.
+
+## Pipeline
+
+The transpilation process runs as a series of steps run one at a time.
+
+### 1 - Read All Assemblies
+
+All assemblies from the manifest are read. We create a catalog of custom definitions for each 
+type we find, their methods, and fields.
+
+### 2 - Form Dependency Graphs
+
+For each method to transpile specified in the manifest look at all types and fields the transpiled 
+method references and add it to a dependency graph. The process is then repeated for each method
+the transpiled method invokes.
+
+### 3 - Determine Conversion Requirements For Each Dependency
+
+For each dependency found in the dependency graph, we create a catalog of information of how 
+each type, method, and field should be transpiled. This includes the name of the header and 
+source file it will be compiled in, what its name will be in C, etc...
+
+### 4 - Generate an Implementation Plan
+
+Based on the dependency graphs we calculated, we form an implementation plan for what header
+files and source files will need to be generated. For each header and source file that is planned
+out it figures out which other headers are required to be referenced, what globals are declared 
+or has implementations, and which methods are declared or implemented.
+
+### 5 - Abstract Syntax Tree Creation
+
+Once we know which types, globals, and methods will go in each header and source file, the transpiler
+goes through each file and generates an abstract syntax tree with a non-textual representation of
+the transpiled output. Any .net methods that are implemented will have their IL instructions analyzed
+and converted into C99 abstract expressions and statements.
+
+The user of ASTs allows the process to be flexible and easily testable.
+
+### 6 - Final Output Generation
+
+Then the ASTs for each output file are taken, and they are converted into actual C99 compilable text.
 
 # Samples
 
