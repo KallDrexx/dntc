@@ -237,4 +237,4 @@ standard C code, and then utilizes an standard ESP-IDF main function to initiali
 initialize a frame buffer array, call the `Render()` function, and display the frame buffer to
 the attached parallel LCD.
 
-![ESP32S3 gif](img/octahedron-esp32s3.gif)
+[![ESP32S3 gif](img/octahedron-esp32s3.png)](https://www.youtube.com/watch?v=W-Fh5kGQaDg)
