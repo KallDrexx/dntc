@@ -11,6 +11,7 @@ customized on a method by method basis.
   * [File Deletion Warning](#file-deletion-warning)
   * [Method Querying](#method-querying)
 * [How It Works](#how-it-works)
+  * [Notable Features](#notable-features)
   * [Limitations](#limitations)
   * [Pipeline](#pipeline)
     * [1 - Read All Assemblies](#1---read-all-assemblies)
@@ -19,6 +20,13 @@ customized on a method by method basis.
     * [4 - Generate an Implementation Plan](#4---generate-an-implementation-plan)
     * [5 - Abstract Syntax Tree Creation](#5---abstract-syntax-tree-creation)
     * [6 - Final Output Generation](#6---final-output-generation)
+  * [Customization Via Attributes](#customization-via-attributes)
+    * [NativeFunctionCallAttribute](#nativefunctioncallattribute)
+    * [NativeGlobalAttribute](#nativeglobalattribute)
+    * [CustomFunctionNameAttribute](#customfunctionnameattribute)
+    * [CustomDeclarationAttribute](#customdeclarationattribute)
+    * [CustomFileNameAttribute](#customfilenameattribute)
+    * [IgnoreInHeaderAttribute](#ignoreinheaderattribute)
 * [Samples](#samples)
   * [Octahedron](#octahedron)
     * [SDL Project](#sdl-project)
@@ -78,6 +86,17 @@ You can find any root methods you are interested in transpiling and copy/paste t
 
 # How It Works
 
+## Notable Features
+
+* Customization of the transpilation process via attributes
+* Easy support for dotnet transpiled code to reference native functions and globals
+* Generic method support (as long as concrete type can be determined via static analysis)
+* Function pointers passed in from C99 into transpiled methods
+  * Represented in C# via `delegate*<T>`
+* Arrays being passed in from C99 into transpiled methods.
+* Static constructor transpilation with helper functions to allow native code to determine
+  when the cost of static constructors are paid.
+
 ## Limitations
 
 While the transpiler is still in development, it has some note-worthy limitations to keep in mind.
@@ -134,6 +153,51 @@ The user of ASTs allows the process to be flexible and easily testable.
 ### 6 - Final Output Generation
 
 Then the ASTs for each output file are taken, and they are converted into actual C99 compilable text.
+
+## Customization Via Attributes
+
+Several attributes can be used to customize how specific fields, types, and methods are transpiled.
+
+### NativeFunctionCallAttribute
+
+Annotating a method with the `[NativeFunctionCall]` tells the transpiler that any calls to
+the method should be replaced with a function with the provided name. This allows using the .net 
+method as a stub, and replace it with a function defined in C. 
+
+This can be used for transpiled code to call functionality that needs to be specially optimized, 
+or invoking capabilities that can't be invoked from transpiled code (e.g. `printf()`);
+
+### NativeGlobalAttribute
+
+Static fields can be annotated with `[NativeGlobal]` to denote that the field itself shouldn't be
+transpiled, but instead references to it are replaced with calls to a natively defined global.
+
+This is useful when integrating into a system that has globals defined and they need to be referenced
+by the .net code.
+
+### CustomFunctionNameAttribute
+
+Methods annotated with `[CustomFunctionName]` allow the method to be named something specific when
+transpiled instead of relying on its auto-generated name. 
+
+This allows providing a nicer name for functions that need to be called from the integrated C99 code.
+
+### CustomDeclarationAttribute
+
+Methods annotated with `[CustomDeclaration]` allows customizing the complete declaration of a function,
+including the return type and parameters. 
+
+This is useful when a method needs to be transpiled but declared using a macro.
+
+### CustomFileNameAttribute
+
+Methods, fields and types annotated with `[CustomFileName]` allows changing the name of the header
+and source file that the type will be declared and implemented in. 
+
+### IgnoreInHeaderAttribute
+
+Methods, fields, and types annotated with `[IgnoreInHeader]` will only be declared in a source file
+and not exist in a header file.
 
 # Samples
 
