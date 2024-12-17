@@ -34,6 +34,11 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
         else
         {
             await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
+            if (dotNetDefinedMethod.Parameters.Count == 0)
+            {
+                await writer.WriteAsync("void");
+            }
+            
             for (var x = 0; x < dotNetDefinedMethod.Parameters.Count; x++)
             {
                 if (x > 0) await writer.WriteAsync(", ");

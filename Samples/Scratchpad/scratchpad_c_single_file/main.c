@@ -5,7 +5,7 @@ typedef struct {
 } ScratchpadCSharp_SingleFileTests_SomeStruct;
 
 
-int32_t main() {
+int32_t main(void) {
 	ScratchpadCSharp_SingleFileTests_SomeStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_SingleFileTests_SomeStruct){0});
 	((&__local_0)->Value) = 33;

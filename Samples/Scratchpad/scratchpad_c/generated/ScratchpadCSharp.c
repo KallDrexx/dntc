@@ -253,27 +253,27 @@ int32_t ScratchpadCSharp_GenericTests_GetStaticNumber(int32_t x) {
 	return ScratchpadCSharp_GenericTests_Run_ScratchpadCSharp_GenericTests_StaticNumberGetter(__temp_0001);
 }
 
-uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod() {
+uint32_t ScratchpadCSharp_AttributeTests_GetNumberMethod(void) {
 	return get_number();
 }
 
-void ScratchpadCSharp_SimpleFunctions__cctor() {
+void ScratchpadCSharp_SimpleFunctions__cctor(void) {
 	ScratchpadCSharp_SimpleFunctions_Vector3 __temp_000f = {0};
 	ScratchpadCSharp_SimpleFunctions_Vector3__ctor((&__temp_000f), 10, 11, 12);
 	ScratchpadCSharp_SimpleFunctions_AStaticVector = __temp_000f;
 	return;
 }
 
-int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt() {
+int32_t ScratchpadCSharp_SimpleFunctions_IncrementStaticInt(void) {
 	ScratchpadCSharp_SimpleFunctions_SomeStaticInt = (ScratchpadCSharp_SimpleFunctions_SomeStaticInt + 1);
 	return ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 }
 
-ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector() {
+ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_GetStaticVector(void) {
 	return ScratchpadCSharp_SimpleFunctions_AStaticVector;
 }
 
-uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField() {
+uint32_t ScratchpadCSharp_AttributeTests_GetStaticNumberField(void) {
 	return static_number;
 }
 
@@ -282,11 +282,11 @@ void ScratchpadCSharp_AttributeTests_SetStaticNumberField(uint32_t num) {
 	return;
 }
 
-int32_t some_named_function() {
+int32_t some_named_function(void) {
 	return 94;
 }
 
-void ScratchpadCSharp_AttributeTests__cctor() {
+void ScratchpadCSharp_AttributeTests__cctor(void) {
 	ScratchpadCSharp_AttributeTests_NonHeaderStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_AttributeTests_NonHeaderStruct){0});
 	((&__local_0)->Value) = 1020;
@@ -294,7 +294,7 @@ void ScratchpadCSharp_AttributeTests__cctor() {
 	return;
 }
 
-int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod() {
+int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod(void) {
 	return ((&ScratchpadCSharp_AttributeTests_TestStructField)->Value);
 }
 
@@ -302,15 +302,15 @@ DECLARE_TEST(custom_declared_method) {
 	return 929;
 }
 
-int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod() {
+int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod(void) {
 	return custom_declared_method();
 }
 
-int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue() {
+int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue(void) {
 	return ((&ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal)->Value);
 }
 
-void ScratchpadCSharp_StringTests_LogStaticString() {
+void ScratchpadCSharp_StringTests_LogStaticString(void) {
 	printf("abcdefg\n");
 	return;
 }

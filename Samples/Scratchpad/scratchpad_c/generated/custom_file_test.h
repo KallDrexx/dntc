@@ -12,6 +12,6 @@ typedef struct {
 
 extern ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField;
 
-int32_t ScratchpadCSharp_AttributeTests_CustomFileTestMethod();
+int32_t ScratchpadCSharp_AttributeTests_CustomFileTestMethod(void);
 
 #endif // CUSTOM_FILE_TEST_H_H

@@ -20,7 +20,7 @@ void Dntc_Samples_Octahedron_Common_Vector3__ctor(Dntc_Samples_Octahedron_Common
 	return;
 }
 
-Dntc_Samples_Octahedron_Common_Camera Dntc_Samples_Octahedron_Common_Camera_Default() {
+Dntc_Samples_Octahedron_Common_Camera Dntc_Samples_Octahedron_Common_Camera_Default(void) {
 	Dntc_Samples_Octahedron_Common_Camera __local_0 = {0};
 	Dntc_Samples_Octahedron_Common_Camera __local_1 = {0};
 	(*(&__local_0)) = ((Dntc_Samples_Octahedron_Common_Camera){0});
