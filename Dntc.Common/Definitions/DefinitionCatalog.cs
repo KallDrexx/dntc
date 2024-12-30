@@ -1,5 +1,6 @@
 ﻿using Dntc.Attributes;
 using Dntc.Common.Definitions.CustomDefinedTypes;
+using Dntc.Common.Definitions.Definers;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
@@ -9,6 +10,12 @@ public class DefinitionCatalog
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
     private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
+    private readonly MethodDefinerDecider _definerDecider;
+
+    public DefinitionCatalog(MethodDefinerDecider decider)
+    {
+        _definerDecider = decider;
+    }
 
     /// <summary>
     /// Adds the specified type to the catalog, along with all of its methods and nested types
@@ -78,34 +85,6 @@ public class DefinitionCatalog
             header);
     }
 
-    private static NativeDefinedMethod ConvertToNativeDefinedMethod(
-        MethodDefinition method, 
-        CustomAttribute nativeFunctionCallAttribute)
-    {
-        if (nativeFunctionCallAttribute.ConstructorArguments.Count < 1)
-        {
-            var message = $"NativeFunctionCallAttribute on '{method.FullName}' expected to have at least " +
-                          $"1 constructor arguments but none were found";
-
-            throw new InvalidOperationException(message);
-        }
-
-        var hasHeaderSpecified = nativeFunctionCallAttribute.ConstructorArguments.Count > 1 &&
-                                 nativeFunctionCallAttribute.ConstructorArguments[1].Value != null;
-
-        var header = hasHeaderSpecified
-            ? new HeaderName(nativeFunctionCallAttribute.ConstructorArguments[1].Value.ToString()!)
-            : (HeaderName?) null;
-                
-        return new NativeDefinedMethod(
-            new IlMethodId(method.FullName),
-            new IlTypeName(method.ReturnType.FullName),
-            header,
-            new CFunctionName(nativeFunctionCallAttribute.ConstructorArguments[0].Value.ToString()!),
-            new IlNamespace(method.DeclaringType.Namespace),
-            method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());
-    }
-
     private void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")
@@ -124,27 +103,21 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            var nativeFunctionCallAttribute = method.CustomAttributes
-                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallAttribute).FullName);
-
-            if (nativeFunctionCallAttribute != null)
-            {
-                var nativeDefinedMethod = ConvertToNativeDefinedMethod(method, nativeFunctionCallAttribute);
-                Add(nativeDefinedMethod);
-                continue;
-            }
+            var definer = _definerDecider.GetDefiner(method);
+            var definedMethod = definer.Define(method);
             
-            var definedMethod = new DotNetDefinedMethod(method);
             Add(definedMethod);
+            if (definedMethod is DotNetDefinedMethod dotNetDefinedMethod)
+            {
+                foreach (var arrayType in dotNetDefinedMethod.ReferencedArrayTypes)
+                {
+                    AddReferencedArrayTypes(arrayType);
+                }
 
-            foreach (var arrayType in definedMethod.ReferencedArrayTypes)
-            {
-                AddReferencedArrayTypes(arrayType);
-            }
-            
-            foreach (var functionPointer in definedMethod.FunctionPointerTypes)
-            {
-                AddDotNetFunctionPointer(functionPointer);
+                foreach (var functionPointer in dotNetDefinedMethod.FunctionPointerTypes)
+                {
+                    AddDotNetFunctionPointer(functionPointer);
+                }
             }
         }
 

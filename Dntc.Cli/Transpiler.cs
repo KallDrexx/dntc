@@ -1,7 +1,9 @@
-﻿using Dntc.Common;
+﻿using Dntc.Attributes;
+using Dntc.Common;
 using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Definitions.Definers;
 using Dntc.Common.Dependencies;
 using Dntc.Common.Planning;
 using Mono.Cecil;
@@ -19,7 +21,12 @@ public class Transpiler
 
     public async Task RunAsync()
     {
-        var definitionCatalog = new DefinitionCatalog();
+        var definerDecider = new MethodDefinerDecider();
+        definerDecider.AddMapping(
+            new IlTypeName(typeof(NativeFunctionCallAttribute).FullName!),
+            new NativeFunctionCallAttributeDefiner());
+        
+        var definitionCatalog = new DefinitionCatalog(definerDecider);
         var conversionCatalog = new ConversionCatalog(definitionCatalog);
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
