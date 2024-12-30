@@ -21,12 +21,14 @@ public class Transpiler
 
     public async Task RunAsync()
     {
-        var definerDecider = new MethodDefinerDecider();
-        definerDecider.AddMapping(
+        var methodDefinerDecider = new MethodDefinerDecider();
+        var typeDefinerDecider = new TypeDefinerDecider();
+        
+        methodDefinerDecider.AddMapping(
             new IlTypeName(typeof(NativeFunctionCallAttribute).FullName!),
             new NativeFunctionCallAttributeDefiner());
         
-        var definitionCatalog = new DefinitionCatalog(definerDecider);
+        var definitionCatalog = new DefinitionCatalog(methodDefinerDecider, typeDefinerDecider);
         var conversionCatalog = new ConversionCatalog(definitionCatalog);
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
