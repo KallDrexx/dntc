@@ -10,13 +10,11 @@ public class DefinitionCatalog
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
     private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
-    private readonly MethodDefinerDecider _methodDefinerDecider;
-    private readonly TypeDefinerDecider _typeDefinerDecider;
+    private readonly DefinerDecider _definerDecider;
 
-    public DefinitionCatalog(MethodDefinerDecider decider, TypeDefinerDecider typeDefinerDecider)
+    public DefinitionCatalog(DefinerDecider decider)
     {
-        _methodDefinerDecider = decider;
-        _typeDefinerDecider = typeDefinerDecider;
+        _definerDecider = decider;
     }
 
     /// <summary>
@@ -95,7 +93,7 @@ public class DefinitionCatalog
             return;
         }
 
-        var typeDefiner = _typeDefinerDecider.GetDefiner(type);
+        var typeDefiner = _definerDecider.GetDefiner(type);
         var definedType = typeDefiner.Define(type);
         Add(definedType);
 
@@ -106,7 +104,7 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            var methodDefiner = _methodDefinerDecider.GetDefiner(method);
+            var methodDefiner = _definerDecider.GetDefiner(method);
             var definedMethod = methodDefiner.Define(method);
             
             Add(definedMethod);
