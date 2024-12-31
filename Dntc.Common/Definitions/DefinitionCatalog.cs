@@ -10,11 +10,11 @@ public class DefinitionCatalog
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
     private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
-    private readonly DefinerSelector _definerSelector;
+    private readonly DefinitionGenerationPipeline _definerPipeline;
 
-    public DefinitionCatalog(DefinerSelector selector)
+    public DefinitionCatalog(DefinitionGenerationPipeline definerPipeline)
     {
-        _definerSelector = selector;
+        _definerPipeline = definerPipeline;
     }
 
     /// <summary>
@@ -67,8 +67,7 @@ public class DefinitionCatalog
             return;
         }
 
-        var typeDefiner = _definerSelector.GetDefiner(type);
-        var definedType = typeDefiner.Define(type);
+        var definedType = _definerPipeline.Define(type);
         Add(definedType);
 
         foreach (var nestedType in type.NestedTypes)
@@ -78,10 +77,9 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            var methodDefiner = _definerSelector.GetDefiner(method);
-            var definedMethod = methodDefiner.Define(method);
-            
+            var definedMethod = _definerPipeline.Define(method);
             Add(definedMethod);
+            
             if (definedMethod is DotNetDefinedMethod dotNetDefinedMethod)
             {
                 foreach (var arrayType in dotNetDefinedMethod.ReferencedArrayTypes)
@@ -98,9 +96,7 @@ public class DefinitionCatalog
 
         foreach (var staticField in type.Fields.Where(x => x.IsStatic))
         {
-            var definer = _definerSelector.GetDefiner(staticField);
-            var global = definer.Define(staticField);
-            
+            var global = _definerPipeline.Define(staticField);
             Add(global);
         }
     }

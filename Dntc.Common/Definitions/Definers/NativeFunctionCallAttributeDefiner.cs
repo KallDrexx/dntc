@@ -9,17 +9,14 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class NativeFunctionCallAttributeDefiner : IDotNetMethodDefiner
 {
-    public DefinedMethod Define(MethodDefinition method)
+    public DefinedMethod? Define(MethodDefinition method)
     {
         var nativeFunctionCallAttribute = method.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeFunctionCallAttribute).FullName);
 
         if (nativeFunctionCallAttribute == null)
         {
-            var message = $"NativeFunctionCallAttributeDefiner invoked for method ${method.FullName} but that method " +
-                          $"does not have a `NativeFunctionCallAttribute` on it";
-
-            throw new InvalidOperationException(message);
+            return null;
         }
         
         if (nativeFunctionCallAttribute.ConstructorArguments.Count < 1)

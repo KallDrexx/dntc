@@ -8,15 +8,14 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class NativeGlobalAttributeDefiner : IDotNetGlobalDefiner
 {
-    public DefinedGlobal Define(FieldDefinition field)
+    public DefinedGlobal? Define(FieldDefinition field)
     {
         var attribute = field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
 
         if (attribute == null)
         {
-            var message = $"Field {field.FullName} did not have a `NativeGlobal` attribute on it";
-            throw new InvalidOperationException(message);
+            return null;
         }
 
         if (attribute.ConstructorArguments.Count < 1)
