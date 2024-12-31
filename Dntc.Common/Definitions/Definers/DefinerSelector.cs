@@ -5,7 +5,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// <summary>
 /// Picks an implementation of different `I*Definer`s.
 /// </summary>
-public class DefinerDecider
+public class DefinerSelector
 {
     private readonly Dictionary<string, IDotNetMethodDefiner> _methodDefiners = new();
     private readonly Dictionary<string, IDotNetTypeDefiner> _typeDefiners = new();

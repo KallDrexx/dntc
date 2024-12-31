@@ -10,11 +10,11 @@ public class DefinitionCatalog
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
     private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
-    private readonly DefinerDecider _definerDecider;
+    private readonly DefinerSelector _definerSelector;
 
-    public DefinitionCatalog(DefinerDecider decider)
+    public DefinitionCatalog(DefinerSelector selector)
     {
-        _definerDecider = decider;
+        _definerSelector = selector;
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ public class DefinitionCatalog
             return;
         }
 
-        var typeDefiner = _definerDecider.GetDefiner(type);
+        var typeDefiner = _definerSelector.GetDefiner(type);
         var definedType = typeDefiner.Define(type);
         Add(definedType);
 
@@ -78,7 +78,7 @@ public class DefinitionCatalog
         
         foreach (var method in type.Methods)
         {
-            var methodDefiner = _definerDecider.GetDefiner(method);
+            var methodDefiner = _definerSelector.GetDefiner(method);
             var definedMethod = methodDefiner.Define(method);
             
             Add(definedMethod);
@@ -98,7 +98,7 @@ public class DefinitionCatalog
 
         foreach (var staticField in type.Fields.Where(x => x.IsStatic))
         {
-            var definer = _definerDecider.GetDefiner(staticField);
+            var definer = _definerSelector.GetDefiner(staticField);
             var global = definer.Define(staticField);
             
             Add(global);

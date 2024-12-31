@@ -21,7 +21,7 @@ public class Transpiler
 
     public async Task RunAsync()
     {
-        var definerDecider = new DefinerDecider();
+        var definerDecider = new DefinerSelector();
         
         definerDecider.AddMapping(typeof(NativeFunctionCallAttribute), new NativeFunctionCallAttributeDefiner());
         definerDecider.AddMapping(typeof(NativeGlobalAttribute), new NativeGlobalAttributeDefiner());
