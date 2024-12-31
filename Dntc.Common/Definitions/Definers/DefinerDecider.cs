@@ -7,10 +7,12 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class DefinerDecider
 {
-    private readonly Dictionary<IlTypeName, IDotNetMethodDefiner> _methodDefiners = new();
-    private readonly Dictionary<IlTypeName, IDotNetTypeDefiner> _typeDefiners = new();
+    private readonly Dictionary<string, IDotNetMethodDefiner> _methodDefiners = new();
+    private readonly Dictionary<string, IDotNetTypeDefiner> _typeDefiners = new();
+    private readonly Dictionary<string, IDotNetGlobalDefiner> _globalDefiners = new();
     private readonly DefaultDotNetMethodDefiner _defaultMethodDefiner = new();
     private readonly DefaultTypeDefiner _defaultTypeDefiner = new();
+    private readonly DefaultFieldDefiner _defaultFieldDefiner = new();
 
     /// <summary>
     /// Adds a mapping for a specific decider to be used when the specified attribute is found
@@ -18,7 +20,7 @@ public class DefinerDecider
     /// </summary>
     public void AddMapping(Type attributeType, IDotNetMethodDefiner definer)
     {
-        _methodDefiners.Add(new IlTypeName(attributeType.FullName!), definer);
+        _methodDefiners.Add(attributeType.FullName!, definer);
     }
 
     /// <summary>
@@ -27,7 +29,16 @@ public class DefinerDecider
     /// </summary>
     public void AddMapping(Type attributeType, IDotNetTypeDefiner definer)
     {
-        _typeDefiners.Add(new IlTypeName(attributeType.FullName!), definer);
+        _typeDefiners.Add(attributeType.FullName!, definer);
+    }
+
+    /// <summary>
+    /// Adds a mapping for a specific decider to be used when the specified attribute is found
+    /// on a field.
+    /// </summary>
+    public void AddMapping(Type attributeType, IDotNetGlobalDefiner definer)
+    {
+        _globalDefiners.Add(attributeType.FullName!, definer);
     }
 
     /// <summary>
@@ -47,15 +58,24 @@ public class DefinerDecider
     {
         return GetDefinerInternal(type.FullName, type.CustomAttributes, _typeDefiners, _defaultTypeDefiner);
     }
+    
+    /// <summary>
+    /// Analyzes the field's custom attributes and finds the first custom attribute whose type
+    /// has been mapped to a definer. If none was found a default definer is returned.
+    /// </summary>
+    public IDotNetGlobalDefiner GetDefiner(FieldDefinition field)
+    {
+        return GetDefinerInternal(field.FullName, field.CustomAttributes, _globalDefiners, _defaultFieldDefiner);
+    }
 
     private static T GetDefinerInternal<T>(
         string name,
         IEnumerable<CustomAttribute> attributes, 
-        Dictionary<IlTypeName, T> map,
+        Dictionary<string, T> map,
         T defaultInstance)
     {
         var definers = attributes
-            .Select(x => new IlTypeName(x.AttributeType.FullName))
+            .Select(x => x.AttributeType.FullName)
             .Select(x => new { TypeName = x, Definer = map.GetValueOrDefault(x) })
             .Where(x => x.Definer != null)
             .ToArray();
@@ -65,10 +85,10 @@ public class DefinerDecider
             return definers.Select(x => x.Definer).FirstOrDefault() ?? defaultInstance;
         }
         
-        var attributeNames = definers.Select(x => x.TypeName.Value)
+        var attributeNames = definers.Select(x => x.TypeName)
             .Aggregate((x, y) => $"{x}, {y}");
 
-        var message = $"Type {name} has the following attributes on it which all map to different " +
+        var message = $"{name} has the following attributes on it which all map to different " +
                       $"definers: {attributeNames}. Each reference can only have a single attribute on it that's " +
                       $"tied to a definer.";
 

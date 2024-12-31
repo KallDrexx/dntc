@@ -59,32 +59,6 @@ public class DefinitionCatalog
         return _globals.GetValueOrDefault(fieldId);
     }
 
-    private static NativeDefinedGlobal ConvertToNativeDefinedGlobal(
-        FieldDefinition field, 
-        CustomAttribute nativeGlobalAttribute)
-    {
-        if (nativeGlobalAttribute.ConstructorArguments.Count < 1)
-        {
-            var message = $"NativeGlobalAttribute on '{field.FullName}' expected to have at least " +
-                          $"1 constructor arguments but none were found";
-
-            throw new InvalidOperationException(message);
-        }
-
-        var hasHeaderSpecified = nativeGlobalAttribute.ConstructorArguments.Count > 1 &&
-                                 nativeGlobalAttribute.ConstructorArguments[1].Value != null;
-
-        var header = hasHeaderSpecified
-            ? new HeaderName(nativeGlobalAttribute.ConstructorArguments[1].Value.ToString()!)
-            : (HeaderName?) null;
-
-        return new NativeDefinedGlobal(
-            new IlFieldId(field.FullName),
-            new IlTypeName(field.FieldType.FullName),
-            new CGlobalName(nativeGlobalAttribute.ConstructorArguments[0].Value.ToString()!),
-            header);
-    }
-
     private void Add(TypeDefinition type)
     {
         if (type.Name == "<Module>")
@@ -124,12 +98,8 @@ public class DefinitionCatalog
 
         foreach (var staticField in type.Fields.Where(x => x.IsStatic))
         {
-            var nativeGlobalAttribute = staticField.CustomAttributes
-                .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
-
-            DefinedGlobal global = nativeGlobalAttribute != null
-                ? ConvertToNativeDefinedGlobal(staticField, nativeGlobalAttribute)
-                : new DotNetDefinedGlobal(staticField);
+            var definer = _definerDecider.GetDefiner(staticField);
+            var global = definer.Define(staticField);
             
             Add(global);
         }
