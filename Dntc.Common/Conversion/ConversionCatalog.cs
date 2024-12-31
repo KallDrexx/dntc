@@ -7,17 +7,19 @@ namespace Dntc.Common.Conversion;
 public class ConversionCatalog
 {
     private readonly DefinitionCatalog _definitionCatalog;
+    private readonly ConversionInfoCreator _conversionInfoCreator;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
     private readonly Dictionary<IlFieldId, GlobalConversionInfo> _globals = new();
 
-    public ConversionCatalog(DefinitionCatalog definitionCatalog)
+    public ConversionCatalog(DefinitionCatalog definitionCatalog, ConversionInfoCreator conversionInfoCreator)
     {
         _definitionCatalog = definitionCatalog;
+        _conversionInfoCreator = conversionInfoCreator;
 
         foreach (var type in NativeDefinedType.StandardTypes.Values)
         {
-            _types[type.IlName] = new TypeConversionInfo(type);
+            _types[type.IlName] = _conversionInfoCreator.Create(type);
         }
     }
 
@@ -93,7 +95,7 @@ public class ConversionCatalog
             }
             
             AddChildren(node);
-            _types.Add(node.TypeName, new TypeConversionInfo(definition));
+            _types.Add(node.TypeName, _conversionInfoCreator.Create(definition));
         }
     }
 

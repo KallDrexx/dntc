@@ -1,6 +1,7 @@
 ﻿using Dntc.Attributes;
 using Dntc.Common;
 using Dntc.Common.Conversion;
+using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.Definers;
@@ -24,9 +25,13 @@ public class Transpiler
         var definerPipeline = new DefinitionGenerationPipeline();
         definerPipeline.Add(new NativeGlobalAttributeDefiner());
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
+
+        var conversionInfoCreator = new ConversionInfoCreator();
+        conversionInfoCreator.Add(new IgnoredInHeadersTypeMutator());
+        conversionInfoCreator.Add(new CustomNameTypeMutator());
         
         var definitionCatalog = new DefinitionCatalog(definerPipeline);
-        var conversionCatalog = new ConversionCatalog(definitionCatalog);
+        var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
         var modules = GetModules();
