@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Dntc.Attributes;
 using Dntc.Common.Definitions;
-using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Conversion;
 
@@ -19,25 +18,25 @@ public class TypeConversionInfo
     /// If true, this is a type that can be considered pre-declared and should not
     /// have a declaration created when generating C code.
     /// </summary>
-    public bool IsPredeclared { get; private set; }
+    public bool IsPredeclared { get; set; }
     
     /// <summary>
     /// The header this type will be declared in. If `null`, this is a type that does
     /// not require a header reference (mostly for native types, like `float`), or
     /// it's defined in a source file instead of a header.
     /// </summary>
-    public HeaderName? Header { get; private set; }
+    public HeaderName? Header { get; set; }
    
     /// <summary>
     /// The source file this type will be declared in. If `null`, this type is not
     /// declared in a source file and is most likely declared in a header file instead.
     /// </summary>
-    public CSourceFileName? SourceFileName { get; private set; }
+    public CSourceFileName? SourceFileName { get; set; }
    
     /// <summary>
     /// What name this type will have in C
     /// </summary>
-    public CTypeName NameInC { get; private set; }
+    public CTypeName NameInC { get; set; }
 
     /// <summary>
     /// Headers that need to be referenced along with this type's declaration that can't be
@@ -45,7 +44,7 @@ public class TypeConversionInfo
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
 
-    public TypeConversionInfo(DefinedType type)
+    internal TypeConversionInfo(DefinedType type)
     {
         IlName = type.IlName;
         
@@ -76,38 +75,8 @@ public class TypeConversionInfo
     {
         IsPredeclared = false;
         NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
-
-        var ignoredInheader = type.Definition
-            .CustomAttributes
-            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
-        
-        var customNaming = Utils.GetCustomFileName(type.Definition.CustomAttributes, type.IlName.Value);
-        if (customNaming != null)
-        {
-            if (ignoredInheader)
-            {
-                Header = null;
-                SourceFileName = customNaming.Value.Item1;
-            }
-            else
-            {
-                Header = customNaming.Value.Item2;
-                SourceFileName = null;
-            }
-        }
-        else
-        {
-            if (ignoredInheader)
-            {
-                Header = null;
-                SourceFileName = Utils.GetSourceFileName(type.Namespace);
-            }
-            else
-            {
-                Header = Utils.GetHeaderName(type.Namespace);
-                SourceFileName = null;
-            }
-        }
+        Header = Utils.GetHeaderName(type.Namespace);
+        SourceFileName = null;
     }
 
     private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)
