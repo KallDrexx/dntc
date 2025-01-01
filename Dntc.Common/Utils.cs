@@ -64,4 +64,15 @@ public static class Utils
 
         return new(new CSourceFileName(sourceFileName), new HeaderName(headerName));
     }
+
+    public static CSourceFileName ToSourceFileName(HeaderName headerName)
+    {
+        var headerNameString = headerName.Value;
+        if (headerNameString.EndsWith(".h"))
+        {
+            headerNameString = headerNameString[..^1] + 'c';
+        }
+
+        return new CSourceFileName(headerNameString);
+    }
 }

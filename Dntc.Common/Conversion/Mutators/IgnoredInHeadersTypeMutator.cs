@@ -16,7 +16,7 @@ public class IgnoredInHeadersTypeMutator : ITypeConversionMutator
             return;
         }
 
-        conversionInfo.SourceFileName = new CSourceFileName(conversionInfo.Header.Value.Value);
+        conversionInfo.SourceFileName = Utils.ToSourceFileName(conversionInfo.Header.Value);
         conversionInfo.Header = null;
     }
 }

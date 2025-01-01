@@ -8,6 +8,9 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp.h"
 
+typedef struct {
+	int32_t Value;
+} ScratchpadCSharp_AttributeTests_NonHeaderStruct;
 
  ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
  int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
