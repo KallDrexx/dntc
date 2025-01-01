@@ -310,6 +310,11 @@ int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue(void) {
 	return ((&ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal)->Value);
 }
 
+__attribute__ ((always_inline))
+int32_t ScratchpadCSharp_AttributeTests_InlineTest(void) {
+	return 42;
+}
+
 void ScratchpadCSharp_StringTests_LogStaticString(void) {
 	printf("abcdefg\n");
 	return;

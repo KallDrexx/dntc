@@ -77,4 +77,10 @@ public static class AttributeTests
     {
         return NonHeaderStructGlobal.Value;
     }
+
+    [WithCAttribute("__attribute__ ((always_inline))")]
+    public static int InlineTest()
+    {
+        return 42;
+    }
 }

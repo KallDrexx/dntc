@@ -92,6 +92,7 @@ void ScratchpadCSharp_AttributeTests__cctor(void);
 int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod(void);
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod(void);
 int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue(void);
+int32_t ScratchpadCSharp_AttributeTests_InlineTest(void);
 void ScratchpadCSharp_StringTests_LogStaticString(void);
 
 #endif // SCRATCHPADCSHARP_H_H

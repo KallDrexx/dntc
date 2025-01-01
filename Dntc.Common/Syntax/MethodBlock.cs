@@ -28,6 +28,13 @@ public class MethodBlock
 
     public async Task WriteAsync(StreamWriter writer)
     {
+        // I know some attributes (like always_inline) require the attribute on the implementation and not 
+        // just the declaration, so write the attribute here. I'm not sure if that's always the case.
+        if (_methodConversionInfo.AttributeText != null)
+        {
+            await writer.WriteLineAsync(_methodConversionInfo.AttributeText);
+        }
+            
         await _methodDeclaration.WriteAsync(writer);
         await writer.WriteLineAsync(" {");
 

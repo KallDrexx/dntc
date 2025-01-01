@@ -29,7 +29,8 @@ public class Transpiler
         var conversionInfoCreator = new ConversionInfoCreator();
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
-        
+       
+        conversionInfoCreator.AddMethodMutator(new WithAttributeMutator());
         conversionInfoCreator.AddMethodMutator(new CustomFileNameMutator());
         conversionInfoCreator.AddMethodMutator(new CustomFunctionNameMutator());
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());

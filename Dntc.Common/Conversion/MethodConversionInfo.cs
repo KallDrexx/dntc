@@ -58,6 +58,11 @@ public class MethodConversionInfo
     /// </summary>
     public string? CustomDeclaration { get; set; }
    
+    /// <summary>
+    /// The optional attribute that should be present on the transpiled function's declaration
+    /// </summary>
+    public string? AttributeText { get; set; }
+   
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
         MethodId = method.Id;
