@@ -34,6 +34,9 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomFunctionNameMutator());
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
+
+        conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
+        conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
         
         var definitionCatalog = new DefinitionCatalog(definerPipeline);
         var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);

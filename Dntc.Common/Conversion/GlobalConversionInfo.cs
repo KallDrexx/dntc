@@ -22,25 +22,25 @@ public class GlobalConversionInfo
     /// If true, this is a global that can be considered pre-declared and should not
     /// have a declaration created when generating C code.
     /// </summary>
-    public bool IsPredeclared { get; private set; }
+    public bool IsPredeclared { get; set; }
     
     /// <summary>
     /// The header this global will be declared in. If `null`, this is a type that does
     /// not require a header reference.
     /// </summary>
-    public HeaderName? Header { get; private set; }
+    public HeaderName? Header { get; set; }
    
     /// <summary>
     /// The file that contains the global "implementation" (e.g. non-extern declaration)
     /// </summary>
-    public CSourceFileName? SourceFileName { get; private set; }
+    public CSourceFileName? SourceFileName { get; set; }
    
     /// <summary>
     /// What name this type will have in C
     /// </summary>
-    public CGlobalName NameInC { get; private set; }
+    public CGlobalName NameInC { get; set; }
 
-    public GlobalConversionInfo(DefinedGlobal global)
+    internal GlobalConversionInfo(DefinedGlobal global)
     {
         IlName = global.IlName;
         Type = global.IlType;
@@ -67,27 +67,9 @@ public class GlobalConversionInfo
         var fieldName = $"{global.Definition.DeclaringType.FullName}_{global.Definition.Name}";
         NameInC = new CGlobalName(Utils.MakeValidCName(fieldName));
         
-        var customNaming = Utils.GetCustomFileName(global.Definition.CustomAttributes, global.Definition.FullName);
-        if (customNaming != null)
-        {
-            SourceFileName = customNaming.Value.Item1;
-            Header = customNaming.Value.Item2;
-        }
-        else
-        {
-            var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
-            Header = Utils.GetHeaderName(declaringNamespace);
-            SourceFileName = Utils.GetSourceFileName(declaringNamespace);
-        }
-
-        var ignoreInHeader = global.Definition
-            .CustomAttributes
-            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
-
-        if (ignoreInHeader)
-        {
-            Header = null;
-        }
+        var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
+        Header = Utils.GetHeaderName(declaringNamespace);
+        SourceFileName = Utils.GetSourceFileName(declaringNamespace);
     }
 
     private void SetupNativeGlobal(NativeDefinedGlobal global)

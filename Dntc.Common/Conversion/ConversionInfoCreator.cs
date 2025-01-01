@@ -10,6 +10,7 @@ public class ConversionInfoCreator
 {
     private readonly List<ITypeConversionMutator> _typeConversionMutators = [];
     private readonly List<IMethodConversionMutator> _methodConversionMutators = [];
+    private readonly List<IGlobalConversionMutator> _globalConversionMutators = [];
 
     public void AddTypeMutator(ITypeConversionMutator mutator)
     {
@@ -19,6 +20,11 @@ public class ConversionInfoCreator
     public void AddMethodMutator(IMethodConversionMutator mutator)
     {
         _methodConversionMutators.Add(mutator);
+    }
+
+    public void AddGlobalMutator(IGlobalConversionMutator mutator)
+    {
+        _globalConversionMutators.Add(mutator);
     }
 
     public TypeConversionInfo Create(DefinedType type)
@@ -43,6 +49,20 @@ public class ConversionInfoCreator
             foreach (var mutator in _methodConversionMutators)
             {
                 mutator.Mutate(conversionInfo, dotNetDefinedMethod);
+            }
+        }
+
+        return conversionInfo;
+    }
+    
+    public GlobalConversionInfo Create(DefinedGlobal global)
+    {
+        var conversionInfo = new GlobalConversionInfo(global);
+        if (global is DotNetDefinedGlobal dotNetDefinedGlobal)
+        {
+            foreach (var mutator in _globalConversionMutators)
+            {
+                mutator.Mutate(conversionInfo, dotNetDefinedGlobal);
             }
         }
 

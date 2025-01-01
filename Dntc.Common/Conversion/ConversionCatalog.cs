@@ -113,8 +113,8 @@ public class ConversionCatalog
                           $"definition exists for it";
             throw new InvalidOperationException(message);
         }
-        
-        _globals.Add(node.FieldId, new GlobalConversionInfo(definition));
+
+        _globals.Add(node.FieldId, _conversionInfoCreator.Create(definition));
         AddChildren(node);
     }
 

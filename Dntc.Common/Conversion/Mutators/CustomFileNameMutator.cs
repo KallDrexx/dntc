@@ -2,7 +2,7 @@ using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMutator
+public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMutator, IGlobalConversionMutator
 {
     public void Mutate(TypeConversionInfo conversionInfo, DotNetDefinedType type)
     {
@@ -37,6 +37,23 @@ public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMu
 
         conversionInfo.SourceFileName = customNaming.Value.Item1;
 
+        if (conversionInfo.Header != null)
+        {
+            // Only add the header if the header value isn't already null. A null header usually means
+            // this type didn't want to be declared in a header.
+            conversionInfo.Header = customNaming.Value.Item2;
+        }
+    }
+
+    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    {
+        var customNaming = Utils.GetCustomFileName(global.Definition.CustomAttributes, global.IlName.Value);
+        if (customNaming == null)
+        {
+            return;
+        }
+
+        conversionInfo.SourceFileName = customNaming.Value.Item1;
         if (conversionInfo.Header != null)
         {
             // Only add the header if the header value isn't already null. A null header usually means
