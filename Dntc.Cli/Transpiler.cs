@@ -27,8 +27,13 @@ public class Transpiler
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
 
         var conversionInfoCreator = new ConversionInfoCreator();
-        conversionInfoCreator.Add(new IgnoredInHeadersTypeMutator());
-        conversionInfoCreator.Add(new CustomNameTypeMutator());
+        conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
+        conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
+        
+        conversionInfoCreator.AddMethodMutator(new CustomFileNameMutator());
+        conversionInfoCreator.AddMethodMutator(new CustomFunctionNameMutator());
+        conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
+        conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
         
         var definitionCatalog = new DefinitionCatalog(definerPipeline);
         var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);

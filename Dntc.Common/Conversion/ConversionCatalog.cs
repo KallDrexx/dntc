@@ -131,7 +131,7 @@ public class ConversionCatalog
             }
             
             AddChildren(node);
-            var conversionInfo = new MethodConversionInfo(definition, this);
+            var conversionInfo = _conversionInfoCreator.Create(definition, this);
             _methods.Add(node.MethodId, conversionInfo);
 
             if (node.IsStaticConstructor)
@@ -155,7 +155,7 @@ public class ConversionCatalog
 
                 _methods.TryAdd(
                     initializerDefinition.Id,
-                    new MethodConversionInfo(initializerDefinition, this));
+                    _conversionInfoCreator.Create(initializerDefinition, this));
                 
                 initMethodDefinition.AddStaticConstructor(conversionInfo);
             }

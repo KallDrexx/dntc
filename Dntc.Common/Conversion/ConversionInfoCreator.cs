@@ -9,10 +9,16 @@ namespace Dntc.Common.Conversion;
 public class ConversionInfoCreator
 {
     private readonly List<ITypeConversionMutator> _typeConversionMutators = [];
+    private readonly List<IMethodConversionMutator> _methodConversionMutators = [];
 
-    public void Add(ITypeConversionMutator mutator)
+    public void AddTypeMutator(ITypeConversionMutator mutator)
     {
         _typeConversionMutators.Add(mutator);
+    }
+
+    public void AddMethodMutator(IMethodConversionMutator mutator)
+    {
+        _methodConversionMutators.Add(mutator);
     }
 
     public TypeConversionInfo Create(DefinedType type)
@@ -23,6 +29,20 @@ public class ConversionInfoCreator
             foreach (var mutator in _typeConversionMutators)
             {
                 mutator.Mutate(conversionInfo, dotNetDefinedType);
+            }
+        }
+
+        return conversionInfo;
+    }
+
+    public MethodConversionInfo Create(DefinedMethod method, ConversionCatalog conversionCatalog)
+    {
+        var conversionInfo = new MethodConversionInfo(method, conversionCatalog);
+        if (method is DotNetDefinedMethod dotNetDefinedMethod)
+        {
+            foreach (var mutator in _methodConversionMutators)
+            {
+                mutator.Mutate(conversionInfo, dotNetDefinedMethod);
             }
         }
 

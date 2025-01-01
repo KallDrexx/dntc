@@ -1,5 +1,4 @@
-﻿using Dntc.Attributes;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion;
 
@@ -12,7 +11,7 @@ public class MethodConversionInfo
 
     public record Local(TypeConversionInfo ConversionInfo, bool IsReference);
     
-    public IlMethodId MethodId { get; private set; }
+    public IlMethodId MethodId { get; }
     
     /// <summary>
     /// If true, then this is a function that has already been declared in
@@ -20,46 +19,46 @@ public class MethodConversionInfo
     /// integrated with. Therefore, if true it should not be declared
     /// in the conversion process.
     /// </summary>
-    public bool IsPredeclared { get; private set; }
+    public bool IsPredeclared { get; set; }
    
     /// <summary>
     /// The header the function is declared in.
     /// </summary>
-    public HeaderName? Header { get; private set; }
+    public HeaderName? Header { get; set; }
    
     /// <summary>
     /// The file that the function is implemented in. If null, then it is
     /// either part of the C standard or implemented in the integrated C
     /// code base.
     /// </summary>
-    public CSourceFileName? SourceFileName { get; private set; }
+    public CSourceFileName? SourceFileName { get; set; }
     
     /// <summary>
     /// The name of the function when defined in C
     /// </summary>
-    public CFunctionName NameInC { get; private set; }
+    public CFunctionName NameInC { get; set; }
    
     /// <summary>
     /// Type conversion information for the type this method returns.
     /// </summary>
-    public TypeConversionInfo ReturnTypeInfo { get; private set; }
+    public TypeConversionInfo ReturnTypeInfo { get; set; }
    
     /// <summary>
     /// Conversion info for all parameters this method is defined with.
     /// </summary>
-    public IReadOnlyList<Parameter> Parameters { get; private set; }
+    public IReadOnlyList<Parameter> Parameters { get; set; }
    
     /// <summary>
     /// Conversion info for all locals used
     /// </summary>
-    public IReadOnlyList<Local> Locals { get; private set; }
+    public IReadOnlyList<Local> Locals { get; set; }
    
     /// <summary>
     /// If present, the method should be declared with this string
     /// </summary>
-    public string? CustomDeclaration { get; private set; }
+    public string? CustomDeclaration { get; set; }
    
-    public MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
+    internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
@@ -92,58 +91,21 @@ public class MethodConversionInfo
 
     private void SetupDotNetMethod(DotNetDefinedMethod method)
     {
-        var customNameAttribute = method.Definition
-            .CustomAttributes
-            .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomFunctionNameAttribute).FullName);
-        
         IsPredeclared = false;
+        Header = Utils.GetHeaderName(method.Namespace);
+        SourceFileName = Utils.GetSourceFileName(method.Namespace);
+            
+        var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
+        if (method.GenericArgumentTypes.Any())
+        {
+            var argTypeNames = method.GenericArgumentTypes
+                .Select(x => x.Value.Value)
+                .Aggregate((x, y) => $"{x}_{y}");
 
-        var customNaming = Utils.GetCustomFileName(method.Definition.CustomAttributes, method.Definition.FullName);
-        if (customNaming != null)
-        {
-            SourceFileName = customNaming.Value.Item1;
-            Header = customNaming.Value.Item2;
-        }
-        else
-        {
-            Header = Utils.GetHeaderName(method.Namespace);
-            SourceFileName = Utils.GetSourceFileName(method.Namespace);
-        }
-
-        string functionName;
-        if (customNameAttribute != null)
-        {
-            functionName = customNameAttribute.ConstructorArguments[0].Value.ToString()!;
-        }
-        else
-        {
-            // TODO: Need to figure out a good way to disambiguate overloaded functions
-            functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
-            if (method.GenericArgumentTypes.Any())
-            {
-                var argTypeNames = method.GenericArgumentTypes
-                    .Select(x => x.Value.Value)
-                    .Aggregate((x, y) => $"{x}_{y}");
-
-                functionName += $"_{argTypeNames}";
-            }
-        }
-
-        if (method.CustomDeclaration != null)
-        {
-            CustomDeclaration = method.CustomDeclaration.Declaration;
+            functionName += $"_{argTypeNames}";
         }
         
-        NameInC = method.CustomDeclaration?.ReferredBy ?? new CFunctionName(Utils.MakeValidCName(functionName));
-
-        var ignoreInHeader = method.Definition
-            .CustomAttributes
-            .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
-
-        if (ignoreInHeader)
-        {
-            Header = null;
-        }
+        NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)
