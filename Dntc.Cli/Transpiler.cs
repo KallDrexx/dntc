@@ -25,6 +25,7 @@ public class Transpiler
         var definerPipeline = new DefinitionGenerationPipeline();
         definerPipeline.Add(new NativeGlobalAttributeDefiner());
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
+        definerPipeline.Add(new NativeTypeDefiner());
 
         var conversionInfoCreator = new ConversionInfoCreator();
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());

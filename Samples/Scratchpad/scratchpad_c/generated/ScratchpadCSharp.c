@@ -315,6 +315,14 @@ int32_t ScratchpadCSharp_AttributeTests_InlineTest(void) {
 	return 42;
 }
 
+int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValue(struct NativeType obj) {
+	return (obj.Value);
+}
+
+int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(struct NativeType *obj) {
+	return (obj->Value);
+}
+
 void ScratchpadCSharp_StringTests_LogStaticString(void) {
 	printf("abcdefg\n");
 	return;

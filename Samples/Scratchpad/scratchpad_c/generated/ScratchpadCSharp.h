@@ -93,6 +93,8 @@ int32_t ScratchpadCSharp_AttributeTests_CustomFileReferenceTestMethod(void);
 int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod(void);
 int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue(void);
 int32_t ScratchpadCSharp_AttributeTests_InlineTest(void);
+int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValue(struct NativeType obj);
+int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(struct NativeType *obj);
 void ScratchpadCSharp_StringTests_LogStaticString(void);
 
 #endif // SCRATCHPADCSHARP_H_H

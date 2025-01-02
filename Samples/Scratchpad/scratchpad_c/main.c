@@ -3,6 +3,7 @@
 #include "generated/fn_pointer_types.h"
 #include "generated/ScratchpadCSharp.h"
 #include "generated/dntc_utils.h"
+#include "native_test.h"
 
 #define ARRAY_ITEM_COUNT (10)
 
@@ -96,6 +97,13 @@ int main(void) {
 
     int32_t inlineTest = ScratchpadCSharp_AttributeTests_InlineTest();
     assert(inlineTest == 42);
+
+    struct NativeType nativeType = {.Value = 65};
+    int32_t nativeTypeValue1 = ScratchpadCSharp_AttributeTests_GetNativeTypeValue(nativeType);
+    assert(nativeTypeValue1 == 65);
+
+    int32_t nativeTypeValue2 = ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(&nativeType);
+    assert(nativeTypeValue2 == 65);
 
     ScratchpadCSharp_StringTests_LogStaticString();
 
