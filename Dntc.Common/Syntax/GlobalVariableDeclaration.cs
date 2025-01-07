@@ -19,6 +19,11 @@ public record GlobalVariableDeclaration(
 
         if (!IsHeaderDeclaration)
         {
+            if (Global.AttributeText != null)
+            {
+                await writer.WriteAsync($" {Global.AttributeText}");
+            }
+            
             await writer.WriteAsync(" = ");
             if (Global.InitialValue != null)
             {

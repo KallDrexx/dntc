@@ -45,6 +45,11 @@ public class GlobalConversionInfo
     /// An expression to set the initial value to
     /// </summary>
     public CBaseExpression? InitialValue { get; set; }
+    
+    /// <summary>
+    /// The optional attribute that should be present on the transpiled global's declaration
+    /// </summary>
+    public string? AttributeText { get; set; }
 
     internal GlobalConversionInfo(DefinedGlobal global)
     {

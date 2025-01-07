@@ -40,6 +40,7 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
 
+        conversionInfoCreator.AddGlobalMutator(new WithAttributeMutator());
         conversionInfoCreator.AddGlobalMutator(new InitialValueMutator(conversionCatalog));
         conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
         conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());

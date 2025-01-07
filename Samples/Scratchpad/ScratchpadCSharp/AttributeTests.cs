@@ -101,5 +101,6 @@ public static class AttributeTests
     }
 
     [InitialGlobalValue("123")]
+    [WithCAttribute("__attribute__ ((aligned (16)))")]
     public static int UnreferencedGlobalField;
 }
