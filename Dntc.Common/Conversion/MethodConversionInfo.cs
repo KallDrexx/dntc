@@ -116,7 +116,7 @@ public class MethodConversionInfo
     private void SetupNativeMethod(NativeDefinedMethod method)
     {
         IsPredeclared = true;
-        Header = method.HeaderFile;
+        Header = null; // Referenced headers will end up being used
         NameInC = method.NativeName;
     }
 

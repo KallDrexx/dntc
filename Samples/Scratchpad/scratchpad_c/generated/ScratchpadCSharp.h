@@ -2,11 +2,9 @@
 #define SCRATCHPADCSHARP_H_H
 
 
-#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"

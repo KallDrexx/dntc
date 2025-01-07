@@ -106,6 +106,15 @@ public class ImplementationPlan
                         sourceFile.AddReferencedHeader(childMethod.Header.Value);
                     }
 
+                    var methodDefinition = _definitionCatalog.Get(methodNode.MethodId);
+                    if (methodDefinition != null)
+                    {
+                        foreach (var header in methodDefinition.ReferencedHeaders)
+                        {
+                            sourceFile.AddReferencedHeader(header);
+                        }
+                    }
+
                     break;
 
                 case DependencyGraph.GlobalNode globalNode:

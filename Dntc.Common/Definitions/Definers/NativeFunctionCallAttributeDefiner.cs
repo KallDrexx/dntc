@@ -30,14 +30,22 @@ public class NativeFunctionCallAttributeDefiner : IDotNetMethodDefiner
         var hasHeaderSpecified = nativeFunctionCallAttribute.ConstructorArguments.Count > 1 &&
                                  nativeFunctionCallAttribute.ConstructorArguments[1].Value != null;
 
-        var header = hasHeaderSpecified
-            ? new HeaderName(nativeFunctionCallAttribute.ConstructorArguments[1].Value.ToString()!)
-            : (HeaderName?) null;
-                
+        var headers = new List<HeaderName>();
+        if (hasHeaderSpecified)
+        {
+            headers = nativeFunctionCallAttribute.ConstructorArguments[1]
+                .Value
+                .ToString()?
+                .Split(',')
+                .Select(x => new HeaderName(x))
+                .ToList() ?? [];
+
+        }
+
         return new NativeDefinedMethod(
             new IlMethodId(method.FullName),
             new IlTypeName(method.ReturnType.FullName),
-            header,
+            headers,
             new CFunctionName(nativeFunctionCallAttribute.ConstructorArguments[0].Value.ToString()!),
             new IlNamespace(method.DeclaringType.Namespace),
             method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());

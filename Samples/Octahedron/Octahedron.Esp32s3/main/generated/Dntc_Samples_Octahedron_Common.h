@@ -2,7 +2,6 @@
 #define DNTC_SAMPLES_OCTAHEDRON_COMMON_H_H
 
 
-#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

@@ -6,7 +6,7 @@ public static class AttributeTests
 {
     public static uint GetNumberMethod() => GetNumber();
 
-    [NativeFunctionCall("get_number", "../native_test.h")]
+    [NativeFunctionCall("get_number", "<stdlib.h>,../native_test.h")]
     private static uint GetNumber()
     {
         return 99;

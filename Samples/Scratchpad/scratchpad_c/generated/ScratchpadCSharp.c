@@ -3,6 +3,7 @@
 #include "fn_pointer_types.h"
 #include <math.h>
 #include "dotnet_arrays.h"
+#include <stdlib.h>
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "../macros.h"

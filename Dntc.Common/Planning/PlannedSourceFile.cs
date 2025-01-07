@@ -38,7 +38,6 @@ public class PlannedSourceFile
 
         foreach (var header in headers)
         {
-            processedHeaderFiles.Add(header.Name);
             foreach (var referencedHeader in header.ReferencedHeaders)
             {
                 if (!headersReferencedByOtherFiles.Contains(referencedHeader))
@@ -47,6 +46,8 @@ public class PlannedSourceFile
                 }
             }
 
+            processedHeaderFiles.Add(header.Name);
+            
             newSourceFile._declaredTypes.AddRange(header.DeclaredTypes);
             
             // We don't care about method declarations or global declarations, as they should have
