@@ -50,6 +50,11 @@ public class GlobalConversionInfo
     /// The optional attribute that should be present on the transpiled global's declaration
     /// </summary>
     public string? AttributeText { get; set; }
+   
+    /// <summary>
+    /// If true, this global is a `char name[]` instead of `char* name`
+    /// </summary>
+    public bool IsNonPointerString { get; set; }
 
     internal GlobalConversionInfo(DefinedGlobal global)
     {

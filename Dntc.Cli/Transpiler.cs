@@ -45,6 +45,7 @@ public class Transpiler
         conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
         conversionInfoCreator.AddGlobalMutator(new CustomGlobalNameMutator());
         conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
+        conversionInfoCreator.AddGlobalMutator(new NonPointerStringMutator());
         
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         

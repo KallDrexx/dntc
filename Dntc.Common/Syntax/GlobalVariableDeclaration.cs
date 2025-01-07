@@ -15,7 +15,14 @@ public record GlobalVariableDeclaration(
             await writer.WriteAsync("extern ");
         }
 
-        await writer.WriteAsync($"{Type.NameInC} {Global.NameInC}");
+        if (Global.IsNonPointerString)
+        {
+            await writer.WriteAsync($"char {Global.NameInC}[]");
+        }
+        else
+        {
+            await writer.WriteAsync($"{Type.NameInC} {Global.NameInC}");
+        }
 
         if (!IsHeaderDeclaration)
         {

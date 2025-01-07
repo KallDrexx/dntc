@@ -73,7 +73,7 @@ public static class AttributeTests
     [IgnoreInHeader]
     [CustomGlobalName("NonHeaderGlobal")]
     public static NonHeaderStruct NonHeaderStructGlobal = new() { Value = 1020 };
-
+    
     public static int GetNonHeaderStructValue()
     {
         return NonHeaderStructGlobal.Value;
@@ -104,4 +104,7 @@ public static class AttributeTests
     [InitialGlobalValue("123")]
     [WithCAttribute("__attribute__ ((aligned (16)))")]
     public static int UnreferencedGlobalField;
+
+    [NonPointerString]
+    public static string TestGlobalString;
 }
