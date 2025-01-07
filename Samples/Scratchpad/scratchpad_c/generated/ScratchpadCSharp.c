@@ -1,12 +1,12 @@
-#include <math.h>
 #include <stdint.h>
-#include <string.h>
-#include "../macros.h"
+#include "ScratchpadCSharp.h"
+#include "fn_pointer_types.h"
+#include <math.h>
+#include "dotnet_arrays.h"
 #include "../native_test.h"
 #include "custom_file_test.h"
-#include "dotnet_arrays.h"
-#include "fn_pointer_types.h"
-#include "ScratchpadCSharp.h"
+#include "../macros.h"
+#include <string.h>
 
 typedef struct {
 	int32_t Value;

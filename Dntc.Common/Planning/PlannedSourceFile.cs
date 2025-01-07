@@ -31,15 +31,20 @@ public class PlannedSourceFile
         IEnumerable<PlannedSourceFile> sourceFiles)
     {
         var newSourceFile = new PlannedSourceFile(name);
-        var processedHeaderFiles = new HashSet<HeaderName>();
-        var headersReferencedByOtherFiles = new HashSet<HeaderName>();
+        
+        // Make sure headers are lists to maintain ordering
+        var processedHeaderFiles = new List<HeaderName>(); 
+        var headersReferencedByOtherFiles = new List<HeaderName>();
 
         foreach (var header in headers)
         {
             processedHeaderFiles.Add(header.Name);
             foreach (var referencedHeader in header.ReferencedHeaders)
             {
-                headersReferencedByOtherFiles.Add(referencedHeader);
+                if (!headersReferencedByOtherFiles.Contains(referencedHeader))
+                {
+                    headersReferencedByOtherFiles.Add(referencedHeader);
+                }
             }
 
             newSourceFile._declaredTypes.AddRange(header.DeclaredTypes);
@@ -54,7 +59,10 @@ public class PlannedSourceFile
         {
             foreach (var referencedHeader in sourceFile.ReferencedHeaders)
             {
-                headersReferencedByOtherFiles.Add(referencedHeader);
+                if (!headersReferencedByOtherFiles.Contains(referencedHeader))
+                {
+                    headersReferencedByOtherFiles.Add(referencedHeader);
+                }
             }
 
             newSourceFile._implementedMethods.AddRange(sourceFile.ImplementedMethods);

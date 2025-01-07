@@ -1,7 +1,7 @@
+#include "Dntc_Samples_Octahedron_Common.h"
+#include <stdint.h>
 #include <math.h>
 #include <stdbool.h>
-#include <stdint.h>
-#include "Dntc_Samples_Octahedron_Common.h"
 #include "dotnet_arrays.h"
 #include "dotnet_math.h"
 

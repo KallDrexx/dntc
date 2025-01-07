@@ -23,10 +23,8 @@ public class SourceFile
 
     public async Task WriteAsync(StreamWriter writer)
     {
-        var orderedIncludes = IncludeClauses.OrderBy(x => !x.Header.Value.StartsWith('<'))
-            .ThenBy(x => x.Header.Value);
-
-        foreach (var include in orderedIncludes)
+        // NOTE: Make sure to keep include ordering
+        foreach (var include in IncludeClauses)
         {
             await include.WriteAsync(writer);
         }
