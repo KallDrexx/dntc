@@ -99,4 +99,7 @@ public static class AttributeTests
     {
         return obj.Value;
     }
+
+    [InitialGlobalValue("123")]
+    public static int UnreferencedGlobalField;
 }

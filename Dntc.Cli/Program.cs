@@ -51,16 +51,25 @@ public static class Program
         Console.WriteLine($"Assembly dir: {manifest.AssemblyDirectory}");
         Console.WriteLine($"Output dir: {manifest.OutputDirectory}");
         
+        Console.WriteLine();
         Console.WriteLine("Assemblies to load:");
         foreach (var assembly in manifest.AssembliesToLoad)
         {
             Console.WriteLine($"\t{assembly}");
         }
         
+        Console.WriteLine();
         Console.WriteLine("Methods to transpile:");
         foreach (var method in manifest.MethodsToTranspile)
         {
             Console.WriteLine($"\t{method}");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Globals to transpile:");
+        foreach (var global in manifest.GlobalsToTranspile)
+        {
+            Console.WriteLine($"\t{global}");
         }
         
         Console.WriteLine();

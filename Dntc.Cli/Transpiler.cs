@@ -23,11 +23,14 @@ public class Transpiler
     public async Task RunAsync()
     {
         var definerPipeline = new DefinitionGenerationPipeline();
+        var conversionInfoCreator = new ConversionInfoCreator();
+        var definitionCatalog = new DefinitionCatalog(definerPipeline);
+        var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);
+        
         definerPipeline.Add(new NativeGlobalAttributeDefiner());
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
         definerPipeline.Add(new NativeTypeDefiner());
 
-        var conversionInfoCreator = new ConversionInfoCreator();
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
        
@@ -37,11 +40,10 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
 
+        conversionInfoCreator.AddGlobalMutator(new InitialValueMutator(conversionCatalog));
         conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
         conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
         
-        var definitionCatalog = new DefinitionCatalog(definerPipeline);
-        var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
         var modules = GetModules();
@@ -61,6 +63,20 @@ public class Transpiler
             }
 
             var graph = new DependencyGraph(definitionCatalog, foundMethod.Id);
+            conversionCatalog.Add(graph);
+            implementationPlan.AddMethodGraph(graph);
+        }
+
+        foreach (var globalId in _manifest.GlobalsToTranspile)
+        {
+            var foundGlobal = definitionCatalog.Get(new IlFieldId(globalId));
+            if (foundGlobal == null)
+            {
+                var message = $"No global with the id '{globalId}' could be found in any of the loaded modules";
+                throw new InvalidOperationException(message);
+            }
+
+            var graph = new DependencyGraph(definitionCatalog, foundGlobal.IlName);
             conversionCatalog.Add(graph);
             implementationPlan.AddMethodGraph(graph);
         }
@@ -114,9 +130,10 @@ public class Transpiler
             Console.WriteLine($"{module.FileName}:");
             
             var methods = new HashSet<MethodDefinition>();
+            var globals = new HashSet<FieldDefinition>();
             foreach (var type in module.Types)
             {
-                FindTypesAndMethods(type, methods);
+                FindTranspilableDefinitions(type, methods, globals);
             }
 
             var orderedMethods = methods
@@ -124,9 +141,21 @@ public class Transpiler
                 .ThenBy(x => x.Name)
                 .ToArray();
 
+            var orderedGlobals = globals
+                .OrderBy(x => x.DeclaringType.FullName)
+                .ThenBy(x => x.Name)
+                .ToArray();
+
+            Console.WriteLine("\tMethods:");
             foreach (var method in orderedMethods)
             {
-                Console.WriteLine($"\t- {method.FullName}");
+                Console.WriteLine($"\t\t- {method.FullName}");
+            }
+            
+            Console.WriteLine("\tGlobals:");
+            foreach (var global in orderedGlobals)
+            {
+                Console.WriteLine($"\t\t- {global.FullName}");
             }
         }
     }
@@ -196,16 +225,24 @@ public class Transpiler
         }
     }
 
-    private static void FindTypesAndMethods(TypeDefinition type, HashSet<MethodDefinition> methods)
+    private static void FindTranspilableDefinitions(
+        TypeDefinition type, 
+        HashSet<MethodDefinition> methods, 
+        HashSet<FieldDefinition> globals)
     {
         foreach (var method in type.Methods)
         {
             methods.Add(method);
         }
 
+        foreach (var field in type.Fields.Where(x => x.IsStatic))
+        {
+            globals.Add(field);
+        }
+
         foreach (var nestedType in type.NestedTypes)
         {
-            FindTypesAndMethods(nestedType, methods);
+            FindTranspilableDefinitions(nestedType, methods, globals);
         }
     }
 

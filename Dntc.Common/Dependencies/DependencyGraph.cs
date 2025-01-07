@@ -31,6 +31,18 @@ public class DependencyGraph
         Root = firstNode;
     }
 
+    public DependencyGraph(DefinitionCatalog definitionCatalog, IlFieldId global)
+    {
+        var node = CreateNode(definitionCatalog, global, []);
+        if (node == null)
+        {
+            var message = $"Failed to create root node from '{global}'";
+            throw new InvalidOperationException(message);
+        }
+
+        Root = node;
+    }
+
     private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
     {
         var invokedDefinition = definitionCatalog.Get(invokedMethod.MethodId);

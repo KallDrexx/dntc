@@ -47,5 +47,8 @@
 
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()"
   ],
+  "GlobalsToTranspile": [
+    "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField"
+  ],
   "OutputDirectory": "scratchpad_c/generated"
 }

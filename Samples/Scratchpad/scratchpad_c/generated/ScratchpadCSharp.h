@@ -47,6 +47,7 @@ typedef struct {
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);

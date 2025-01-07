@@ -13,9 +13,10 @@ typedef struct {
 	int32_t Value;
 } ScratchpadCSharp_AttributeTests_NonHeaderStruct;
 
- ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
- int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
- ScratchpadCSharp_AttributeTests_NonHeaderStruct ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal;
+ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector = {0};
+int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
+ScratchpadCSharp_AttributeTests_NonHeaderStruct ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal = {0};
+int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField = 123;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);

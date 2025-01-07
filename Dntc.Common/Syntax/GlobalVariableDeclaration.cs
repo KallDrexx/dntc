@@ -6,10 +6,30 @@ namespace Dntc.Common.Syntax;
 public record GlobalVariableDeclaration(
     GlobalConversionInfo Global, 
     TypeConversionInfo Type,
-    bool IsExtern)
+    bool IsHeaderDeclaration)
 {
     public async Task WriteAsync(StreamWriter writer)
     {
-        await writer.WriteLineAsync($"{(IsExtern ? "extern" : "")} {Type.NameInC} {Global.NameInC};");
+        if (IsHeaderDeclaration)
+        {
+            await writer.WriteAsync("extern ");
+        }
+
+        await writer.WriteAsync($"{Type.NameInC} {Global.NameInC}");
+
+        if (!IsHeaderDeclaration)
+        {
+            await writer.WriteAsync(" = ");
+            if (Global.InitialValue != null)
+            {
+                await Global.InitialValue.WriteCodeStringAsync(writer);
+            }
+            else
+            {
+                await writer.WriteAsync("{0}");
+            }
+        }
+
+        await writer.WriteLineAsync(";");
     }
 }

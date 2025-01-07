@@ -1,5 +1,6 @@
 using Dntc.Attributes;
 using Dntc.Common.Definitions;
+using Dntc.Common.Syntax.Expressions;
 
 namespace Dntc.Common.Conversion;
 
@@ -39,6 +40,11 @@ public class GlobalConversionInfo
     /// What name this type will have in C
     /// </summary>
     public CGlobalName NameInC { get; set; }
+   
+    /// <summary>
+    /// An expression to set the initial value to
+    /// </summary>
+    public CBaseExpression? InitialValue { get; set; }
 
     internal GlobalConversionInfo(DefinedGlobal global)
     {

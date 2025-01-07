@@ -105,6 +105,8 @@ int main(void) {
     int32_t nativeTypeValue2 = ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(&nativeType);
     assert(nativeTypeValue2 == 65);
 
+    assert(ScratchpadCSharp_AttributeTests_UnreferencedGlobalField == 123);
+
     ScratchpadCSharp_StringTests_LogStaticString();
 
     printf("Tests passed!\n");

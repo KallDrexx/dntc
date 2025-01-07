@@ -34,6 +34,12 @@ public class Manifest
     /// Full names of all methods to transpile
     /// </summary>
     public IReadOnlyList<string> MethodsToTranspile { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Full identifiers for globals to explicitly compile, even if they are not referenced
+    /// by other .net code.
+    /// </summary>
+    public IReadOnlyList<string> GlobalsToTranspile { get; set; } = Array.Empty<string>();
     
     /// <summary>
     /// Directory to place all generated header and source files in
