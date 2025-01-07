@@ -15,7 +15,7 @@ typedef struct {
 
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector = {0};
 int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
-ScratchpadCSharp_AttributeTests_NonHeaderStruct ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal = {0};
+ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
@@ -292,7 +292,7 @@ void ScratchpadCSharp_AttributeTests__cctor(void) {
 	ScratchpadCSharp_AttributeTests_NonHeaderStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_AttributeTests_NonHeaderStruct){0});
 	((&__local_0)->Value) = 1020;
-	ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal = __local_0;
+	NonHeaderGlobal = __local_0;
 	return;
 }
 
@@ -309,7 +309,7 @@ int32_t ScratchpadCSharp_AttributeTests_ReferToCustomDeclaredMethod(void) {
 }
 
 int32_t ScratchpadCSharp_AttributeTests_GetNonHeaderStructValue(void) {
-	return ((&ScratchpadCSharp_AttributeTests_NonHeaderStructGlobal)->Value);
+	return ((&NonHeaderGlobal)->Value);
 }
 
 __attribute__ ((always_inline))

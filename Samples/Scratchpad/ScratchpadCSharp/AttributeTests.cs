@@ -71,6 +71,7 @@ public static class AttributeTests
     }
 
     [IgnoreInHeader]
+    [CustomGlobalName("NonHeaderGlobal")]
     public static NonHeaderStruct NonHeaderStructGlobal = new() { Value = 1020 };
 
     public static int GetNonHeaderStructValue()
