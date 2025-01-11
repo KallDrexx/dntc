@@ -48,6 +48,7 @@ public class NativeFunctionCallAttributeDefiner : IDotNetMethodDefiner
             headers,
             new CFunctionName(nativeFunctionCallAttribute.ConstructorArguments[0].Value.ToString()!),
             new IlNamespace(method.DeclaringType.Namespace),
-            method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray());
+            method.Parameters.Select(x => new IlTypeName(x.ParameterType.FullName)).ToArray(),
+            method);
     }
 }

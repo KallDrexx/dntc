@@ -108,6 +108,7 @@ int main(void) {
     assert(ScratchpadCSharp_AttributeTests_UnreferencedGlobalField == 123);
 
     ScratchpadCSharp_StringTests_LogStaticString();
+    ScratchpadCSharp_AttributeTests_TestNativeGeneric();
 
     printf("Tests passed!\n");
     return 0;

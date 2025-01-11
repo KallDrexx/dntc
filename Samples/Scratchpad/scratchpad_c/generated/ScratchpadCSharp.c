@@ -7,6 +7,7 @@
 #include "../native_test.h"
 #include "custom_file_test.h"
 #include "../macros.h"
+#include <stdio.h>
 #include <string.h>
 
 typedef struct {
@@ -324,6 +325,11 @@ int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValue(struct NativeType obj
 
 int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(struct NativeType *obj) {
 	return (obj->Value);
+}
+
+void ScratchpadCSharp_AttributeTests_TestNativeGeneric(void) {
+	printf("generic test %d\n", 1234);
+	return;
 }
 
 void ScratchpadCSharp_StringTests_LogStaticString(void) {

@@ -107,4 +107,15 @@ public static class AttributeTests
 
     [NonPointerString]
     public static string TestGlobalString;
+
+    [NativeFunctionCall("printf", "<stdio.h>")]
+    public static void Printf<T>(string template, T input1)
+    {
+        
+    }
+
+    public static void TestNativeGeneric()
+    {
+        Printf("generic test %d\n", 1234);
+    }
 }

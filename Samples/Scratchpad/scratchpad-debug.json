@@ -44,6 +44,7 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::InlineTest()",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValue(ScratchpadCSharp.AttributeTests/NativeTestType)",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValueRef(ScratchpadCSharp.AttributeTests/NativeTestType&)",
+    "System.Void ScratchpadCSharp.AttributeTests::TestNativeGeneric()",
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
