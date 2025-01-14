@@ -109,8 +109,12 @@ public static class Program
         var dotnetRoot = Environment.GetEnvironmentVariable("DOTNET_ROOT");
         if (dotnetRoot == null)
         {
-            var message = "No DOTNET_ROOT environment variable found (needed to locate dotnet executable";
-            throw new InvalidOperationException(message);
+            dotnetRoot = GetDotNetExecutableFromPath();
+            if (dotnetRoot == null)
+            {
+                var message = "No DOTNET_ROOT environment variable found and dotnet cli executable not found in PATH";
+                throw new InvalidOperationException(message);
+            }
         }
         
         var dotnetExecutable = Path.Combine(dotnetRoot, "dotnet");
@@ -134,5 +138,32 @@ public static class Program
         await process!.WaitForExitAsync();
         
         Console.WriteLine();
+    }
+
+    /// <summary>
+    /// Iterates through all directories in the PATH environment variable, looking for the dotnet cli
+    /// </summary>
+    private static string? GetDotNetExecutableFromPath()
+    {
+        var pathEnv = Environment.GetEnvironmentVariable("PATH");
+        if (pathEnv == null)
+        {
+            return null;
+        }
+
+        var paths = pathEnv.Split(Path.PathSeparator);
+        foreach (var directory in paths)
+        {
+            var withExtensionExists = File.Exists(Path.Combine(directory, "dotnet.exe"));
+            var withoutExtensionExists = File.Exists(Path.Combine(directory, "dotnet"));
+
+            if (withExtensionExists || withoutExtensionExists)
+            {
+                return directory;
+            }
+        }
+
+        // Not found
+        return null;
     }
 }
