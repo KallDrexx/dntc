@@ -9,6 +9,7 @@
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"
+#include "ScratchpadCSharp_Dependency.h"
 
 typedef struct {
 	float X;
@@ -97,5 +98,7 @@ int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValue(struct NativeType obj
 int32_t ScratchpadCSharp_AttributeTests_GetNativeTypeValueRef(struct NativeType *obj);
 void ScratchpadCSharp_AttributeTests_TestNativeGeneric(void);
 void ScratchpadCSharp_StringTests_LogStaticString(void);
+int32_t ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(int32_t x);
+void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void);
 
 #endif // SCRATCHPADCSHARP_H_H

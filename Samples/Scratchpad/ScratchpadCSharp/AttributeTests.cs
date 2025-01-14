@@ -1,4 +1,5 @@
 ﻿using Dntc.Attributes;
+using ScratchpadCSharp.Dependency;
 
 namespace ScratchpadCSharp;
 
@@ -117,5 +118,10 @@ public static class AttributeTests
     public static void TestNativeGeneric()
     {
         Printf("generic test %d\n", 1234);
+    }
+
+    public static void TestNativeGenericInDep()
+    {
+        GenericUtils.Printf("generic dep test %d\n", 5678);
     }
 }

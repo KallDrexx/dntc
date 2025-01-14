@@ -22,17 +22,23 @@ public class CallHandlers : IOpCodeHandlerCollection
 
     private static InvokedMethod? GetCallTarget(Instruction instruction, DotNetDefinedMethod method)
     {
-        return instruction.Operand switch
+        switch (instruction.Operand)
         {
-            GenericInstanceMethod generic => 
-                new GenericInvokedMethod(
-                    new IlMethodId(generic.FullName),
-                    new IlMethodId(generic.ElementMethod.FullName),
-                    generic.GenericArguments.Select(x => new IlTypeName(x.FullName)).ToArray()),
+            case GenericInstanceMethod generic:
+                var arguments = generic.GenericArguments.Select(x => new IlTypeName(x.FullName)).ToArray();
+                var methodId = Utils.NormalizeGenericMethodId(generic.FullName, generic.ElementMethod.GenericParameters);
+                var originalMethodId = Utils.NormalizeGenericMethodId(
+                    generic.ElementMethod.FullName,
+                    generic.ElementMethod.GenericParameters);
+
+                return new GenericInvokedMethod(methodId, originalMethodId, arguments);
+                
+            case MethodReference reference:
+                return new InvokedMethod(new IlMethodId(reference.FullName));
             
-            MethodReference reference => new InvokedMethod(new IlMethodId(reference.FullName)),
-            _ => null
-        };
+            default:
+                return null;
+        }
     }
     
     private static OpCodeHandlingResult CallMethodReference(
@@ -42,7 +48,7 @@ public class CallHandlers : IOpCodeHandlerCollection
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
-        var returnType = context.ConversionCatalog.Find(returnTypeName);
+        var returnType = conversionInfo.ReturnTypeInfo;
 
         // Arguments (including the instance if this isn't a static call) are pushed onto the stack in the order
         // they are called, which means they are popped in the reverse order needed. So we need to revers the
@@ -69,7 +75,9 @@ public class CallHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var methodReference = (MethodReference)context.CurrentInstruction.Operand;
-            var methodId = new IlMethodId(methodReference.FullName);
+            var methodId = methodReference is GenericInstanceMethod generic && generic.HasGenericArguments
+                ? Utils.NormalizeGenericMethodId(generic.FullName, generic.ElementMethod.GenericParameters)
+                : new IlMethodId(methodReference.FullName);
             return CallMethodReference(context, methodId, new IlTypeName(methodReference.ReturnType.FullName));
         }
 

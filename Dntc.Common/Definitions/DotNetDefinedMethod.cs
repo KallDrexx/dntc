@@ -1,4 +1,5 @@
-﻿using Dntc.Attributes;
+﻿using System.Text.RegularExpressions;
+using Dntc.Attributes;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
 
@@ -51,8 +52,14 @@ public class DotNetDefinedMethod : DefinedMethod
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
-        Id = new IlMethodId(definition.FullName);
         ReturnType = new IlTypeName(definition.ReturnType.FullName);
+        
+        // If this is a generic method we need to replace the named generic parameters with their
+        // index values (e.g. !!0) so that we can correctly identify this method when called from
+        // another .net assembly.
+        Id = definition.HasGenericParameters 
+            ? Utils.NormalizeGenericMethodId(definition.FullName, definition.GenericParameters) 
+            : new IlMethodId(definition.FullName);
 
         var parameters = definition.Parameters
             .OrderBy(x => x.Index)

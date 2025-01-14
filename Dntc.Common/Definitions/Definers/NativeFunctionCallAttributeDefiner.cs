@@ -42,8 +42,12 @@ public class NativeFunctionCallAttributeDefiner : IDotNetMethodDefiner
 
         }
 
+        var id = method.HasGenericParameters
+            ? Utils.NormalizeGenericMethodId(method.FullName, method.GenericParameters)
+            : new IlMethodId(method.FullName);
+
         return new NativeDefinedMethod(
-            new IlMethodId(method.FullName),
+            id,
             new IlTypeName(method.ReturnType.FullName),
             headers,
             new CFunctionName(nativeFunctionCallAttribute.ConstructorArguments[0].Value.ToString()!),

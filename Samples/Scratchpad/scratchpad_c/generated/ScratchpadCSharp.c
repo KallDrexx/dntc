@@ -9,6 +9,7 @@
 #include "../macros.h"
 #include <stdio.h>
 #include <string.h>
+#include "ScratchpadCSharp_Dependency.h"
 
 typedef struct {
 	int32_t Value;
@@ -334,6 +335,15 @@ void ScratchpadCSharp_AttributeTests_TestNativeGeneric(void) {
 
 void ScratchpadCSharp_StringTests_LogStaticString(void) {
 	printf("abcdefg\n");
+	return;
+}
+
+int32_t ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(int32_t x) {
+	return ScratchpadCSharp_Dependency_GenericUtils_GenericReturnValue_System_Int32(x);
+}
+
+void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void) {
+	printf("generic dep test %d\n", 5678);
 	return;
 }
 

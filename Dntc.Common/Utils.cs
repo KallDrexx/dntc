@@ -1,6 +1,5 @@
-﻿using Dntc.Attributes;
-using Dntc.Common.Conversion;
-using Dntc.Common.Definitions;
+﻿using System.Text.RegularExpressions;
+using Dntc.Attributes;
 using Mono.Cecil;
 
 namespace Dntc.Common;
@@ -74,5 +73,29 @@ public static class Utils
         }
 
         return new CSourceFileName(headerNameString);
+    }
+
+    public static IlMethodId NormalizeGenericMethodId(
+        string signature,
+        Mono.Collections.Generic.Collection<GenericParameter> parameters)
+    {
+        for (var x = 0; x < parameters.Count; x++)
+        {
+            var name = parameters[x].FullName;
+            // We need to replace any part of the method signature that's referring to a
+            // named generic parameter and replace it with the index. There's probably a 
+            // better way to do this, but I think this will work?
+            //
+            // The regex will match any parameters that consist of the name. The type name must
+            // start with either a parenthesis (first param) or comma (not first param). It must 
+            // also end with a parenthesis (last param) or comma. Use regex groupings to keep
+            // the preceding and trailing characters as expected.
+            var parameterPattern = new Regex($"([\\(,]){name}([,\\) ])");
+            var returnTypePattern = new Regex($"^{name} ");
+            signature = parameterPattern.Replace(signature, $"$1!!{x}$2");
+            signature = returnTypePattern.Replace(signature, $"!!{x} ");
+        }
+
+        return new IlMethodId(signature);
     }
 }

@@ -107,8 +107,12 @@ int main(void) {
 
     assert(ScratchpadCSharp_AttributeTests_UnreferencedGlobalField == 123);
 
+    int32_t genericDepNum = ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(25);
+    assert(genericDepNum == 25);
+
     ScratchpadCSharp_StringTests_LogStaticString();
     ScratchpadCSharp_AttributeTests_TestNativeGeneric();
+    ScratchpadCSharp_AttributeTests_TestNativeGenericInDep();
 
     printf("Tests passed!\n");
     return 0;

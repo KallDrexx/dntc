@@ -3,7 +3,8 @@
   "BuildInDebugMode": false,
   "AssemblyDirectory": "ScratchpadCSharp/bin/Release/net8.0",
   "AssembliesToLoad": [
-    "ScratchpadCSharp.dll"
+    "ScratchpadCSharp.dll",
+    "ScratchpadCSharp.Dependency.dll"
   ],
   "MethodsToTranspile": [
     "System.Int32 ScratchpadCSharp.SimpleFunctions::BitwiseOps(System.Int32)",
@@ -45,7 +46,9 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValue(ScratchpadCSharp.AttributeTests/NativeTestType)",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValueRef(ScratchpadCSharp.AttributeTests/NativeTestType&)",
     "System.Void ScratchpadCSharp.AttributeTests::TestNativeGeneric()",
-    "System.Void ScratchpadCSharp.StringTests::LogStaticString()"
+    "System.Void ScratchpadCSharp.StringTests::LogStaticString()",
+    "System.Int32 ScratchpadCSharp.GenericTests::GetGenericNumberFromDep(System.Int32)",
+    "System.Void ScratchpadCSharp.AttributeTests::TestNativeGenericInDep()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

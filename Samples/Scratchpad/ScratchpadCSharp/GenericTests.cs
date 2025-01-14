@@ -1,4 +1,6 @@
-﻿namespace ScratchpadCSharp;
+﻿using ScratchpadCSharp.Dependency;
+
+namespace ScratchpadCSharp;
 
 public class GenericTests
 {
@@ -33,6 +35,11 @@ public class GenericTests
     {
         var getter = new AddNumberGetter(x, y);
         return Run(getter);
+    }
+
+    public static int GetGenericNumberFromDep(int x)
+    {
+        return GenericUtils.GenericReturnValue(x);
     }
 
     private static int Run<T>(T getter) where T : IGetNumber
