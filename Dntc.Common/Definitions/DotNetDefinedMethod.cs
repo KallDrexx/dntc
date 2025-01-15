@@ -218,6 +218,7 @@ public class DotNetDefinedMethod : DefinedMethod
 
     private void HandleCustomDeclarationAttribute(MethodDefinition method)
     {
+        // TODO: Add the concept of a definition mutator at some point, to make this pipeline-able.
         var attribute = method.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(CustomDeclarationAttribute).FullName);
 
@@ -250,7 +251,7 @@ public class DotNetDefinedMethod : DefinedMethod
 
         if (referencedHeader != null)
         {
-            ReferencedHeaders = [new HeaderName(referencedHeader)];
+            ReferencedHeaders = referencedHeader.Split(',').Select(x => new HeaderName(x)).ToArray();
         }
     }
 }
