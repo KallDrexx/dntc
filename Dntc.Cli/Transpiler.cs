@@ -1,9 +1,8 @@
-﻿using Dntc.Attributes;
+﻿using System.Runtime.Loader;
 using Dntc.Common;
 using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
-using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.Definers;
 using Dntc.Common.Dependencies;
 using Dntc.Common.Planning;
@@ -22,10 +21,13 @@ public class Transpiler
 
     public async Task RunAsync()
     {
-        var definerPipeline = new DefinitionGenerationPipeline();
-        var conversionInfoCreator = new ConversionInfoCreator();
-        var definitionCatalog = new DefinitionCatalog(definerPipeline);
-        var conversionCatalog = new ConversionCatalog(definitionCatalog, conversionInfoCreator);
+        var plugins = LoadPlugins();
+        
+        var transpilerPipeline = new TranspilerContext();
+        var definerPipeline = transpilerPipeline.Definers;
+        var conversionInfoCreator = transpilerPipeline.ConversionInfoCreator;
+        var definitionCatalog = transpilerPipeline.DefinitionCatalog;
+        var conversionCatalog = transpilerPipeline.ConversionCatalog;
         
         definerPipeline.Add(new NativeGlobalAttributeDefiner());
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
@@ -47,12 +49,21 @@ public class Transpiler
         conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddGlobalMutator(new NonPointerStringMutator());
         
+        if (plugins.All(x => !x.BypassBuiltInNativeDefinitions))
+        {
+            definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
+            definitionCatalog.Add(NativeDefinedMethod.StandardMethods);
+            definitionCatalog.Add(CustomDefinedMethod.StandardCustomMethods);
+        }
+
+        foreach (var plugin in plugins)
+        {
+            plugin.Customize(transpilerPipeline);
+        }
+        
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
         var modules = GetModules();
-        definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
-        definitionCatalog.Add(NativeDefinedMethod.StandardMethods);
-        definitionCatalog.Add(CustomDefinedMethod.StandardCustomMethods);
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
         var implementationPlan = new ImplementationPlan(conversionCatalog, definitionCatalog);
@@ -252,8 +263,25 @@ public class Transpiler
     private IReadOnlyList<ModuleDefinition> GetModules()
     {
         return _manifest.AssembliesToLoad
-            .Select(assemlbyFile => Path.Combine(_manifest.AssemblyDirectory!, assemlbyFile))
-            .Select(path => ModuleDefinition.ReadModule(path))
+            .Select(assemblyFile => Path.Combine(_manifest.AssemblyDirectory!, assemblyFile))
+            .Select(ModuleDefinition.ReadModule)
+            .ToArray();
+    }
+
+    private IReadOnlyList<ITranspilerPlugin> LoadPlugins()
+    {
+        if (_manifest.PluginAssembly == null)
+        {
+            return [];
+        }
+
+        var pluginAssemblyPath = Path.Combine(_manifest.AssemblyDirectory!, _manifest.PluginAssembly);
+        var context = new AssemblyLoadContext(null);
+        var assembly = context.LoadFromAssemblyPath(pluginAssemblyPath);
+        return assembly.GetTypes()
+            .Where(x => x.IsAssignableTo(typeof(ITranspilerPlugin)))
+            .Select(Activator.CreateInstance)
+            .Cast<ITranspilerPlugin>()
             .ToArray();
     }
 }

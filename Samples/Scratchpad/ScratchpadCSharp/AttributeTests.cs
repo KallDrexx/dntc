@@ -107,7 +107,7 @@ public static class AttributeTests
     public static int UnreferencedGlobalField;
 
     [NonPointerString]
-    public static string TestGlobalString;
+    public static string? TestGlobalString;
 
     [NativeFunctionCall("printf", "<stdio.h>")]
     public static void Printf<T>(string template, T input1)

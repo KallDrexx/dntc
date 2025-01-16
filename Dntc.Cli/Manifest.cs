@@ -29,6 +29,12 @@ public class Manifest
     /// List of dll files to load from the assmebly directory
     /// </summary>
     public IReadOnlyList<string> AssembliesToLoad { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// The name of the assembly (in the AssemblyDirectory) that contains a transpiler
+    /// plugin that should be activated.
+    /// </summary>
+    public string? PluginAssembly { get; set; }
     
     /// <summary>
     /// Full names of all methods to transpile
