@@ -20,6 +20,7 @@ int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
 ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
+int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);

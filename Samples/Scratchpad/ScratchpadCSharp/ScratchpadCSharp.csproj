@@ -29,6 +29,7 @@
     <ItemGroup>
       <ProjectReference Include="..\..\..\Dntc.Attributes\Dntc.Attributes.csproj" />
       <ProjectReference Include="..\..\..\ScratchpadCSharp.Dependency\ScratchpadCSharp.Dependency.csproj" />
+      <ProjectReference Include="..\..\..\ScratchpadCSharp.Plugin\ScratchpadCSharp.Plugin.csproj" />
     </ItemGroup>
 
 </Project>
