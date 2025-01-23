@@ -8,7 +8,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class NativeGlobalAttributeDefiner : IDotNetGlobalDefiner
 {
-    public DefinedGlobal? Define(FieldDefinition field)
+    public DefinedField? Define(FieldDefinition field)
     {
         var attribute = field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
@@ -33,10 +33,10 @@ public class NativeGlobalAttributeDefiner : IDotNetGlobalDefiner
             ? new HeaderName(attribute.ConstructorArguments[1].Value.ToString()!)
             : (HeaderName?) null;
 
-        return new NativeDefinedGlobal(
+        return new NativeDefinedField(
             new IlFieldId(field.FullName),
             new IlTypeName(field.FieldType.FullName),
-            new CGlobalName(attribute.ConstructorArguments[0].Value.ToString()!),
+            new CFieldName(attribute.ConstructorArguments[0].Value.ToString()!),
             header);
     }
 }

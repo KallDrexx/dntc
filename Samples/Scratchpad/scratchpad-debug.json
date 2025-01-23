@@ -48,7 +48,8 @@
     "System.Void ScratchpadCSharp.AttributeTests::TestNativeGeneric()",
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()",
     "System.Int32 ScratchpadCSharp.GenericTests::GetGenericNumberFromDep(System.Int32)",
-    "System.Void ScratchpadCSharp.AttributeTests::TestNativeGenericInDep()"
+    "System.Void ScratchpadCSharp.AttributeTests::TestNativeGenericInDep()",
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

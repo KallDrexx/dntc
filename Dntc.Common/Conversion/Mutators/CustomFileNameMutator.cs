@@ -45,9 +45,9 @@ public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMu
         }
     }
 
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var customNaming = Utils.GetCustomFileName(global.Definition.CustomAttributes, global.IlName.Value);
+        var customNaming = Utils.GetCustomFileName(field.Definition.CustomAttributes, field.IlName.Value);
         if (customNaming == null)
         {
             return;

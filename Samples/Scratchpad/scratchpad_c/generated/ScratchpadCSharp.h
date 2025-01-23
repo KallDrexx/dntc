@@ -45,6 +45,10 @@ typedef struct {
 	char __dummy; // Placeholder for empty type
 } ScratchpadCSharp_AttributeTests;
 
+typedef struct {
+	int32_t some_value;
+} ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
+
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
@@ -101,5 +105,6 @@ void ScratchpadCSharp_AttributeTests_TestNativeGeneric(void);
 void ScratchpadCSharp_StringTests_LogStaticString(void);
 int32_t ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(int32_t x);
 void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void);
+int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSharp_AttributeTests_CustomFieldNameStruct obj);
 
 #endif // SCRATCHPADCSHARP_H_H

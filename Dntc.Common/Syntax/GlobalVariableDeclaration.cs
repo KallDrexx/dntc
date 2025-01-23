@@ -4,7 +4,7 @@ using Dntc.Common.Definitions;
 namespace Dntc.Common.Syntax;
 
 public record GlobalVariableDeclaration(
-    GlobalConversionInfo Global, 
+    FieldConversionInfo Field, 
     TypeConversionInfo Type,
     bool IsHeaderDeclaration)
 {
@@ -15,26 +15,26 @@ public record GlobalVariableDeclaration(
             await writer.WriteAsync("extern ");
         }
 
-        if (Global.IsNonPointerString)
+        if (Field.IsNonPointerString)
         {
-            await writer.WriteAsync($"char {Global.NameInC}[]");
+            await writer.WriteAsync($"char {Field.NameInC}[]");
         }
         else
         {
-            await writer.WriteAsync($"{Type.NameInC} {Global.NameInC}");
+            await writer.WriteAsync($"{Type.NameInC} {Field.NameInC}");
         }
 
         if (!IsHeaderDeclaration)
         {
-            if (Global.AttributeText != null)
+            if (Field.AttributeText != null)
             {
-                await writer.WriteAsync($" {Global.AttributeText}");
+                await writer.WriteAsync($" {Field.AttributeText}");
             }
             
             await writer.WriteAsync(" = ");
-            if (Global.InitialValue != null)
+            if (Field.InitialValue != null)
             {
-                await Global.InitialValue.WriteCodeStringAsync(writer);
+                await Field.InitialValue.WriteCodeStringAsync(writer);
             }
             else
             {

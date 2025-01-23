@@ -35,7 +35,8 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         foreach (var field in dotNetDefinedType.InstanceFields)
         {
             var fieldType = Catalog.Find(field.Type);
-            await writer.WriteLineAsync($"\t{fieldType.NameInC} {Utils.MakeValidCName(field.Name)};");
+            var fieldConversionInfo = Catalog.Find(field.Id);
+            await writer.WriteLineAsync($"\t{fieldType.NameInC} {fieldConversionInfo.NameInC};");
         }
 
         if (dotNetDefinedType.InstanceFields.Count == 0)

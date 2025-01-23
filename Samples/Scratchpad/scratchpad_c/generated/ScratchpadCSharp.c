@@ -348,3 +348,7 @@ void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void) {
 	return;
 }
 
+int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSharp_AttributeTests_CustomFieldNameStruct obj) {
+	return (obj.some_value);
+}
+

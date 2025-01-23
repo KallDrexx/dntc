@@ -59,7 +59,7 @@ public class ImplementationPlan
 
                     break;
 
-                case DependencyGraph.GlobalNode globalNode:
+                case DependencyGraph.FieldNode globalNode:
                     var global = _conversionCatalog.Find(globalNode.FieldId);
                     if (global.Header != null)
                     {
@@ -117,7 +117,7 @@ public class ImplementationPlan
 
                     break;
 
-                case DependencyGraph.GlobalNode globalNode:
+                case DependencyGraph.FieldNode globalNode:
                     var global = _conversionCatalog.Find(globalNode.FieldId);
                     if (global.Header != null)
                     {
@@ -166,9 +166,10 @@ public class ImplementationPlan
 
                 break;
 
-            case DependencyGraph.GlobalNode globalNode:
-                AddGlobalDeclaration(globalNode);
-                AddGlobalImplementation(globalNode);
+            case DependencyGraph.FieldNode fieldNode:
+                AddFieldDeclaration(fieldNode);
+                AddFieldImplementation(fieldNode);
+
                 break;
 
             default:
@@ -298,39 +299,51 @@ public class ImplementationPlan
         ProcessNode(node);
     }
 
-    private void AddGlobalDeclaration(DependencyGraph.GlobalNode node)
+    private void AddFieldDeclaration(DependencyGraph.FieldNode node)
     {
-        var global = _conversionCatalog.Find(node.FieldId);
-        if (global.IsPredeclared || global.Header == null)
+        var field = _conversionCatalog.Find(node.FieldId);
+        if (field.IsPredeclared || field.Header == null)
         {
             return;
         }
 
-        if (!_headers.TryGetValue(global.Header.Value, out var header))
+        if (!_headers.TryGetValue(field.Header.Value, out var header))
         {
-            header = new PlannedHeaderFile(global.Header.Value);
-            _headers[global.Header.Value] = header;
+            header = new PlannedHeaderFile(field.Header.Value);
+            _headers[field.Header.Value] = header;
         }
 
         AddReferencedHeaders(node, header);
-        header.AddDeclaredGlobal(global);
+
+        // If a field isn't global, then its declaration will be part of its declaring
+        // type's declaration
+        if (node.IsGlobal)
+        {
+            header.AddDeclaredGlobal(field);
+        }
     }
 
-    private void AddGlobalImplementation(DependencyGraph.GlobalNode node)
+    private void AddFieldImplementation(DependencyGraph.FieldNode node)
     {
-        var global = _conversionCatalog.Find(node.FieldId);
-        if (global.IsPredeclared || global.SourceFileName == null)
+        var field = _conversionCatalog.Find(node.FieldId);
+        if (field.IsPredeclared || field.SourceFileName == null)
         {
             return;
         }
 
-        if (!_sourceFiles.TryGetValue(global.SourceFileName.Value, out var sourceFile))
+        if (!_sourceFiles.TryGetValue(field.SourceFileName.Value, out var sourceFile))
         {
-            sourceFile = new PlannedSourceFile(global.SourceFileName.Value);
-            _sourceFiles[global.SourceFileName.Value] = sourceFile;
+            sourceFile = new PlannedSourceFile(field.SourceFileName.Value);
+            _sourceFiles[field.SourceFileName.Value] = sourceFile;
         }
 
         AddReferencedHeaders(node, sourceFile);
-        sourceFile.AddImplementedGlobal(global);
+
+        // If a field isn't global, then its declaration will be part of its declaring
+        // type's declaration
+        if (node.IsGlobal)
+        {
+            sourceFile.AddImplementedGlobal(field);
+        }
     }
 }

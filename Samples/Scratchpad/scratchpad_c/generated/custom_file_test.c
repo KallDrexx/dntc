@@ -1,6 +1,6 @@
+#include "custom_file_test.h"
 #include "ScratchpadCSharp.h"
 #include <stdint.h>
-#include "custom_file_test.h"
 
 
 ScratchpadCSharp_AttributeTests_CustomFileTestStruct ScratchpadCSharp_AttributeTests_TestStructField = {0};

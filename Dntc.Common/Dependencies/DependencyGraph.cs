@@ -15,7 +15,7 @@ public class DependencyGraph
 
     public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor) : Node;
 
-    public record GlobalNode(IlFieldId FieldId) : Node;
+    public record FieldNode(IlFieldId FieldId, bool IsGlobal) : Node;
     
     public Node Root { get; private set; }
 
@@ -180,25 +180,29 @@ public class DependencyGraph
         var node = new TypeNode(typeName);
         path.Add(node);
 
-        var subTypes = type.InstanceFields
-            .Select(x => x.Type)
-            .Concat(type.OtherReferencedTypes)
-            .Distinct();
-        
-        foreach (var subType in subTypes)
+        foreach (var field in type.InstanceFields)
         {
-            var subNode = CreateNode(definitionCatalog, subType, path);
-            if (subNode != null)
+            var fieldNode = CreateNode(definitionCatalog, field.Id, path);
+            if (fieldNode != null)
             {
-                node.Children.Add(subNode);
+                node.Children.Add(fieldNode);
             }
         }
-        
+
+        foreach (var referencedType in type.OtherReferencedTypes)
+        {
+            var typeNode = CreateNode(definitionCatalog, referencedType, path);
+            if (typeNode != null)
+            {
+                node.Children.Add(typeNode);
+            }
+        }
+
         path.RemoveAt(path.Count - 1);
         return node;
     }
 
-    private static GlobalNode? CreateNode(DefinitionCatalog definitionCatalog, IlFieldId fieldId, List<Node> path)
+    private static FieldNode? CreateNode(DefinitionCatalog definitionCatalog, IlFieldId fieldId, List<Node> path)
     {
         if (IsInPath(path, fieldId))
         {
@@ -208,12 +212,18 @@ public class DependencyGraph
         var field = definitionCatalog.Get(fieldId);
         if (field == null)
         {
-            var message = $"No global defined for the field '{fieldId}'";
+            var message = $"No field defined for the '{fieldId}'";
             throw new InvalidOperationException(message);
         }
 
-        var node = new GlobalNode(fieldId);
+        var node = new FieldNode(fieldId, field.IsGlobal);
         path.Add(node);
+
+        var typeNode = CreateNode(definitionCatalog, field.IlType, path);
+        if (typeNode != null)
+        {
+            node.Children.Add(typeNode);
+        }
         
         // If the declaring type has a static constructor, we need to depend on that. This will miss
         // any other types with static constructors that modify this static value, but there's not an
@@ -222,7 +232,7 @@ public class DependencyGraph
         // TODO: Maybe it makes more sense just to add any static constructors as a dependency before
         // jumping to any new method or type. This is a bit easier now that we've converted the circular
         // dependency system to return null instead of throwing an exception.
-        if (field is DotNetDefinedGlobal dotNetGlobal)
+        if (field is DotNetDefinedField dotNetGlobal)
         {
             var staticConstructor = dotNetGlobal.Definition
                 .DeclaringType
@@ -272,7 +282,7 @@ public class DependencyGraph
     {
         foreach (var node in path)
         {
-            if (node is GlobalNode globalNode && globalNode.FieldId == id)
+            if (node is FieldNode globalNode && globalNode.FieldId == id)
             {
                 return true;
             }

@@ -8,7 +8,7 @@ public class DefinitionCatalog
 {
     private readonly Dictionary<IlTypeName, DefinedType> _types = new();
     private readonly Dictionary<IlMethodId, DefinedMethod> _methods = new();
-    private readonly Dictionary<IlFieldId, DefinedGlobal> _globals = new();
+    private readonly Dictionary<IlFieldId, DefinedField> _fields = new();
     private readonly DefinitionGenerationPipeline _definerPipeline;
 
     public DefinitionCatalog(DefinitionGenerationPipeline definerPipeline)
@@ -53,9 +53,9 @@ public class DefinitionCatalog
         return _methods.GetValueOrDefault(methodId);
     }
 
-    public DefinedGlobal? Get(IlFieldId fieldId)
+    public DefinedField? Get(IlFieldId fieldId)
     {
-        return _globals.GetValueOrDefault(fieldId);
+        return _fields.GetValueOrDefault(fieldId);
     }
 
     private void Add(TypeDefinition type)
@@ -93,10 +93,10 @@ public class DefinitionCatalog
             }
         }
 
-        foreach (var staticField in type.Fields.Where(x => x.IsStatic))
+        foreach (var staticField in type.Fields)
         {
-            var global = _definerPipeline.Define(staticField);
-            Add(global);
+            var field = _definerPipeline.Define(staticField);
+            Add(field);
         }
     }
 
@@ -141,15 +141,15 @@ public class DefinitionCatalog
         _methods[method.Id] = method;
     }
 
-    private void Add(DefinedGlobal global)
+    private void Add(DefinedField field)
     {
-        if (_globals.TryAdd(global.IlName, global))
+        if (_fields.TryAdd(field.IlName, field))
         {
             return;
         }
         
         // TODO: Add better duplication logic, and possibly allow overriding
-        var message = $"Global '{global.IlName}' is already defined and cannot be redefined";
+        var message = $"Field '{field.IlName}' is already defined and cannot be redefined";
         throw new InvalidOperationException(message);
     }
 }

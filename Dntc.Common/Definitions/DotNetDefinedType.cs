@@ -1,5 +1,4 @@
-﻿using Dntc.Common.OpCodeHandling;
-using Mono.Cecil;
+﻿using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
@@ -37,8 +36,7 @@ public class DotNetDefinedType : DefinedType
     private static Field ConvertToField(FieldDefinition fieldDefinition)
     {
         var type = new IlTypeName(fieldDefinition.FieldType.FullName);
-        var name = fieldDefinition.Name;
 
-        return new Field(type, name);
+        return new Field(type, new IlFieldId(fieldDefinition.FullName));
     }
 }

@@ -73,9 +73,9 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             CBaseExpression newExpression;
 
+            var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
             if (field.IsStatic)
             {
-                var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
                 var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
                 newExpression = new VariableValueExpression(variable);
             }
@@ -86,7 +86,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
                 newExpression = new FieldAccessExpression(
                     objectExpression,
-                    new Variable(fieldType, field.Name, field.FieldType.IsByReference));
+                    new Variable(fieldType, fieldConversionInfo.NameInC.Value, field.FieldType.IsByReference));
             }
 
             if (getAddress)

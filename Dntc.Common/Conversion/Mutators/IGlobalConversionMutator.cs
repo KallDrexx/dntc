@@ -4,5 +4,5 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public interface IGlobalConversionMutator
 {
-    void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global);
+    void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field);
 }

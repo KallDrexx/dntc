@@ -6,9 +6,9 @@ namespace ScratchpadCSharp.Plugin;
 
 public class Aligned8GlobalMutator : IGlobalConversionMutator
 {
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var attribute = global.Definition
+        var attribute = field.Definition
             .CustomAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == typeof(Aligned8Attribute).FullName);
 

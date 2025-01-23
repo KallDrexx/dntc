@@ -32,6 +32,10 @@ public class NativeTypeDefiner : IDotNetTypeDefiner
 
         var referenceName = attribute.ConstructorArguments[0].Value.ToString()!;
 
-        return new NativeDefinedType(new IlTypeName(type.FullName), header, new CTypeName(referenceName));
+        var instanceFields = type.Fields
+            .Select(x => new DefinedType.Field(new IlTypeName(x.FieldType.FullName), new IlFieldId(x.FullName)))
+            .ToArray();
+        
+        return new NativeDefinedType(new IlTypeName(type.FullName), header, new CTypeName(referenceName), instanceFields);
     }
 }

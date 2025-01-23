@@ -62,6 +62,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
             var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+            var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
 
             AssignmentStatementSet statement;
             if (field.IsStatic)
@@ -69,7 +70,6 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var items = context.ExpressionStack.Pop(1);
                 var value = items[0];
 
-                var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
                 var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
                 var left = new VariableValueExpression(variable);
                 var right = new DereferencedValueExpression(value);
@@ -82,7 +82,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var obj = items[1];
 
                 var left = new FieldAccessExpression(obj,
-                    new Variable(value.ResultingType, field.Name, field.FieldType.IsPointer));
+                    new Variable(value.ResultingType, fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer));
                 
                 var right = new DereferencedValueExpression(value);
                 statement = new AssignmentStatementSet(left, right);

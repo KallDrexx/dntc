@@ -55,10 +55,10 @@ public class ConversionInfoCreator
         return conversionInfo;
     }
     
-    public GlobalConversionInfo Create(DefinedGlobal global)
+    public FieldConversionInfo Create(DefinedField field)
     {
-        var conversionInfo = new GlobalConversionInfo(global);
-        if (global is DotNetDefinedGlobal dotNetDefinedGlobal)
+        var conversionInfo = new FieldConversionInfo(field);
+        if (field is DotNetDefinedField dotNetDefinedGlobal)
         {
             foreach (var mutator in _globalConversionMutators)
             {

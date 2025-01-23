@@ -7,14 +7,14 @@ public class PlannedSourceFile
     private readonly List<MethodConversionInfo> _implementedMethods = [];
     private readonly List<HeaderName> _referencedHeaders = [];
     private readonly List<TypeConversionInfo> _declaredTypes = [];
-    private readonly List<GlobalConversionInfo> _globals = [];
+    private readonly List<FieldConversionInfo> _globals = [];
     
     public CSourceFileName Name { get; }
 
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
     public IReadOnlyList<TypeConversionInfo> DeclaredTypes => _declaredTypes;
-    public IReadOnlyList<GlobalConversionInfo> ImplementedGlobals => _globals;
+    public IReadOnlyList<FieldConversionInfo> ImplementedGlobals => _globals;
 
     public PlannedSourceFile(CSourceFileName name)
     {
@@ -101,11 +101,11 @@ public class PlannedSourceFile
         }
     }
 
-    public void AddImplementedGlobal(GlobalConversionInfo global)
+    public void AddImplementedGlobal(FieldConversionInfo field)
     {
-        if (!_globals.Contains(global))
+        if (!_globals.Contains(field))
         {
-            _globals.Add(global);
+            _globals.Add(field);
         }
     }
 

@@ -19,9 +19,9 @@ public class WithAttributeMutator : IMethodConversionMutator, IGlobalConversionM
         conversionInfo.AttributeText = attribute.ConstructorArguments[0].Value.ToString()!;
     }
 
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var attribute = global.Definition
+        var attribute = field.Definition
             .CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(WithCAttributeAttribute).FullName);
 

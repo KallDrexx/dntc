@@ -10,7 +10,7 @@ public class ConversionCatalog
     private readonly ConversionInfoCreator _conversionInfoCreator;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
-    private readonly Dictionary<IlFieldId, GlobalConversionInfo> _globals = new();
+    private readonly Dictionary<IlFieldId, FieldConversionInfo> _globals = new();
 
     public ConversionCatalog(DefinitionCatalog definitionCatalog, ConversionInfoCreator conversionInfoCreator)
     {
@@ -50,7 +50,7 @@ public class ConversionCatalog
         throw new InvalidOperationException(message);
     }
 
-    public GlobalConversionInfo Find(IlFieldId fieldId)
+    public FieldConversionInfo Find(IlFieldId fieldId)
     {
         if (_globals.TryGetValue(fieldId, out var info))
         {
@@ -73,7 +73,7 @@ public class ConversionCatalog
                 AddNode(methodNode);
                 break;
             
-            case DependencyGraph.GlobalNode globalNode:
+            case DependencyGraph.FieldNode globalNode:
                 AddNode(globalNode);
                 break;
             
@@ -99,7 +99,7 @@ public class ConversionCatalog
         }
     }
 
-    private void AddNode(DependencyGraph.GlobalNode node)
+    private void AddNode(DependencyGraph.FieldNode node)
     {
         if (_globals.ContainsKey(node.FieldId))
         {
@@ -109,7 +109,7 @@ public class ConversionCatalog
         var definition = _definitionCatalog.Get(node.FieldId);
         if (definition == null)
         {
-            var message = $"Dependency graph contained a node for global `{node.FieldId}` but no " +
+            var message = $"Dependency graph contained a node for field `{node.FieldId}` but no " +
                           $"definition exists for it";
             throw new InvalidOperationException(message);
         }

@@ -4,8 +4,8 @@ namespace Dntc.Common.Definitions.Definers;
 
 public class DefaultFieldDefiner : IDotNetGlobalDefiner
 {
-    public DefinedGlobal Define(FieldDefinition field)
+    public DefinedField Define(FieldDefinition field)
     {
-        return new DotNetDefinedGlobal(field);
+        return new DotNetDefinedField(field);
     }
 }

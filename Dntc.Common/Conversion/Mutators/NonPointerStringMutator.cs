@@ -5,13 +5,13 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class NonPointerStringMutator : IGlobalConversionMutator
 {
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var hasAttribute = global.Definition
+        var hasAttribute = field.Definition
             .CustomAttributes
             .Any(x => x.AttributeType.FullName == typeof(NonPointerStringAttribute).FullName);
 
-        if (!hasAttribute || global.IlType.Value != typeof(string).FullName)
+        if (!hasAttribute || field.IlType.Value != typeof(string).FullName)
         {
             return;
         }

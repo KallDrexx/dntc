@@ -98,4 +98,20 @@ public static class Utils
 
         return new IlMethodId(signature);
     }
+
+    public static IlNamespace GetNamespace(TypeDefinition type)
+    {
+        while (type.DeclaringType != null)
+        {
+            type = type.DeclaringType;
+        }
+
+        if (string.IsNullOrEmpty(type.Namespace))
+        {
+            var message = $"Root type {type.FullName} did not have a namespace";
+            throw new InvalidOperationException(message);
+        }
+
+        return new IlNamespace(type.Namespace);
+    }
 }

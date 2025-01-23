@@ -34,9 +34,9 @@ public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversion
         conversionInfo.Header = null;
     }
 
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var ignoredInHeader = global.Definition
+        var ignoredInHeader = field.Definition
             .CustomAttributes
             .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
 

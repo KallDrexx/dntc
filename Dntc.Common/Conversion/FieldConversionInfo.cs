@@ -7,7 +7,7 @@ namespace Dntc.Common.Conversion;
 /// <summary>
 /// Contains information for how a global will be converted to C
 /// </summary>
-public class GlobalConversionInfo
+public class FieldConversionInfo
 {
     /// <summary>
     /// The name this global has when referenced in .net
@@ -39,7 +39,7 @@ public class GlobalConversionInfo
     /// <summary>
     /// What name this type will have in C
     /// </summary>
-    public CGlobalName NameInC { get; set; }
+    public CFieldName NameInC { get; set; }
    
     /// <summary>
     /// An expression to set the initial value to
@@ -56,43 +56,46 @@ public class GlobalConversionInfo
     /// </summary>
     public bool IsNonPointerString { get; set; }
 
-    internal GlobalConversionInfo(DefinedGlobal global)
+    internal FieldConversionInfo(DefinedField field)
     {
-        IlName = global.IlName;
-        Type = global.IlType;
+        IlName = field.IlName;
+        Type = field.IlType;
 
-        switch (global)
+        switch (field)
         {
-            case DotNetDefinedGlobal dotNetDefinedGlobal:
+            case DotNetDefinedField dotNetDefinedGlobal:
                 SetupDotNetGlobal(dotNetDefinedGlobal);
                 break;
             
-            case NativeDefinedGlobal nativeGlobal:
+            case NativeDefinedField nativeGlobal:
                 SetupNativeGlobal(nativeGlobal);
                 break;
             
             default:
-                throw new NotSupportedException(global.GetType().FullName);
+                throw new NotSupportedException(field.GetType().FullName);
         }
     }
 
-    private void SetupDotNetGlobal(DotNetDefinedGlobal global)
+    private void SetupDotNetGlobal(DotNetDefinedField field)
     {
         IsPredeclared = false;
+
+        var fieldName = field.IsGlobal
+            ? $"{field.Definition.DeclaringType.FullName}_{field.Definition.Name}"
+            : field.Definition.Name;
         
-        var fieldName = $"{global.Definition.DeclaringType.FullName}_{global.Definition.Name}";
-        NameInC = new CGlobalName(Utils.MakeValidCName(fieldName));
-        
-        var declaringNamespace = new IlNamespace(global.Definition.DeclaringType.Namespace);
+        NameInC = new CFieldName(Utils.MakeValidCName(fieldName));
+
+        var declaringNamespace = Utils.GetNamespace(field.Definition.DeclaringType);
         Header = Utils.GetHeaderName(declaringNamespace);
         SourceFileName = Utils.GetSourceFileName(declaringNamespace);
     }
 
-    private void SetupNativeGlobal(NativeDefinedGlobal global)
+    private void SetupNativeGlobal(NativeDefinedField field)
     {
         IsPredeclared = true;
-        Header = global.HeaderFile;
+        Header = field.HeaderFile;
         SourceFileName = null;
-        NameInC = global.NativeName;
+        NameInC = field.NativeName;
     }
 }

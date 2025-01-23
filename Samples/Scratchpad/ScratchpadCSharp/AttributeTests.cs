@@ -72,7 +72,7 @@ public static class AttributeTests
     }
 
     [IgnoreInHeader]
-    [CustomGlobalName("NonHeaderGlobal")]
+    [CustomFieldName("NonHeaderGlobal")]
     public static NonHeaderStruct NonHeaderStructGlobal = new() { Value = 1020 };
     
     public static int GetNonHeaderStructValue()
@@ -123,5 +123,16 @@ public static class AttributeTests
     public static void TestNativeGenericInDep()
     {
         GenericUtils.Printf("generic dep test %d\n", 5678);
+    }
+
+    public struct CustomFieldNameStruct
+    {
+        [CustomFieldName("some_value")]
+        public int Value;
+    }
+
+    public static int GetCustomFieldStructValue(CustomFieldNameStruct obj)
+    {
+        return obj.Value;
     }
 }

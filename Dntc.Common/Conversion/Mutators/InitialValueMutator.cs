@@ -15,9 +15,9 @@ public class InitialValueMutator : IGlobalConversionMutator
         _conversionCatalog = conversionCatalog;
     }
 
-    public void Mutate(GlobalConversionInfo conversionInfo, DotNetDefinedGlobal global)
+    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
-        var attribute = global.Definition
+        var attribute = field.Definition
             .CustomAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == typeof(InitialGlobalValueAttribute).FullName);
 
@@ -26,7 +26,7 @@ public class InitialValueMutator : IGlobalConversionMutator
             return;
         }
 
-        var returnType = _conversionCatalog.Find(global.IlType);
+        var returnType = _conversionCatalog.Find(field.IlType);
         var expression = new LiteralValueExpression(attribute.ConstructorArguments[0].Value.ToString()!, returnType);
         conversionInfo.InitialValue = expression;
     }

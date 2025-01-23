@@ -32,7 +32,7 @@ public readonly record struct CTypeName(string Value)
     }
 }
 
-public readonly record struct CGlobalName(string Value)
+public readonly record struct CFieldName(string Value)
 {
     public override string ToString()
     {

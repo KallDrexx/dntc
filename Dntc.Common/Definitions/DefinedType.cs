@@ -2,7 +2,7 @@
 
 public abstract class DefinedType
 {
-    public record Field(IlTypeName Type, string Name);
+    public record Field(IlTypeName Type, IlFieldId Id);
     
     public IlTypeName IlName { get; protected set; }
     

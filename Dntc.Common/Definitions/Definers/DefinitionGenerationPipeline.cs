@@ -54,7 +54,7 @@ public class DefinitionGenerationPipeline
         _typeDefiners.Insert(_typeDefiners.Count - 1, definer);
     }
 
-    public DefinedGlobal Define(FieldDefinition field)
+    public DefinedField Define(FieldDefinition field)
     {
         // Should always be able to get oen via default
         return _globalDefiners
