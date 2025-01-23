@@ -5,9 +5,7 @@ namespace Dntc.Attributes;
 /// attribute position.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Field)]
-#pragma warning disable CS9113 // Parameter is unread.
 public class WithCAttributeAttribute(string text) : Attribute
-#pragma warning restore CS9113 // Parameter is unread.
 {
     
 }

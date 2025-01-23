@@ -4,9 +4,7 @@ namespace Dntc.Attributes;
 /// Specifies that the field it is attached to should be transpiled with a different name
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
-#pragma warning disable CS9113 // Parameter is unread.
 public class CustomFieldNameAttribute(string name) : Attribute
-#pragma warning restore CS9113 // Parameter is unread.
 {
     
 }
