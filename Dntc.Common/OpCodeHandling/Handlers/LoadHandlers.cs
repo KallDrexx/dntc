@@ -50,7 +50,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         { Code.Ldc_R4, new LdCHandler(null) },
         { Code.Ldc_R8, new LdCHandler(null) },
-        
+
         { Code.Ldloc, new LdLocHandler(null, false) },
         { Code.Ldloc_S, new LdLocHandler(null, false) },
         { Code.Ldloc_0, new LdLocHandler(0, false) },
@@ -59,7 +59,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         { Code.Ldloc_3, new LdLocHandler(3, false) },
         { Code.Ldloca, new LdLocHandler(null, true) },
         { Code.Ldloca_S, new LdLocHandler(null, true) },
-        
+
         { Code.Ldobj, new LdObjHandler() },
         { Code.Ldstr, new LdStrHandler() },
     };
@@ -69,14 +69,14 @@ public class LoadHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
-            var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
 
             CBaseExpression newExpression;
 
             var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
             if (field.IsStatic)
             {
-                var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
+                var variable = new Variable(fieldConversionInfo.FieldTypeConversionInfo,
+                    fieldConversionInfo.NameInC.Value, false);
                 newExpression = new VariableValueExpression(variable);
             }
             else
@@ -86,7 +86,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
                 newExpression = new FieldAccessExpression(
                     objectExpression,
-                    new Variable(fieldType, fieldConversionInfo.NameInC.Value, field.FieldType.IsByReference));
+                    new Variable(fieldConversionInfo.FieldTypeConversionInfo, fieldConversionInfo.NameInC.Value,
+                        field.FieldType.IsByReference));
             }
 
             if (getAddress)
@@ -185,7 +186,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             string numericLiteral;
             TypeConversionInfo typeInfo;
-            
+
             if (hardCodedNumber != null)
             {
                 numericLiteral = hardCodedNumber.Value.ToString();
@@ -296,7 +297,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 : new DereferencedValueExpression(expression);
 
             context.ExpressionStack.Push(newExpression);
-            
+
             return new OpCodeHandlingResult(null);
         }
 
@@ -305,7 +306,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             return new OpCodeAnalysisResult();
         }
     }
-    
+
     private class LdObjHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
@@ -313,9 +314,9 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var items = context.ExpressionStack.Pop(1);
             var objectAddress = items[0];
-            
+
             context.ExpressionStack.Push(new DereferencedValueExpression(objectAddress));
-            
+
             return new OpCodeHandlingResult(null);
         }
 

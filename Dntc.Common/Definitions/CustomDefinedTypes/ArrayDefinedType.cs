@@ -11,12 +11,16 @@ public abstract class ArrayDefinedType : CustomDefinedType
     protected ArrayDefinedType(
         TypeReference elementType,
         IlTypeName ilTypeName, 
-        HeaderName headerName, 
+        HeaderName? headerName, 
         CSourceFileName? sourceFileName, 
         CTypeName nativeName, 
-        IReadOnlyList<IlTypeName> otherReferencedTypes, 
         IReadOnlyList<HeaderName> referencedHeaders) 
-        : base(ilTypeName, headerName, sourceFileName, nativeName, otherReferencedTypes, referencedHeaders)
+        : base(ilTypeName, 
+            headerName, 
+            sourceFileName, 
+            nativeName, 
+            [new IlTypeName(elementType.FullName)], 
+            referencedHeaders)
     {
         ElementType = new IlTypeName(elementType.FullName);
     }
@@ -25,6 +29,13 @@ public abstract class ArrayDefinedType : CustomDefinedType
     /// Returns an expression that contains the size of the array
     /// </summary>
     public abstract CBaseExpression GetArraySizeExpression(
+        CBaseExpression expressionToArray, 
+        ConversionCatalog conversionCatalog);
+
+    /// <summary>
+    /// Returns an expression that provides access to the items in the array
+    /// </summary>
+    public abstract CBaseExpression GetItemsAccessorExpression(
         CBaseExpression expressionToArray, 
         ConversionCatalog conversionCatalog);
 }

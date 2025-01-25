@@ -8,6 +8,6 @@ public class TestPlugin : ITranspilerPlugin
 
     public void Customize(TranspilerContext context)
     {
-        context.ConversionInfoCreator.AddGlobalMutator(new Aligned8GlobalMutator());
+        context.ConversionInfoCreator.AddGlobalMutator(new Aligned8FieldMutator());
     }
 }

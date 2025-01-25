@@ -12,18 +12,18 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             case DotNetDefinedType dotNetDefinedType:
                 await WriteDotNetDefinedTypeAsync(writer, dotNetDefinedType);
                 break;
-            
+
             case NativeDefinedType:
                 break; // Nothing to do
-            
+
             case CustomDefinedType customDefinedType:
                 await WriteCustomDefinedType(writer, customDefinedType);
                 break;
-            
+
             case DotNetFunctionPointerType functionPointerType:
                 await WriteFunctionPointerType(writer, functionPointerType);
                 break;
-            
+
             default:
                 throw new NotSupportedException(TypeDefinition.GetType().FullName);
         }
@@ -34,9 +34,12 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         await writer.WriteLineAsync("typedef struct {");
         foreach (var field in dotNetDefinedType.InstanceFields)
         {
-            var fieldType = Catalog.Find(field.Type);
-            var fieldConversionInfo = Catalog.Find(field.Id);
-            await writer.WriteLineAsync($"\t{fieldType.NameInC} {fieldConversionInfo.NameInC};");
+            var declaration = new FieldDeclaration(
+                Catalog.Find(field.Id),
+                FieldDeclaration.FieldFlags.IgnoreValueInitialization);
+
+            await writer.WriteAsync("\t");
+            await declaration.WriteAsync(writer);
         }
 
         if (dotNetDefinedType.InstanceFields.Count == 0)
@@ -62,7 +65,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
     private async Task WriteFunctionPointerType(StreamWriter writer, DotNetFunctionPointerType fnPointer)
     {
         var returnType = Catalog.Find(new IlTypeName(fnPointer.Definition.ReturnType.FullName));
-        
+
         await writer.WriteAsync($"typedef {returnType.NameInC} (*{TypeConversion.NameInC})(");
         for (var x = 0; x < fnPointer.Definition.Parameters.Count; x++)
         {

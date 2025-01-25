@@ -2,7 +2,7 @@ using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMutator, IGlobalConversionMutator
+public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMutator, IFieldConversionMutator
 {
     public void Mutate(TypeConversionInfo conversionInfo, DotNetDefinedType type)
     {

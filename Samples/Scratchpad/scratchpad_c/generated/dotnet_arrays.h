@@ -11,6 +11,11 @@ typedef struct {
     uint16_t *items;
 } SystemUInt16Array;
 
+typedef struct {
+    size_t length;
+    int32_t *items;
+} SystemInt32Array;
+
 
 
 #endif // DOTNET_ARRAYS_H_H

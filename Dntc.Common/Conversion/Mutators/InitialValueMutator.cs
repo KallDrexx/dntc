@@ -4,7 +4,7 @@ using Dntc.Common.Syntax.Expressions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class InitialValueMutator : IGlobalConversionMutator
+public class InitialValueMutator : IFieldConversionMutator
 {
     // This causes an annoying almost circular dependency. I need to think through a better
     // graph for this.

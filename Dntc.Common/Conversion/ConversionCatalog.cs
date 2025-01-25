@@ -10,7 +10,7 @@ public class ConversionCatalog
     private readonly ConversionInfoCreator _conversionInfoCreator;
     private readonly Dictionary<IlTypeName, TypeConversionInfo> _types = new();
     private readonly Dictionary<IlMethodId, MethodConversionInfo> _methods = new();
-    private readonly Dictionary<IlFieldId, FieldConversionInfo> _globals = new();
+    private readonly Dictionary<IlFieldId, FieldConversionInfo> _fields = new();
 
     public ConversionCatalog(DefinitionCatalog definitionCatalog, ConversionInfoCreator conversionInfoCreator)
     {
@@ -52,7 +52,7 @@ public class ConversionCatalog
 
     public FieldConversionInfo Find(IlFieldId fieldId)
     {
-        if (_globals.TryGetValue(fieldId, out var info))
+        if (_fields.TryGetValue(fieldId, out var info))
         {
             return info;
         }
@@ -101,7 +101,7 @@ public class ConversionCatalog
 
     private void AddNode(DependencyGraph.FieldNode node)
     {
-        if (_globals.ContainsKey(node.FieldId))
+        if (_fields.ContainsKey(node.FieldId))
         {
             return;
         }
@@ -114,8 +114,10 @@ public class ConversionCatalog
             throw new InvalidOperationException(message);
         }
 
-        _globals.Add(node.FieldId, _conversionInfoCreator.Create(definition));
         AddChildren(node);
+
+        var fieldType = Find(definition.IlType);
+        _fields.Add(node.FieldId, _conversionInfoCreator.Create(definition, fieldType));
     }
 
     private void AddNode(DependencyGraph.MethodNode node)

@@ -16,7 +16,6 @@ public class HeapArrayDefinedType : ArrayDefinedType
             new HeaderName("dotnet_arrays.h"), 
             null, 
             FormNativeName(arrayType),
-            [new IlTypeName(arrayType.GetElementType().FullName)],
             [new HeaderName("<stdio.h>"), new HeaderName("<stdlib.h>")])
     {
         if (!arrayType.IsArray)
@@ -58,5 +57,14 @@ typedef struct {{
     {
         var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
         return new FieldAccessExpression(expressionToArray, new Variable(int32Type, "length", false));
+    }
+
+    public override CBaseExpression GetItemsAccessorExpression(
+        CBaseExpression expressionToArray, 
+        ConversionCatalog conversionCatalog)
+    {
+        var elementType = conversionCatalog.Find(ElementType);
+        var items = new Variable(elementType, "items", false);
+        return new FieldAccessExpression(expressionToArray, items);
     }
 }

@@ -22,6 +22,8 @@ public class Transpiler
     public async Task RunAsync()
     {
         var plugins = LoadPlugins();
+        var modules = GetModules();
+        var charArrayType = modules.First().ImportReference(typeof(char[]));
         
         var transpilerPipeline = new TranspilerContext();
         var definerPipeline = transpilerPipeline.Definers;
@@ -45,9 +47,10 @@ public class Transpiler
         conversionInfoCreator.AddGlobalMutator(new WithAttributeMutator());
         conversionInfoCreator.AddGlobalMutator(new InitialValueMutator(conversionCatalog));
         conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
-        conversionInfoCreator.AddGlobalMutator(new CustomGlobalNameMutator());
+        conversionInfoCreator.AddGlobalMutator(new CustomFieldNameMutator());
         conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddGlobalMutator(new NonPointerStringMutator());
+        conversionInfoCreator.AddGlobalMutator(new StaticallySizedArrayFieldMutator(charArrayType, conversionCatalog));
         
         if (plugins.All(x => !x.BypassBuiltInNativeDefinitions))
         {
@@ -63,7 +66,6 @@ public class Transpiler
         
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
-        var modules = GetModules();
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
         var implementationPlan = new ImplementationPlan(conversionCatalog, definitionCatalog);

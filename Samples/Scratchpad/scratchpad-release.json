@@ -50,12 +50,14 @@
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()",
     "System.Int32 ScratchpadCSharp.GenericTests::GetGenericNumberFromDep(System.Int32)",
     "System.Void ScratchpadCSharp.AttributeTests::TestNativeGenericInDep()",
-    "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)"
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)",
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetFirstNumber(ScratchpadCSharp.AttributeTests/StaticallySizedTest)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
     "System.String ScratchpadCSharp.AttributeTests::TestGlobalString",
-    "System.Int32 ScratchpadCSharp.PluginTests::PluginGlobal"
+    "System.Int32 ScratchpadCSharp.PluginTests::PluginGlobal",
+    "System.String ScratchpadCSharp.AttributeTests::StaticallySizedString"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

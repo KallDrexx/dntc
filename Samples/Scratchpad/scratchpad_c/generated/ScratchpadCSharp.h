@@ -49,12 +49,17 @@ typedef struct {
 	int32_t some_value;
 } ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
 
+typedef struct {
+	int32_t NumberArray[10];
+} ScratchpadCSharp_AttributeTests_StaticallySizedTest;
+
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
+extern char ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);
@@ -106,5 +111,6 @@ void ScratchpadCSharp_StringTests_LogStaticString(void);
 int32_t ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(int32_t x);
 void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void);
 int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSharp_AttributeTests_CustomFieldNameStruct obj);
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_AttributeTests_StaticallySizedTest value);
 
 #endif // SCRATCHPADCSHARP_H_H

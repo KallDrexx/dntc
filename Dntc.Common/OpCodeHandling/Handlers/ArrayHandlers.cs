@@ -113,9 +113,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
             var lengthCheck = new ArrayLengthCheckStatementSet(lengthField, array, indexExpression);
-            
-            var elementType = context.ConversionCatalog.Find(arrayDefinedType.ElementType);
-            var itemsExpression = new FieldAccessExpression(array, new Variable(elementType, "items", false));
+            var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, array.ResultingType);
             
             // Return the length check while adding the accessor expression to the stack

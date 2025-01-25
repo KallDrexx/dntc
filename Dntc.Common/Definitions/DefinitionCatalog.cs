@@ -97,6 +97,14 @@ public class DefinitionCatalog
         {
             var fieldDefinition = _definerPipeline.Define(field);
             Add(fieldDefinition);
+            
+            // If the field type is an array, then we should add the definition if
+            // it doesn't already exist.
+            if (field.FieldType.IsArray && !_types.ContainsKey(new IlTypeName(field.FieldType.FullName)))
+            {
+                var definition = new HeapArrayDefinedType(field.FieldType);
+                Add(definition);
+            }
         }
     }
 

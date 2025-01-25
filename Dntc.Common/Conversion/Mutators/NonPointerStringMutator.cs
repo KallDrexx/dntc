@@ -3,7 +3,7 @@ using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class NonPointerStringMutator : IGlobalConversionMutator
+public class NonPointerStringMutator : IFieldConversionMutator
 {
     public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {

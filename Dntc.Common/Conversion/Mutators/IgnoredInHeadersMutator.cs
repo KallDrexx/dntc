@@ -3,7 +3,7 @@ using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversionMutator, IGlobalConversionMutator
+public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversionMutator, IFieldConversionMutator
 {
     public void Mutate(TypeConversionInfo conversionInfo, DotNetDefinedType type)
     {

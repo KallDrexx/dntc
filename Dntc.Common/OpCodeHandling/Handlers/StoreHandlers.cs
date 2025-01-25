@@ -14,14 +14,14 @@ public class StoreHandlers : IOpCodeHandlerCollection
         { Code.Stobj, new StObjHandler() },
         { Code.Starg, new StArgHandler() },
         { Code.Starg_S, new StArgHandler() },
-        
+
         { Code.Stind_I, new StIndHandler() },
         { Code.Stind_I2, new StIndHandler() },
         { Code.Stind_I4, new StIndHandler() },
         { Code.Stind_I8, new StIndHandler() },
         { Code.Stind_R4, new StIndHandler() },
         { Code.Stind_R8, new StIndHandler() },
-        
+
         { Code.Stloc, new StLocHandler(null) },
         { Code.Stloc_0, new StLocHandler(0) },
         { Code.Stloc_1, new StLocHandler(1) },
@@ -44,7 +44,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         var name = $"__temp_{currentIlOffset:x4}";
         var tempVariable = variable.Variable with { Name = name };
         var tempVariableExpression = new VariableValueExpression(tempVariable);
-        
+
         if (expressionStack.ReplaceExpression(variable, tempVariableExpression))
         {
             // At least one expression in the stack was replaced
@@ -55,13 +55,12 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
         return null;
     }
-        
+
     private class StFldHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
-            var fieldType = context.ConversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
             var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
 
             AssignmentStatementSet statement;
@@ -70,7 +69,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var items = context.ExpressionStack.Pop(1);
                 var value = items[0];
 
-                var variable = new Variable(fieldType, fieldConversionInfo.NameInC.Value, false);
+                var variable = new Variable(
+                    fieldConversionInfo.FieldTypeConversionInfo,
+                    fieldConversionInfo.NameInC.Value, 
+                    false);
+                
                 var left = new VariableValueExpression(variable);
                 var right = new DereferencedValueExpression(value);
                 statement = new AssignmentStatementSet(left, right);
@@ -83,7 +86,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
                 var left = new FieldAccessExpression(obj,
                     new Variable(value.ResultingType, fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer));
-                
+
                 var right = new DereferencedValueExpression(value);
                 statement = new AssignmentStatementSet(left, right);
             }
@@ -103,7 +106,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             };
         }
     }
-    
+
     private class StIndHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
@@ -124,7 +127,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             return new OpCodeAnalysisResult();
         }
     }
-    
+
     private class StObjHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
@@ -145,7 +148,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             return new OpCodeAnalysisResult();
         }
     }
-    
+
     private class StArgHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
@@ -170,14 +173,14 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var argument = context.CurrentMethodConversion.Parameters[argIndex];
             var storedVariableExpression = new VariableValueExpression(
                 new Variable(argument.ConversionInfo, argument.Name, argument.IsReference));
-            
+
             var left = new DereferencedValueExpression(storedVariableExpression);
             var right = new DereferencedValueExpression(value);
             var statement = new AssignmentStatementSet(left, right);
 
             var tempVariable = HandleReferencedVariable(
-                context.ExpressionStack, 
-                storedVariableExpression, 
+                context.ExpressionStack,
+                storedVariableExpression,
                 context.CurrentInstruction.Offset);
 
             CStatementSet result = tempVariable != null
@@ -192,7 +195,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             return new OpCodeAnalysisResult();
         }
     }
-    
+
     private class StLocHandler(int? index) : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
@@ -228,7 +231,8 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var left = new DereferencedValueExpression(localVariable);
             var right = new DereferencedValueExpression(items[0]);
 
-            var tempStatement = HandleReferencedVariable(context.ExpressionStack, localVariable, context.CurrentInstruction.Offset);
+            var tempStatement = HandleReferencedVariable(context.ExpressionStack, localVariable,
+                context.CurrentInstruction.Offset);
             var statement = new AssignmentStatementSet(left, right);
 
             CStatementSet result = tempStatement != null

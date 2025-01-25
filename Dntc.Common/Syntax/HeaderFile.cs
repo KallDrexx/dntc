@@ -8,14 +8,14 @@ public class HeaderFile
     private readonly IReadOnlyList<IncludeClause> IncludeClauses;
     private readonly IReadOnlyList<TypeDeclaration> Types;
     private readonly IReadOnlyList<MethodDeclaration> Methods;
-    private readonly IReadOnlyList<GlobalVariableDeclaration> Globals;
+    private readonly IReadOnlyList<FieldDeclaration> Globals;
     
     public HeaderFile(
         HeaderGuard guard, 
         IReadOnlyList<IncludeClause> includeClauses, 
         IReadOnlyList<TypeDeclaration> types, 
         IReadOnlyList<MethodDeclaration> methods, 
-        IReadOnlyList<GlobalVariableDeclaration> globals)
+        IReadOnlyList<FieldDeclaration> globals)
     {
         Guard = guard;
         IncludeClauses = includeClauses;

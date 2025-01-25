@@ -21,6 +21,7 @@ ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
+char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -368,5 +369,13 @@ void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void) {
 
 int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSharp_AttributeTests_CustomFieldNameStruct obj) {
 	return (obj.some_value);
+}
+
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_AttributeTests_StaticallySizedTest value) {
+	if (10 <= 0) {
+		printf("Attempted to access to (value.NumberArray)[%ld], but only %zu items are in the array", 0, 10);
+		abort();
+	}
+	return (value.NumberArray)[0];
 }
 

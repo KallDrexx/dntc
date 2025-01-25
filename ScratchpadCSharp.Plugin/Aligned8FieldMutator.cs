@@ -4,7 +4,7 @@ using Dntc.Common.Definitions;
 
 namespace ScratchpadCSharp.Plugin;
 
-public class Aligned8GlobalMutator : IGlobalConversionMutator
+public class Aligned8FieldMutator : IFieldConversionMutator
 {
     public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {

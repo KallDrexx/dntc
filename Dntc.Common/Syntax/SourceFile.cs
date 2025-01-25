@@ -6,13 +6,13 @@ public class SourceFile
 {
     public IReadOnlyList<IncludeClause> IncludeClauses { get; }
     public IReadOnlyList<MethodBlock> Methods { get; }
-    public IReadOnlyList<GlobalVariableDeclaration> Globals { get; }
+    public IReadOnlyList<FieldDeclaration> Globals { get; }
     public IReadOnlyList<TypeDeclaration> TypeDeclarations { get; }
     
     public SourceFile(
         IReadOnlyList<IncludeClause> includeClauses, 
         IReadOnlyList<MethodBlock> methods, 
-        IReadOnlyList<GlobalVariableDeclaration> globals,
+        IReadOnlyList<FieldDeclaration> globals,
         IReadOnlyList<TypeDeclaration> typeDeclarations)
     {
         IncludeClauses = includeClauses;

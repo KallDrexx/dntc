@@ -47,7 +47,11 @@ public class NativeDefinedType : DefinedType
             {
                 typeof(string),
                 new NativeDefinedType(new IlTypeName(typeof(string).FullName!), null, new CTypeName("char*"), [])
-            }
+            },
+            {
+                typeof(char),
+                new NativeDefinedType(new IlTypeName(typeof(char).FullName!), null, new CTypeName("char"), [])
+            },
         };
 
     private static NativeDefinedType StdIntType(string clrName, string nativeName)

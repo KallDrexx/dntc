@@ -41,8 +41,8 @@ public class PlannedFileConverter
             .ToArray();
 
         var globals = plannedHeaderFile.DeclaredGlobals
-            .Select(x => new { GlobalInfo = x, TypeInfo = _conversionCatalog.Find(x.Type)})
-            .Select(x => new GlobalVariableDeclaration(x.GlobalInfo, x.TypeInfo, true))
+            .Select(x => new { GlobalInfo = x, TypeInfo = x.FieldTypeConversionInfo })
+            .Select(x => new FieldDeclaration(x.GlobalInfo, FieldDeclaration.FieldFlags.IsHeaderDeclaration))
             .ToArray();
 
         return new HeaderFile(guard, includes, typeDeclarations, methodDeclarations, globals);
@@ -65,8 +65,8 @@ public class PlannedFileConverter
             .ToArray();
 
         var globals = plannedSourceFile.ImplementedGlobals
-            .Select(x => new { GlobalInfo = x, TypeInfo = _conversionCatalog.Find(x.Type)})
-            .Select(x => new GlobalVariableDeclaration(x.GlobalInfo, x.TypeInfo, false))
+            .Select(x => new { GlobalInfo = x, TypeInfo = x.FieldTypeConversionInfo })
+            .Select(x => new FieldDeclaration(x.GlobalInfo, FieldDeclaration.FieldFlags.None))
             .ToArray();
 
         var typeDeclarations = plannedSourceFile.DeclaredTypes

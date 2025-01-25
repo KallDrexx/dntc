@@ -115,6 +115,18 @@ int main(void) {
     ScratchpadCSharp_AttributeTests_TestNativeGeneric();
     ScratchpadCSharp_AttributeTests_TestNativeGenericInDep();
 
+    printf("Statically Sized String: %s\n", ScratchpadCSharp_AttributeTests_StaticallySizedString);
+
+    int32_t *tempItems = malloc(sizeof(int32_t) * ARRAY_ITEM_COUNT);
+    for (int x = 0; x < ARRAY_ITEM_COUNT; x++)
+    {
+        tempItems[x] = ARRAY_ITEM_COUNT - x;
+    }
+    
+    ScratchpadCSharp_AttributeTests_StaticallySizedTest test = {.NumberArray = {1,2,3,4,5,6,7,8,9,10}};
+    int32_t arrayFirstNumber = ScratchpadCSharp_AttributeTests_GetFirstNumber(test);
+    assert(arrayFirstNumber == 1);
+
     printf("Tests passed!\n");
     return 0;
 }

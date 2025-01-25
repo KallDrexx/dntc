@@ -15,9 +15,9 @@ public class FieldConversionInfo
     public IlFieldId IlName { get; }
    
     /// <summary>
-    /// The type of value this global contains
+    /// The conversion info for the field's value
     /// </summary>
-    public IlTypeName Type { get; }
+    public TypeConversionInfo FieldTypeConversionInfo { get; set; }
     
     /// <summary>
     /// If true, this is a global that can be considered pre-declared and should not
@@ -47,7 +47,7 @@ public class FieldConversionInfo
     public CBaseExpression? InitialValue { get; set; }
     
     /// <summary>
-    /// The optional attribute that should be present on the transpiled global's declaration
+    /// The optional attribute that should be present on the transpiled field's declaration
     /// </summary>
     public string? AttributeText { get; set; }
    
@@ -55,11 +55,17 @@ public class FieldConversionInfo
     /// If true, this global is a `char name[]` instead of `char* name`
     /// </summary>
     public bool IsNonPointerString { get; set; }
-
-    internal FieldConversionInfo(DefinedField field)
+   
+    /// <summary>
+    /// If a non-null value, this is considered an array of values with a compile time size of
+    /// the specified value.
+    /// </summary>
+    public int? StaticItemSize { get; set; }
+    
+    internal FieldConversionInfo(DefinedField field, TypeConversionInfo fieldType)
     {
         IlName = field.IlName;
-        Type = field.IlType;
+        FieldTypeConversionInfo = fieldType;
 
         switch (field)
         {

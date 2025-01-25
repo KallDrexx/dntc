@@ -3,7 +3,7 @@ using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Conversion.Mutators;
 
-public class WithAttributeMutator : IMethodConversionMutator, IGlobalConversionMutator
+public class WithAttributeMutator : IMethodConversionMutator, IFieldConversionMutator
 {
     public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method)
     {
