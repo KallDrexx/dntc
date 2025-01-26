@@ -164,12 +164,20 @@ public static class SimpleFunctions
         return (float)Math.Sqrt(value);
     }
 
-    public static void ArrayTest(ushort[] test)
+    public static ushort ArrayTest(ushort[] test)
     {
         for (var x = 0; x < test.Length; x++)
         {
             test[x] = (ushort)x;
         }
+
+        ushort sum = 0;
+        for (var x = 0; x < test.Length; x++)
+        {
+            sum += test[x];
+        }
+
+        return sum;
     }
 
     public static Vector3 ConstructorTest(float x, float y, float z)

@@ -140,24 +140,42 @@ float ScratchpadCSharp_SimpleFunctions_SquareRootTest(float value) {
 	return ((float)sqrt(((double)value)));
 }
 
-void ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
-	int32_t __local_0 = {0};
-	__local_0 = 0;
+uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
+	uint16_t __local_0 = {0};
+	int32_t __local_1 = {0};
+	int32_t __local_2 = {0};
+	__local_1 = 0;
 	goto IL_000d;
 
 IL_0004:
-	if ((test.length) <= __local_0) {
-		printf("ATtempted to write to test[%ld], but only %zu items are in the array", __local_0, (test.length));
+	if ((test.length) <= __local_1) {
+		printf("Attempted to access to test[%ld], but only %zu items are in the array", __local_1, (test.length));
 		abort();
 	}
-	(test.items)[__local_0] = ((uint16_t)__local_0);
-	__local_0 = (__local_0 + 1);
+	(test.items)[__local_1] = ((uint16_t)__local_1);
+	__local_1 = (__local_1 + 1);
 
 IL_000d:
-	if ((__local_0 < ((int32_t)(test.length)))) {
+	if ((__local_1 < ((int32_t)(test.length)))) {
 		goto IL_0004;
 	}
-	return;
+	__local_0 = 0;
+	__local_2 = 0;
+	goto IL_0024;
+
+IL_0019:
+	if ((test.length) <= __local_2) {
+		printf("Attempted to access to test[%ld], but only %zu items are in the array", __local_2, (test.length));
+		abort();
+	}
+	__local_0 = ((uint16_t)(__local_0 + (test.items)[__local_2]));
+	__local_2 = (__local_2 + 1);
+
+IL_0024:
+	if ((__local_2 < ((int32_t)(test.length)))) {
+		goto IL_0019;
+	}
+	return __local_0;
 }
 
 void ScratchpadCSharp_SimpleFunctions_Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z) {

@@ -27,10 +27,11 @@ int main(void) {
 
     uint16_t *items = malloc(sizeof(uint16_t) * ARRAY_ITEM_COUNT);
     SystemUInt16Array array = {.length = ARRAY_ITEM_COUNT, .items = items };
-    ScratchpadCSharp_SimpleFunctions_ArrayTest(array);
+    uint16_t arraySum = ScratchpadCSharp_SimpleFunctions_ArrayTest(array);
 
     assert(array.items[3] == 3);
     assert(array.items[8] == 8);
+    assert(arraySum == 45);
 
     ScratchpadCSharp_SimpleFunctions_RefTest(&first, &someFloat, 5);
 

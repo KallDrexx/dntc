@@ -23,7 +23,7 @@
     "System.Single ScratchpadCSharp.SimpleFunctions/Vector3::Dot(ScratchpadCSharp.SimpleFunctions/Vector3)",
     "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions/Vector3::op_Addition(ScratchpadCSharp.SimpleFunctions/Vector3,ScratchpadCSharp.SimpleFunctions/Vector3)",
     "System.Single ScratchpadCSharp.SimpleFunctions::SquareRootTest(System.Single)",
-    "System.Void ScratchpadCSharp.SimpleFunctions::ArrayTest(System.UInt16[])",
+    "System.UInt16 ScratchpadCSharp.SimpleFunctions::ArrayTest(System.UInt16[])",
     "ScratchpadCSharp.SimpleFunctions/Vector3 ScratchpadCSharp.SimpleFunctions::ConstructorTest(System.Single,System.Single,System.Single)",
     "System.Void ScratchpadCSharp.SimpleFunctions::RefTest(ScratchpadCSharp.SimpleFunctions/Vector3&,System.Single&,System.Single)",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::SwapTest(System.Int32,System.Int32)",
