@@ -43,9 +43,15 @@ public class TypeConversionInfo
     /// automatically determined.
     /// </summary>
     public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
+   
+    /// <summary>
+    /// The dntc type definition that this conversion info was created from.
+    /// </summary>
+    public DefinedType OriginalTypeDefinition { get; }
 
     internal TypeConversionInfo(DefinedType type)
     {
+        OriginalTypeDefinition = type;
         IlName = type.IlName;
         
         switch (type)

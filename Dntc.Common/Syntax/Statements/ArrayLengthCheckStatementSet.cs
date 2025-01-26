@@ -3,7 +3,7 @@ using Dntc.Common.Syntax.Expressions;
 namespace Dntc.Common.Syntax.Statements;
 
 public record ArrayLengthCheckStatementSet(
-    FieldAccessExpression ArrayLengthField,
+    CBaseExpression ArrayLengthField,
     CBaseExpression Array,
     DereferencedValueExpression Index) : CStatementSet
 {

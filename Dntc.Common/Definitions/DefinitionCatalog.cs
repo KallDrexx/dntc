@@ -93,10 +93,10 @@ public class DefinitionCatalog
             }
         }
 
-        foreach (var staticField in type.Fields)
+        foreach (var field in type.Fields)
         {
-            var field = _definerPipeline.Define(staticField);
-            Add(field);
+            var fieldDefinition = _definerPipeline.Define(field);
+            Add(fieldDefinition);
         }
     }
 
@@ -108,7 +108,7 @@ public class DefinitionCatalog
 
     private void AddReferencedArrayTypes(TypeReference arrayType)
     {
-        var type = new ArrayDefinedType(arrayType);
+        var type = new HeapArrayDefinedType(arrayType);
         _types.TryAdd(type.IlName, type);
     }
     

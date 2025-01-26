@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil.Cil;
 
@@ -41,11 +42,20 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var value = items[0];
             var index = items[1];
             var array = items[2];
-            var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
-            var itemType = value.ResultingType;
 
-            var lengthField = new FieldAccessExpression(array, new Variable(int32Type, "length", false));
+            if (array.ResultingType.OriginalTypeDefinition is not ArrayDefinedType arrayDefinedType)
+            {
+                var message = $"stelem opcode received for an expression returning {array.ResultingType.IlName} " +
+                              $"which was defined by {array.ResultingType.OriginalTypeDefinition.GetType().FullName} " +
+                              $"which does not inherit from ArrayDefinedType";
+
+                throw new InvalidOperationException(message);
+            }
+            
+            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
+            
+            var itemType = value.ResultingType;
             var itemsExpression = new FieldAccessExpression(array, new Variable(itemType, "items", false));
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemType);
             
@@ -90,13 +100,22 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var items = context.ExpressionStack.Pop(2);
             var index = items[0];
             var array = items[1];
-            var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
-            
-            var lengthField = new FieldAccessExpression(array, new Variable(int32Type, "length", false));
+
+            if (array.ResultingType.OriginalTypeDefinition is not ArrayDefinedType arrayDefinedType)
+            {
+                var message = $"ldelem opcode received for an expression returning {array.ResultingType.IlName} " +
+                              $"which was defined by {array.ResultingType.OriginalTypeDefinition.GetType().FullName} " +
+                              $"which does not inherit from ArrayDefinedType";
+
+                throw new InvalidOperationException(message);
+            }
+
+            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
             var lengthCheck = new ArrayLengthCheckStatementSet(lengthField, array, indexExpression);
             
-            var itemsExpression = new FieldAccessExpression(array, new Variable(array.ResultingType, "items", false));
+            var elementType = context.ConversionCatalog.Find(arrayDefinedType.ElementType);
+            var itemsExpression = new FieldAccessExpression(array, new Variable(elementType, "items", false));
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, array.ResultingType);
             
             // Return the length check while adding the accessor expression to the stack
