@@ -150,7 +150,7 @@ uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
 
 IL_0004:
 	if ((test.length) <= __local_1) {
-		printf("Attempted to access to test[%ld], but only %zu items are in the array", __local_1, (test.length));
+		printf("Attempted to access to test[%d], but only %zu items are in the array", __local_1, (test.length));
 		abort();
 	}
 	(test.items)[__local_1] = ((uint16_t)__local_1);
@@ -166,7 +166,7 @@ IL_000d:
 
 IL_0019:
 	if ((test.length) <= __local_2) {
-		printf("Attempted to access to test[%ld], but only %zu items are in the array", __local_2, (test.length));
+		printf("Attempted to access to test[%d], but only %zu items are in the array", __local_2, (test.length));
 		abort();
 	}
 	__local_0 = ((uint16_t)(__local_0 + (test.items)[__local_2]));
@@ -373,7 +373,7 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSha
 
 int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_AttributeTests_StaticallySizedTest value) {
 	if (10 <= 0) {
-		printf("Attempted to access to (value.NumberArray)[%ld], but only %zu items are in the array", 0, 10);
+		printf("Attempted to access to (value.NumberArray)[%d], but only %zu items are in the array", 0, 10);
 		abort();
 	}
 	return (value.NumberArray)[0];

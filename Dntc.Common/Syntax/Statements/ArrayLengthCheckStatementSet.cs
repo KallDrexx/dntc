@@ -19,7 +19,7 @@ public record ArrayLengthCheckStatementSet(
         // Error message
         await writer.WriteAsync("\t\tprintf(\"Attempted to access to ");
         await Array.WriteCodeStringAsync(writer);
-        await writer.WriteAsync("[%ld], but only %zu items are in the array\", ");
+        await writer.WriteAsync("[%d], but only %zu items are in the array\", ");
         await Index.WriteCodeStringAsync(writer);
         await writer.WriteAsync(", ");
         await ArrayLengthField.WriteCodeStringAsync(writer);
