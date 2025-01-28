@@ -259,7 +259,19 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            // We need to make sure it's known that this instruction depends on the type of the
+            // operand, otherwise we risk a native type missing from the conversion catalog.
+
+            var referencedTypes = new HashSet<IlTypeName>();
+            if (context.CurrentInstruction.Operand != null)
+            {
+                referencedTypes.Add(new IlTypeName(context.CurrentInstruction.Operand.GetType().FullName!));
+            }
+
+            return new OpCodeAnalysisResult
+            {
+                ReferencedTypes = referencedTypes,
+            };
         }
     }
 

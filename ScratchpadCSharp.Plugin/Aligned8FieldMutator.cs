@@ -1,3 +1,4 @@
+using Dntc.Common;
 using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
@@ -6,6 +7,8 @@ namespace ScratchpadCSharp.Plugin;
 
 public class Aligned8FieldMutator : IFieldConversionMutator
 {
+    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
+
     public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
         var attribute = field.Definition

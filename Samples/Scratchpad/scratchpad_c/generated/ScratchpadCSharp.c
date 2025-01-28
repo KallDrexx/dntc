@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "ScratchpadCSharp.h"
 #include "fn_pointer_types.h"
+#include <stdbool.h>
 #include <math.h>
 #include "dotnet_arrays.h"
 #include <stdlib.h>

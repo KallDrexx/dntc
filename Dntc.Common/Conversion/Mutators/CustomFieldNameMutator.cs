@@ -5,6 +5,8 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class CustomFieldNameMutator : IFieldConversionMutator
 {
+    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
+
     public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
         var attribute = field.Definition

@@ -12,6 +12,20 @@ public class ConversionInfoCreator
     private readonly List<IMethodConversionMutator> _methodConversionMutators = [];
     private readonly List<IFieldConversionMutator> _fieldConversionMutators = [];
 
+    public IReadOnlySet<IlTypeName> RequiredTypes
+    {
+        get
+        {
+            var set = new HashSet<IlTypeName>();
+            foreach (var type in _fieldConversionMutators.SelectMany(mutator => mutator.RequiredTypes))
+            {
+                set.Add(type);
+            }
+
+            return set;
+        }
+    }
+
     public void AddTypeMutator(ITypeConversionMutator mutator)
     {
         _typeConversionMutators.Add(mutator);

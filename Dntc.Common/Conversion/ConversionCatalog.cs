@@ -16,16 +16,21 @@ public class ConversionCatalog
     {
         _definitionCatalog = definitionCatalog;
         _conversionInfoCreator = conversionInfoCreator;
-
-        foreach (var type in NativeDefinedType.StandardTypes.Values)
-        {
-            _types[type.IlName] = _conversionInfoCreator.Create(type);
-        }
     }
 
     public void Add(DependencyGraph dependencyGraph)
     {
         AddNode(dependencyGraph.Root);
+    }
+
+    public void Add(IlTypeName typeName)
+    {
+        if (_types.ContainsKey(typeName))
+        {
+            return;
+        }
+        
+        AddNode(new DependencyGraph.TypeNode(typeName));
     }
 
     public TypeConversionInfo Find(IlTypeName name)

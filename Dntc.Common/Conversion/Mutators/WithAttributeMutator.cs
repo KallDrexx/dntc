@@ -19,6 +19,8 @@ public class WithAttributeMutator : IMethodConversionMutator, IFieldConversionMu
         conversionInfo.AttributeText = attribute.ConstructorArguments[0].Value.ToString()!;
     }
 
+    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
+
     public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
     {
         var attribute = field.Definition

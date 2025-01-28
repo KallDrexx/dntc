@@ -63,6 +63,11 @@ public class Transpiler
         {
             plugin.Customize(transpilerPipeline);
         }
+
+        foreach (var requiredType in conversionInfoCreator.RequiredTypes)
+        {
+            conversionCatalog.Add(requiredType);
+        }
         
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         
