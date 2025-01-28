@@ -7,3 +7,10 @@ build/
 cmake-build-*/
 sdkconfig.ci
 sdkconfig.old
+CMakeFiles/
+CMakeCache.txt
+scratchpad_c
+!scratchpad_c/
+cmake_install.cmake
+Makefile
+
