@@ -1,4 +1,3 @@
-using Dntc.Attributes;
 using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
 
@@ -77,6 +76,10 @@ public class FieldConversionInfo
                 SetupNativeGlobal(nativeGlobal);
                 break;
             
+            case CustomDefinedField customField:
+                SetupCustomField(customField);
+                break;
+            
             default:
                 throw new NotSupportedException(field.GetType().FullName);
         }
@@ -102,6 +105,14 @@ public class FieldConversionInfo
         IsPredeclared = true;
         Header = field.HeaderFile;
         SourceFileName = null;
+        NameInC = field.NativeName;
+    }
+
+    private void SetupCustomField(CustomDefinedField field)
+    {
+        IsPredeclared = false;
+        Header = field.DeclaredInHeader;
+        SourceFileName = field.DeclaredInSourceFileName;
         NameInC = field.NativeName;
     }
 }

@@ -42,5 +42,8 @@ public abstract class CustomDefinedField : DefinedField
         }
     }
 
-    public abstract CustomCodeStatementSet GetCustomDeclaration(ConversionCatalog catalog);
+    /// <summary>
+    /// Generates a C statement set representing the declaration of the global or instance field.
+    /// </summary>
+    public abstract CustomCodeStatementSet GetCustomDeclaration();
 }

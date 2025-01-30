@@ -36,7 +36,7 @@ public class ConversionInfoCreator
         _methodConversionMutators.Add(mutator);
     }
 
-    public void AddGlobalMutator(IFieldConversionMutator mutator)
+    public void AddFieldMutator(IFieldConversionMutator mutator)
     {
         _fieldConversionMutators.Add(mutator);
     }

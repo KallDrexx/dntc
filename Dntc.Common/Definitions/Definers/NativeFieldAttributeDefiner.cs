@@ -6,7 +6,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// <summary>
 /// Returns a `NativeDefinedGlobal` based on the .net field.
 /// </summary>
-public class NativeGlobalAttributeDefiner : IDotNetGlobalDefiner
+public class NativeFieldAttributeDefiner : IDotNetFieldDefiner
 {
     public DefinedField? Define(FieldDefinition field)
     {
