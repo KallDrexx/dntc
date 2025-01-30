@@ -152,4 +152,19 @@ public static class AttributeTests
     {
         return value.NumberArray[0];
     }
+
+    [CustomDeclaration("INT_FIELD(custom_declared_global)", "custom_declared_global", "../native_test2.h")]
+    [InitialGlobalValue("675")]
+    public static int CustomDeclaredGlobalTest;
+
+    public struct CustomDeclaredFieldStruct
+    {
+        [CustomDeclaration("INT_FIELD(field)", "field", "../native_test2.h")]
+        public int SomeField;
+    }
+
+    public static int GetCustomDeclaredField(CustomDeclaredFieldStruct fieldStruct)
+    {
+        return fieldStruct.SomeField;
+    }
 }

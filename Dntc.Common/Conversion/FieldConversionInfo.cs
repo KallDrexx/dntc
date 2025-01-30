@@ -1,6 +1,6 @@
-using Dntc.Attributes;
 using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
+using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Conversion;
 
@@ -61,6 +61,14 @@ public class FieldConversionInfo
     /// the specified value.
     /// </summary>
     public int? StaticItemSize { get; set; }
+
+    /// <summary>
+    /// Headers that need to be referenced along with this type's declaration that can't be
+    /// automatically determined.
+    /// </summary>
+    public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
+    
+    public CustomCodeStatementSet? CustomDeclaration { get; set; }
     
     internal FieldConversionInfo(DefinedField field, TypeConversionInfo fieldType)
     {
@@ -75,6 +83,10 @@ public class FieldConversionInfo
             
             case NativeDefinedField nativeGlobal:
                 SetupNativeGlobal(nativeGlobal);
+                break;
+            
+            case CustomDefinedField customField:
+                SetupCustomField(customField);
                 break;
             
             default:
@@ -103,5 +115,15 @@ public class FieldConversionInfo
         Header = field.HeaderFile;
         SourceFileName = null;
         NameInC = field.NativeName;
+    }
+
+    private void SetupCustomField(CustomDefinedField field)
+    {
+        IsPredeclared = false;
+        Header = field.DeclaredInHeader;
+        SourceFileName = field.DeclaredInSourceFileName;
+        NameInC = field.NativeName;
+        CustomDeclaration = field.GetCustomDeclaration();
+        ReferencedHeaders = field.ReferencedHeaders;
     }
 }

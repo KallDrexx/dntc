@@ -31,9 +31,10 @@ public class Transpiler
         var definitionCatalog = transpilerPipeline.DefinitionCatalog;
         var conversionCatalog = transpilerPipeline.ConversionCatalog;
         
-        definerPipeline.Add(new NativeGlobalAttributeDefiner());
+        definerPipeline.Add(new NativeFieldAttributeDefiner());
         definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
         definerPipeline.Add(new NativeTypeDefiner());
+        definerPipeline.Add(new CustomDeclaredFieldDefiner());
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
@@ -44,13 +45,13 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
 
-        conversionInfoCreator.AddGlobalMutator(new WithAttributeMutator());
-        conversionInfoCreator.AddGlobalMutator(new InitialValueMutator(conversionCatalog));
-        conversionInfoCreator.AddGlobalMutator(new CustomFileNameMutator());
-        conversionInfoCreator.AddGlobalMutator(new CustomFieldNameMutator());
-        conversionInfoCreator.AddGlobalMutator(new IgnoredInHeadersMutator());
-        conversionInfoCreator.AddGlobalMutator(new NonPointerStringMutator());
-        conversionInfoCreator.AddGlobalMutator(new StaticallySizedArrayFieldMutator(charArrayType, conversionCatalog));
+        conversionInfoCreator.AddFieldMutator(new WithAttributeMutator());
+        conversionInfoCreator.AddFieldMutator(new InitialValueMutator(conversionCatalog));
+        conversionInfoCreator.AddFieldMutator(new CustomFileNameMutator());
+        conversionInfoCreator.AddFieldMutator(new CustomFieldNameMutator());
+        conversionInfoCreator.AddFieldMutator(new IgnoredInHeadersMutator());
+        conversionInfoCreator.AddFieldMutator(new NonPointerStringMutator());
+        conversionInfoCreator.AddFieldMutator(new StaticallySizedArrayFieldMutator(charArrayType, conversionCatalog));
         
         if (plugins.All(x => !x.BypassBuiltInNativeDefinitions))
         {

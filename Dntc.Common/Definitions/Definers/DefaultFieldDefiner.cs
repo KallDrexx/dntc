@@ -2,7 +2,7 @@ using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Definers;
 
-public class DefaultFieldDefiner : IDotNetGlobalDefiner
+public class DefaultFieldDefiner : IDotNetFieldDefiner
 {
     public DefinedField Define(FieldDefinition field)
     {

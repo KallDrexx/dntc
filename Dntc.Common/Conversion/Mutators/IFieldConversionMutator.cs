@@ -1,4 +1,5 @@
 using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -10,5 +11,5 @@ public interface IFieldConversionMutator
     /// </summary>
     IReadOnlySet<IlTypeName> RequiredTypes { get; }
     
-    void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field);
+    void Mutate(FieldConversionInfo conversionInfo, FieldDefinition fieldDefinition);
 } 

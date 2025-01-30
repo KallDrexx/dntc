@@ -7,7 +7,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class DefinitionGenerationPipeline
 {
-    private readonly List<IDotNetGlobalDefiner> _globalDefiners = new();
+    private readonly List<IDotNetFieldDefiner> _globalDefiners = new();
     private readonly List<IDotNetMethodDefiner> _methodDefiners = new();
     private readonly List<IDotNetTypeDefiner> _typeDefiners = new();
 
@@ -33,7 +33,7 @@ public class DefinitionGenerationPipeline
     /// <summary>
     /// Adds the specified global definer to the end of the definer pipeline
     /// </summary>
-    public void Add(IDotNetGlobalDefiner definer)
+    public void Add(IDotNetFieldDefiner definer)
     {
         _globalDefiners.Insert(_globalDefiners.Count - 1, definer);
     }

@@ -127,6 +127,15 @@ int main(void) {
     int32_t arrayFirstNumber = ScratchpadCSharp_AttributeTests_GetFirstNumber(test);
     assert(arrayFirstNumber == 1);
 
+    // Verify the macros are working by utilizing them, they'll fail to compile if they don't get
+    // their custom declarations used.
+    custom_declared_global = 5;
+    ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct declaredTest = {0};
+    declaredTest.field = 25;
+
+    int32_t customDeclaredFieldTest = ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(declaredTest);
+    assert(customDeclaredFieldTest == 25);
+
     printf("Tests passed!\n");
     return 0;
 }

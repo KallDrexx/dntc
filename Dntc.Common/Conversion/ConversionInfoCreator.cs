@@ -1,5 +1,6 @@
 using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion;
 
@@ -36,7 +37,7 @@ public class ConversionInfoCreator
         _methodConversionMutators.Add(mutator);
     }
 
-    public void AddGlobalMutator(IFieldConversionMutator mutator)
+    public void AddFieldMutator(IFieldConversionMutator mutator)
     {
         _fieldConversionMutators.Add(mutator);
     }
@@ -72,11 +73,19 @@ public class ConversionInfoCreator
     public FieldConversionInfo Create(DefinedField field, TypeConversionInfo fieldType)
     {
         var conversionInfo = new FieldConversionInfo(field, fieldType);
-        if (field is DotNetDefinedField dotNetDefinedGlobal)
+
+        var fieldDefinition = field switch
+        {
+            DotNetDefinedField dotNetDefinedField => dotNetDefinedField.Definition,
+            CustomDefinedField customDefinedField => customDefinedField.OriginalField,
+            _ => null
+        };
+
+        if (fieldDefinition != null)
         {
             foreach (var mutator in _fieldConversionMutators)
             {
-                mutator.Mutate(conversionInfo, dotNetDefinedGlobal);
+                mutator.Mutate(conversionInfo, fieldDefinition);
             }
         }
 

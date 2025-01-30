@@ -2,7 +2,7 @@ using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Definers;
 
-public interface IDotNetGlobalDefiner
+public interface IDotNetFieldDefiner
 {
     /// <summary>
     /// Attempts to create a dntc `Definedglobal` for the specified Mono.cecil field. Returns `null`

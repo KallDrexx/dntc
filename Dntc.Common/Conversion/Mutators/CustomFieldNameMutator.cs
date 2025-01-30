@@ -1,5 +1,5 @@
 using Dntc.Attributes;
-using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -7,9 +7,9 @@ public class CustomFieldNameMutator : IFieldConversionMutator
 {
     public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
 
-    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
+    public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
-        var attribute = field.Definition
+        var attribute = field
             .CustomAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomFieldNameAttribute).FullName);
 
