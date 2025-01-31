@@ -61,6 +61,12 @@ public class FieldConversionInfo
     /// the specified value.
     /// </summary>
     public int? StaticItemSize { get; set; }
+
+    /// <summary>
+    /// Headers that need to be referenced along with this type's declaration that can't be
+    /// automatically determined.
+    /// </summary>
+    public IReadOnlyList<HeaderName> ReferencedHeaders { get; private set; } = Array.Empty<HeaderName>();
     
     public CustomCodeStatementSet? CustomDeclaration { get; set; }
     
@@ -118,5 +124,6 @@ public class FieldConversionInfo
         SourceFileName = field.DeclaredInSourceFileName;
         NameInC = field.NativeName;
         CustomDeclaration = field.GetCustomDeclaration();
+        ReferencedHeaders = field.ReferencedHeaders;
     }
 }

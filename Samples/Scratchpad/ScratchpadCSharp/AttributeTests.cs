@@ -160,11 +160,11 @@ public static class AttributeTests
     public struct CustomDeclaredFieldStruct
     {
         [CustomDeclaration("INT_FIELD(field)", "field", "../native_test2.h")]
-        public int Field;
+        public int SomeField;
     }
 
     public static int GetCustomDeclaredField(CustomDeclaredFieldStruct fieldStruct)
     {
-        return fieldStruct.Field;
+        return fieldStruct.SomeField;
     }
 }

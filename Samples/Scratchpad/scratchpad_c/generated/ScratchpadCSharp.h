@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "../native_test.h"
+#include "../native_test2.h"
 #include "custom_file_test.h"
 #include "dotnet_arrays.h"
 #include "fn_pointer_types.h"

@@ -76,6 +76,11 @@ public class ImplementationPlan
                         }
                     }
 
+                    foreach (var header in global.ReferencedHeaders)
+                    {
+                        headerFile.AddReferencedHeader(header);
+                    }
+
                     break;
 
                 default:
@@ -132,6 +137,11 @@ public class ImplementationPlan
                         {
                             sourceFile.AddReferencedHeader(type.Header.Value);
                         }
+                    }
+
+                    foreach (var header in global.ReferencedHeaders)
+                    {
+                        sourceFile.AddReferencedHeader(header);
                     }
 
                     break;
