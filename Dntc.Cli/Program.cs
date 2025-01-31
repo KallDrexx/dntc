@@ -36,7 +36,10 @@ public static class Program
             {
                 await BuildDotNetProjectAsync(manifest);
             }
-            
+          
+            // Set the working directory to the assembly directory in case Mono.cecil tries to
+            // load assembly references at runtime. Otherwise, it won't find them.
+            Directory.SetCurrentDirectory(manifest.AssemblyDirectory!);
             await transpiler.RunAsync();
         }
 
