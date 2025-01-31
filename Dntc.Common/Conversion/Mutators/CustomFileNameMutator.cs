@@ -1,4 +1,5 @@
 using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -47,9 +48,9 @@ public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMu
 
     public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
 
-    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
+    public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
-        var customNaming = Utils.GetCustomFileName(field.Definition.CustomAttributes, field.IlName.Value);
+        var customNaming = Utils.GetCustomFileName(field.CustomAttributes, field.FullName);
         if (customNaming == null)
         {
             return;

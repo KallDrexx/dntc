@@ -21,9 +21,9 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
         new IlTypeName(typeof(char).FullName!),
     ]);
 
-    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
+    public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
-        var attribute = field.Definition
+        var attribute = field
             .CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(StaticallySizedArrayAttribute).FullName);
 
@@ -32,7 +32,7 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
             return;
         }
 
-        var fieldType = field.Definition.FieldType;
+        var fieldType = field.FieldType;
         if (fieldType.FullName == typeof(string).FullName)
         {
             fieldType = _charArrayType;
@@ -40,7 +40,7 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
 
         if (!fieldType.IsArray)
         {
-            var message = $"StaticallySizedArrayAttribute was attached to the field {field.IlName} but " +
+            var message = $"StaticallySizedArrayAttribute was attached to the field {field.FullName} but " +
                           $"its field type is not an array type";
 
             throw new InvalidOperationException(message);
@@ -48,7 +48,7 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
 
         if (!attribute.HasConstructorArguments || attribute.ConstructorArguments[0].Value is not int size)
         {
-            var message = $"Field {field.IlName}'s StaticallySizedArrayAttribute constructor did not have a " +
+            var message = $"Field {field.FullName}'s StaticallySizedArrayAttribute constructor did not have a " +
                           $"single integer size value";
 
             throw new InvalidOperationException(message);

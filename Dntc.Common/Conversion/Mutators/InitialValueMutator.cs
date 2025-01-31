@@ -1,6 +1,6 @@
 using Dntc.Attributes;
-using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -17,9 +17,9 @@ public class InitialValueMutator : IFieldConversionMutator
 
     public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
 
-    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
+    public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
-        var attribute = field.Definition
+        var attribute = field
             .CustomAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == typeof(InitialGlobalValueAttribute).FullName);
 
@@ -28,7 +28,7 @@ public class InitialValueMutator : IFieldConversionMutator
             return;
         }
 
-        var returnType = _conversionCatalog.Find(field.IlType);
+        var returnType = _conversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
         var expression = new LiteralValueExpression(attribute.ConstructorArguments[0].Value.ToString()!, returnType);
         conversionInfo.InitialValue = expression;
     }

@@ -1,5 +1,6 @@
 using Dntc.Attributes;
 using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -36,9 +37,9 @@ public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversion
 
     public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
 
-    public void Mutate(FieldConversionInfo conversionInfo, DotNetDefinedField field)
+    public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
-        var ignoredInHeader = field.Definition
+        var ignoredInHeader = field
             .CustomAttributes
             .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);
 

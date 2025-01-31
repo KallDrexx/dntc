@@ -1,5 +1,5 @@
-using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Statements;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
@@ -23,7 +23,10 @@ public abstract class CustomDefinedField : DefinedField
     /// </summary>
     public CFieldName NativeName { get; }
     
+    public FieldDefinition? OriginalField { get; }
+    
     protected CustomDefinedField(
+        FieldDefinition? originalField,
         HeaderName? declaredInHeader, 
         CSourceFileName? declaredInSourceFileName,
         CFieldName nativeName, 
@@ -35,6 +38,7 @@ public abstract class CustomDefinedField : DefinedField
         DeclaredInHeader = declaredInHeader;
         DeclaredInSourceFileName = declaredInSourceFileName;
         NativeName = nativeName;
+        OriginalField = originalField;
 
         if (referencedHeaders != null)
         {

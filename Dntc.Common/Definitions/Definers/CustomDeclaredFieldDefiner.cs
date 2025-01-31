@@ -40,6 +40,7 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
         List<HeaderName> referencedHeaders = header != null ? [new HeaderName(header)] : [];
 
         return new CustomDeclaredFieldDefinition(
+            field,
             declaration,
             Utils.GetHeaderName(declaringNamespace),
             Utils.GetSourceFileName(declaringNamespace),
@@ -55,6 +56,7 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
         private readonly string _declaration;
         
         public CustomDeclaredFieldDefinition(
+            FieldDefinition originalField,
             string declaration,
             HeaderName? declaredInHeader, 
             CSourceFileName? declaredInSourceFileName, 
@@ -63,7 +65,7 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
             IlTypeName type, 
             bool isGlobal, 
             IReadOnlyList<HeaderName>? referencedHeaders = null) 
-            : base(declaredInHeader, declaredInSourceFileName, nativeName, name, type, isGlobal, referencedHeaders)
+            : base(originalField, declaredInHeader, declaredInSourceFileName, nativeName, name, type, isGlobal, referencedHeaders)
         {
             _declaration = declaration;
         }
