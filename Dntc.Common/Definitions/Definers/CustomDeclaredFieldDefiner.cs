@@ -68,17 +68,9 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
             _declaration = declaration;
         }
 
-        public override CustomCodeStatementSet GetCustomDeclaration(bool isHeaderDeclaration, string? explicitInitialValue)
+        public override CustomCodeStatementSet GetCustomDeclaration()
         {
-            var rawCode = _declaration;
-            rawCode = IsGlobal switch
-            {
-                true when isHeaderDeclaration => $"extern {rawCode};",
-                true => $"{rawCode} = {explicitInitialValue ?? "{0}"};",
-                _ => $"{rawCode};"
-            };
-
-            return new CustomCodeStatementSet(rawCode);
+            return new CustomCodeStatementSet(_declaration);
         }
     }
 }

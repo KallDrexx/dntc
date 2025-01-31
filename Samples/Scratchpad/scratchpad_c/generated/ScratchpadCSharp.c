@@ -23,7 +23,7 @@ int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
 char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
-int32_t ScratchpadCSharp_AttributeTests_CustomDeclaredGlobalTest = 675;
+INT_FIELD(custom_declared_global) = {0};
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -382,6 +382,6 @@ int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_Attribut
 }
 
 int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct fieldStruct) {
-	return (fieldStruct.Field);
+	return (fieldStruct.field);
 }
 

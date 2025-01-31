@@ -1,5 +1,6 @@
 using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
+using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Conversion;
 
@@ -61,6 +62,8 @@ public class FieldConversionInfo
     /// </summary>
     public int? StaticItemSize { get; set; }
     
+    public CustomCodeStatementSet? CustomDeclaration { get; set; }
+    
     internal FieldConversionInfo(DefinedField field, TypeConversionInfo fieldType)
     {
         IlName = field.IlName;
@@ -114,5 +117,6 @@ public class FieldConversionInfo
         Header = field.DeclaredInHeader;
         SourceFileName = field.DeclaredInSourceFileName;
         NameInC = field.NativeName;
+        CustomDeclaration = field.GetCustomDeclaration();
     }
 }

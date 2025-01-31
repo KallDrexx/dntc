@@ -19,17 +19,24 @@ public record FieldDeclaration(FieldConversionInfo Field, FieldDeclaration.Field
             await writer.WriteAsync("extern ");
         }
 
-        if (Field.IsNonPointerString)
+        if (Field.CustomDeclaration != null)
         {
-            await writer.WriteAsync($"char {Field.NameInC}[]");
+            await Field.CustomDeclaration.WriteAsync(writer);
         }
         else
         {
-            await writer.WriteAsync($"{Field.FieldTypeConversionInfo.NameInC} {Field.NameInC}");
-
-            if (Field.StaticItemSize != null)
+            if (Field.IsNonPointerString)
             {
-                await writer.WriteAsync($"[{Field.StaticItemSize}]");
+                await writer.WriteAsync($"char {Field.NameInC}[]");
+            }
+            else
+            {
+                await writer.WriteAsync($"{Field.FieldTypeConversionInfo.NameInC} {Field.NameInC}");
+
+                if (Field.StaticItemSize != null)
+                {
+                    await writer.WriteAsync($"[{Field.StaticItemSize}]");
+                }
             }
         }
 
