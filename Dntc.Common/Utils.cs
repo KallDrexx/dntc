@@ -90,10 +90,10 @@ public static class Utils
             // start with either a parenthesis (first param) or comma (not first param). It must 
             // also end with a parenthesis (last param) or comma. Use regex groupings to keep
             // the preceding and trailing characters as expected.
-            var parameterPattern = new Regex($"([\\(,]){name}([,\\) ])");
-            var returnTypePattern = new Regex($"^{name} ");
+            var parameterPattern = new Regex($"([\\(,]){name}([,\\) \\&\\*])");
+            var returnTypePattern = new Regex($"^{name}([ \\*])");
             signature = parameterPattern.Replace(signature, $"$1!!{x}$2");
-            signature = returnTypePattern.Replace(signature, $"!!{x} ");
+            signature = returnTypePattern.Replace(signature, $"!!{x}$1");
         }
 
         return new IlMethodId(signature);
