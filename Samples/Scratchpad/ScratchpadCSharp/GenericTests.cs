@@ -51,13 +51,10 @@ public class GenericTests
 
     public static unsafe int* GenericPointerTest()
     {
-        return GenericPointerReturnTypeTest<int>(4);
-        
-        // TODO: Fix
-        // var value = GenericPointerReturnTypeTest<int>(4);
-        // *value = 25;
-        //
-        // return value;
+        var value = GenericPointerReturnTypeTest<int>(4);
+        *value = 25;
+
+        return value;
     }
 
     [NativeFunctionCall("generic_pointer_return_type_test", "../native_test.h")]

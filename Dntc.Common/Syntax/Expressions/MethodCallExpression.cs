@@ -5,7 +5,7 @@ namespace Dntc.Common.Syntax.Expressions;
 public record MethodCallExpression(
     CBaseExpression FnExpression,
     IReadOnlyList<CBaseExpression> Parameters,
-    TypeConversionInfo ReturnType) : CBaseExpression(false)
+    TypeConversionInfo ReturnType) : CBaseExpression(ReturnType.IsPointer)
 {
     // Note: Right now method can only return value types. That may change depending on how
     // reference types end up being handled

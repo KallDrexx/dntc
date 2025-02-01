@@ -386,6 +386,9 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_
 }
 
 int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void) {
-	return generic_pointer_return_type_test(4);
+	int32_t* __temp_0001 = {0};
+	__temp_0001 = generic_pointer_return_type_test(4);
+	(*__temp_0001) = 25;
+	return __temp_0001;
 }
 

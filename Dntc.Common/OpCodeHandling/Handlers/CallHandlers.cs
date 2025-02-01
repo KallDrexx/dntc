@@ -58,15 +58,32 @@ public class CallHandlers : IOpCodeHandlerCollection
             .ToArray();
 
         var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
-        var expression = new MethodCallExpression(fnExpression, arguments, returnType);
-        
+        var methodCallExpression = new MethodCallExpression(fnExpression, arguments, returnType);
+
         if (ReturnsVoid(returnTypeName))
         {
-            var statement = new VoidExpressionStatementSet(expression);
+            var statement = new VoidExpressionStatementSet(methodCallExpression);
             return new OpCodeHandlingResult(statement);
         }
-        
-        context.ExpressionStack.Push(expression);
+
+        // If this function returns a pointer, we need to store that pointer into a local variable and
+        // put that variable on the stack instead of the method call itself. Otherwise, you end up
+        // with code like `(*func()) = 25` and other illegal expressions.
+        if (returnType.IsPointer)
+        {
+            var name = $"__temp_{context.CurrentInstruction.Offset:x4}";
+            var tempVariable = new Variable(returnType, name, returnType.IsPointer);
+            var tempVariableExpression = new VariableValueExpression(tempVariable);
+
+            var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
+            var assignment = new AssignmentStatementSet(tempVariableExpression, methodCallExpression);
+
+            context.ExpressionStack.Push(tempVariableExpression);
+            return new OpCodeHandlingResult(new CompoundStatementSet([localDeclaration, assignment]));
+        }
+
+        // Otherwise we can just inline the method call.
+        context.ExpressionStack.Push(methodCallExpression);
         return new OpCodeHandlingResult(null);
     }
     

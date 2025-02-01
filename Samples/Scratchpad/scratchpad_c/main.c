@@ -137,7 +137,7 @@ int main(void) {
     assert(customDeclaredFieldTest == 25);
 
     int32_t* newInt = ScratchpadCSharp_GenericTests_GenericPointerTest();
-    assert(*newInt == 0);
+    assert(*newInt == 25);
 
     printf("Tests passed!\n");
     return 0;
