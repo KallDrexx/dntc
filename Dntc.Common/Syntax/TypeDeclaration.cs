@@ -48,7 +48,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
         }
 
-        await writer.WriteLineAsync($"}} {TypeConversion.NameInC};");
+        await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
     }
 
     private async Task WriteCustomDefinedType(
@@ -66,7 +66,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
     {
         var returnType = Catalog.Find(new IlTypeName(fnPointer.Definition.ReturnType.FullName));
 
-        await writer.WriteAsync($"typedef {returnType.NameInC} (*{TypeConversion.NameInC})(");
+        await writer.WriteAsync($"typedef {returnType.NativeNameWithPossiblePointer()} (*{TypeConversion.NativeNameWithPossiblePointer()})(");
         for (var x = 0; x < fnPointer.Definition.Parameters.Count; x++)
         {
             var param = fnPointer.Definition.Parameters[x];
@@ -77,7 +77,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                 await writer.WriteAsync(", ");
             }
 
-            await writer.WriteAsync(paramType.NameInC.Value);
+            await writer.WriteAsync(paramType.NativeNameWithPossiblePointer());
         }
 
         await writer.WriteLineAsync(");");

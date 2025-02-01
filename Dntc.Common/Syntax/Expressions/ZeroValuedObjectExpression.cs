@@ -2,13 +2,13 @@
 
 namespace Dntc.Common.Syntax.Expressions;
 
-public record ZeroValuedObjectExpression(TypeConversionInfo TypeInfo) : CBaseExpression(false)
+public record ZeroValuedObjectExpression(TypeConversionInfo TypeInfo) : CBaseExpression(TypeInfo.IsPointer)
 {
     public override TypeConversionInfo ResultingType => TypeInfo;
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
-        await writer.WriteAsync($"(({TypeInfo.NameInC}){{0}})");
+        await writer.WriteAsync($"(({TypeInfo.NativeNameWithPossiblePointer()}){{0}})");
     }
 
     public override CBaseExpression? ReplaceExpression(CBaseExpression search, CBaseExpression replacement)

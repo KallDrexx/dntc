@@ -33,7 +33,7 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
         }
         else
         {
-            await writer.WriteAsync($"{Method.ReturnTypeInfo.NameInC} {Method.NameInC}(");
+            await writer.WriteAsync($"{Method.ReturnTypeInfo.NativeNameWithPossiblePointer()} {Method.NameInC}(");
             if (dotNetDefinedMethod.Parameters.Count == 0)
             {
                 await writer.WriteAsync("void");
@@ -47,7 +47,7 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
                 var paramType = Catalog.Find(param.Type);
 
                 var pointerSymbol = param.IsReference ? "*" : "";
-                await writer.WriteAsync($"{paramType.NameInC} {pointerSymbol}{param.Name}");
+                await writer.WriteAsync($"{paramType.NativeNameWithPossiblePointer()} {pointerSymbol}{param.Name}");
             }
 
             await writer.WriteAsync(")");

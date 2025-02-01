@@ -173,8 +173,13 @@ public class DependencyGraph
         var type = definitionCatalog.Get(typeName);
         if (type == null)
         {
-            var message = $"No type in the catalog with the name '{typeName.Value}'";
-            throw new InvalidOperationException(message);
+            // If this is a pointer variation of a type we already know about, use that as the definition
+            type = definitionCatalog.Get(typeName.GetNonPointer());
+            if (type == null)
+            {
+                var message = $"No type in the catalog with the name '{typeName.Value}'";
+                throw new InvalidOperationException(message);
+            }
         }
 
         var node = new TypeNode(typeName);

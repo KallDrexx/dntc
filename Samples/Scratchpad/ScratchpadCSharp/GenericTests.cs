@@ -1,4 +1,6 @@
-﻿using ScratchpadCSharp.Dependency;
+﻿using System.Runtime.InteropServices;
+using Dntc.Attributes;
+using ScratchpadCSharp.Dependency;
 
 namespace ScratchpadCSharp;
 
@@ -45,5 +47,29 @@ public class GenericTests
     private static int Run<T>(T getter) where T : IGetNumber
     {
         return getter.GetNumber();
+    }
+
+    public static unsafe int* GenericPointerTest()
+    {
+        return GenericPointerReturnTypeTest<int>(4);
+        
+        // TODO: Fix
+        // var value = GenericPointerReturnTypeTest<int>(4);
+        // *value = 25;
+        //
+        // return value;
+    }
+
+    [NativeFunctionCall("generic_pointer_return_type_test", "../native_test.h")]
+    private static unsafe TItem* GenericPointerReturnTypeTest<TItem>(int size) where TItem : unmanaged
+    {
+        // TODO: Support sizeof function
+        return (TItem*) Marshal.AllocHGlobal(size);
+    }
+
+    [NativeFunctionCall("sizeof", null)]
+    private static int SizeOfDeref<T>(ref T obj)
+    {
+        return 0;
     }
 }

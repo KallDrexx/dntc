@@ -385,3 +385,7 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_
 	return (fieldStruct.field);
 }
 
+int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void) {
+	return generic_pointer_return_type_test(4);
+}
+

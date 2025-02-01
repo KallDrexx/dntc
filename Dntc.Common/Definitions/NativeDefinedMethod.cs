@@ -55,8 +55,22 @@ public class NativeDefinedMethod : DefinedMethod
 
             newParameterTypes.Add(genericIndex != null ? genericArguments[genericIndex.Value] : parameterType);
         }
+
+        var returnType = ReturnType.GetNonPointer();
+        for (var x = 0; x < _definition.GenericParameters.Count; x++)
+        {
+            if (_definition.GenericParameters[x].FullName == returnType.Value)
+            {
+                returnType = genericArguments[x];
+            }
+        }
+
+        if (ReturnType.IsPointer())
+        {
+            returnType = returnType.AsPointerType();
+        }
         
-        return new NativeDefinedMethod(newId, ReturnType, ReferencedHeaders, NativeName, Namespace, newParameterTypes);
+        return new NativeDefinedMethod(newId, returnType, ReferencedHeaders, NativeName, Namespace, newParameterTypes);
     }
 
     public static IReadOnlyList<NativeDefinedMethod> StandardMethods { get; } =

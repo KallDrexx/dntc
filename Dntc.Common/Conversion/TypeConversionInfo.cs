@@ -48,11 +48,17 @@ public class TypeConversionInfo
     /// The dntc type definition that this conversion info was created from.
     /// </summary>
     public DefinedType OriginalTypeDefinition { get; }
+   
+    /// <summary>
+    /// Designates if this type is a pointer variation of a type or not.
+    /// </summary>
+    public bool IsPointer { get; }
 
-    internal TypeConversionInfo(DefinedType type)
+    internal TypeConversionInfo(DefinedType type, bool isPointer)
     {
         OriginalTypeDefinition = type;
         IlName = type.IlName;
+        IsPointer = isPointer;
         
         switch (type)
         {
@@ -76,7 +82,7 @@ public class TypeConversionInfo
                 throw new NotSupportedException(type.GetType().FullName);
         }
     }
-
+    
     private void SetupDotNetType(DotNetDefinedType type)
     {
         IsPredeclared = false;

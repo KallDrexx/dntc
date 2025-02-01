@@ -31,7 +31,7 @@ public record FieldDeclaration(FieldConversionInfo Field, FieldDeclaration.Field
             }
             else
             {
-                await writer.WriteAsync($"{Field.FieldTypeConversionInfo.NameInC} {Field.NameInC}");
+                await writer.WriteAsync($"{Field.FieldTypeConversionInfo.NativeNameWithPossiblePointer()} {Field.NameInC}");
 
                 if (Field.StaticItemSize != null)
                 {

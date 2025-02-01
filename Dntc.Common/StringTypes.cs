@@ -6,6 +6,23 @@ public readonly record struct IlTypeName(string Value)
     {
         return Value;
     }
+
+    public IlTypeName GetNonPointer()
+    {
+        return IsPointer()
+            ? new IlTypeName(Value.Substring(0, Value.Length - 1))
+            : this;
+    }
+
+    public bool IsPointer()
+    {
+        return Value.EndsWith('*');
+    }
+
+    public IlTypeName AsPointerType()
+    {
+        return IsPointer() ? this : new IlTypeName(Value + '*');
+    }
 }
 
 public readonly record struct IlMethodId(string Value)

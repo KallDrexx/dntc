@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Dntc.Attributes;
+using Dntc.Common.Conversion;
 using Mono.Cecil;
 
 namespace Dntc.Common;
@@ -113,5 +114,12 @@ public static class Utils
         }
 
         return new IlNamespace(type.Namespace);
+    }
+
+    public static string NativeNameWithPossiblePointer(this TypeConversionInfo typeInfo)
+    {
+        return typeInfo.IsPointer
+            ? $"{typeInfo.NameInC}*"
+            : typeInfo.NameInC.Value;
     }
 }

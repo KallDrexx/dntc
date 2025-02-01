@@ -42,9 +42,9 @@ public class ConversionInfoCreator
         _fieldConversionMutators.Add(mutator);
     }
 
-    public TypeConversionInfo Create(DefinedType type)
+    public TypeConversionInfo Create(DefinedType type, bool isPointer)
     {
-        var conversionInfo = new TypeConversionInfo(type);
+        var conversionInfo = new TypeConversionInfo(type, isPointer);
         if (type is DotNetDefinedType dotNetDefinedType)
         {
             foreach (var mutator in _typeConversionMutators)
