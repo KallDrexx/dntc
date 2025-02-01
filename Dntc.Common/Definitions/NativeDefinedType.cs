@@ -52,6 +52,12 @@ public class NativeDefinedType : DefinedType
                 typeof(char),
                 new NativeDefinedType(new IlTypeName(typeof(char).FullName!), null, new CTypeName("char"), [])
             },
+            {
+                // Since C doesn't have any reflection, there's no native variation for this. However, this still
+                // needs a definition for support when `typeof()` is used to fill in the literal name of the type.
+                typeof(Type),
+                new NativeDefinedType(new IlTypeName(typeof(Type).FullName!), null, new CTypeName(""), [])
+            }
         };
 
     private static NativeDefinedType StdIntType(string clrName, string nativeName)

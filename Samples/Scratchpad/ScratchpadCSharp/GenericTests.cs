@@ -51,7 +51,7 @@ public class GenericTests
 
     public static unsafe int* GenericPointerTest()
     {
-        var value = GenericPointerReturnTypeTest<int>(4);
+        var value = GenericPointerReturnTypeTest<int>(SizeOf(typeof(int)));
         *value = 25;
 
         return value;
@@ -65,7 +65,7 @@ public class GenericTests
     }
 
     [NativeFunctionCall("sizeof", null)]
-    private static int SizeOfDeref<T>(ref T obj)
+    private static int SizeOf(Type type)
     {
         return 0;
     }

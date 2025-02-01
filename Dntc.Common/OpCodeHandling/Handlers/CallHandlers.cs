@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -9,6 +8,17 @@ namespace Dntc.Common.OpCodeHandling.Handlers;
 
 public class CallHandlers : IOpCodeHandlerCollection
 {
+    /// <summary>
+    /// Methods that should not be executed and be bypassed.
+    /// </summary>
+    private static readonly HashSet<IlMethodId> IgnoredMethods =
+        [
+            // GetTypeFromHandle comes from a `typeof()` expression and usually follows a
+            // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
+            // type, we don't need this intermediary step.
+            new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
+        ];
+
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
         { Code.Call, new CallHandler() },
@@ -34,7 +44,10 @@ public class CallHandlers : IOpCodeHandlerCollection
                 return new GenericInvokedMethod(methodId, originalMethodId, arguments);
                 
             case MethodReference reference:
-                return new InvokedMethod(new IlMethodId(reference.FullName));
+                var referenceMethodId = new IlMethodId(reference.FullName);
+                return IgnoredMethods.Contains(referenceMethodId)
+                    ? null
+                    : new InvokedMethod(referenceMethodId);
             
             default:
                 return null;
@@ -95,6 +108,12 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodId = methodReference is GenericInstanceMethod generic && generic.HasGenericArguments
                 ? Utils.NormalizeGenericMethodId(generic.FullName, generic.ElementMethod.GenericParameters)
                 : new IlMethodId(methodReference.FullName);
+
+            if (IgnoredMethods.Contains(methodId))
+            {
+                return new OpCodeHandlingResult(null);
+            }
+
             return CallMethodReference(context, methodId, new IlTypeName(methodReference.ReturnType.FullName));
         }
 
@@ -112,8 +131,8 @@ public class CallHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var callSite = (CallSite)context.CurrentInstruction.Operand;
-            
-            // Top of the stack contains the function name to call, followed by the arguments in 
+
+            // Top of the stack contains the function name to call, followed by the arguments in
             // reverse calling order
             var allItems = context.ExpressionStack.Pop(callSite.Parameters.Count + 1);
             var fnPointerExpression = allItems[0];

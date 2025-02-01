@@ -15,11 +15,12 @@ public class MiscHandlers : IOpCodeHandlerCollection
         { Code.Dup, new DupHandler() },
         { Code.Pop, new PopHandler() },
         { Code.Ret, new RetHandler() },
-       
+        { Code.Ldtoken, new LdTokenHandler() },
+
         // Constrained op code can be handled by a look behind with callvirt
         { Code.Constrained, new NopHandler()},
     };
-    
+
     private class InitObjHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(
@@ -115,6 +116,48 @@ public class MiscHandlers : IOpCodeHandlerCollection
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             return new OpCodeAnalysisResult();
+        }
+    }
+
+    private class LdTokenHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            switch (context.CurrentInstruction.Operand)
+            {
+                case TypeReference typeReference:
+                {
+                    var tokenInfo = context.ConversionCatalog.Find(new IlTypeName(typeReference.FullName));
+                    var returnTypeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(Type).FullName!));
+                    var expression = new LiteralValueExpression(tokenInfo.NameInC.Value, returnTypeInfo);
+                    context.ExpressionStack.Push(expression);
+                    break;
+                }
+
+                default:
+                    throw new NotSupportedException(context.CurrentInstruction.Operand.GetType().FullName);
+            }
+
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            var types = new HashSet<IlTypeName>();
+            switch (context.CurrentInstruction.Operand)
+            {
+                case TypeReference typeReference:
+                    types.Add(new IlTypeName(typeReference.FullName));
+                    break;
+
+                default:
+                    throw new NotSupportedException(context.CurrentInstruction.Operand.GetType().FullName);
+            }
+
+            return new OpCodeAnalysisResult
+            {
+                ReferencedTypes = types,
+            };
         }
     }
 }
