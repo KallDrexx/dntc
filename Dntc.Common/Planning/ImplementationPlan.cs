@@ -227,7 +227,7 @@ public class ImplementationPlan
 
             AddReferencedHeaders(node, header);
 
-            var typeDefinition = _definitionCatalog.Get(node.TypeName);
+            var typeDefinition = _definitionCatalog.Get(node.TypeName.GetNonPointerOrRef());
             foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
             {
                 header.AddReferencedHeader(referencedHeader);

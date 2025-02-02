@@ -51,7 +51,10 @@ public class PlannedHeaderFile
 
     public void AddDeclaredType(TypeConversionInfo type)
     {
-        if (!_declaredTypes.Contains(type))
+        // We might have two instances of `TypeConversionInfo` if one was created from a
+        // pointer or reference parameter/return type instead of a stand-alone object. Therefore,
+        // we need to compare the il names instead of relying on `.Contains()`.
+        if (_declaredTypes.All(x => x.IlName != type.IlName))
         {
             _declaredTypes.Add(type);
         }

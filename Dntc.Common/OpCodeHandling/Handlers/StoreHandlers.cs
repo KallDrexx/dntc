@@ -122,8 +122,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var address = items[1];
 
             var left = new DereferencedValueExpression(address);
-            var right = new DereferencedValueExpression(value);
-            var statement = new AssignmentStatementSet(left, right);
+            var statement = new AssignmentStatementSet(left, value);
 
             return new OpCodeHandlingResult(statement);
         }
@@ -143,8 +142,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var address = items[1];
 
             var left = new DereferencedValueExpression(address);
-            var right = new DereferencedValueExpression(objectValue);
-            var statement = new AssignmentStatementSet(left, right);
+            var statement = new AssignmentStatementSet(left, objectValue);
 
             return new OpCodeHandlingResult(statement);
         }
@@ -180,9 +178,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var storedVariableExpression = new VariableValueExpression(
                 new Variable(argument.ConversionInfo, argument.Name, argument.IsReference));
 
-            var left = new DereferencedValueExpression(storedVariableExpression);
-            var right = new DereferencedValueExpression(value);
-            var statement = new AssignmentStatementSet(left, right);
+            var statement = new AssignmentStatementSet(storedVariableExpression, value);
 
             var tempVariable = HandleReferencedVariable(
                 context.ExpressionStack,

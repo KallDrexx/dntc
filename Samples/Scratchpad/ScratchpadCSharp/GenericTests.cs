@@ -57,6 +57,14 @@ public class GenericTests
         return value;
     }
 
+    public static unsafe void PointerAssignmentTest(int* input)
+    {
+        // This is a weird test, but it verifies 2 bug fixes:
+        // 1. Assignments to pointer types are not dereferenced
+        // 2. Pointer parameters were being transpiled as non-pointers
+        input = GenericPointerReturnTypeTest<int>(SizeOf(typeof(int)));
+    }
+
     public static int RefArgTest(int value)
     {
         var test = 0;

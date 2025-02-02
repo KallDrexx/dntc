@@ -164,7 +164,7 @@ public class DotNetDefinedMethod : DefinedMethod
         }
 
         return new Parameter(
-            new IlTypeName(definition.ParameterType.GetElementType().FullName),
+            new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
             definition.ParameterType.IsByReference);
     }
