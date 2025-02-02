@@ -30,7 +30,7 @@ public class ConversionCatalog
             return;
         }
         
-        AddNode(new DependencyGraph.TypeNode(typeName));
+        AddNode(new DependencyGraph.TypeNode(typeName, false));
     }
 
     public TypeConversionInfo Find(IlTypeName name)

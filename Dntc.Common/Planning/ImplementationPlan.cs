@@ -154,36 +154,43 @@ public class ImplementationPlan
 
     private void ProcessNode(DependencyGraph.Node node)
     {
+        var typeNode = node as DependencyGraph.TypeNode;
+        var methodNode = node as DependencyGraph.MethodNode;
+        var fieldNode = node as DependencyGraph.FieldNode;
+
+        if (typeNode != null && typeNode.IsPredeclared)
+        {
+            // Predeclared types should not have them or their children declared
+            return;
+        }
+
         foreach (var child in node.Children)
         {
             ProcessNode(child);
         }
 
-        switch (node)
+        if (typeNode != null)
         {
-            case DependencyGraph.TypeNode typeNode:
-                DeclareType(typeNode);
-                break;
+            DeclareType(typeNode);
+        }
+        else if (methodNode != null)
+        {
+            DeclareMethod(methodNode);
+            AddMethodImplementation(methodNode);
 
-            case DependencyGraph.MethodNode methodNode:
-                DeclareMethod(methodNode);
-                AddMethodImplementation(methodNode);
-
-                if (methodNode.IsStaticConstructor)
-                {
-                    AddStaticConstructorInitializer();
-                }
-
-                break;
-
-            case DependencyGraph.FieldNode fieldNode:
-                AddFieldDeclaration(fieldNode);
-                AddFieldImplementation(fieldNode);
-
-                break;
-
-            default:
-                throw new NotSupportedException(node.GetType().FullName);
+            if (methodNode.IsStaticConstructor)
+            {
+                AddStaticConstructorInitializer();
+            }
+        }
+        else if (fieldNode != null)
+        {
+            AddFieldDeclaration(fieldNode);
+            AddFieldImplementation(fieldNode);
+        }
+        else
+        {
+            throw new NotSupportedException(node.GetType().FullName);
         }
     }
 

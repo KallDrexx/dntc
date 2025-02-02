@@ -11,7 +11,7 @@ public class DependencyGraph
         public List<Node> Children { get; } = [];
     }
 
-    public record TypeNode(IlTypeName TypeName) : Node;
+    public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node;
 
     public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor) : Node;
 
@@ -182,7 +182,7 @@ public class DependencyGraph
             }
         }
 
-        var node = new TypeNode(typeName);
+        var node = new TypeNode(typeName, type is NativeDefinedType);
         path.Add(node);
 
         foreach (var field in type.InstanceFields)
