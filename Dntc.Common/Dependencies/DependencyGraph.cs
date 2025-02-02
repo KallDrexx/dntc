@@ -6,16 +6,16 @@ namespace Dntc.Common.Dependencies;
 
 public class DependencyGraph
 {
-    public abstract record Node
+    public abstract record Node(bool IsPredeclared)
     {
         public List<Node> Children { get; } = [];
     }
 
-    public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node;
+    public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node(IsPredeclared);
 
-    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor) : Node;
+    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared) : Node(IsPredeclared);
 
-    public record FieldNode(IlFieldId FieldId, bool IsGlobal) : Node;
+    public record FieldNode(IlFieldId FieldId, bool IsGlobal, bool IsPredeclared) : Node(IsPredeclared);
     
     public Node Root { get; private set; }
 
@@ -101,7 +101,8 @@ public class DependencyGraph
         }
 
         var isStaticConstructor = method is DotNetDefinedMethod { Definition: { IsConstructor: true, IsStatic: true } };
-        var node = new MethodNode(methodId, isStaticConstructor);
+        var isPredeclared = method is NativeDefinedMethod;
+        var node = new MethodNode(methodId, isStaticConstructor, isPredeclared);
         path.Add(node);
 
         foreach (var type in method.GetReferencedTypes)
@@ -221,7 +222,7 @@ public class DependencyGraph
             throw new InvalidOperationException(message);
         }
 
-        var node = new FieldNode(fieldId, field.IsGlobal);
+        var node = new FieldNode(fieldId, field.IsGlobal, field is NativeDefinedField);
         path.Add(node);
 
         var typeNode = CreateNode(definitionCatalog, field.IlType, path);

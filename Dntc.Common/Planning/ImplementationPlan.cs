@@ -32,6 +32,11 @@ public class ImplementationPlan
 
     private void AddReferencedHeaders(DependencyGraph.Node node, PlannedHeaderFile headerFile)
     {
+        if (node.IsPredeclared)
+        {
+            return;
+        }
+
         foreach (var child in node.Children)
         {
             switch (child)
@@ -91,6 +96,11 @@ public class ImplementationPlan
 
     private void AddReferencedHeaders(DependencyGraph.Node node, PlannedSourceFile sourceFile)
     {
+        if (node.IsPredeclared)
+        {
+            return;
+        }
+
         foreach (var child in node.Children)
         {
             switch (child)
@@ -154,13 +164,9 @@ public class ImplementationPlan
 
     private void ProcessNode(DependencyGraph.Node node)
     {
-        var typeNode = node as DependencyGraph.TypeNode;
-        var methodNode = node as DependencyGraph.MethodNode;
-        var fieldNode = node as DependencyGraph.FieldNode;
-
-        if (typeNode != null && typeNode.IsPredeclared)
+        if (node.IsPredeclared)
         {
-            // Predeclared types should not have them or their children declared
+            // Predeclared nodes should not have them or their children declared
             return;
         }
 
@@ -169,11 +175,11 @@ public class ImplementationPlan
             ProcessNode(child);
         }
 
-        if (typeNode != null)
+        if (node is DependencyGraph.TypeNode typeNode)
         {
             DeclareType(typeNode);
         }
-        else if (methodNode != null)
+        else if (node is DependencyGraph.MethodNode methodNode)
         {
             DeclareMethod(methodNode);
             AddMethodImplementation(methodNode);
@@ -183,7 +189,7 @@ public class ImplementationPlan
                 AddStaticConstructorInitializer();
             }
         }
-        else if (fieldNode != null)
+        else if (node is DependencyGraph.FieldNode fieldNode)
         {
             AddFieldDeclaration(fieldNode);
             AddFieldImplementation(fieldNode);
@@ -312,7 +318,7 @@ public class ImplementationPlan
         }
 
         _staticConstructorInitializerAdded = true;
-        var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false);
+        var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false, false);
         ProcessNode(node);
     }
 
