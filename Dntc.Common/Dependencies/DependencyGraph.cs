@@ -174,7 +174,7 @@ public class DependencyGraph
         if (type == null)
         {
             // If this is a pointer variation of a type we already know about, use that as the definition
-            type = definitionCatalog.Get(typeName.GetNonPointer());
+            type = definitionCatalog.Get(typeName.GetNonPointerOrRef());
             if (type == null)
             {
                 var message = $"No type in the catalog with the name '{typeName.Value}'";

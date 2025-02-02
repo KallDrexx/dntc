@@ -91,7 +91,7 @@ public class ConversionCatalog
     {
         if (!_types.ContainsKey(node.TypeName))
         {
-            var definition = _definitionCatalog.Get(node.TypeName.GetNonPointer());
+            var definition = _definitionCatalog.Get(node.TypeName.GetNonPointerOrRef());
             if (definition == null)
             {
                 var message = $"Dependency graph contained node for type '{node.TypeName.Value}' but no " +

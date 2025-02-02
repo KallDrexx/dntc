@@ -46,7 +46,7 @@ public class NativeDefinedMethod : DefinedMethod
             for (var x = 0; x < _definition.GenericParameters.Count; x++)
             {
                 var generic = _definition.GenericParameters[x];
-                if (generic.FullName == parameterType.Value)
+                if (generic.FullName == parameterType.GetNonPointerOrRef().Value)
                 {
                     genericIndex = x;
                     break;
@@ -56,7 +56,7 @@ public class NativeDefinedMethod : DefinedMethod
             newParameterTypes.Add(genericIndex != null ? genericArguments[genericIndex.Value] : parameterType);
         }
 
-        var returnType = ReturnType.GetNonPointer();
+        var returnType = ReturnType.GetNonPointerOrRef();
         for (var x = 0; x < _definition.GenericParameters.Count; x++)
         {
             if (_definition.GenericParameters[x].FullName == returnType.Value)

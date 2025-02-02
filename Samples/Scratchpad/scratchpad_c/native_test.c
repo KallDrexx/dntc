@@ -11,3 +11,7 @@ uint32_t get_number() {
 void* generic_pointer_return_type_test(const size_t size) {
     return calloc(1, size);
 }
+
+void generic_ref_test(int32_t* data, int32_t value) {
+    *data = value;
+}

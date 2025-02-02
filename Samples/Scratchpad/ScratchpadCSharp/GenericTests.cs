@@ -57,10 +57,17 @@ public class GenericTests
         return value;
     }
 
+    public static int RefArgTest(int value)
+    {
+        var test = 0;
+        RefGenericTest(ref test, value);
+
+        return test;
+    }
+
     [NativeFunctionCall("generic_pointer_return_type_test", "../native_test.h")]
     private static unsafe TItem* GenericPointerReturnTypeTest<TItem>(int size) where TItem : unmanaged
     {
-        // TODO: Support sizeof function
         return (TItem*) Marshal.AllocHGlobal(size);
     }
 
@@ -68,5 +75,11 @@ public class GenericTests
     private static int SizeOf(Type type)
     {
         return 0;
+    }
+
+    [NativeFunctionCall("generic_ref_test", "../native_test.h")]
+    private static void RefGenericTest<TData>(ref TData data, TData value)
+    {
+        data = value;
     }
 }

@@ -7,9 +7,9 @@ public readonly record struct IlTypeName(string Value)
         return Value;
     }
 
-    public IlTypeName GetNonPointer()
+    public IlTypeName GetNonPointerOrRef()
     {
-        return IsPointer()
+        return IsPointer() || IsReference()
             ? new IlTypeName(Value.Substring(0, Value.Length - 1))
             : this;
     }
@@ -17,6 +17,11 @@ public readonly record struct IlTypeName(string Value)
     public bool IsPointer()
     {
         return Value.EndsWith('*');
+    }
+
+    public bool IsReference()
+    {
+        return Value.EndsWith('&');
     }
 
     public IlTypeName AsPointerType()

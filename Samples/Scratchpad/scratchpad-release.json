@@ -53,7 +53,8 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetFirstNumber(ScratchpadCSharp.AttributeTests/StaticallySizedTest)",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomDeclaredField(ScratchpadCSharp.AttributeTests/CustomDeclaredFieldStruct)",
-    "System.Int32* ScratchpadCSharp.GenericTests::GenericPointerTest()"
+    "System.Int32* ScratchpadCSharp.GenericTests::GenericPointerTest()",
+    "System.Int32 ScratchpadCSharp.GenericTests::RefArgTest(System.Int32)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

@@ -392,3 +392,10 @@ int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void) {
 	return __temp_000f;
 }
 
+int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value) {
+	int32_t __local_0 = {0};
+	__local_0 = 0;
+	generic_ref_test((&__local_0), value);
+	return __local_0;
+}
+
