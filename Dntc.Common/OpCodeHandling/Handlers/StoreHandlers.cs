@@ -97,11 +97,17 @@ public class StoreHandlers : IOpCodeHandlerCollection
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             var field = (FieldDefinition)context.CurrentInstruction.Operand;
-            var declaringType = new IlTypeName(field.DeclaringType.FullName);
+
+            // We only need to return the declaring type if the field isn't static. If the
+            // field is static than we don't actually need to reference the declaring type
+            // in code.
+            var declaringTypes = field.IsStatic
+                ? Array.Empty<IlTypeName>()
+                : [new IlTypeName(field.DeclaringType.FullName)];
 
             return new OpCodeAnalysisResult
             {
-                ReferencedTypes = new HashSet<IlTypeName>([declaringType]),
+                ReferencedTypes = new HashSet<IlTypeName>(declaringTypes),
                 ReferencedGlobal = field.IsStatic ? field : null,
             };
         }

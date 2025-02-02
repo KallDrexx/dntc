@@ -40,14 +40,6 @@ typedef struct {
 } ScratchpadCSharp_GenericTests_StaticNumberGetter;
 
 typedef struct {
-	char __dummy; // Placeholder for empty type
-} ScratchpadCSharp_SimpleFunctions;
-
-typedef struct {
-	char __dummy; // Placeholder for empty type
-} ScratchpadCSharp_AttributeTests;
-
-typedef struct {
 	int32_t some_value;
 } ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
 
