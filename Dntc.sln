@@ -5,6 +5,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dntc.Common", "Dntc.Common\Dntc.Common.csproj", "{1BD08044-8624-44FF-857A-7B2B2C668BC1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C9F60E92-3C28-497D-B688-BDA03B48EC11}"
+	ProjectSection(SolutionItems) = preProject
+		Samples\build_all.sh = Samples\build_all.sh
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Octahedron", "Octahedron", "{CA66C664-57B2-40BD-983E-86B883FF3B10}"
 EndProject
