@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Dntc.Attributes;
+﻿using Dntc.Attributes;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
 
@@ -83,7 +82,7 @@ public class DotNetDefinedMethod : DefinedMethod
             ? definition.Body
                 .Variables
                 .OrderBy(x => x.Index)
-                .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference))
+                .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference || x.VariableType.IsPointer))
                 .ToArray()
             : [];
 
@@ -166,7 +165,7 @@ public class DotNetDefinedMethod : DefinedMethod
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            definition.ParameterType.IsByReference);
+            definition.ParameterType.IsByReference || definition.ParameterType.IsPointer);
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>
