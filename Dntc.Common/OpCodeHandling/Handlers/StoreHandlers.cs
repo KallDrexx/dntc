@@ -230,11 +230,35 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var localVariable = new VariableValueExpression(
                 new Variable(local.ConversionInfo, Utils.LocalName(localIndex), local.IsReference));
 
-            var left = new DereferencedValueExpression(localVariable);
-            var right = new DereferencedValueExpression(items[0]);
+            CBaseExpression left, right;
+            if (items[0].ProducesAPointer && localVariable.ProducesAPointer)
+            {
+                // Both are pointers and thus assignment is compatible as is
+                left = localVariable;
+                right = items[0];
+            }
+            else if (localVariable.ProducesAPointer && !items[0].ProducesAPointer)
+            {
+                // local is a pointer, so we need to dereference it to store the right hand value
+                left = new DereferencedValueExpression(localVariable);
+                right = items[0];
+            }
+            else if (!localVariable.ProducesAPointer && items[0].ProducesAPointer)
+            {
+                // Set the local's value to the dereferenced value of the assigment's expression
+                left = localVariable;
+                right = new DereferencedValueExpression(items[0]);
+            }
+            else
+            {
+                // Both are non-pointers
+                left = localVariable;
+                right = items[0];
+            }
 
             var tempStatement = HandleReferencedVariable(context.ExpressionStack, localVariable,
                 context.CurrentInstruction.Offset);
+
             var statement = new AssignmentStatementSet(left, right);
 
             CStatementSet result = tempStatement != null

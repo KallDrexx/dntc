@@ -308,11 +308,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 new Variable(
                     local.ConversionInfo,
                     Utils.LocalName(localIndex),
-                    local.IsReference));
+                    local.IsReference || local.ConversionInfo.IlName.IsPointer()));
 
             CBaseExpression newExpression = getAddress
                 ? new AddressOfValueExpression(expression)
-                : new DereferencedValueExpression(expression);
+                : expression;
 
             context.ExpressionStack.Push(newExpression);
 

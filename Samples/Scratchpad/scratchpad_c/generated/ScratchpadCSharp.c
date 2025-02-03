@@ -399,10 +399,19 @@ int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value) {
 	return __local_0;
 }
 
-void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* input) {
+void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* *input) {
+	int32_t* __local_0 = {0};
+	int32_t* __local_1 = {0};
 	int32_t* __temp_000f = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(int32_t));
 	input = __temp_000f;
+	int32_t* __temp_0025 = {0};
+	__temp_0025 = generic_pointer_return_type_test(sizeof(int32_t));
+	__local_0 = __temp_0025;
+	int32_t* __temp_003a = {0};
+	__temp_003a = generic_pointer_return_type_test(sizeof(int32_t));
+	__local_1 = __temp_003a;
+	(*input) = ((*__local_0) + (*__local_1));
 	return;
 }
 
