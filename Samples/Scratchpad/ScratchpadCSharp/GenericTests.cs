@@ -63,6 +63,11 @@ public class GenericTests
         // 1. Assignments to pointer types are not dereferenced
         // 2. Pointer parameters were being transpiled as non-pointers
         input = GenericPointerReturnTypeTest<int>(SizeOf(typeof(int)));
+
+        var first = GenericPointerReturnTypeTest<int>(SizeOf(typeof(int)));
+        var second = GenericPointerReturnTypeTest<int>(SizeOf(typeof(int)));
+
+        *input = *first + *second;
     }
 
     public static int RefArgTest(int value)
