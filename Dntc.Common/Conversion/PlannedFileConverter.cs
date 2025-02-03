@@ -20,7 +20,7 @@ public class PlannedFileConverter
     {
         _conversionCatalog = conversionCatalog;
         _definitionCatalog = definitionCatalog;
-        _debugLogging = true; // debugLogging;
+        _debugLogging = debugLogging;
     }
 
     public HeaderFile Convert(PlannedHeaderFile plannedHeaderFile)

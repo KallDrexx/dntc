@@ -66,7 +66,7 @@ public class MethodConversionInfo
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
         MethodId = method.Id;
-        ReturnTypeInfo = conversionCatalog.Find(method.ReturnType.GetNonPointerOrRef());
+        ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
             .Select(x => new Parameter(conversionCatalog.Find(x.Type.GetNonPointerOrRef()), x.Name, x.IsReference))
             .ToArray();
