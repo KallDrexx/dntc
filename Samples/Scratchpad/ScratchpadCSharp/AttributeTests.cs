@@ -97,7 +97,13 @@ public static class AttributeTests
         return obj.Value;
     }
 
-    public static int GetNativeTypeValueRef(ref NativeTestType obj)
+    [NativeType("struct NativeType", "../native_test.h")]
+    public struct RefNativeTestType
+    {
+        public int Value;
+    }
+
+    public static int GetNativeTypeValueRef(ref RefNativeTestType obj)
     {
         return obj.Value;
     }

@@ -68,11 +68,11 @@ public class MethodConversionInfo
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
-            .Select(x => new Parameter(conversionCatalog.Find(x.Type.GetNonPointerOrRef()), x.Name, x.IsReference))
+            .Select(x => new Parameter(conversionCatalog.Find(x.Type), x.Name, x.IsReference))
             .ToArray();
 
         Locals = method.Locals
-            .Select(x => new Local(conversionCatalog.Find(x.Type.GetNonPointerOrRef()), x.IsReference))
+            .Select(x => new Local(conversionCatalog.Find(x.Type), x.IsReference))
             .ToArray();
         
         switch (method)

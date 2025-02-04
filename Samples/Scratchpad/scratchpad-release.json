@@ -45,7 +45,7 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNonHeaderStructValue()",
     "System.Int32 ScratchpadCSharp.AttributeTests::InlineTest()",
     "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValue(ScratchpadCSharp.AttributeTests/NativeTestType)",
-    "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValueRef(ScratchpadCSharp.AttributeTests/NativeTestType&)",
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetNativeTypeValueRef(ScratchpadCSharp.AttributeTests/RefNativeTestType&)",
     "System.Void ScratchpadCSharp.AttributeTests::TestNativeGeneric()",
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()",
     "System.Int32 ScratchpadCSharp.GenericTests::GetGenericNumberFromDep(System.Int32)",
