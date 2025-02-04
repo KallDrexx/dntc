@@ -34,7 +34,7 @@ public class HeapArrayDefinedType : ArrayDefinedType
 
         var content = $@"
 typedef struct {{
-    size_t length;
+    int32_t length;
     {elementInfo.NameInC} *items;
 }} {NativeName};";
 

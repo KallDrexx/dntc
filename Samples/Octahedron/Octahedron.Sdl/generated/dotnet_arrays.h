@@ -7,7 +7,7 @@
 
 
 typedef struct {
-    size_t length;
+    int32_t length;
     uint16_t *items;
 } SystemUInt16Array;
 

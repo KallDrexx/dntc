@@ -495,7 +495,7 @@ IL_00e3:
 
 IL_0114:
 	if ((pixels.length) <= __local_17) {
-		printf("Attempted to access to pixels[%d], but only %zu items are in the array", __local_17, (pixels.length));
+		printf("Attempted to access to pixels[%d], but only %u items are in the array", __local_17, (pixels.length));
 		abort();
 	}
 	(pixels.items)[__local_17] = color;
