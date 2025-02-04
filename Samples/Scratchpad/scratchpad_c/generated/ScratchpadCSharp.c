@@ -415,3 +415,9 @@ void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* *input) {
 	return;
 }
 
+bool ScratchpadCSharp_GenericTests_PointerNullCheck(void) {
+	ScratchpadCSharp_GenericTests_SimpleStruct* __temp_000f = {0};
+	__temp_000f = generic_pointer_return_type_test(sizeof(ScratchpadCSharp_GenericTests_SimpleStruct));
+	return (__temp_000f == ((uint32_t)0));
+}
+

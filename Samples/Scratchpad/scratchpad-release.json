@@ -55,7 +55,8 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomDeclaredField(ScratchpadCSharp.AttributeTests/CustomDeclaredFieldStruct)",
     "System.Int32* ScratchpadCSharp.GenericTests::GenericPointerTest()",
     "System.Int32 ScratchpadCSharp.GenericTests::RefArgTest(System.Int32)",
-    "System.Void ScratchpadCSharp.GenericTests::PointerAssignmentTest(System.Int32*)"
+    "System.Void ScratchpadCSharp.GenericTests::PointerAssignmentTest(System.Int32*)",
+    "System.Boolean ScratchpadCSharp.GenericTests::PointerNullCheck()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

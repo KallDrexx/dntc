@@ -51,6 +51,10 @@ typedef struct {
 	INT_FIELD(field);
 } ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct;
 
+typedef struct {
+	int32_t Value;
+} ScratchpadCSharp_GenericTests_SimpleStruct;
+
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
@@ -115,5 +119,6 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_
 int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void);
 int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value);
 void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* *input);
+bool ScratchpadCSharp_GenericTests_PointerNullCheck(void);
 
 #endif // SCRATCHPADCSHARP_H_H

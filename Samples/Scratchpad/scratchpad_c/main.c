@@ -139,6 +139,9 @@ int main(void) {
     int32_t* newInt = ScratchpadCSharp_GenericTests_GenericPointerTest();
     assert(*newInt == 25);
 
+    bool pointerCheckResult = ScratchpadCSharp_GenericTests_PointerNullCheck();
+    assert(pointerCheckResult == false);
+
     printf("Tests passed!\n");
     return 0;
 }

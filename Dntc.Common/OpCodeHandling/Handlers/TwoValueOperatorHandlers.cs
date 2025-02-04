@@ -37,8 +37,8 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
             HandleContext context)
         {
             var items = context.ExpressionStack.Pop(2);
-            var right = new DereferencedValueExpression(items[0]);
-            var left = new DereferencedValueExpression(items[1]);
+            var right = items[0];
+            var left = items[1];
 
             var resultingType = BoolOperators.Contains(@operator)
                 ? context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!))
