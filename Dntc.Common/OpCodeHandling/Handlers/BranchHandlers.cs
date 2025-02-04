@@ -105,8 +105,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var items = context.ExpressionStack.Pop(2);
-            var value2 = new DereferencedValueExpression(items[0]);
-            var value1 = new DereferencedValueExpression(items[1]);
+            var value2 = items[0];
+            var value1 = items[1];
             var target = (Instruction)context.CurrentInstruction.Operand;
             var boolType = context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
             var condition = new TwoExpressionEvalExpression(value1, comparison, value2, boolType);

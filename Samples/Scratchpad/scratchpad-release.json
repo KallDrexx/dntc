@@ -56,7 +56,8 @@
     "System.Int32* ScratchpadCSharp.GenericTests::GenericPointerTest()",
     "System.Int32 ScratchpadCSharp.GenericTests::RefArgTest(System.Int32)",
     "System.Void ScratchpadCSharp.GenericTests::PointerAssignmentTest(System.Int32*)",
-    "System.Boolean ScratchpadCSharp.GenericTests::PointerNullCheck()"
+    "System.Boolean ScratchpadCSharp.GenericTests::PointerNullCheck()",
+    "System.Int32 ScratchpadCSharp.GenericTests::PointerNullCheck2()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

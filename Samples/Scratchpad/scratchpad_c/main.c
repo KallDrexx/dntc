@@ -142,6 +142,9 @@ int main(void) {
     bool pointerCheckResult = ScratchpadCSharp_GenericTests_PointerNullCheck();
     assert(pointerCheckResult == false);
 
+    int32_t pointerCheck2 = ScratchpadCSharp_GenericTests_PointerNullCheck2();
+    assert(pointerCheck2 == 2);
+
     printf("Tests passed!\n");
     return 0;
 }

@@ -421,3 +421,15 @@ bool ScratchpadCSharp_GenericTests_PointerNullCheck(void) {
 	return (__temp_000f == ((uint32_t)0));
 }
 
+int32_t ScratchpadCSharp_GenericTests_PointerNullCheck2(void) {
+	ScratchpadCSharp_GenericTests_SimpleStruct* __temp_000f = {0};
+	__temp_000f = generic_pointer_return_type_test(sizeof(ScratchpadCSharp_GenericTests_SimpleStruct));
+	if ((__temp_000f == ((uint32_t)0))) {
+		goto IL_001a;
+	}
+	return 2;
+
+IL_001a:
+	return 1;
+}
+

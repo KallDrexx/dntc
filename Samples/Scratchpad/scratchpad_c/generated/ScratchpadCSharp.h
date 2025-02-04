@@ -120,5 +120,6 @@ int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void);
 int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value);
 void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* *input);
 bool ScratchpadCSharp_GenericTests_PointerNullCheck(void);
+int32_t ScratchpadCSharp_GenericTests_PointerNullCheck2(void);
 
 #endif // SCRATCHPADCSHARP_H_H

@@ -90,6 +90,12 @@ public class GenericTests
         return pointer == null;
     }
 
+    public static unsafe int PointerNullCheck2()
+    {
+        var pointer = GenericPointerReturnTypeTest<SimpleStruct>(SizeOf(typeof(SimpleStruct)));
+        return pointer == null ? 1 : 2;
+    }
+
     [NativeFunctionCall("generic_pointer_return_type_test", "../native_test.h")]
     private static unsafe TItem* GenericPointerReturnTypeTest<TItem>(int size) where TItem : unmanaged
     {
