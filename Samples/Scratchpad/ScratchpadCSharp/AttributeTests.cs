@@ -156,6 +156,7 @@ public static class AttributeTests
 
     public static int GetFirstNumber(StaticallySizedTest value)
     {
+        value.NumberArray[1] = 25;
         return value.NumberArray[0];
     }
 

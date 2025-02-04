@@ -54,9 +54,9 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             
             var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
-            
+
             var itemType = value.ResultingType;
-            var itemsExpression = new FieldAccessExpression(array, new Variable(itemType, "items", false));
+            var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemType);
             
             var valueExpression = new DereferencedValueExpression(value);

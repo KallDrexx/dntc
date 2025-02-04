@@ -374,6 +374,11 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSha
 }
 
 int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_AttributeTests_StaticallySizedTest value) {
+	if (10 <= 1) {
+		printf("Attempted to access to (value.NumberArray)[%d], but only %zu items are in the array", 1, 10);
+		abort();
+	}
+	(value.NumberArray)[1] = 25;
 	if (10 <= 0) {
 		printf("Attempted to access to (value.NumberArray)[%d], but only %zu items are in the array", 0, 10);
 		abort();
