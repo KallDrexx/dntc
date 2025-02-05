@@ -1,10 +1,8 @@
 using Dntc.Attributes;
-using Dntc.Common.Conversion;
-using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions.CustomDefinedTypes;
 using Mono.Cecil;
 
-namespace Dntc.Common.Definitions.Definers;
+namespace Dntc.Common.Conversion.Mutators;
 
 public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
 {
