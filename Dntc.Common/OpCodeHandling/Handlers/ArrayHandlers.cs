@@ -60,11 +60,11 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemType);
             
             var valueExpression = new DereferencedValueExpression(value);
-            
-            var lengthCheck = new ArrayLengthCheckStatementSet(lengthField, array, indexExpression);
-            var storeStatement = new ArrayStoreStatementSet(lengthCheck, arrayIndex, valueExpression);
 
-            return new OpCodeHandlingResult(storeStatement);
+            var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
+            var storeStatement = new ArrayStoreStatementSet(arrayIndex, valueExpression);
+
+            return new OpCodeHandlingResult(new CompoundStatementSet([lengthCheck, storeStatement]));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
@@ -112,7 +112,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
             var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
-            var lengthCheck = new ArrayLengthCheckStatementSet(lengthField, array, indexExpression);
+            var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, array.ResultingType);
             

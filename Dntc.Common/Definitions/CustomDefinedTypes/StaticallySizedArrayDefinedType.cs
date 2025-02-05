@@ -54,4 +54,12 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
         // The array index can go against the array itself
         return expressionToArray;
     }
+
+    public override CStatementSet GetLengthCheckExpression(
+        CBaseExpression arrayLengthField,
+        CBaseExpression arrayInstance,
+        DereferencedValueExpression index)
+    {
+        return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
+    }
 }

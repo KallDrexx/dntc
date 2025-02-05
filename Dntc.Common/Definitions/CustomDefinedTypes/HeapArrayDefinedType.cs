@@ -67,4 +67,12 @@ typedef struct {{
         var items = new Variable(elementType, "items", false);
         return new FieldAccessExpression(expressionToArray, items);
     }
+
+    public override CStatementSet GetLengthCheckExpression(
+        CBaseExpression arrayLengthField,
+        CBaseExpression arrayInstance,
+        DereferencedValueExpression index)
+    {
+        return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
+    }
 }
