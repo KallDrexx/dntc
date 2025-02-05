@@ -47,7 +47,7 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
                 var paramType = Catalog.Find(param.Type);
 
                 var pointerSymbol = param.IsReference ? "*" : "";
-                await writer.WriteAsync($"{paramType.NativeNameWithPossiblePointer()} {pointerSymbol}{param.Name}");
+                await writer.WriteAsync($"{paramType.NameInC} {pointerSymbol}{param.Name}");
             }
 
             await writer.WriteAsync(")");

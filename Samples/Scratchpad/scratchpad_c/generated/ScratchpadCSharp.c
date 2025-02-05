@@ -404,7 +404,7 @@ int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value) {
 	return __local_0;
 }
 
-void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t* *input) {
+void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t *input) {
 	int32_t* __local_0 = {0};
 	int32_t* __local_1 = {0};
 	int32_t* __temp_000f = {0};
