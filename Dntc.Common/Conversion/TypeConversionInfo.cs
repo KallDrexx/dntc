@@ -54,7 +54,7 @@ public class TypeConversionInfo
     /// </summary>
     public bool IsPointer { get; }
 
-    internal TypeConversionInfo(DefinedType type, bool isPointer)
+    public TypeConversionInfo(DefinedType type, bool isPointer)
     {
         OriginalTypeDefinition = type;
         IlName = type.IlName;
