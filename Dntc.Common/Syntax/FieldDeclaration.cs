@@ -47,7 +47,7 @@ public record FieldDeclaration(FieldConversionInfo Field, FieldDeclaration.Field
                 await writer.WriteAsync($" {Field.AttributeText}");
             }
 
-            if (!Flags.HasFlag(FieldFlags.IgnoreValueInitialization))
+            if (!Field.HasNoInitialValue && !Flags.HasFlag(FieldFlags.IgnoreValueInitialization))
             {
                 await writer.WriteAsync(" = ");
                 if (Field.InitialValue != null)

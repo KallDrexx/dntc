@@ -63,6 +63,7 @@ extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
 extern char ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
 extern INT_FIELD(custom_declared_global);
+extern int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a);
 int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns_Int32 fn, int32_t x, int32_t y);

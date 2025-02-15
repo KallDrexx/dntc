@@ -24,6 +24,7 @@ char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
 char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
 INT_FIELD(custom_declared_global) = 675;
+int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);

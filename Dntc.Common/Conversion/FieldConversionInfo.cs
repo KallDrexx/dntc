@@ -45,6 +45,12 @@ public class FieldConversionInfo
     /// An expression to set the initial value to
     /// </summary>
     public CBaseExpression? InitialValue { get; set; }
+
+    /// <summary>
+    /// If true (and on a global), the field declaration will not have an initialized value
+    /// on it (e.g. no `= {0}`).
+    /// </summary>
+    public bool HasNoInitialValue { get; set; }
     
     /// <summary>
     /// The optional attribute that should be present on the transpiled field's declaration

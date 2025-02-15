@@ -240,4 +240,6 @@ public static class SimpleFunctions
     {
         return AStaticVector;
     }
+
+    public static int GlobalWithNoInitialValue;
 }
