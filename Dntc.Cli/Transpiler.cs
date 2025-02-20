@@ -31,10 +31,10 @@ public class Transpiler
         var definitionCatalog = transpilerPipeline.DefinitionCatalog;
         var conversionCatalog = transpilerPipeline.ConversionCatalog;
         
-        definerPipeline.Add(new NativeFieldAttributeDefiner());
-        definerPipeline.Add(new NativeFunctionCallAttributeDefiner());
-        definerPipeline.Add(new NativeTypeDefiner());
-        definerPipeline.Add(new CustomDeclaredFieldDefiner());
+        definerPipeline.Append(new NativeFieldAttributeDefiner());
+        definerPipeline.Append(new NativeFunctionCallAttributeDefiner());
+        definerPipeline.Append(new NativeTypeDefiner());
+        definerPipeline.Append(new CustomDeclaredFieldDefiner());
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());

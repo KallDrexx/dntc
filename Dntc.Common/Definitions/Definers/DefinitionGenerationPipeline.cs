@@ -33,7 +33,7 @@ public class DefinitionGenerationPipeline
     /// <summary>
     /// Adds the specified global definer to the end of the definer pipeline
     /// </summary>
-    public void Add(IDotNetFieldDefiner definer)
+    public void Append(IDotNetFieldDefiner definer)
     {
         _globalDefiners.Insert(_globalDefiners.Count - 1, definer);
     }
@@ -41,7 +41,7 @@ public class DefinitionGenerationPipeline
     /// <summary>
     /// Adds the specified method definer to the end of the definer pipeline
     /// </summary>
-    public void Add(IDotNetMethodDefiner definer)
+    public void Append(IDotNetMethodDefiner definer)
     {
         _methodDefiners.Insert(_methodDefiners.Count - 1, definer);
     }
@@ -49,9 +49,33 @@ public class DefinitionGenerationPipeline
     /// <summary>
     /// Adds the specified type definer to the end of the definer pipeline
     /// </summary>
-    public void Add(IDotNetTypeDefiner definer)
+    public void Append(IDotNetTypeDefiner definer)
     {
         _typeDefiners.Insert(_typeDefiners.Count - 1, definer);
+    }
+
+    /// <summary>
+    /// Adds the specified global definer to the beginning of the definer pipeline
+    /// </summary>
+    public void Prepend(IDotNetFieldDefiner definer)
+    {
+        _globalDefiners.Insert(0, definer);
+    }
+
+    /// <summary>
+    /// Adds the specified method definer to the beginning of the definer pipeline
+    /// </summary>
+    public void Prepend(IDotNetMethodDefiner definer)
+    {
+        _methodDefiners.Insert(0, definer);
+    }
+
+    /// <summary>
+    /// Adds the specified type definer to the beginning of the definer pipeline
+    /// </summary>
+    public void Prepend(IDotNetTypeDefiner definer)
+    {
+        _typeDefiners.Insert(0, definer);
     }
 
     public DefinedField Define(FieldDefinition field)
