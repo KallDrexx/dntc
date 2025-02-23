@@ -57,7 +57,9 @@
     "System.Int32 ScratchpadCSharp.GenericTests::RefArgTest(System.Int32)",
     "System.Void ScratchpadCSharp.GenericTests::PointerAssignmentTest(System.Int32*)",
     "System.Boolean ScratchpadCSharp.GenericTests::PointerNullCheck()",
-    "System.Int32 ScratchpadCSharp.GenericTests::PointerNullCheck2()"
+    "System.Int32 ScratchpadCSharp.GenericTests::PointerNullCheck2()",
+    "method System.Int32 *() ScratchpadCSharp.SimpleFunctions::GetFunctionPointer()",
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::RunFunctionPointer(method System.Int32 *())"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

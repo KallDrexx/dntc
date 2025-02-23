@@ -6,6 +6,8 @@
 
 typedef int32_t (*FnPtr_Int32_Int32_Returns_Int32)(int32_t, int32_t);
 
+typedef int32_t (*FnPtr_Returns_Int32)();
+
 
 
 

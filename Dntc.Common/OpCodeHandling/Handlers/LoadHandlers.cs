@@ -1,5 +1,4 @@
-﻿using Dntc.Attributes;
-using Dntc.Common.Conversion;
+﻿using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;

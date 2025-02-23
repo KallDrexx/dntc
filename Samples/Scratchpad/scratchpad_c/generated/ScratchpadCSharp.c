@@ -439,3 +439,15 @@ IL_001a:
 	return 1;
 }
 
+int32_t ScratchpadCSharp_SimpleFunctions_ReturnOne(void) {
+	return 1;
+}
+
+FnPtr_Returns_Int32 ScratchpadCSharp_SimpleFunctions_GetFunctionPointer(void) {
+	return (&ScratchpadCSharp_SimpleFunctions_ReturnOne);
+}
+
+int32_t ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(FnPtr_Returns_Int32 function) {
+	return function();
+}
+

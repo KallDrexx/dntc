@@ -145,6 +145,10 @@ int main(void) {
     int32_t pointerCheck2 = ScratchpadCSharp_GenericTests_PointerNullCheck2();
     assert(pointerCheck2 == 2);
 
+    FnPtr_Returns_Int32 retrievedFnPointer = ScratchpadCSharp_SimpleFunctions_GetFunctionPointer();
+    int32_t fnPointerResult = ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(retrievedFnPointer);
+    assert(fnPointerResult == 1);
+
     printf("Tests passed!\n");
     return 0;
 }

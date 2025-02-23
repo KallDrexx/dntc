@@ -242,4 +242,19 @@ public static class SimpleFunctions
     }
 
     public static int GlobalWithNoInitialValue;
+
+    public static int ReturnOne()
+    {
+        return 1;
+    }
+
+    public static unsafe delegate*<int> GetFunctionPointer()
+    {
+        return &SimpleFunctions.ReturnOne;
+    }
+
+    public static unsafe int RunFunctionPointer(delegate*<int> function)
+    {
+        return function();
+    }
 }

@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Definitions;
-using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -25,12 +24,13 @@ public class CallHandlers : IOpCodeHandlerCollection
         { Code.Calli, new CallIHandler() },
         { Code.Newobj, new NewObjHandler() },
         { Code.Callvirt, new CallVirtHandler() },
+        { Code.Ldftn, new LdFtnHandler() },
     };
 
     private static bool ReturnsVoid(TypeReference type) => type.FullName == typeof(void).FullName;
     private static bool ReturnsVoid(IlTypeName type) => type.Value == typeof(void).FullName;
 
-    private static InvokedMethod? GetCallTarget(Instruction instruction, DotNetDefinedMethod method)
+    private static InvokedMethod? GetCallTarget(Instruction instruction)
     {
         switch (instruction.Operand)
         {
@@ -121,7 +121,7 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             return new OpCodeAnalysisResult
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction, context.CurrentMethod),
+                CalledMethod = GetCallTarget(context.CurrentInstruction),
             };
         }
     }
@@ -199,7 +199,7 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             return new OpCodeAnalysisResult
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction, context.CurrentMethod),
+                CalledMethod = GetCallTarget(context.CurrentInstruction),
             };
         }
     }
@@ -227,6 +227,40 @@ public class CallHandlers : IOpCodeHandlerCollection
                     VirtualCallConverter.Convert(
                         context.CurrentInstruction,
                         context.CurrentMethod))
+            };
+        }
+    }
+
+    private class LdFtnHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var target = GetCallTarget(context.CurrentInstruction);
+            if (target == null)
+            {
+                var message = $"No call target could be created for ldftn instruction (operand {context.CurrentInstruction.Operand}";
+                throw new InvalidOperationException(message);
+            }
+
+            var conversionInfo = context.ConversionCatalog.Find(target.MethodId);
+            var functionNameExpression = new LiteralValueExpression(
+                conversionInfo.NameInC.Value,
+                conversionInfo.ReturnTypeInfo);
+
+            var functionAddress = new AddressOfValueExpression(functionNameExpression);
+            context.ExpressionStack.Push(functionAddress);
+
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult
+            {
+                // Even though the method isn't called, we need to analyze it as a
+                // called method so the dependency graph gets generated for it, so it gets
+                // transpiled and can have a pointer created from it.
+                CalledMethod = GetCallTarget(context.CurrentInstruction),
             };
         }
     }
