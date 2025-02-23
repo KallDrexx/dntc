@@ -149,6 +149,10 @@ int main(void) {
     int32_t fnPointerResult = ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(retrievedFnPointer);
     assert(fnPointerResult == 1);
 
+    ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(63);
+    int32_t otherAssemblyFieldValue = ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue();
+    assert(otherAssemblyFieldValue == 63);
+
     printf("Tests passed!\n");
     return 0;
 }

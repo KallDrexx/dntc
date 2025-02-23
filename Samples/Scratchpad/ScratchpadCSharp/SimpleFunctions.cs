@@ -1,4 +1,6 @@
-﻿namespace ScratchpadCSharp;
+﻿using ScratchpadCSharp.Dependency;
+
+namespace ScratchpadCSharp;
 
 public static class SimpleFunctions
 {
@@ -256,5 +258,15 @@ public static class SimpleFunctions
     public static unsafe int RunFunctionPointer(delegate*<int> function)
     {
         return function();
+    }
+
+    public static void SetOtherAssemblyFieldValue(int value)
+    {
+        Misc.FieldInAnotherAssembly = value;
+    }
+
+    public static int GetOtherAssemblyFieldValue()
+    {
+        return Misc.FieldInAnotherAssembly;
     }
 }

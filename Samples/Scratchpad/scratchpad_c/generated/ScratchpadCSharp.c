@@ -451,3 +451,12 @@ int32_t ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(FnPtr_Returns_Int32 
 	return function();
 }
 
+void ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(int32_t value) {
+	ScratchpadCSharp_Dependency_Misc_FieldInAnotherAssembly = value;
+	return;
+}
+
+int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void) {
+	return ScratchpadCSharp_Dependency_Misc_FieldInAnotherAssembly;
+}
+

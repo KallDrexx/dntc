@@ -67,7 +67,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var reference = (FieldReference)context.CurrentInstruction.Operand;
+            var field = reference.Resolve();
 
             CBaseExpression newExpression;
 
@@ -100,7 +101,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var reference = (FieldReference)context.CurrentInstruction.Operand;
+            var field = reference.Resolve();
 
             // We only need to return the declaring type if the field isn't static. If the
             // field is static than we don't actually need to reference the declaring type

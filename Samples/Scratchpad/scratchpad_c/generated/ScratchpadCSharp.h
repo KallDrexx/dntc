@@ -125,5 +125,7 @@ int32_t ScratchpadCSharp_GenericTests_PointerNullCheck2(void);
 int32_t ScratchpadCSharp_SimpleFunctions_ReturnOne(void);
 FnPtr_Returns_Int32 ScratchpadCSharp_SimpleFunctions_GetFunctionPointer(void);
 int32_t ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(FnPtr_Returns_Int32 function);
+void ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(int32_t value);
+int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void);
 
 #endif // SCRATCHPADCSHARP_H_H

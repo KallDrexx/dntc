@@ -60,7 +60,8 @@ public class StoreHandlers : IOpCodeHandlerCollection
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var reference = (FieldReference)context.CurrentInstruction.Operand;
+            var field = reference.Resolve();
             var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
 
             AssignmentStatementSet statement;
@@ -96,7 +97,8 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            var field = (FieldDefinition)context.CurrentInstruction.Operand;
+            var reference = (FieldReference)context.CurrentInstruction.Operand;
+            var field = reference.Resolve();
 
             // We only need to return the declaring type if the field isn't static. If the
             // field is static than we don't actually need to reference the declaring type
