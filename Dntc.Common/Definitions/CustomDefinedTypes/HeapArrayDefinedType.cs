@@ -40,14 +40,14 @@ typedef struct {{
 
         return new CustomCodeStatementSet(content);
     }
-    
+
     private static CTypeName FormNativeName(TypeReference type)
     {
         var elementType = type.GetElementType();
         var convertedName = elementType.FullName
             .Replace(".", "")
             .Replace("/", "");
-        
+
         return new CTypeName($"{convertedName}Array");
     }
 

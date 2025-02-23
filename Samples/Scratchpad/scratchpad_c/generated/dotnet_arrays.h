@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "ScratchpadCSharp.h"
 
 
 typedef struct {
@@ -15,6 +16,11 @@ typedef struct {
     int32_t length;
     int32_t *items;
 } SystemInt32Array;
+
+typedef struct {
+    int32_t length;
+    ScratchpadCSharp_SimpleFunctions_Vector2 *items;
+} ScratchpadCSharpSimpleFunctionsVector2Array;
 
 
 

@@ -61,7 +61,9 @@
     "method System.Int32 *() ScratchpadCSharp.SimpleFunctions::GetFunctionPointer()",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::RunFunctionPointer(method System.Int32 *())",
     "System.Void ScratchpadCSharp.SimpleFunctions::SetOtherAssemblyFieldValue(System.Int32)",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::GetOtherAssemblyFieldValue()"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::GetOtherAssemblyFieldValue()",
+    "System.Single ScratchpadCSharp.SimpleFunctions::GetVectorArrayXValue(System.Int32)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::SetVectorArrayXValue(System.Int32,System.Single)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
@@ -69,7 +71,8 @@
     "System.Int32 ScratchpadCSharp.PluginTests::PluginGlobal",
     "System.String ScratchpadCSharp.AttributeTests::StaticallySizedString",
     "System.Int32 ScratchpadCSharp.AttributeTests::CustomDeclaredGlobalTest",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::GlobalWithNoInitialValue"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::GlobalWithNoInitialValue",
+    "ScratchpadCSharp.SimpleFunctions/Vector2[] ScratchpadCSharp.SimpleFunctions::NonStaticallySizedVector2Array"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

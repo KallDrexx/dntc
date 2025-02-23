@@ -153,6 +153,10 @@ int main(void) {
     int32_t otherAssemblyFieldValue = ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue();
     assert(otherAssemblyFieldValue == 63);
 
+    ScratchpadCSharp_SimpleFunctions_SetVectorArrayXValue(3, 22.5f);
+    float arrayXItemValue = ScratchpadCSharp_SimpleFunctions_GetVectorArrayXValue(3);
+    assert(arrayXItemValue == 22.5f);
+
     printf("Tests passed!\n");
     return 0;
 }

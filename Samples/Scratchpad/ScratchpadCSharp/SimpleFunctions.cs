@@ -1,4 +1,5 @@
-﻿using ScratchpadCSharp.Dependency;
+﻿using Dntc.Attributes;
+using ScratchpadCSharp.Dependency;
 
 namespace ScratchpadCSharp;
 
@@ -268,5 +269,22 @@ public static class SimpleFunctions
     public static int GetOtherAssemblyFieldValue()
     {
         return Misc.FieldInAnotherAssembly;
+    }
+
+    // This is used to verify heap allocated arrays have their types defined in the correct spot,
+    // specifically not the `dotnet_arrays.h` file but instead the same header as the underlying type.
+    public static Vector2[] NonStaticallySizedVector2Array;
+
+    [StaticallySizedArray(10)]
+    public static Vector2[] Vector2Array;
+
+    public static float GetVectorArrayXValue(int index)
+    {
+        return Vector2Array[index].X;
+    }
+
+    public static void SetVectorArrayXValue(int index, float value)
+    {
+        Vector2Array[index].X = value;
     }
 }

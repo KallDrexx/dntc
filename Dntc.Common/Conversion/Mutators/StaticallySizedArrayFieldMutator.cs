@@ -63,7 +63,8 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
         var definedType = new StaticallySizedArrayDefinedType(fieldType, elementTypeInfo, size, sizeType);
         var fieldTypeInfo = new TypeConversionInfo(definedType, false);
 
-        // Replace the field's current conversion info with one based on a statically sized defined type
+        // Replace the field's current conversion info with one based on a statically sized defined type.
+        // We can't do this in a definer because we don't want all arrays of this type to be statically sized.
         conversionInfo.FieldTypeConversionInfo = fieldTypeInfo;
         conversionInfo.StaticItemSize = size;
     }

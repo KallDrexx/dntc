@@ -102,6 +102,13 @@ public class DefinitionCatalog
             // it doesn't already exist.
             if (field.FieldType.IsArray && !_types.ContainsKey(new IlTypeName(field.FieldType.FullName)))
             {
+                // TODO: Remove hard coding of heap allocated arrays and use the definer pipeline instead.
+                // The problem with this atm is that types for arrays in Mono.Cecil are `ArrayType` which
+                // inherits from `TypeReference` but not `TypeDefinition`. Thus we can't pass them into
+                // `DefinerPipeline.Define()` calls. Unlike most other references I've encountered, calling
+                // `Resolve()` on an `ArrayType` returns a `TypeDefinition` of the element type, not the array
+                // itself. Most likely this is going to require having a new type of definer specifically for
+                // the Mono.Cecil `ArrayType`.
                 var definition = new HeapArrayDefinedType(field.FieldType);
                 Add(definition);
             }

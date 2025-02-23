@@ -19,12 +19,14 @@ typedef struct {
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector = {0};
 int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
 ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
+ScratchpadCSharp_SimpleFunctions_Vector2 ScratchpadCSharp_SimpleFunctions_Vector2Array[10] = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
 char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
 INT_FIELD(custom_declared_global) = 675;
 int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
+ScratchpadCSharpSimpleFunctionsVector2Array ScratchpadCSharp_SimpleFunctions_NonStaticallySizedVector2Array = {0};
 
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
@@ -458,5 +460,22 @@ void ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(int32_t value) 
 
 int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void) {
 	return ScratchpadCSharp_Dependency_Misc_FieldInAnotherAssembly;
+}
+
+float ScratchpadCSharp_SimpleFunctions_GetVectorArrayXValue(int32_t index) {
+	if (10 <= index) {
+		printf("Attempted to access to ScratchpadCSharp_SimpleFunctions_Vector2Array[%d], but only %u items are in the array", index, 10);
+		abort();
+	}
+	return (ScratchpadCSharp_SimpleFunctions_Vector2Array[index].X);
+}
+
+void ScratchpadCSharp_SimpleFunctions_SetVectorArrayXValue(int32_t index, float value) {
+	if (10 <= index) {
+		printf("Attempted to access to ScratchpadCSharp_SimpleFunctions_Vector2Array[%d], but only %u items are in the array", index, 10);
+		abort();
+	}
+	(ScratchpadCSharp_SimpleFunctions_Vector2Array[index].X) = value;
+	return;
 }
 
