@@ -153,8 +153,13 @@ public class PlannedFileConverter
             }
             catch (Exception exception)
             {
+                var debugInfo = CecilUtils.LoggedSequencePointInfo(
+                    CecilUtils.GetSequencePoint(
+                        dotNetDefinedMethod.Definition,
+                        instruction));
+
                 var message = $"Exception occurred transpiling method '{dotNetDefinedMethod.Id}' on instruction " +
-                              $"IL_{instruction.Offset:x4}: {instruction.OpCode.Code} ({instruction.Operand})";
+                              $"IL_{instruction.Offset:x4}: {instruction.OpCode.Code} ({instruction.Operand}) {debugInfo}";
                 throw new Exception(message, exception);
             }
 

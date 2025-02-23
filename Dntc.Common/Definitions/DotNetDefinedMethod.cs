@@ -185,7 +185,12 @@ public class DotNetDefinedMethod : DefinedMethod
         {
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
             {
-                var message = $"No handler for op code '{instruction.OpCode.Code}'";
+                var debugInfo = CecilUtils.LoggedSequencePointInfo(
+                    CecilUtils.GetSequencePoint(
+                        Definition,
+                        instruction));
+
+                var message = $"No handler for op code '{instruction.OpCode.Code}' {debugInfo}";
                 throw new InvalidOperationException(message);
             }
 

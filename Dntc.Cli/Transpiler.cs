@@ -270,9 +270,14 @@ public class Transpiler
 
     private IReadOnlyList<ModuleDefinition> GetModules()
     {
+        var parameters = new ReaderParameters
+        {
+            ReadSymbols = true,
+        };
+
         return _manifest.AssembliesToLoad
             .Select(assemblyFile => Path.Combine(_manifest.AssemblyDirectory!, assemblyFile))
-            .Select(ModuleDefinition.ReadModule)
+            .Select(x => ModuleDefinition.ReadModule(x, parameters))
             .ToArray();
     }
 
