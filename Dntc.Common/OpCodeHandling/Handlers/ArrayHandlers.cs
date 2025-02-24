@@ -10,7 +10,8 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
         { Code.Ldlen, new LdLenHandler() },
-        
+
+        { Code.Ldelema, new LdElemHandler() },
         { Code.Ldelem_I, new LdElemHandler() },
         { Code.Ldelem_I1, new LdElemHandler() },
         { Code.Ldelem_I2, new LdElemHandler() },
@@ -22,7 +23,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
         { Code.Ldelem_R8, new LdElemHandler() },
         { Code.Ldelem_Any, new LdElemHandler() },
         { Code.Ldelem_Ref, new LdElemHandler() },
-        
+
         { Code.Stelem_I, new StElemHandler() },
         { Code.Stelem_I1, new StElemHandler() },
         { Code.Stelem_I2, new StElemHandler() },
