@@ -30,7 +30,7 @@ public class NativeDefinedMethod : DefinedMethod
         _definition = definition;
     }
 
-    public NativeDefinedMethod MakeGenericClone(IlMethodId newId, IReadOnlyList<IlTypeName> genericArguments)
+    public override DefinedMethod MakeGenericInstance(IlMethodId newId, IReadOnlyList<IlTypeName> genericArguments)
     {
         if (_definition == null)
         {

@@ -24,5 +24,13 @@ public abstract class DefinedMethod
         .Concat(GetReferencedTypesInternal())
         .ToArray();
 
+    public virtual DefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
+    {
+        var message = $"Generic method '{methodId}' cannot be made into a generic instance because " +
+                      $"{GetType().FullName} does not support doing so.";
+
+        throw new InvalidOperationException(message);
+    }
+
     protected abstract IReadOnlyList<IlTypeName> GetReferencedTypesInternal();
 }

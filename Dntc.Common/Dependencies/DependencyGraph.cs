@@ -60,28 +60,7 @@ public class DependencyGraph
             throw new InvalidOperationException(message);
         }
 
-        DefinedMethod newMethod;
-        switch (sourceMethod)
-        {
-            case DotNetDefinedMethod dotNetDefinedMethod:
-                newMethod = dotNetDefinedMethod.MakeGenericInstance(
-                         invokedMethod.MethodId, 
-                         invokedMethod.GenericArguments);
-                break;
-            
-            case NativeDefinedMethod nativeDefinedMethod:
-                newMethod = nativeDefinedMethod.MakeGenericClone(invokedMethod.MethodId, invokedMethod.GenericArguments);
-                break;
-
-            default:
-            {
-                var message = $"Generic method '{invokedMethod.MethodId}' refers to the original method " +
-                              $"'{invokedMethod.OriginalMethodId}', but that method is a " +
-                              $"{sourceMethod.GetType().FullName} which can't be cloned.";
-                throw new NotSupportedException(message);
-            }
-        }
-
+        var newMethod = sourceMethod.MakeGenericInstance(invokedMethod.MethodId, invokedMethod.GenericArguments);
         definitionCatalog.Add([newMethod]);
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }

@@ -57,7 +57,7 @@ public class DotNetDefinedMethod : DefinedMethod
         // index values (e.g. !!0) so that we can correctly identify this method when called from
         // another .net assembly.
         Id = definition.HasGenericParameters 
-            ? Utils.NormalizeGenericMethodId(definition.FullName, definition.GenericParameters) 
+            ? Utils.NormalizeGenericMethodId(definition.FullName, definition.GenericParameters)
             : new IlMethodId(definition.FullName);
 
         var parameters = definition.Parameters
@@ -149,7 +149,7 @@ public class DotNetDefinedMethod : DefinedMethod
             }).ToArray();
     }
 
-    public DotNetDefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
+    public override DefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
     {
         return new DotNetDefinedMethod(Definition, methodId, genericArguments);
     }
