@@ -16,6 +16,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         { Code.Starg_S, new StArgHandler() },
 
         { Code.Stind_I, new StIndHandler() },
+        { Code.Stind_I1, new StIndHandler() },
         { Code.Stind_I2, new StIndHandler() },
         { Code.Stind_I4, new StIndHandler() },
         { Code.Stind_I8, new StIndHandler() },
