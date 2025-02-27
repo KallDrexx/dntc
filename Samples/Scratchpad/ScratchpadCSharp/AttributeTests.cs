@@ -174,4 +174,20 @@ public static class AttributeTests
     {
         return fieldStruct.SomeField;
     }
+
+    public static int NonNativeGetNumber(int first, int second, int third)
+    {
+        return first + second + third;
+    }
+
+    [NativeFunctionCall("void_pointer_test", "../native_test.h")]
+    public static unsafe int NativeFunctionPointerTest(delegate*<int, int, int, int> pointer)
+    {
+        return 0;
+    }
+
+    public static unsafe int CallNativePointer()
+    {
+        return NativeFunctionPointerTest(&NonNativeGetNumber);
+    }
 }

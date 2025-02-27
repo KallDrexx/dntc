@@ -127,5 +127,7 @@ FnPtr_Returns_Int32 ScratchpadCSharp_SimpleFunctions_GetFunctionPointer(void);
 int32_t ScratchpadCSharp_SimpleFunctions_RunFunctionPointer(FnPtr_Returns_Int32 function);
 void ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(int32_t value);
 int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void);
+int32_t ScratchpadCSharp_AttributeTests_NonNativeGetNumber(int32_t first, int32_t second, int32_t third);
+int32_t ScratchpadCSharp_AttributeTests_CallNativePointer(void);
 
 #endif // SCRATCHPADCSHARP_H_H

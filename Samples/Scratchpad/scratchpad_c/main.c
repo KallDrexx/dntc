@@ -153,6 +153,9 @@ int main(void) {
     int32_t otherAssemblyFieldValue = ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue();
     assert(otherAssemblyFieldValue == 63);
 
+    int32_t nativePointerTest = ScratchpadCSharp_AttributeTests_CallNativePointer();
+    assert(nativePointerTest == 6);
+
     printf("Tests passed!\n");
     return 0;
 }

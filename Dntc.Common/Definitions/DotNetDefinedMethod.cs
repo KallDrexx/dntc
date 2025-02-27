@@ -14,7 +14,6 @@ public class DotNetDefinedMethod : DefinedMethod
     private bool _hasBeenAnalyzed;
     
     public MethodDefinition Definition { get; }
-    public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
     public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
     public CustomDeclarationInfo? CustomDeclaration { get; private set; }

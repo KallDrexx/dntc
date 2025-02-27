@@ -28,6 +28,15 @@ public class NativeDefinedMethod : DefinedMethod
         Parameters = parameterTypes.Select(x => new Parameter(x, "a", false)).ToArray();
         ReferencedHeaders = headers;
         _definition = definition;
+
+        if (definition != null)
+        {
+            FunctionPointerTypes = definition.Parameters
+                .Select(x => x.ParameterType)
+                .OfType<FunctionPointerType>()
+                .Concat(definition.Body?.Variables.Select(x => x.VariableType).OfType<FunctionPointerType>() ?? [])
+                .ToArray();
+        }
     }
 
     public override DefinedMethod MakeGenericInstance(IlMethodId newId, IReadOnlyList<IlTypeName> genericArguments)

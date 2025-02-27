@@ -78,17 +78,17 @@ public class DefinitionCatalog
         {
             var definedMethod = _definerPipeline.Define(method);
             Add(definedMethod);
-            
+
+            foreach (var functionPointer in definedMethod.FunctionPointerTypes)
+            {
+                AddDotNetFunctionPointer(functionPointer);
+            }
+
             if (definedMethod is DotNetDefinedMethod dotNetDefinedMethod)
             {
                 foreach (var arrayType in dotNetDefinedMethod.ReferencedArrayTypes)
                 {
                     AddReferencedArrayTypes(arrayType);
-                }
-
-                foreach (var functionPointer in dotNetDefinedMethod.FunctionPointerTypes)
-                {
-                    AddDotNetFunctionPointer(functionPointer);
                 }
             }
         }

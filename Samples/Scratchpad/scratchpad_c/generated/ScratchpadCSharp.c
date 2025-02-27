@@ -460,3 +460,11 @@ int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void) {
 	return ScratchpadCSharp_Dependency_Misc_FieldInAnotherAssembly;
 }
 
+int32_t ScratchpadCSharp_AttributeTests_NonNativeGetNumber(int32_t first, int32_t second, int32_t third) {
+	return ((first + second) + third);
+}
+
+int32_t ScratchpadCSharp_AttributeTests_CallNativePointer(void) {
+	return void_pointer_test((&ScratchpadCSharp_AttributeTests_NonNativeGetNumber));
+}
+
