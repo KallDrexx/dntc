@@ -41,7 +41,10 @@ public class ConversionHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            return new OpCodeAnalysisResult
+            {
+                ReferencedTypes = new HashSet<IlTypeName>([new IlTypeName(castToType.FullName!)]),
+            };
         }
     }
 }

@@ -76,7 +76,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             if (field.IsStatic)
             {
                 var variable = new Variable(fieldConversionInfo.FieldTypeConversionInfo,
-                    fieldConversionInfo.NameInC.Value, false);
+                    fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer);
                 newExpression = new VariableValueExpression(variable);
             }
             else
