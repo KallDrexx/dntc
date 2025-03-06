@@ -122,4 +122,10 @@ public static class Utils
             ? $"{typeInfo.NameInC}*"
             : typeInfo.NameInC.Value;
     }
+
+    public static CustomAttribute? GetCustomAttribute(Type attributeType, MethodDefinition method)
+    {
+        return method.CustomAttributes
+            .SingleOrDefault(x => x.AttributeType.FullName == attributeType.FullName);
+    }
 }

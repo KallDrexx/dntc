@@ -468,3 +468,10 @@ int32_t ScratchpadCSharp_AttributeTests_CallNativePointer(void) {
 	return void_pointer_test((&ScratchpadCSharp_AttributeTests_NonNativeGetNumber));
 }
 
+int32_t addOneFunc(int32_t a) {
+return a + 1;}
+
+int32_t ScratchpadCSharp_AttributeTests_AddTwo(int32_t input) {
+	return addOneFunc(addOneMacro(input));
+}
+

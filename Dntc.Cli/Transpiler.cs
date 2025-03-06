@@ -35,6 +35,7 @@ public class Transpiler
         definerPipeline.Append(new NativeFunctionCallAttributeDefiner());
         definerPipeline.Append(new NativeTypeDefiner());
         definerPipeline.Append(new CustomDeclaredFieldDefiner());
+        definerPipeline.Append(new CustomFunctionDefiner());
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());

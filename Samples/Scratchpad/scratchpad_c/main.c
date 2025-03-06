@@ -156,6 +156,9 @@ int main(void) {
     int32_t nativePointerTest = ScratchpadCSharp_AttributeTests_CallNativePointer();
     assert(nativePointerTest == 6);
 
+    int32_t customFunctionValue = ScratchpadCSharp_AttributeTests_AddTwo(12);
+    assert(customFunctionValue == 14);
+
     printf("Tests passed!\n");
     return 0;
 }

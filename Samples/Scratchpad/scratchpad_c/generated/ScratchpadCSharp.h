@@ -129,5 +129,8 @@ void ScratchpadCSharp_SimpleFunctions_SetOtherAssemblyFieldValue(int32_t value);
 int32_t ScratchpadCSharp_SimpleFunctions_GetOtherAssemblyFieldValue(void);
 int32_t ScratchpadCSharp_AttributeTests_NonNativeGetNumber(int32_t first, int32_t second, int32_t third);
 int32_t ScratchpadCSharp_AttributeTests_CallNativePointer(void);
+#define addOneMacro(a) ((a) + 1)
+int32_t addOneFunc(int32_t a);
+int32_t ScratchpadCSharp_AttributeTests_AddTwo(int32_t input);
 
 #endif // SCRATCHPADCSHARP_H_H

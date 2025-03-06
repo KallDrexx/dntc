@@ -190,4 +190,21 @@ public static class AttributeTests
     {
         return NativeFunctionPointerTest(&NonNativeGetNumber);
     }
+
+    [CustomFunction("#define addOneMacro(a) ((a) + 1)", null, "addOneMacro")]
+    public static int AddOneMacro(int a)
+    {
+        return 0;
+    }
+
+    [CustomFunction("int32_t addOneFunc(int32_t a)", "return a + 1;", "addOneFunc")]
+    public static int AddOneFunction(int a)
+    {
+        return 0;
+    }
+
+    public static int AddTwo(int input)
+    {
+        return AddOneFunction(AddOneMacro(input));
+    }
 }

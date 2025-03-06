@@ -54,7 +54,16 @@ public class HeaderFile
         foreach (var method in Methods)
         {
             await method.WriteAsync(writer);
-            await writer.WriteLineAsync(";");
+
+            if (method.Definition.IsMacroDefinition)
+            {
+                // Macro declarations should not have semicolons.
+                await writer.WriteLineAsync();
+            }
+            else
+            {
+                await writer.WriteLineAsync(";");
+            }
         }
 
         await writer.WriteLineAsync();

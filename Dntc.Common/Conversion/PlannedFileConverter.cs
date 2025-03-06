@@ -62,6 +62,7 @@ public class PlannedFileConverter
                 var statements = GetMethodStatements(definition!, x);
                 return new MethodBlock(x, statements, declaration);
             })
+            .Where(x => x.Statements.Count > 0)
             .ToArray();
 
         var globals = plannedSourceFile.ImplementedGlobals

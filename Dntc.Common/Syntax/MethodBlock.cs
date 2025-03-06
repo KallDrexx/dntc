@@ -7,8 +7,9 @@ public class MethodBlock
 {
     private readonly MethodConversionInfo _methodConversionInfo;
     private readonly MethodDeclaration _methodDeclaration;
-    private readonly IReadOnlyList<CStatementSet> _statements;
     private readonly IReadOnlyList<int> _jumpOffsets;
+
+    public IReadOnlyList<CStatementSet> Statements { get; }
 
     public MethodBlock(
         MethodConversionInfo method, 
@@ -17,7 +18,7 @@ public class MethodBlock
     {
         _methodConversionInfo = method;
         _methodDeclaration = declaration;
-        _statements = statements;
+        Statements = statements;
 
         _jumpOffsets = statements
             .SelectMany(GetJumpOffsets)
@@ -39,7 +40,7 @@ public class MethodBlock
         await writer.WriteLineAsync(" {");
 
         var jumpOffsetIndex = 0;
-        foreach (var statement in _statements)
+        foreach (var statement in Statements)
         {
             while (jumpOffsetIndex < _jumpOffsets.Count && _jumpOffsets[jumpOffsetIndex] <= statement.LastIlOffset)
             {
