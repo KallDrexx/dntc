@@ -72,5 +72,65 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
                 ? new CustomCodeStatementSet(_implementation)
                 : null;
         }
+
+        public override DefinedMethod MakeGenericInstance(
+            IlMethodId methodId,
+            IReadOnlyList<IlTypeName> genericArguments)
+        {
+            if (!IsMacroDefinition)
+            {
+                // For now, we only support making a generic instance of a custom function that is detected as
+                // having a macro declaration (i.e. starts with #define).  This is because non-macros would need
+                // their declarations, implementations (probably), and names customized based on the generic
+                // arguments provided. That's complex, so we'll punt that until it's actually desired.
+                var message = $"Custom function attribute on {_methodDefinition.FullName} does not have a macro " +
+                              $"definition, and thus cannot have a generic instance made from it.";
+                throw new InvalidOperationException(message);
+            }
+
+            // NOTE: This will cause the same macro to be declared multiple times. Not sure of a good
+            // way to prevent that yet.
+
+            // TODO: this is common code that should be generalized
+            var newParameters = new List<Parameter>();
+            foreach (var parameter in Parameters)
+            {
+                var genericIndex = (int?)null;
+                for (var x = 0; x < _methodDefinition.GenericParameters.Count; x++)
+                {
+                    var generic = _methodDefinition.GenericParameters[x];
+                    if (generic.FullName == parameter.Type.GetNonPointerOrRef().Value)
+                    {
+                        genericIndex = x;
+                        break;
+                    }
+                }
+
+                if (genericIndex != null)
+                {
+                    newParameters.Add(parameter with { Type = genericArguments[genericIndex.Value] });
+                }
+                else
+                {
+                    newParameters.Add(parameter);
+                }
+            }
+
+            var returnType = ReturnType.GetNonPointerOrRef();
+            for (var x = 0; x < _methodDefinition.GenericParameters.Count; x++)
+            {
+                if (_methodDefinition.GenericParameters[x].FullName == returnType.Value)
+                {
+                    returnType = genericArguments[x];
+                }
+            }
+
+            if (ReturnType.IsPointer())
+            {
+                returnType = returnType.AsPointerType();
+            }
+
+            return new CustomDefinition(_declaration, _implementation, NativeName, _methodDefinition, methodId, returnType, Namespace, newParameters);
+        }
     }
 }

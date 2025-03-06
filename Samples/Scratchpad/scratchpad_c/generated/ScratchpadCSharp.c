@@ -475,3 +475,11 @@ int32_t ScratchpadCSharp_AttributeTests_AddTwo(int32_t input) {
 	return addOneFunc(addOneMacro(input));
 }
 
+int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input) {
+	return addOneGenericMacro(input);
+}
+
+uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input) {
+	return addOneGenericMacro(input);
+}
+

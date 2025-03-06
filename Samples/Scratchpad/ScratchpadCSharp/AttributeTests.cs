@@ -197,6 +197,12 @@ public static class AttributeTests
         return 0;
     }
 
+    [CustomFunction("#define addOneGenericMacro(a) ((a) + 1)", null, "addOneGenericMacro")]
+    public static T? AddOneGenericMacro<T>(T a)
+    {
+        return default;
+    }
+
     [CustomFunction("int32_t addOneFunc(int32_t a)", "return a + 1;", "addOneFunc")]
     public static int AddOneFunction(int a)
     {
@@ -206,5 +212,15 @@ public static class AttributeTests
     public static int AddTwo(int input)
     {
         return AddOneFunction(AddOneMacro(input));
+    }
+
+    public static int AddOneInt(int input)
+    {
+        return AddOneGenericMacro(input);
+    }
+
+    public static uint AddOneUint(uint input)
+    {
+        return AddOneGenericMacro(input);
     }
 }

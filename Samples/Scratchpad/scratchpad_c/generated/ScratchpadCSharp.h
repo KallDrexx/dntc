@@ -132,5 +132,9 @@ int32_t ScratchpadCSharp_AttributeTests_CallNativePointer(void);
 #define addOneMacro(a) ((a) + 1)
 int32_t addOneFunc(int32_t a);
 int32_t ScratchpadCSharp_AttributeTests_AddTwo(int32_t input);
+#define addOneGenericMacro(a) ((a) + 1)
+int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input);
+#define addOneGenericMacro(a) ((a) + 1)
+uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input);
 
 #endif // SCRATCHPADCSHARP_H_H

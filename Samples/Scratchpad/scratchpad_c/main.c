@@ -159,6 +159,12 @@ int main(void) {
     int32_t customFunctionValue = ScratchpadCSharp_AttributeTests_AddTwo(12);
     assert(customFunctionValue == 14);
 
+    int32_t customFuncIntValue = ScratchpadCSharp_AttributeTests_AddOneInt(14);
+    assert(customFuncIntValue == 15);
+
+    uint32_t customFuncUintValue = ScratchpadCSharp_AttributeTests_AddOneUint(15);
+    assert(customFuncUintValue == 16);
+
     printf("Tests passed!\n");
     return 0;
 }

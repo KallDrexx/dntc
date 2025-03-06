@@ -63,7 +63,9 @@
     "System.Void ScratchpadCSharp.SimpleFunctions::SetOtherAssemblyFieldValue(System.Int32)",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::GetOtherAssemblyFieldValue()",
     "System.Int32 ScratchpadCSharp.AttributeTests::CallNativePointer()",
-    "System.Int32 ScratchpadCSharp.AttributeTests::AddTwo(System.Int32)"
+    "System.Int32 ScratchpadCSharp.AttributeTests::AddTwo(System.Int32)",
+    "System.Int32 ScratchpadCSharp.AttributeTests::AddOneInt(System.Int32)",
+    "System.UInt32 ScratchpadCSharp.AttributeTests::AddOneUint(System.UInt32)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
