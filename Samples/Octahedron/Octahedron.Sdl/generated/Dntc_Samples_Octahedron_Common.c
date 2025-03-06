@@ -6,8 +6,6 @@
 #include "dotnet_math.h"
 
 
-
-
 void Dntc_Samples_Octahedron_Common_Vector3__ctor(Dntc_Samples_Octahedron_Common_Vector3 *__this, float x, float y, float z) {
 	float __local_0 = {0};
 	float __local_1 = {0};
@@ -1072,4 +1070,3 @@ IL_0050:
 IL_0065:
 	return;
 }
-

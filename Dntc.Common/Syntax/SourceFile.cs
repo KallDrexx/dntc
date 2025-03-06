@@ -32,9 +32,9 @@ public class SourceFile
             await include.WriteAsync(writer);
         }
 
-        await writer.WriteLineAsync();
         foreach (var type in TypeDeclarations)
         {
+            await writer.WriteLineAsync();
             await type.WriteAsync(writer);
         }
 
@@ -44,18 +44,16 @@ public class SourceFile
             await global.WriteAsync(writer);
         }
 
-        await writer.WriteLineAsync();
         foreach (var method in MethodDeclarations)
         {
-            await method.WriteAsync(writer);
             await writer.WriteLineAsync();
+            await method.WriteAsync(writer);
         }
 
-        await writer.WriteLineAsync();
         foreach (var method in Methods)
         {
-            await method.WriteAsync(writer);
             await writer.WriteLineAsync();
+            await method.WriteAsync(writer);
         }
     }
 }

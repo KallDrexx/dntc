@@ -26,7 +26,6 @@ char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
 INT_FIELD(custom_declared_global) = 675;
 int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 
-
 int32_t ScratchpadCSharp_SimpleFunctions_BitwiseOps(int32_t a) {
 	return ((((a >> 1) | (a & 15)) << 2) ^ 255);
 }
@@ -483,4 +482,3 @@ int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input) {
 uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input) {
 	return addOneGenericMacro(input);
 }
-

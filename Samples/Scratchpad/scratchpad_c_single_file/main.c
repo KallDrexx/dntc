@@ -8,7 +8,6 @@ typedef struct {
 
 
 #define addOneMacro(a) ((a) + 1)
-
 int32_t main(void) {
 	ScratchpadCSharp_SingleFileTests_SomeStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_SingleFileTests_SomeStruct){0});
@@ -18,4 +17,3 @@ int32_t main(void) {
 	addOneMacro(10);
 	return (__local_0.Value);
 }
-
