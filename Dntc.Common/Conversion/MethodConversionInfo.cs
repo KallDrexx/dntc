@@ -62,6 +62,12 @@ public class MethodConversionInfo
     /// The optional attribute that should be present on the transpiled function's declaration
     /// </summary>
     public string? AttributeText { get; set; }
+
+    /// <summary>
+    /// Specifies if the method only has a declaration and no implementation. This is the case for
+    /// macros or functions where the implementation is defined inside the header.
+    /// </summary>
+    public bool IsDeclarationOnlyMethod { get; set; }
    
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
@@ -74,7 +80,7 @@ public class MethodConversionInfo
         Locals = method.Locals
             .Select(x => new Local(conversionCatalog.Find(x.Type), x.IsReference))
             .ToArray();
-        
+
         switch (method)
         {
             case DotNetDefinedMethod dotNetDefinedMethod:
@@ -99,7 +105,7 @@ public class MethodConversionInfo
         IsPredeclared = false;
         Header = Utils.GetHeaderName(method.Namespace);
         SourceFileName = Utils.GetSourceFileName(method.Namespace);
-            
+
         var functionName = $"{method.Definition.DeclaringType.FullName}.{method.Definition.Name}";
         if (method.GenericArgumentTypes.Any())
         {
@@ -126,5 +132,6 @@ public class MethodConversionInfo
         Header = method.HeaderName;
         NameInC = method.NativeName;
         SourceFileName = method.SourceFileName;
+        IsDeclarationOnlyMethod = method.GetCustomDeclaration() != null && method.GetCustomImplementation() == null;
     }
 }

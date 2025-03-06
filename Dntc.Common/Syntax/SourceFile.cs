@@ -8,17 +8,20 @@ public class SourceFile
     public IReadOnlyList<MethodBlock> Methods { get; }
     public IReadOnlyList<FieldDeclaration> Globals { get; }
     public IReadOnlyList<TypeDeclaration> TypeDeclarations { get; }
+    public IReadOnlyList<MethodDeclaration> MethodDeclarations { get; }
     
     public SourceFile(
         IReadOnlyList<IncludeClause> includeClauses, 
         IReadOnlyList<MethodBlock> methods, 
         IReadOnlyList<FieldDeclaration> globals,
-        IReadOnlyList<TypeDeclaration> typeDeclarations)
+        IReadOnlyList<TypeDeclaration> typeDeclarations,
+        IReadOnlyList<MethodDeclaration> methodDeclarations)
     {
         IncludeClauses = includeClauses;
         Methods = methods;
         Globals = globals;
         TypeDeclarations = typeDeclarations;
+        MethodDeclarations = methodDeclarations;
     }
 
     public async Task WriteAsync(StreamWriter writer)
@@ -39,6 +42,13 @@ public class SourceFile
         foreach (var global in Globals)
         {
             await global.WriteAsync(writer);
+        }
+
+        await writer.WriteLineAsync();
+        foreach (var method in MethodDeclarations)
+        {
+            await method.WriteAsync(writer);
+            await writer.WriteLineAsync();
         }
 
         await writer.WriteLineAsync();

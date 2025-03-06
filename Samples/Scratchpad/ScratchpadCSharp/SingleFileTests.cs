@@ -20,7 +20,13 @@ public static class SingleFileTests
     {
         
     }
-    
+
+    [CustomFunction("#define addOneMacro(a) ((a) + 1)", null, "addOneMacro")]
+    public static int AddOneMacro(int a)
+    {
+        return 0;
+    }
+
     [CustomFunctionName("main")]
     public static int MainFunction()
     {
@@ -31,6 +37,8 @@ public static class SingleFileTests
        
         DoStuff2();
         DoStuff();
+
+        var output = AddOneMacro(10);
 
         return test.Value;
     }

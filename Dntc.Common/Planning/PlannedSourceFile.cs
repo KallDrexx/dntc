@@ -8,13 +8,15 @@ public class PlannedSourceFile
     private readonly List<HeaderName> _referencedHeaders = [];
     private readonly List<TypeConversionInfo> _declaredTypes = [];
     private readonly List<FieldConversionInfo> _globals = [];
-    
+    private readonly List<MethodConversionInfo> _declaredMethods = [];
+
     public CSourceFileName Name { get; }
 
     public IReadOnlyList<MethodConversionInfo> ImplementedMethods => _implementedMethods;
     public IReadOnlyList<HeaderName> ReferencedHeaders => _referencedHeaders;
     public IReadOnlyList<TypeConversionInfo> DeclaredTypes => _declaredTypes;
     public IReadOnlyList<FieldConversionInfo> ImplementedGlobals => _globals;
+    public IReadOnlyList<MethodConversionInfo> DeclaredMethods => _declaredMethods;
 
     public PlannedSourceFile(CSourceFileName name)
     {
@@ -31,9 +33,9 @@ public class PlannedSourceFile
         IEnumerable<PlannedSourceFile> sourceFiles)
     {
         var newSourceFile = new PlannedSourceFile(name);
-        
+
         // Make sure headers are lists to maintain ordering
-        var processedHeaderFiles = new List<HeaderName>(); 
+        var processedHeaderFiles = new List<HeaderName>();
         var headersReferencedByOtherFiles = new List<HeaderName>();
 
         foreach (var header in headers)
@@ -47,13 +49,20 @@ public class PlannedSourceFile
             }
 
             processedHeaderFiles.Add(header.Name);
-            
+
             newSourceFile._declaredTypes.AddRange(header.DeclaredTypes);
-            
+
             // We don't care about method declarations or global declarations, as they should have
             // implementations in the corresponding source files. It would be a bug if a header is
             // provided without its corresponding source file, but there's no easy way to enforce
             // that.
+            //
+            // The exception to this is if the method only has a declaration without an implementation
+            // (such as a macro) and thus must be in the merged output.
+            foreach (var declaredMethod in header.DeclaredMethods.Where(x => x.IsDeclarationOnlyMethod))
+            {
+                newSourceFile._declaredMethods.Add(declaredMethod);
+            }
         }
 
         foreach (var sourceFile in sourceFiles)
@@ -69,17 +78,17 @@ public class PlannedSourceFile
             newSourceFile._implementedMethods.AddRange(sourceFile.ImplementedMethods);
             newSourceFile._globals.AddRange(sourceFile._globals);
         }
-        
+
         // Resolve which headers are actually required to be referenced (we shouldn't reference
         // any headers we merged in).
         newSourceFile._referencedHeaders.AddRange(
             headersReferencedByOtherFiles
-            .Where(x => !processedHeaderFiles.Contains(x))
-            .ToArray());
+                .Where(x => !processedHeaderFiles.Contains(x))
+                .ToArray());
 
         return newSourceFile;
     }
-    
+
     public void AddMethod(MethodConversionInfo method)
     {
         if (!_implementedMethods.Contains(method))
