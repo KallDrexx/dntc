@@ -30,10 +30,10 @@ public abstract class CustomDefinedField : DefinedField
         HeaderName? declaredInHeader, 
         CSourceFileName? declaredInSourceFileName,
         CFieldName nativeName, 
-        IlFieldId name, 
-        IlTypeName type, 
+        IlFieldId name,
+        DefinedType fieldType,
         bool isGlobal,
-        IReadOnlyList<HeaderName>? referencedHeaders = null) : base(name, type, isGlobal)
+        IReadOnlyList<HeaderName>? referencedHeaders = null) : base(name, fieldType, isGlobal)
     {
         DeclaredInHeader = declaredInHeader;
         DeclaredInSourceFileName = declaredInSourceFileName;

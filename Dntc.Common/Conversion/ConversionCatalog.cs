@@ -121,7 +121,7 @@ public class ConversionCatalog
 
         AddChildren(node);
 
-        var fieldType = Find(definition.IlType);
+        var fieldType = _conversionInfoCreator.Create(definition.FieldType, definition.FieldType.IlName.IsPointer());
         _fields.Add(node.FieldId, _conversionInfoCreator.Create(definition, fieldType));
     }
 
