@@ -46,8 +46,6 @@ public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMu
         }
     }
 
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
         var customNaming = Utils.GetCustomFileName(field.CustomAttributes, field.FullName);

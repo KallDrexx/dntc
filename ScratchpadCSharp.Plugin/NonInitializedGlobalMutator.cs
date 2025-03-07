@@ -7,8 +7,6 @@ namespace ScratchpadCSharp.Plugin;
 
 public class NonInitializedGlobalMutator : IFieldConversionMutator
 {
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition fieldDefinition)
     {
         if (fieldDefinition.Name.EndsWith("GlobalWithNoInitialValue"))

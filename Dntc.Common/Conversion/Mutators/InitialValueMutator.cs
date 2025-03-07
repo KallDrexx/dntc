@@ -15,8 +15,6 @@ public class InitialValueMutator : IFieldConversionMutator
         _conversionCatalog = conversionCatalog;
     }
 
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
         var attribute = field

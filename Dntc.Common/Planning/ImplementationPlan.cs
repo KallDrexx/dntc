@@ -12,6 +12,7 @@ public class ImplementationPlan
 {
     private readonly ConversionCatalog _conversionCatalog;
     private readonly DefinitionCatalog _definitionCatalog;
+    private readonly ConversionInfoCreator _conversionInfoCreator;
     private readonly Dictionary<HeaderName, PlannedHeaderFile> _headers = new();
     private readonly Dictionary<CSourceFileName, PlannedSourceFile> _sourceFiles = new();
     private bool _staticConstructorInitializerAdded = false;
@@ -19,10 +20,14 @@ public class ImplementationPlan
     public IEnumerable<PlannedHeaderFile> Headers => _headers.Values;
     public IEnumerable<PlannedSourceFile> SourceFiles => _sourceFiles.Values;
 
-    public ImplementationPlan(ConversionCatalog conversionCatalog, DefinitionCatalog definitionCatalog)
+    public ImplementationPlan(
+        ConversionCatalog conversionCatalog,
+        DefinitionCatalog definitionCatalog,
+        ConversionInfoCreator conversionInfoCreator)
     {
         _conversionCatalog = conversionCatalog;
         _definitionCatalog = definitionCatalog;
+        _conversionInfoCreator = conversionInfoCreator;
     }
 
     public void AddMethodGraph(DependencyGraph graph)
@@ -42,7 +47,7 @@ public class ImplementationPlan
             switch (child)
             {
                 case DependencyGraph.TypeNode typeNode:
-                    var childType = _conversionCatalog.Find(typeNode.TypeName);
+                    var childType = _conversionInfoCreator.Create(typeNode.Type);
                     if (childType.Header != null)
                     {
                         headerFile.AddReferencedHeader(childType.Header.Value);
@@ -74,7 +79,7 @@ public class ImplementationPlan
                     var globalDefinition = _definitionCatalog.Get(globalNode.FieldId);
                     if (globalDefinition != null)
                     {
-                        var type = _conversionCatalog.Find(globalDefinition.IlType);
+                        var type = _conversionInfoCreator.Create(globalDefinition.FieldType);
                         if (type.Header != null)
                         {
                             headerFile.AddReferencedHeader(type.Header.Value);
@@ -106,7 +111,7 @@ public class ImplementationPlan
             switch (child)
             {
                 case DependencyGraph.TypeNode typeNode:
-                    var childType = _conversionCatalog.Find(typeNode.TypeName);
+                    var childType = _conversionInfoCreator.Create(typeNode.Type);
                     if (childType.Header != null)
                     {
                         sourceFile.AddReferencedHeader(childType.Header.Value);
@@ -142,7 +147,7 @@ public class ImplementationPlan
                     var globalDefinition = _definitionCatalog.Get(globalNode.FieldId);
                     if (globalDefinition != null)
                     {
-                        var type = _conversionCatalog.Find(globalDefinition.IlType);
+                        var type = _conversionInfoCreator.Create(globalDefinition.FieldType);
                         if (type.Header != null)
                         {
                             sourceFile.AddReferencedHeader(type.Header.Value);
@@ -202,7 +207,7 @@ public class ImplementationPlan
 
     private void DeclareType(DependencyGraph.TypeNode node)
     {
-        var type = _conversionCatalog.Find(node.TypeName);
+        var type = _conversionInfoCreator.Create(node.Type);
         if (type.IsPredeclared)
         {
             // No need to touch predeclared types
@@ -227,8 +232,7 @@ public class ImplementationPlan
 
             AddReferencedHeaders(node, header);
 
-            var typeDefinition = _definitionCatalog.Get(node.TypeName.GetNonPointerOrRef());
-            foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
+            foreach (var referencedHeader in node.Type.ManuallyReferencedHeaders)
             {
                 header.AddReferencedHeader(referencedHeader);
             }
@@ -245,8 +249,7 @@ public class ImplementationPlan
 
             AddReferencedHeaders(node, sourceFile);
 
-            var typeDefinition = _definitionCatalog.Get(node.TypeName);
-            foreach (var referencedHeader in typeDefinition!.ManuallyReferencedHeaders)
+            foreach (var referencedHeader in node.Type.ManuallyReferencedHeaders)
             {
                 sourceFile.AddReferencedHeader(referencedHeader);
             }

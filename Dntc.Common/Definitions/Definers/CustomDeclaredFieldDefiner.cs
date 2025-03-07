@@ -10,7 +10,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
 {
-    public DefinedField? Define(FieldDefinition field)
+    public DefinedField? Define(FieldDefinition field, DefinedType fieldType)
     {
         var attribute = field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(CustomDeclarationAttribute).FullName);
@@ -46,7 +46,7 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
             Utils.GetSourceFileName(declaringNamespace),
             new CFieldName(referredBy),
             new IlFieldId(field.FullName),
-            new IlTypeName(field.FieldType.FullName),
+            fieldType,
             field.IsStatic,
             referencedHeaders);
     }
@@ -61,11 +61,11 @@ public class CustomDeclaredFieldDefiner : IDotNetFieldDefiner
             HeaderName? declaredInHeader, 
             CSourceFileName? declaredInSourceFileName, 
             CFieldName nativeName, 
-            IlFieldId name, 
-            IlTypeName type, 
-            bool isGlobal, 
+            IlFieldId name,
+            DefinedType fieldType,
+            bool isGlobal,
             IReadOnlyList<HeaderName>? referencedHeaders = null) 
-            : base(originalField, declaredInHeader, declaredInSourceFileName, nativeName, name, type, isGlobal, referencedHeaders)
+            : base(originalField, declaredInHeader, declaredInSourceFileName, nativeName, name, fieldType, isGlobal, referencedHeaders)
         {
             _declaration = declaration;
         }

@@ -8,8 +8,6 @@ namespace ScratchpadCSharp.Plugin;
 
 public class Aligned8FieldMutator : IFieldConversionMutator
 {
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
         var attribute = field

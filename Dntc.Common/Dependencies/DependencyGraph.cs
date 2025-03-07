@@ -11,7 +11,7 @@ public class DependencyGraph
         public List<Node> Children { get; } = [];
     }
 
-    public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node(IsPredeclared);
+    public record TypeNode(DefinedType Type, bool IsPredeclared) : Node(IsPredeclared);
 
     public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared) : Node(IsPredeclared);
 
@@ -183,7 +183,39 @@ public class DependencyGraph
             }
         }
 
-        var node = new TypeNode(typeName, type is NativeDefinedType);
+        var node = new TypeNode(type, type is NativeDefinedType);
+        path.Add(node);
+
+        foreach (var field in type.InstanceFields)
+        {
+            var fieldNode = CreateNode(definitionCatalog, field.Id, path);
+            if (fieldNode != null)
+            {
+                node.Children.Add(fieldNode);
+            }
+        }
+
+        foreach (var referencedType in type.OtherReferencedTypes)
+        {
+            var typeNode = CreateNode(definitionCatalog, referencedType, path);
+            if (typeNode != null)
+            {
+                node.Children.Add(typeNode);
+            }
+        }
+
+        path.RemoveAt(path.Count - 1);
+        return node;
+    }
+
+    private static TypeNode? CreateNode(DefinitionCatalog definitionCatalog, DefinedType type, List<Node> path)
+    {
+        if (IsInPath(path, type.IlName))
+        {
+            return null;
+        }
+
+        var node = new TypeNode(type, type is NativeDefinedType);
         path.Add(node);
 
         foreach (var field in type.InstanceFields)
@@ -225,7 +257,7 @@ public class DependencyGraph
         var node = new FieldNode(fieldId, field.IsGlobal, field is NativeDefinedField);
         path.Add(node);
 
-        var typeNode = CreateNode(definitionCatalog, field.IlType, path);
+        var typeNode = CreateNode(definitionCatalog, field.FieldType, path);
         if (typeNode != null)
         {
             node.Children.Add(typeNode);
@@ -275,7 +307,7 @@ public class DependencyGraph
     {
         foreach (var node in path)
         {
-            if (node is TypeNode typeNode && typeNode.TypeName == id)
+            if (node is TypeNode typeNode && typeNode.Type.IlName == id)
             {
                 return true;
             }

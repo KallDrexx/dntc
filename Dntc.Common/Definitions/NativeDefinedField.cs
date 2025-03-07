@@ -6,11 +6,11 @@ public class NativeDefinedField : DefinedField
     public CFieldName NativeName { get; }
     
     public NativeDefinedField(
-        IlFieldId ilName, 
-        IlTypeName type,
-        CFieldName nativeName, 
+        IlFieldId ilName,
+        DefinedType fieldType,
+        CFieldName nativeName,
         HeaderName? headerFile)
-        : base(ilName, type, true)
+        : base(ilName, fieldType, true)
     {
         HeaderFile = headerFile;
         NativeName = nativeName;

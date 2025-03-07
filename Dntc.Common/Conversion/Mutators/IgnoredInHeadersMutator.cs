@@ -35,8 +35,6 @@ public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversion
         conversionInfo.Header = null;
     }
 
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>();
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
         var ignoredInHeader = field

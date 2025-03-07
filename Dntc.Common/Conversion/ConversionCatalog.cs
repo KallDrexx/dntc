@@ -23,14 +23,14 @@ public class ConversionCatalog
         AddNode(dependencyGraph.Root);
     }
 
-    public void Add(IlTypeName typeName)
+    public void Add(DefinedType type)
     {
-        if (_types.ContainsKey(typeName))
+        if (_types.ContainsKey(type.IlName))
         {
             return;
         }
         
-        AddNode(new DependencyGraph.TypeNode(typeName, false));
+        AddNode(new DependencyGraph.TypeNode(type, false));
     }
 
     public TypeConversionInfo Find(IlTypeName name)
@@ -89,19 +89,8 @@ public class ConversionCatalog
 
     private void AddNode(DependencyGraph.TypeNode node)
     {
-        if (!_types.ContainsKey(node.TypeName))
-        {
-            var definition = _definitionCatalog.Get(node.TypeName.GetNonPointerOrRef());
-            if (definition == null)
-            {
-                var message = $"Dependency graph contained node for type '{node.TypeName.Value}' but no " +
-                              $"definition exists for it";
-                throw new InvalidOperationException(message);
-            }
-            
-            AddChildren(node);
-            _types.Add(node.TypeName, _conversionInfoCreator.Create(definition, node.TypeName.IsPointer()));
-        }
+        AddChildren(node);
+        _types.Add(node.Type.IlName, _conversionInfoCreator.Create(node.Type));
     }
 
     private void AddNode(DependencyGraph.FieldNode node)
@@ -121,7 +110,7 @@ public class ConversionCatalog
 
         AddChildren(node);
 
-        var fieldType = _conversionInfoCreator.Create(definition.FieldType, definition.FieldType.IlName.IsPointer());
+        var fieldType = _conversionInfoCreator.Create(definition.FieldType);
         _fields.Add(node.FieldId, _conversionInfoCreator.Create(definition, fieldType));
     }
 

@@ -80,9 +80,11 @@ public class DefinitionGenerationPipeline
 
     public DefinedField Define(FieldDefinition field)
     {
-        // Should always be able to get oen via default
+        var fieldType = Define(field.FieldType.Resolve());
+
+        // Should always be able to get one via default
         return _globalDefiners
-            .Select(x => x.Define(field))
+            .Select(x => x.Define(field, fieldType))
             .First(x => x != null)!;
     }
 

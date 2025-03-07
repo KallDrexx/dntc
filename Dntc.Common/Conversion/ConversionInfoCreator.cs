@@ -13,20 +13,6 @@ public class ConversionInfoCreator
     private readonly List<IMethodConversionMutator> _methodConversionMutators = [];
     private readonly List<IFieldConversionMutator> _fieldConversionMutators = [];
 
-    public IReadOnlySet<IlTypeName> RequiredTypes
-    {
-        get
-        {
-            var set = new HashSet<IlTypeName>();
-            foreach (var type in _fieldConversionMutators.SelectMany(mutator => mutator.RequiredTypes))
-            {
-                set.Add(type);
-            }
-
-            return set;
-        }
-    }
-
     public void AddTypeMutator(ITypeConversionMutator mutator)
     {
         _typeConversionMutators.Add(mutator);
@@ -42,9 +28,9 @@ public class ConversionInfoCreator
         _fieldConversionMutators.Add(mutator);
     }
 
-    public TypeConversionInfo Create(DefinedType type, bool isPointer)
+    public TypeConversionInfo Create(DefinedType type)
     {
-        var conversionInfo = new TypeConversionInfo(type, isPointer);
+        var conversionInfo = new TypeConversionInfo(type, type.IlName.IsPointer());
         if (type is DotNetDefinedType dotNetDefinedType)
         {
             foreach (var mutator in _typeConversionMutators)

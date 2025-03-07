@@ -8,7 +8,7 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class NativeFieldAttributeDefiner : IDotNetFieldDefiner
 {
-    public DefinedField? Define(FieldDefinition field)
+    public DefinedField? Define(FieldDefinition field, DefinedType fieldType)
     {
         var attribute = field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(NativeGlobalAttribute).FullName);
@@ -35,7 +35,7 @@ public class NativeFieldAttributeDefiner : IDotNetFieldDefiner
 
         return new NativeDefinedField(
             new IlFieldId(field.FullName),
-            new IlTypeName(field.FieldType.FullName),
+            fieldType,
             new CFieldName(attribute.ConstructorArguments[0].Value.ToString()!),
             header);
     }

@@ -4,8 +4,8 @@ namespace Dntc.Common.Definitions.Definers;
 
 public class DefaultFieldDefiner : IDotNetFieldDefiner
 {
-    public DefinedField Define(FieldDefinition field)
+    public DefinedField Define(FieldDefinition field, DefinedType fieldType)
     {
-        return new DotNetDefinedField(field);
+        return new DotNetDefinedField(field, fieldType);
     }
 }

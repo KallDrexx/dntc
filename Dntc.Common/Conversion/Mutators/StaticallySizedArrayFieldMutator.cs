@@ -15,10 +15,6 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
         _conversionCatalog = conversionCatalog;
     }
 
-    public IReadOnlySet<IlTypeName> RequiredTypes => new HashSet<IlTypeName>([
-        new IlTypeName(typeof(char).FullName!),
-    ]);
-
     public void Mutate(FieldConversionInfo conversionInfo, FieldDefinition field)
     {
         var attribute = field
