@@ -6,8 +6,13 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversionMutator, IFieldConversionMutator
 {
-    public void Mutate(TypeConversionInfo conversionInfo, DotNetDefinedType type)
+    public void Mutate(TypeConversionInfo conversionInfo)
     {
+        if (conversionInfo.OriginalTypeDefinition is not DotNetDefinedType type)
+        {
+            return;
+        }
+
         var ignoredInHeader = type.Definition
             .CustomAttributes
             .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);

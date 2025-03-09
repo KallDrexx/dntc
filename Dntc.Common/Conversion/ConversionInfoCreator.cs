@@ -45,12 +45,9 @@ public class ConversionInfoCreator
     public TypeConversionInfo Create(DefinedType type, bool isPointer)
     {
         var conversionInfo = new TypeConversionInfo(type, isPointer);
-        if (type is DotNetDefinedType dotNetDefinedType)
+        foreach (var mutator in _typeConversionMutators)
         {
-            foreach (var mutator in _typeConversionMutators)
-            {
-                mutator.Mutate(conversionInfo, dotNetDefinedType);
-            }
+            mutator.Mutate(conversionInfo);
         }
 
         return conversionInfo;

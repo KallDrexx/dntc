@@ -5,8 +5,13 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMutator, IFieldConversionMutator
 {
-    public void Mutate(TypeConversionInfo conversionInfo, DotNetDefinedType type)
+    public void Mutate(TypeConversionInfo conversionInfo)
     {
+        if (conversionInfo.OriginalTypeDefinition is not DotNetDefinedType type)
+        {
+            return;
+        }
+
         var customNaming = Utils.GetCustomFileName(type.Definition.CustomAttributes, type.IlName.Value);
         if (customNaming == null)
         {
