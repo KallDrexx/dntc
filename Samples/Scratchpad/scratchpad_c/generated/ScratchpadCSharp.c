@@ -144,7 +144,7 @@ float ScratchpadCSharp_SimpleFunctions_SquareRootTest(float value) {
 	return ((float)sqrt(((double)value)));
 }
 
-uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
+uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(<Late bound array name> test) {
 	uint16_t __local_0 = {0};
 	int32_t __local_1 = {0};
 	int32_t __local_2 = {0};

@@ -15,7 +15,6 @@ public class HeapArrayDefinedType : ArrayDefinedType
             new IlTypeName(arrayType.FullName), 
             new HeaderName("dotnet_arrays.h"), 
             null, 
-            FormNativeName(arrayType),
             [new HeaderName("<stdio.h>"), new HeaderName("<stdlib.h>")])
     {
         if (!arrayType.IsArray)
@@ -41,16 +40,6 @@ typedef struct {{
         return new CustomCodeStatementSet(content);
     }
     
-    private static CTypeName FormNativeName(TypeReference type)
-    {
-        var elementType = type.GetElementType();
-        var convertedName = elementType.FullName
-            .Replace(".", "")
-            .Replace("/", "");
-        
-        return new CTypeName($"{convertedName}Array");
-    }
-
     public override CBaseExpression GetArraySizeExpression(
         CBaseExpression expressionToArray,
         ConversionCatalog conversionCatalog)

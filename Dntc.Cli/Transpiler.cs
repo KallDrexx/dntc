@@ -38,7 +38,7 @@ public class Transpiler
         definerPipeline.Append(new CustomDeclaredFieldDefiner());
         definerPipeline.Append(new CustomFunctionDefiner());
 
-        definerPipeline.AppendFieldMutator(new StaticallySizedArrayMutator(definerPipeline, definitionCatalog));
+        definerPipeline.AppendFieldMutator(new StaticallySizedArrayMutator(definitionCatalog));
         definerPipeline.AppendFieldMutator(new HeapAllocatedArrayMutator(definitionCatalog));
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());

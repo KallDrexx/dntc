@@ -9,7 +9,7 @@
 typedef struct {
     int32_t length;
     uint16_t *items;
-} SystemUInt16Array;
+} <Late bound array name>;
 
 
 

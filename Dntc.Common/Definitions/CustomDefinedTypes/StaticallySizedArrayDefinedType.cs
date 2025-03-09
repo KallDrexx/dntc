@@ -12,7 +12,6 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
 
     public StaticallySizedArrayDefinedType(
         TypeReference arrayType,
-        TypeConversionInfo elementTypeInfo,
         IlTypeName ilTypeName,
         int size, 
         IlTypeName sizeType)
@@ -21,7 +20,6 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
             ilTypeName,
             null,
             null,
-            elementTypeInfo.NameInC,
             [])
     {
         if (!arrayType.IsArray)

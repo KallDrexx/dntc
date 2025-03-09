@@ -44,7 +44,7 @@ typedef struct {
 } ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
 
 typedef struct {
-	System_Int32 NumberArray[10];
+	<Late bound array name> NumberArray[10];
 } ScratchpadCSharp_AttributeTests_StaticallySizedTest;
 
 typedef struct {
@@ -81,7 +81,7 @@ ScratchpadCSharp_SimpleFunctions_Vector2 ScratchpadCSharp_SimpleFunctions_Vector
 ScratchpadCSharp_SimpleFunctions_Triangle ScratchpadCSharp_SimpleFunctions_TriangleAdd(ScratchpadCSharp_SimpleFunctions_Triangle a, ScratchpadCSharp_SimpleFunctions_Triangle b);
 ScratchpadCSharp_SimpleFunctions_Triangle ScratchpadCSharp_SimpleFunctions_TriangleBuilder(float x0, float y0, float x1, float y1, float x2, float y2);
 float ScratchpadCSharp_SimpleFunctions_SquareRootTest(float value);
-uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test);
+uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(<Late bound array name> test);
 void ScratchpadCSharp_SimpleFunctions_Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z);
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_ConstructorTest(float x, float y, float z);
 void ScratchpadCSharp_SimpleFunctions_RefTest(ScratchpadCSharp_SimpleFunctions_Vector3 *vector, float *floatToAdd, float amount);

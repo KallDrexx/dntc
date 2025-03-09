@@ -14,12 +14,11 @@ public abstract class ArrayDefinedType : CustomDefinedType
         IlTypeName ilTypeName, 
         HeaderName? headerName, 
         CSourceFileName? sourceFileName, 
-        CTypeName nativeName, 
-        IReadOnlyList<HeaderName> referencedHeaders) 
+        IReadOnlyList<HeaderName> referencedHeaders)
         : base(ilTypeName, 
             headerName, 
             sourceFileName, 
-            nativeName, 
+            new CTypeName("<Late bound array name>"),
             [new IlTypeName(elementType.FullName)], 
             referencedHeaders)
     {

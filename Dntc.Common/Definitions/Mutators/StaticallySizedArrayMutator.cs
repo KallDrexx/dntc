@@ -1,7 +1,5 @@
 using Dntc.Attributes;
-using Dntc.Common.Conversion;
 using Dntc.Common.Definitions.CustomDefinedTypes;
-using Dntc.Common.Definitions.Definers;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Mutators;
@@ -13,14 +11,10 @@ namespace Dntc.Common.Definitions.Mutators;
 /// </summary>
 public class StaticallySizedArrayMutator : IFieldDefinitionMutator
 {
-    private readonly DefinitionGenerationPipeline _definitionGenerationPipeline;
     private readonly DefinitionCatalog _definitionCatalog;
 
-    public StaticallySizedArrayMutator(
-        DefinitionGenerationPipeline definitionGenerationPipeline,
-        DefinitionCatalog definitionCatalog)
+    public StaticallySizedArrayMutator(DefinitionCatalog definitionCatalog)
     {
-        _definitionGenerationPipeline = definitionGenerationPipeline;
         _definitionCatalog = definitionCatalog;
     }
 
@@ -45,17 +39,11 @@ public class StaticallySizedArrayMutator : IFieldDefinitionMutator
             throw new InvalidOperationException(message);
         }
 
-        // We need to get the derived type info of the array's element type, so we can
-        // accurately tell the array's type conversion info what it's native name is. Eventually
-        // there should be a better way to do this, but this is only needed for arrays.
-        var elementTypeDefinition = _definitionGenerationPipeline.Define(cecilField.FieldType.Resolve());
-        var elementTypeInfo = new TypeConversionInfo(elementTypeDefinition, cecilField.FieldType.IsPointer);
-
         var sizeType = new IlTypeName(typeof(int).FullName!); // TODO: Figure out a way to make this configurable.
 
         // We can't use the real IlName, because we need a custom iL name for this specific usage.
         var ilName = new IlTypeName($"StaticallySizedArray({cecilField.FullName})");
-        var definedType = new StaticallySizedArrayDefinedType(cecilField.FieldType, elementTypeInfo, ilName, size, sizeType);
+        var definedType = new StaticallySizedArrayDefinedType(cecilField.FieldType, ilName, size, sizeType);
         _definitionCatalog.Add([definedType]);
 
         // Update the field to use the custom type IL name
