@@ -20,7 +20,7 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
             ilTypeName,
             null,
             null,
-            [])
+            [new HeaderName("<stdio.h>"), new HeaderName("<stdlib.h>")])
     {
         if (!arrayType.IsArray)
         {

@@ -23,6 +23,15 @@ public class HeapAllocatedArrayMutator : IFieldDefinitionMutator
             return;
         }
 
+        // This is a hack, but we need to ensure we don't create a heap allocated array
+        // when it's already been mutated as part of being a statically sized array. This works
+        // because the statically sized array mutator adjusts the ILName. We need a better way to
+        // detect if the heap allocated array definition should take ownership of this array or not.
+        if (!field.IlName.Value.EndsWith("[]"))
+        {
+            return;
+        }
+
         if (_definitionCatalog.Get(field.IlName) == null)
         {
             var typeDefinition = new HeapArrayDefinedType(cecilField.FieldType);
