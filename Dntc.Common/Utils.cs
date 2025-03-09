@@ -128,4 +128,10 @@ public static class Utils
         return method.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == attributeType.FullName);
     }
+
+    public static CustomAttribute? GetCustomAttribute(Type attributeType, FieldDefinition field)
+    {
+        return field.CustomAttributes
+            .SingleOrDefault(x => x.AttributeType.FullName == attributeType.FullName);
+    }
 }

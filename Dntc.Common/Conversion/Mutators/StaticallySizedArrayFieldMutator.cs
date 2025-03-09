@@ -51,20 +51,7 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
 
             throw new InvalidOperationException(message);
         }
-        
-        // We need to get the derived type info of the array's element type, so we can
-        // accurately tell the array's type conversion info what it's native name is. This
-        // *should* not be a race condition because the dependency graph should have ensured
-        // that this field's type info is added to the conversion catalog before the field itself.
-        var elementType = new IlTypeName(fieldType.GetElementType().FullName);
-        var elementTypeInfo = _conversionCatalog.Find(elementType);
 
-        var sizeType = new IlTypeName(typeof(int).FullName!); // TODO: Figure out a way to make this configurable.
-        var definedType = new StaticallySizedArrayDefinedType(fieldType, elementTypeInfo, size, sizeType);
-        var fieldTypeInfo = new TypeConversionInfo(definedType, false);
-
-        // Replace the field's current conversion info with one based on a statically sized defined type
-        conversionInfo.FieldTypeConversionInfo = fieldTypeInfo;
         conversionInfo.StaticItemSize = size;
     }
 }

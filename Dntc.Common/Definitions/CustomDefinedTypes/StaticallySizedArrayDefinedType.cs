@@ -12,12 +12,13 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
 
     public StaticallySizedArrayDefinedType(
         TypeReference arrayType,
-        TypeConversionInfo elementTypeInfo, 
+        TypeConversionInfo elementTypeInfo,
+        IlTypeName ilTypeName,
         int size, 
         IlTypeName sizeType)
         : base(
             arrayType.GetElementType(),
-            new IlTypeName(arrayType.FullName),
+            ilTypeName,
             null,
             null,
             elementTypeInfo.NameInC,

@@ -44,7 +44,7 @@ typedef struct {
 } ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
 
 typedef struct {
-	int32_t NumberArray[10];
+	System_Int32 NumberArray[10];
 } ScratchpadCSharp_AttributeTests_StaticallySizedTest;
 
 typedef struct {
@@ -61,7 +61,7 @@ extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
-extern char ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
+extern char* ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
 extern INT_FIELD(custom_declared_global);
 extern int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 

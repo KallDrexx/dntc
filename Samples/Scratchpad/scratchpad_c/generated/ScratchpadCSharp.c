@@ -22,7 +22,7 @@ ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
-char ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
+char* ScratchpadCSharp_AttributeTests_StaticallySizedString[8] = "abcdefg";
 INT_FIELD(custom_declared_global) = 675;
 int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 

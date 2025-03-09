@@ -1,3 +1,4 @@
+using Dntc.Common.Definitions.Mutators;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Definers;
@@ -10,6 +11,7 @@ public class DefinitionGenerationPipeline
     private readonly List<IDotNetFieldDefiner> _globalDefiners = new();
     private readonly List<IDotNetMethodDefiner> _methodDefiners = new();
     private readonly List<IDotNetTypeDefiner> _typeDefiners = new();
+    private readonly List<IFieldDefinitionMutator> _fieldMutators = new();
 
     public DefinitionGenerationPipeline()
     {
@@ -78,17 +80,40 @@ public class DefinitionGenerationPipeline
         _typeDefiners.Insert(0, definer);
     }
 
+    /// <summary>
+    /// Adds the specified field mutator to the end of the definer pipeline
+    /// </summary>
+    public void AppendFieldMutator(IFieldDefinitionMutator mutator)
+    {
+        _fieldMutators.Add(mutator);
+    }
+
+    /// <summary>
+    /// Adds the specified field mutator to the beginning of the definer pipeline
+    /// </summary>
+    public void PrependFieldMutator(IFieldDefinitionMutator mutator)
+    {
+        _fieldMutators.Insert(0, mutator);
+    }
+
     public DefinedField Define(FieldDefinition field)
     {
-        // Should always be able to get oen via default
-        return _globalDefiners
+        // Should always be able to get one via default
+        var definition = _globalDefiners
             .Select(x => x.Define(field))
             .First(x => x != null)!;
+
+        foreach (var mutator in _fieldMutators)
+        {
+            mutator.Mutate(definition, field);
+        }
+
+        return definition;
     }
 
     public DefinedMethod Define(MethodDefinition method)
     {
-        // Should always be able to get oen via default
+        // Should always be able to get one via default
         return _methodDefiners
             .Select(x => x.Define(method))
             .First(x => x != null)!;
@@ -96,7 +121,7 @@ public class DefinitionGenerationPipeline
 
     public DefinedType Define(TypeDefinition type)
     {
-        // Should always be able to get oen via default
+        // Should always be able to get one via default
         return _typeDefiners
             .Select(x => x.Define(type))
             .First(x => x != null)!;
