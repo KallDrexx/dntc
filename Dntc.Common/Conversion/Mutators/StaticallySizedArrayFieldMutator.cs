@@ -30,13 +30,7 @@ public class StaticallySizedArrayFieldMutator : IFieldConversionMutator
             return;
         }
 
-        var fieldType = field.FieldType;
-        if (fieldType.FullName == typeof(string).FullName)
-        {
-            fieldType = _charArrayType;
-        }
-
-        if (!fieldType.IsArray)
+        if (!field.FieldType.IsArray)
         {
             var message = $"StaticallySizedArrayAttribute was attached to the field {field.FullName} but " +
                           $"its field type is not an array type";

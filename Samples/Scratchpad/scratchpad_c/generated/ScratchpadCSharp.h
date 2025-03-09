@@ -61,7 +61,7 @@ extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
 extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
-extern char* ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
+extern char ScratchpadCSharp_AttributeTests_StaticallySizedString[8];
 extern INT_FIELD(custom_declared_global);
 extern int32_t ScratchpadCSharp_SimpleFunctions_GlobalWithNoInitialValue;
 
