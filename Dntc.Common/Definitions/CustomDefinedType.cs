@@ -10,7 +10,7 @@ public abstract class CustomDefinedType : DefinedType
 {
     public HeaderName? HeaderName { get; }
     public CSourceFileName? SourceFileName { get; }
-    public CTypeName NativeName { get; }
+    public CTypeName NativeName { get; set; }
     
     protected CustomDefinedType(
         IlTypeName ilTypeName, 

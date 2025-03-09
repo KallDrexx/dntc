@@ -64,4 +64,11 @@ typedef struct {{
     {
         return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
     }
+
+    public override CTypeName FormTypeName(TypeConversionInfo elementTypeInfo)
+    {
+        var convertedName = Utils.MakeValidCName(ElementType.Value).Replace("_", "");
+
+        return new CTypeName($"{convertedName}Array");
+    }
 }

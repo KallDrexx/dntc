@@ -43,6 +43,7 @@ public class Transpiler
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
+        conversionInfoCreator.AddTypeMutator(new ArrayLateNameBindingMutator(definitionCatalog, conversionInfoCreator));
        
         conversionInfoCreator.AddMethodMutator(new WithAttributeMutator());
         conversionInfoCreator.AddMethodMutator(new CustomFileNameMutator());

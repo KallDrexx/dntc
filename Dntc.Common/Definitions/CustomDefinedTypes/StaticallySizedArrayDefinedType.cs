@@ -61,4 +61,9 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
     {
         return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
     }
+
+    public override CTypeName FormTypeName(TypeConversionInfo elementTypeInfo)
+    {
+        return elementTypeInfo.NameInC;
+    }
 }

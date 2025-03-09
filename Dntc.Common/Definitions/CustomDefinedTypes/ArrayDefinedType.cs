@@ -46,4 +46,11 @@ public abstract class ArrayDefinedType : CustomDefinedType
         CBaseExpression arrayLengthField,
         CBaseExpression arrayInstance,
         DereferencedValueExpression index);
+
+    /// <summary>
+    /// Returns the C name for the array's element type
+    /// </summary>
+    /// <param name="elementTypeInfo"></param>
+    /// <returns></returns>
+    public abstract CTypeName FormTypeName(TypeConversionInfo elementTypeInfo);
 }
