@@ -28,7 +28,7 @@ public class InitialValueMutator : IFieldConversionMutator
             return;
         }
 
-        var returnType = _conversionCatalog.Find(new IlTypeName(field.FieldType.FullName));
+        var returnType = _conversionCatalog.Find(conversionInfo.FieldTypeConversionInfo.IlName);
         var expression = new LiteralValueExpression(attribute.ConstructorArguments[0].Value.ToString()!, returnType);
         conversionInfo.InitialValue = expression;
     }

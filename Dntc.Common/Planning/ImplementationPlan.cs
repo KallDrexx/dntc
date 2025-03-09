@@ -253,11 +253,6 @@ public class ImplementationPlan
 
             sourceFile.AddDeclaredType(type);
         }
-        else
-        {
-            var message = $"Type '{type.IlName}' is not predeclared and has no header or source file set";
-            throw new InvalidOperationException(message);
-        }
     }
 
     private void DeclareMethod(DependencyGraph.MethodNode node)

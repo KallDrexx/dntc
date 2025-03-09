@@ -4,6 +4,7 @@ using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.Definers;
+using Dntc.Common.Definitions.Mutators;
 using Dntc.Common.Dependencies;
 using Dntc.Common.Planning;
 using Mono.Cecil;
@@ -37,8 +38,12 @@ public class Transpiler
         definerPipeline.Append(new CustomDeclaredFieldDefiner());
         definerPipeline.Append(new CustomFunctionDefiner());
 
+        definerPipeline.AppendFieldMutator(new StaticallySizedArrayMutator(definitionCatalog));
+        definerPipeline.AppendFieldMutator(new HeapAllocatedArrayMutator(definitionCatalog));
+
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());
+        conversionInfoCreator.AddTypeMutator(new ArrayLateNameBindingMutator(definitionCatalog, conversionInfoCreator));
        
         conversionInfoCreator.AddMethodMutator(new WithAttributeMutator());
         conversionInfoCreator.AddMethodMutator(new CustomFileNameMutator());

@@ -12,16 +12,15 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
 
     public StaticallySizedArrayDefinedType(
         TypeReference arrayType,
-        TypeConversionInfo elementTypeInfo, 
+        IlTypeName ilTypeName,
         int size, 
         IlTypeName sizeType)
         : base(
             arrayType.GetElementType(),
-            new IlTypeName(arrayType.FullName),
+            ilTypeName,
             null,
             null,
-            elementTypeInfo.NameInC,
-            [])
+            [new HeaderName("<stdio.h>"), new HeaderName("<stdlib.h>")])
     {
         if (!arrayType.IsArray)
         {
@@ -61,5 +60,10 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
         DereferencedValueExpression index)
     {
         return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
+    }
+
+    public override CTypeName FormTypeName(TypeConversionInfo elementTypeInfo)
+    {
+        return elementTypeInfo.NameInC;
     }
 }

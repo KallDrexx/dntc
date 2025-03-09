@@ -27,6 +27,10 @@ public static class SingleFileTests
         return 0;
     }
 
+    [StaticallySizedArray(10)]
+    [InitialGlobalValue("{1,2,3,4,5,6,7,8,9,10}")]
+    public static int[] NumberArray;
+
     [CustomFunctionName("main")]
     public static int MainFunction()
     {
@@ -39,6 +43,7 @@ public static class SingleFileTests
         DoStuff();
 
         var output = AddOneMacro(10);
+        var number = NumberArray[3];
 
         return test.Value;
     }

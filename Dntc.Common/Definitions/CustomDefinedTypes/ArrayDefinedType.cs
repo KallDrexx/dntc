@@ -14,12 +14,11 @@ public abstract class ArrayDefinedType : CustomDefinedType
         IlTypeName ilTypeName, 
         HeaderName? headerName, 
         CSourceFileName? sourceFileName, 
-        CTypeName nativeName, 
-        IReadOnlyList<HeaderName> referencedHeaders) 
+        IReadOnlyList<HeaderName> referencedHeaders)
         : base(ilTypeName, 
             headerName, 
             sourceFileName, 
-            nativeName, 
+            new CTypeName("<Late bound array name>"),
             [new IlTypeName(elementType.FullName)], 
             referencedHeaders)
     {
@@ -47,4 +46,11 @@ public abstract class ArrayDefinedType : CustomDefinedType
         CBaseExpression arrayLengthField,
         CBaseExpression arrayInstance,
         DereferencedValueExpression index);
+
+    /// <summary>
+    /// Returns the C name for the array's element type
+    /// </summary>
+    /// <param name="elementTypeInfo"></param>
+    /// <returns></returns>
+    public abstract CTypeName FormTypeName(TypeConversionInfo elementTypeInfo);
 }

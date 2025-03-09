@@ -71,7 +71,7 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
     "System.String ScratchpadCSharp.AttributeTests::TestGlobalString",
     "System.Int32 ScratchpadCSharp.PluginTests::PluginGlobal",
-    "System.String ScratchpadCSharp.AttributeTests::StaticallySizedString",
+    "System.Char[] ScratchpadCSharp.AttributeTests::StaticallySizedString",
     "System.Int32 ScratchpadCSharp.AttributeTests::CustomDeclaredGlobalTest",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::GlobalWithNoInitialValue"
   ],
