@@ -230,4 +230,12 @@ public static class AttributeTests
     {
         return AddOneGenericMacro(input);
     }
+
+    [NativeGlobal("native_number_array", "../native_test.h")]
+    public static int[] NativeArrayNoBoundsCheck;
+
+    public static int GetFirstNativeArrayNoBoundsCheckValue()
+    {
+        return NativeArrayNoBoundsCheck[0];
+    }
 }

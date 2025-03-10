@@ -171,6 +171,9 @@ int main(void) {
     uint32_t customFuncUintValue = ScratchpadCSharp_AttributeTests_AddOneUint(15);
     assert(customFuncUintValue == 16);
 
+    int32_t nativeArrayNoBoundsCheckValue = ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue();
+    assert(nativeArrayNoBoundsCheckValue == 10);
+
     printf("Tests passed!\n");
     return 0;
 }

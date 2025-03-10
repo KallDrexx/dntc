@@ -138,5 +138,6 @@ int32_t ScratchpadCSharp_AttributeTests_AddTwo(int32_t input);
 int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input);
 #define addOneGenericMacro(a) ((a) + 1)
 uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input);
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue(void);
 
 #endif // SCRATCHPADCSHARP_H_H

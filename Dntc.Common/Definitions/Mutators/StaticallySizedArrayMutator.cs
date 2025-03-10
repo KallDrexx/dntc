@@ -28,6 +28,14 @@ public class StaticallySizedArrayMutator : IFieldDefinitionMutator
         var attribute = Utils.GetCustomAttribute(typeof(StaticallySizedArrayAttribute), cecilField);
         if (attribute == null)
         {
+            // If this isn't a explicitly marked as a statically sized type, but is marked as a native global,
+            // then we need to treat it as a statically sized type with no bounds checking (since we have
+            // idea of the size)
+            if (Utils.GetCustomAttribute(typeof(NativeGlobalAttribute), cecilField) != null)
+            {
+                SetupDefinedType(field, cecilField, 0, true);
+            }
+
             return;
         }
 
@@ -45,6 +53,11 @@ public class StaticallySizedArrayMutator : IFieldDefinitionMutator
             bypassBoundsCheck = bypassArg;
         }
 
+        SetupDefinedType(field, cecilField, size, bypassBoundsCheck);
+    }
+
+    private void SetupDefinedType(DefinedField field, FieldDefinition cecilField, int size, bool bypassBoundsCheck)
+    {
         var sizeType = new IlTypeName(typeof(int).FullName!); // TODO: Figure out a way to make this configurable.
 
         // We can't use the real IlName, because we need a custom iL name for this specific usage.

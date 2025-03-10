@@ -487,3 +487,7 @@ int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input) {
 uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input) {
 	return addOneGenericMacro(input);
 }
+
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue(void) {
+	return native_number_array[0];
+}

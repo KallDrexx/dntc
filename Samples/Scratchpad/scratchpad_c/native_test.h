@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 extern uint32_t static_number;
+extern int32_t native_number_array[25];
 
 uint32_t get_number();
 void* generic_pointer_return_type_test(size_t size);
