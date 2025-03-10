@@ -150,12 +150,21 @@ public static class AttributeTests
     {
         [StaticallySizedArray(10)]
         public int[] NumberArray;
+
+        [StaticallySizedArray(10, true)]
+        public int[] NumberArray2;
     }
 
     public static int GetFirstNumber(StaticallySizedTest value)
     {
         value.NumberArray[1] = 25;
         return value.NumberArray[0];
+    }
+
+    public static int GetFirstNumberNoBoundsCheck(StaticallySizedTest value)
+    {
+        value.NumberArray2[1] = 25;
+        return value.NumberArray2[0];
     }
 
     [CustomDeclaration("INT_FIELD(custom_declared_global)", "custom_declared_global", "../native_test2.h")]

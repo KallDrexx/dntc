@@ -9,12 +9,14 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
 {
     private readonly int _size;
     private readonly IlTypeName _sizeType;
+    private readonly bool _bypassBoundsCheck;
 
     public StaticallySizedArrayDefinedType(
         TypeReference arrayType,
         IlTypeName ilTypeName,
         int size, 
-        IlTypeName sizeType)
+        IlTypeName sizeType,
+        bool bypassBoundsCheck)
         : base(
             arrayType.GetElementType(),
             ilTypeName,
@@ -30,6 +32,7 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
 
         _size = size;
         _sizeType = sizeType;
+        _bypassBoundsCheck = bypassBoundsCheck;
     }
 
     public override CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)
@@ -59,7 +62,9 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
         CBaseExpression arrayInstance,
         DereferencedValueExpression index)
     {
-        return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
+        return _bypassBoundsCheck
+            ? new CustomCodeStatementSet(string.Empty)
+            : new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
     }
 
     public override CTypeName FormTypeName(TypeConversionInfo elementTypeInfo)

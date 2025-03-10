@@ -123,9 +123,15 @@ int main(void) {
         tempItems[x] = ARRAY_ITEM_COUNT - x;
     }
     
-    ScratchpadCSharp_AttributeTests_StaticallySizedTest test = {.NumberArray = {1,2,3,4,5,6,7,8,9,10}};
+    ScratchpadCSharp_AttributeTests_StaticallySizedTest test = {
+        .NumberArray = {1,2,3,4,5,6,7,8,9,10},
+        .NumberArray2 = {10,20,30,40,50,60,70,80,90,100},
+    };
     int32_t arrayFirstNumber = ScratchpadCSharp_AttributeTests_GetFirstNumber(test);
     assert(arrayFirstNumber == 1);
+
+    int32_t arrayFirstNumber2 = ScratchpadCSharp_AttributeTests_GetFirstNumberNoBoundsCheck(test);
+    assert(arrayFirstNumber2 == 10);
 
     // Verify the macros are working by utilizing them, they'll fail to compile if they don't get
     // their custom declarations used.

@@ -39,11 +39,23 @@ public class StaticallySizedArrayMutator : IFieldDefinitionMutator
             throw new InvalidOperationException(message);
         }
 
+        var bypassBoundsCheck = false;
+        if (attribute.ConstructorArguments.Count > 1 && attribute.ConstructorArguments[1].Value is bool bypassArg)
+        {
+            bypassBoundsCheck = bypassArg;
+        }
+
         var sizeType = new IlTypeName(typeof(int).FullName!); // TODO: Figure out a way to make this configurable.
 
         // We can't use the real IlName, because we need a custom iL name for this specific usage.
         var ilName = new IlTypeName($"StaticallySizedArray({cecilField.FullName})");
-        var definedType = new StaticallySizedArrayDefinedType(cecilField.FieldType, ilName, size, sizeType);
+        var definedType = new StaticallySizedArrayDefinedType(
+            cecilField.FieldType,
+            ilName,
+            size,
+            sizeType,
+            bypassBoundsCheck);
+
         _definitionCatalog.Add([definedType]);
 
         // Update the field to use the custom type IL name

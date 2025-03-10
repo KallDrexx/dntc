@@ -387,6 +387,11 @@ int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_Attribut
 	return (value.NumberArray)[0];
 }
 
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNumberNoBoundsCheck(ScratchpadCSharp_AttributeTests_StaticallySizedTest value) {
+	(value.NumberArray2)[1] = 25;
+	return (value.NumberArray2)[0];
+}
+
 int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct fieldStruct) {
 	return (fieldStruct.field);
 }

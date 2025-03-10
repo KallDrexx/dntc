@@ -45,6 +45,7 @@ typedef struct {
 
 typedef struct {
 	int32_t NumberArray[10];
+	int32_t NumberArray2[10];
 } ScratchpadCSharp_AttributeTests_StaticallySizedTest;
 
 typedef struct {
@@ -116,6 +117,7 @@ int32_t ScratchpadCSharp_GenericTests_GetGenericNumberFromDep(int32_t x);
 void ScratchpadCSharp_AttributeTests_TestNativeGenericInDep(void);
 int32_t ScratchpadCSharp_AttributeTests_GetCustomFieldStructValue(ScratchpadCSharp_AttributeTests_CustomFieldNameStruct obj);
 int32_t ScratchpadCSharp_AttributeTests_GetFirstNumber(ScratchpadCSharp_AttributeTests_StaticallySizedTest value);
+int32_t ScratchpadCSharp_AttributeTests_GetFirstNumberNoBoundsCheck(ScratchpadCSharp_AttributeTests_StaticallySizedTest value);
 int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct fieldStruct);
 int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void);
 int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value);
