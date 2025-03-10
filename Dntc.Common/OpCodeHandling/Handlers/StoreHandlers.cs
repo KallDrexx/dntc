@@ -77,7 +77,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     false);
                 
                 var left = new VariableValueExpression(variable);
-                var right = new DereferencedValueExpression(value);
+                var right = value;
                 statement = new AssignmentStatementSet(left, right);
             }
             else
