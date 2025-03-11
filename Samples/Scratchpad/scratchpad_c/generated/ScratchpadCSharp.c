@@ -39,17 +39,17 @@ int32_t ScratchpadCSharp_SimpleFunctions_FnPointerTest(FnPtr_Int32_Int32_Returns
 
 int32_t ScratchpadCSharp_SimpleFunctions_IfTest(int32_t input) {
 	if ((input >= 20)) {
-		goto IL_0007;
+		goto ScratchpadCSharp_SimpleFunctions_IfTest_IL_0007;
 	}
 	return -1;
 
-IL_0007:
+ScratchpadCSharp_SimpleFunctions_IfTest_IL_0007:
 	if ((input < 50)) {
-		goto IL_000f;
+		goto ScratchpadCSharp_SimpleFunctions_IfTest_IL_000f;
 	}
 	return 100;
 
-IL_000f:
+ScratchpadCSharp_SimpleFunctions_IfTest_IL_000f:
 	return input;
 }
 
@@ -150,9 +150,9 @@ uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
 	int32_t __local_1 = {0};
 	int32_t __local_2 = {0};
 	__local_1 = 0;
-	goto IL_000d;
+	goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_000d;
 
-IL_0004:
+ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0004:
 	if ((test.length) <= __local_1) {
 		printf("Attempted to access to test[%d], but only %u items are in the array", __local_1, (test.length));
 		abort();
@@ -160,15 +160,15 @@ IL_0004:
 	(test.items)[__local_1] = ((uint16_t)__local_1);
 	__local_1 = (__local_1 + 1);
 
-IL_000d:
+ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_000d:
 	if ((__local_1 < ((int32_t)(test.length)))) {
-		goto IL_0004;
+		goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0004;
 	}
 	__local_0 = 0;
 	__local_2 = 0;
-	goto IL_0024;
+	goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0024;
 
-IL_0019:
+ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0019:
 	if ((test.length) <= __local_2) {
 		printf("Attempted to access to test[%d], but only %u items are in the array", __local_2, (test.length));
 		abort();
@@ -176,9 +176,9 @@ IL_0019:
 	__local_0 = ((uint16_t)(__local_0 + (test.items)[__local_2]));
 	__local_2 = (__local_2 + 1);
 
-IL_0024:
+ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0024:
 	if ((__local_2 < ((int32_t)(test.length)))) {
-		goto IL_0019;
+		goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0019;
 	}
 	return __local_0;
 }
@@ -231,15 +231,15 @@ float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1) {
 int32_t ScratchpadCSharp_SimpleFunctions_TernaryTest(int32_t a, int32_t b) {
 	int32_t __checkpoint_for_il000c = {0};
 	if ((a < b)) {
-		goto IL_0009;
+		goto ScratchpadCSharp_SimpleFunctions_TernaryTest_IL_0009;
 	}
 	__checkpoint_for_il000c = (a - b);
-	goto IL_000c;
+	goto ScratchpadCSharp_SimpleFunctions_TernaryTest_IL_000c;
 
-IL_0009:
+ScratchpadCSharp_SimpleFunctions_TernaryTest_IL_0009:
 	__checkpoint_for_il000c = (b - a);
 
-IL_000c:
+ScratchpadCSharp_SimpleFunctions_TernaryTest_IL_000c:
 	return (__checkpoint_for_il000c + 3);
 }
 
@@ -437,11 +437,11 @@ int32_t ScratchpadCSharp_GenericTests_PointerNullCheck2(void) {
 	ScratchpadCSharp_GenericTests_SimpleStruct* __temp_000f = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(ScratchpadCSharp_GenericTests_SimpleStruct));
 	if ((__temp_000f == ((uint32_t)0))) {
-		goto IL_001a;
+		goto ScratchpadCSharp_GenericTests_PointerNullCheck2_IL_001a;
 	}
 	return 2;
 
-IL_001a:
+ScratchpadCSharp_GenericTests_PointerNullCheck2_IL_001a:
 	return 1;
 }
 

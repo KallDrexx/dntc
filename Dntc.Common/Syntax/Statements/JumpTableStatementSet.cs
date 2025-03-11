@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+using Dntc.Common.Syntax.Expressions;
 
 namespace Dntc.Common.Syntax.Statements;
 
@@ -8,9 +9,10 @@ namespace Dntc.Common.Syntax.Statements;
 /// label. If the expression resolves to a number greater than or equal to the number of IL offsets 
 /// provided, then execution will fall through to the next statement set.
 /// </summary>
-/// <param name="Value"></param>
-/// <param name="IlOffsets"></param>
-public record JumpTableStatementSet(CBaseExpression Value, IReadOnlyList<int> IlOffsets) : CStatementSet
+public record JumpTableStatementSet(
+    CBaseExpression Value,
+    IReadOnlyList<int> IlOffsets,
+    MethodConversionInfo CurrentMethod) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {
@@ -20,7 +22,7 @@ public record JumpTableStatementSet(CBaseExpression Value, IReadOnlyList<int> Il
 
         for (var x = 0; x < IlOffsets.Count; x++)
         {
-            await writer.WriteLineAsync($"\t\tcase {x}: goto {Utils.IlOffsetToLabel(IlOffsets[x])};");
+            await writer.WriteLineAsync($"\t\tcase {x}: goto {Utils.IlOffsetToLabel(IlOffsets[x], CurrentMethod)};");
         }
 
         await writer.WriteLineAsync("\t}");

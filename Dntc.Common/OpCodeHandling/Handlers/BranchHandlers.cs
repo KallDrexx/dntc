@@ -68,8 +68,10 @@ public class BranchHandlers : IOpCodeHandlerCollection
             // we need to instruct the transpiler to create a checkpoint of the current expression stack values, so
             // that the correct expression is utilized when it transpiles the operation in section 4.
             var checkpointTarget = context.ExpressionStack.Count > 0 ? (int?)target.Offset : null;
-            
-            return new OpCodeHandlingResult(new GotoStatementSet(target.Offset), checkpointTarget);
+
+            return new OpCodeHandlingResult(
+                new GotoStatementSet(target.Offset, context.CurrentMethodConversion),
+                checkpointTarget);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
@@ -91,7 +93,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
                 condition = new NotExpression(condition);
             }
 
-            return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
+            return new OpCodeHandlingResult(
+                new IfConditionJumpStatementSet(condition, target.Offset, context.CurrentMethodConversion));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
@@ -111,7 +114,8 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var boolType = context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!));
             var condition = new TwoExpressionEvalExpression(value1, comparison, value2, boolType);
 
-            return new OpCodeHandlingResult(new IfConditionJumpStatementSet(condition, target.Offset));
+            return new OpCodeHandlingResult(
+                new IfConditionJumpStatementSet(condition, target.Offset, context.CurrentMethodConversion));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
@@ -131,7 +135,7 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var targets = (Instruction[])context.CurrentInstruction.Operand;
             var offsets = targets.Select(x => x.Offset).ToArray();
 
-            var statement = new JumpTableStatementSet(items[0], offsets);
+            var statement = new JumpTableStatementSet(items[0], offsets, context.CurrentMethodConversion);
             return new OpCodeHandlingResult(statement);
         }
 

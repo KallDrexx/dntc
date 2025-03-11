@@ -48,7 +48,7 @@ public class MethodBlock
                 // this should be fine. Ternaries are the main thing this will probably break on, but
                 // that requires a more complex solution anyway that we'll handle later.
                 await writer.WriteLineAsync(); // Blank line for visual separation
-                await writer.WriteLineAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex])}:");
+                await writer.WriteLineAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex], _methodConversionInfo)}:");
                 jumpOffsetIndex++;
             }
 
