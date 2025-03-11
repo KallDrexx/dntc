@@ -12,7 +12,7 @@ public abstract class DefinedMethod
     public IlTypeName ReturnType { get; set; }
     public IlNamespace Namespace { get; protected set; }
     public IReadOnlyList<Parameter> Parameters { get; set; } = ArraySegment<Parameter>.Empty;
-    public IReadOnlyList<Local> Locals { get; protected set; } = ArraySegment<Local>.Empty;
+    public IReadOnlyList<Local> Locals { get; set; } = ArraySegment<Local>.Empty;
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; protected set; } = ArraySegment<FunctionPointerType>.Empty;
     public bool IsMacroDefinition { get; protected set; }
 

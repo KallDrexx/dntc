@@ -57,5 +57,27 @@ public class EnumDefinitionMutator : IFieldDefinitionMutator, IMethodDefinitionM
 
             method.Parameters = newParameters;
         }
+
+        if (method.Locals.Any())
+        {
+            var newLocals = new List<DefinedMethod.Local>();
+            for (var index = 0; index < method.Locals.Count; index++)
+            {
+                var currentLocal = method.Locals[index];
+                var cecilLocal = cecilDefinition.Body.Variables[index];
+
+                var resolvedType = cecilLocal.VariableType.Resolve();
+                if (resolvedType?.IsEnum != true || resolvedType.FullName != currentLocal.Type.Value)
+                {
+                    newLocals.Add(currentLocal);
+                    continue;
+                }
+
+                var newLocal = currentLocal with { Type = GetEnumType(resolvedType) };
+                newLocals.Add(newLocal);
+            }
+
+            method.Locals = newLocals;
+        }
     }
 }
