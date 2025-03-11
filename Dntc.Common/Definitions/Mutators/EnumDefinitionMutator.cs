@@ -28,10 +28,9 @@ public class EnumDefinitionMutator : IFieldDefinitionMutator, IMethodDefinitionM
 
     public void Mutate(DefinedMethod method, MethodDefinition cecilDefinition)
     {
-        if (cecilDefinition.ReturnType is not GenericParameter &&
-            !cecilDefinition.ReturnType.ContainsGenericParameter &&
-            cecilDefinition.ReturnType is not FunctionPointerType &&
-            cecilDefinition.ReturnType.Resolve().IsEnum)
+        var resolvedReturnType = cecilDefinition.ReturnType.Resolve();
+
+        if (resolvedReturnType != null && resolvedReturnType.IsEnum)
         {
             method.ReturnType = GetEnumType(cecilDefinition.ReturnType.Resolve());
         }
@@ -44,30 +43,15 @@ public class EnumDefinitionMutator : IFieldDefinitionMutator, IMethodDefinitionM
                 var cecilParam = cecilDefinition.Parameters
                     .FirstOrDefault(x => x.Name == param.Name);
 
-                if (cecilParam == null ||
-                    cecilParam.ParameterType.ContainsGenericParameter ||
-                    cecilParam.ParameterType is GenericParameter ||
-                    cecilParam.ParameterType is FunctionPointerType)
+                var cecilParamType = cecilParam?.ParameterType.Resolve();
+
+                if (cecilParamType?.IsEnum != true || cecilParamType.FullName != param.Type.Value)
                 {
                     newParameters.Add(param);
                     continue;
                 }
 
-                if (cecilParam.ParameterType.FullName != param.Type.Value)
-                {
-                    // Might have already been modified, so don't touch it
-                    newParameters.Add(param);
-                    continue;
-                }
-
-                var type = cecilParam.ParameterType.Resolve();
-                if (!type.IsEnum)
-                {
-                    newParameters.Add(param);
-                    continue;
-                }
-
-                var newParam = param with { Type = GetEnumType(type) };
+                var newParam = param with { Type = GetEnumType(cecilParamType) };
                 newParameters.Add(newParam);
             }
 
