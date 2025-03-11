@@ -40,6 +40,9 @@ public class Transpiler
 
         definerPipeline.AppendFieldMutator(new StaticallySizedArrayMutator(definitionCatalog));
         definerPipeline.AppendFieldMutator(new HeapAllocatedArrayMutator(definitionCatalog));
+        definerPipeline.AppendFieldMutator(new EnumDefinitionMutator());
+
+        definerPipeline.AppendMethodMutator(new EnumDefinitionMutator());
 
         conversionInfoCreator.AddTypeMutator(new IgnoredInHeadersMutator());
         conversionInfoCreator.AddTypeMutator(new CustomFileNameMutator());

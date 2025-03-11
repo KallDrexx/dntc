@@ -19,6 +19,7 @@ typedef struct {
 ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector = {0};
 int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
 ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
+int32_t ScratchpadCSharp_EnumTests_GlobalEnumValue = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
@@ -490,4 +491,17 @@ uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input) {
 
 int32_t ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue(void) {
 	return native_number_array[0];
+}
+
+int32_t ScratchpadCSharp_EnumTests_GetTestEnumValue(void) {
+	return ScratchpadCSharp_EnumTests_GlobalEnumValue;
+}
+
+void ScratchpadCSharp_EnumTests_SetEnumValue(int32_t value) {
+	ScratchpadCSharp_EnumTests_GlobalEnumValue = value;
+	return;
+}
+
+uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void) {
+	return 3;
 }

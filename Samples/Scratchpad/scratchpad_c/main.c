@@ -174,6 +174,10 @@ int main(void) {
     int32_t nativeArrayNoBoundsCheckValue = ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue();
     assert(nativeArrayNoBoundsCheckValue == 10);
 
+    ScratchpadCSharp_EnumTests_SetEnumValue(5);
+    int32_t enumValue = ScratchpadCSharp_EnumTests_GetTestEnumValue();
+    assert(enumValue == 5);
+
     printf("Tests passed!\n");
     return 0;
 }

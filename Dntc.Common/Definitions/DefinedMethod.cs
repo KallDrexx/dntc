@@ -9,9 +9,9 @@ public abstract class DefinedMethod
     public record Local(IlTypeName Type, bool IsReference);
     
     public IlMethodId Id { get; protected set; }
-    public IlTypeName ReturnType { get; protected set; }
+    public IlTypeName ReturnType { get; set; }
     public IlNamespace Namespace { get; protected set; }
-    public IReadOnlyList<Parameter> Parameters { get; protected set; } = ArraySegment<Parameter>.Empty;
+    public IReadOnlyList<Parameter> Parameters { get; set; } = ArraySegment<Parameter>.Empty;
     public IReadOnlyList<Local> Locals { get; protected set; } = ArraySegment<Local>.Empty;
     public IReadOnlyList<FunctionPointerType> FunctionPointerTypes { get; protected set; } = ArraySegment<FunctionPointerType>.Empty;
     public bool IsMacroDefinition { get; protected set; }

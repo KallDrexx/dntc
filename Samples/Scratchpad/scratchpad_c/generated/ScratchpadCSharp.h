@@ -59,6 +59,7 @@ typedef struct {
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
+extern int32_t ScratchpadCSharp_EnumTests_GlobalEnumValue;
 extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
@@ -139,5 +140,8 @@ int32_t ScratchpadCSharp_AttributeTests_AddOneInt(int32_t input);
 #define addOneGenericMacro(a) ((a) + 1)
 uint32_t ScratchpadCSharp_AttributeTests_AddOneUint(uint32_t input);
 int32_t ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue(void);
+int32_t ScratchpadCSharp_EnumTests_GetTestEnumValue(void);
+void ScratchpadCSharp_EnumTests_SetEnumValue(int32_t value);
+uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void);
 
 #endif // SCRATCHPADCSHARP_H_H

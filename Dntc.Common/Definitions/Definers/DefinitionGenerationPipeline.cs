@@ -8,10 +8,11 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class DefinitionGenerationPipeline
 {
-    private readonly List<IDotNetFieldDefiner> _globalDefiners = new();
-    private readonly List<IDotNetMethodDefiner> _methodDefiners = new();
-    private readonly List<IDotNetTypeDefiner> _typeDefiners = new();
-    private readonly List<IFieldDefinitionMutator> _fieldMutators = new();
+    private readonly List<IDotNetFieldDefiner> _globalDefiners = [];
+    private readonly List<IDotNetMethodDefiner> _methodDefiners = [];
+    private readonly List<IDotNetTypeDefiner> _typeDefiners = [];
+    private readonly List<IFieldDefinitionMutator> _fieldMutators = [];
+    private readonly List<IMethodDefinitionMutator> _methodMutators = [];
 
     public DefinitionGenerationPipeline()
     {
@@ -96,6 +97,22 @@ public class DefinitionGenerationPipeline
         _fieldMutators.Insert(0, mutator);
     }
 
+    /// <summary>
+    /// Adds the specified method mutator to the end of the definer pipeline
+    /// </summary>
+    public void AppendMethodMutator(IMethodDefinitionMutator mutator)
+    {
+        _methodMutators.Add(mutator);
+    }
+
+    /// <summary>
+    /// Adds the specified method mutator to the beginning of the definer pipeline
+    /// </summary>
+    public void PrependMethodMutator(IMethodDefinitionMutator mutator)
+    {
+        _methodMutators.Insert(0, mutator);
+    }
+
     public DefinedField Define(FieldDefinition field)
     {
         // Should always be able to get one via default
@@ -114,9 +131,16 @@ public class DefinitionGenerationPipeline
     public DefinedMethod Define(MethodDefinition method)
     {
         // Should always be able to get one via default
-        return _methodDefiners
+        var definition = _methodDefiners
             .Select(x => x.Define(method))
             .First(x => x != null)!;
+
+        foreach (var mutator in _methodMutators)
+        {
+            mutator.Mutate(definition, method);
+        }
+
+        return definition;
     }
 
     public DefinedType Define(TypeDefinition type)

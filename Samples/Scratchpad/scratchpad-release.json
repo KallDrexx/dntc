@@ -67,7 +67,10 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::AddTwo(System.Int32)",
     "System.Int32 ScratchpadCSharp.AttributeTests::AddOneInt(System.Int32)",
     "System.UInt32 ScratchpadCSharp.AttributeTests::AddOneUint(System.UInt32)",
-    "System.Int32 ScratchpadCSharp.AttributeTests::GetFirstNativeArrayNoBoundsCheckValue()"
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetFirstNativeArrayNoBoundsCheckValue()",
+    "ScratchpadCSharp.EnumTests/TestEnum ScratchpadCSharp.EnumTests::GetTestEnumValue()",
+    "System.Void ScratchpadCSharp.EnumTests::SetEnumValue(ScratchpadCSharp.EnumTests/TestEnum)",
+    "ScratchpadCSharp.EnumTests/UShortEnum ScratchpadCSharp.EnumTests::GetUShortEnumValue()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
