@@ -9,7 +9,8 @@ public class EnumDefinitionMutator : IFieldDefinitionMutator, IMethodDefinitionM
 {
     public void Mutate(DefinedField field, FieldDefinition cecilField)
     {
-        if (!cecilField.FieldType.Resolve().IsEnum)
+        var resolvedFieldType = cecilField.FieldType.Resolve();
+        if (resolvedFieldType == null || !cecilField.FieldType.Resolve().IsEnum)
         {
             return;
         }
