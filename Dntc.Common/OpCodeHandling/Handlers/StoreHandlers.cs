@@ -89,7 +89,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var left = new FieldAccessExpression(obj,
                     new Variable(value.ResultingType, fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer));
 
-                var right = new DereferencedValueExpression(value);
+                var right = value;
                 statement = new AssignmentStatementSet(left, right);
             }
 
