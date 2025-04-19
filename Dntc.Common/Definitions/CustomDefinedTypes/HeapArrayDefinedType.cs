@@ -11,7 +11,7 @@ public class HeapArrayDefinedType : ArrayDefinedType
     
     public HeapArrayDefinedType(TypeReference arrayType) 
         : base(
-            arrayType.GetElementType(),
+            new IlTypeName(arrayType.GetElementType().FullName),
             new IlTypeName(arrayType.FullName), 
             new HeaderName("dotnet_arrays.h"), 
             null, 

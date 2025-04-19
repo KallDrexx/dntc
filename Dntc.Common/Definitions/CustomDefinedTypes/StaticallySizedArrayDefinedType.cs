@@ -18,7 +18,7 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
         IlTypeName sizeType,
         bool bypassBoundsCheck)
         : base(
-            arrayType.GetElementType(),
+            new IlTypeName(arrayType.GetElementType().FullName),
             ilTypeName,
             null,
             null,
@@ -30,6 +30,24 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
             throw new InvalidOperationException(message);
         }
 
+        _size = size;
+        _sizeType = sizeType;
+        _bypassBoundsCheck = bypassBoundsCheck;
+    }
+
+    public StaticallySizedArrayDefinedType(
+        IlTypeName arrayElementType,
+        IlTypeName ilTypeName,
+        int size,
+        IlTypeName sizeType,
+        bool bypassBoundsCheck)
+        : base(
+            arrayElementType,
+            ilTypeName,
+            null,
+            null,
+            [new HeaderName("<stdio.h>"), new HeaderName("<stdlib.h>")])
+    {
         _size = size;
         _sizeType = sizeType;
         _bypassBoundsCheck = bypassBoundsCheck;

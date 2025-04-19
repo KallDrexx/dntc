@@ -10,19 +10,19 @@ public abstract class ArrayDefinedType : CustomDefinedType
     public IlTypeName ElementType { get; }
     
     protected ArrayDefinedType(
-        TypeReference elementType,
-        IlTypeName ilTypeName, 
-        HeaderName? headerName, 
+        IlTypeName elementType,
+        IlTypeName ilTypeName,
+        HeaderName? headerName,
         CSourceFileName? sourceFileName, 
         IReadOnlyList<HeaderName> referencedHeaders)
         : base(ilTypeName, 
             headerName, 
             sourceFileName, 
             new CTypeName("<Late bound array name>"),
-            [new IlTypeName(elementType.FullName)], 
+            [elementType],
             referencedHeaders)
     {
-        ElementType = new IlTypeName(elementType.FullName);
+        ElementType = elementType;
     }
 
     /// <summary>
