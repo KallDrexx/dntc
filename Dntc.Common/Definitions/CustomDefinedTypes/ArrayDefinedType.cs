@@ -11,11 +11,11 @@ public abstract class ArrayDefinedType : CustomDefinedType
     
     protected ArrayDefinedType(
         IlTypeName elementType,
-        IlTypeName ilTypeName,
+        IlTypeName arrayTypeName,
         HeaderName? headerName,
         CSourceFileName? sourceFileName, 
         IReadOnlyList<HeaderName> referencedHeaders)
-        : base(ilTypeName, 
+        : base(arrayTypeName,
             headerName, 
             sourceFileName, 
             new CTypeName("<Late bound array name>"),
@@ -28,7 +28,7 @@ public abstract class ArrayDefinedType : CustomDefinedType
     /// <summary>
     /// Returns an expression that contains the size of the array
     /// </summary>
-    public abstract CBaseExpression GetArraySizeExpression(
+    public abstract CBaseExpression? GetArraySizeExpression(
         CBaseExpression expressionToArray, 
         ConversionCatalog conversionCatalog);
 

@@ -53,7 +53,6 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
             
-            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
 
             var itemType = value.ResultingType;
@@ -62,10 +61,18 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             
             var valueExpression = new DereferencedValueExpression(value);
 
-            var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
-            var storeStatement = new ArrayStoreStatementSet(arrayIndex, valueExpression);
+            var statements = new List<CStatementSet>();
+            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
+            if (lengthField != null)
+            {
+                var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
+                statements.Add(lengthCheck);
+            }
 
-            return new OpCodeHandlingResult(new CompoundStatementSet([lengthCheck, storeStatement]));
+            var storeStatement = new ArrayStoreStatementSet(arrayIndex, valueExpression);
+            statements.Add(storeStatement);
+
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
@@ -111,16 +118,23 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
-            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             var indexExpression = new DereferencedValueExpression(index);
-            var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, array.ResultingType);
             
             // Return the length check while adding the accessor expression to the stack
             context.ExpressionStack.Push(arrayIndex);
 
-            return new OpCodeHandlingResult(lengthCheck);
+            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
+
+            if (lengthField != null)
+            {
+                var lengthCheck = arrayDefinedType.GetLengthCheckExpression(lengthField, array, indexExpression);
+                return new OpCodeHandlingResult(lengthCheck);
+            }
+
+            // Without a length check there are no statements to write out atm.
+            return new OpCodeHandlingResult(null);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
