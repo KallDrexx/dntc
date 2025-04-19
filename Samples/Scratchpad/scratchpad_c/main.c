@@ -183,6 +183,9 @@ int main(void) {
     ScratchpadCSharp_SimpleFunctions_LdIndRefTest(&array2, 1, 23);
     assert(array2.items[1] == 23);
 
+    uint32_t negResults = ScratchpadCSharp_SimpleFunctions_NegOpCodeTest(15);
+    assert(negResults == -15);
+
     printf("Tests passed!\n");
     return 0;
 }

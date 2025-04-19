@@ -16,6 +16,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
         { Code.Pop, new PopHandler() },
         { Code.Ret, new RetHandler() },
         { Code.Ldtoken, new LdTokenHandler() },
+        { Code.Neg, new NegHandler() },
 
         // Constrained op code can be handled by a look behind with callvirt
         { Code.Constrained, new NopHandler()},
@@ -158,6 +159,23 @@ public class MiscHandlers : IOpCodeHandlerCollection
             {
                 ReferencedTypes = types,
             };
+        }
+    }
+
+    private class NegHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var items = context.ExpressionStack.Pop(1);
+            var newExpression = new NegateExpression(items[0], false);
+            context.ExpressionStack.Push(newExpression);
+
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
         }
     }
 }

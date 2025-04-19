@@ -90,7 +90,7 @@ public class BranchHandlers : IOpCodeHandlerCollection
             CBaseExpression condition = new DereferencedValueExpression(item);
             if (!isTrueCheck)
             {
-                condition = new NotExpression(condition);
+                condition = new NegateExpression(condition, true);
             }
 
             return new OpCodeHandlingResult(

@@ -275,4 +275,9 @@ public static class SimpleFunctions
     {
         array[index] = value;
     }
+
+    public static int NegOpCodeTest(int value)
+    {
+        return -value;
+    }
 }

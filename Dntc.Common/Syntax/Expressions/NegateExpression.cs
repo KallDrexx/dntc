@@ -5,14 +5,22 @@ namespace Dntc.Common.Syntax.Expressions;
 /// <summary>
 /// Negates the specified expression
 /// </summary>
-public record NotExpression(CBaseExpression Expression) : CBaseExpression(false)
+public record NegateExpression(CBaseExpression Expression, bool BooleanNegation) : CBaseExpression(false)
 {
     // Probably can be hardcoded to bool
     public override TypeConversionInfo ResultingType => Expression.ResultingType; 
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
-        await writer.WriteAsync("!");
+        if (BooleanNegation)
+        {
+            await writer.WriteAsync("!");
+        }
+        else
+        {
+            await writer.WriteAsync("-");
+        }
+
         await Expression.WriteCodeStringAsync(writer);
     }
 

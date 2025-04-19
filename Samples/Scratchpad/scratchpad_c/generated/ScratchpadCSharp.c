@@ -514,3 +514,7 @@ void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int
 	(array->items)[index] = value;
 	return;
 }
+
+int32_t ScratchpadCSharp_SimpleFunctions_NegOpCodeTest(int32_t value) {
+	return -value;
+}
