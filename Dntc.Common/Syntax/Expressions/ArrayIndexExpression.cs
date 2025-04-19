@@ -5,7 +5,8 @@ namespace Dntc.Common.Syntax.Expressions;
 public record ArrayIndexExpression(
     CBaseExpression Array,
     DereferencedValueExpression Index,
-    TypeConversionInfo ValueType) : CBaseExpression(false) // TODO: support array of pointers
+    TypeConversionInfo ValueType)
+    : CBaseExpression(true) // Indexing operation in C is essentially pointer arithmetic, so it produces a pointer
 {
     public override TypeConversionInfo ResultingType => ValueType;
     
