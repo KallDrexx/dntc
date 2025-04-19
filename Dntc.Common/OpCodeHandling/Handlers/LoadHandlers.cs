@@ -24,6 +24,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         { Code.Ldind_U1, new LdIndHandler() },
         { Code.Ldind_U2, new LdIndHandler() },
         { Code.Ldind_U4, new LdIndHandler() },
+        { Code.Ldind_Ref, new LdIndRefHandler() },
 
         { Code.Ldarg, new LdArgHandler(null, false) },
         { Code.Ldarg_S, new LdArgHandler(null, false) },
@@ -133,6 +134,21 @@ public class LoadHandlers : IOpCodeHandlerCollection
             var dereferencedExpression = new DereferencedValueExpression(items[0]);
             context.ExpressionStack.Push(dereferencedExpression);
 
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
+    }
+
+    private class LdIndRefHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            // Stdind.ref takes an address off the stack and gets the reference to the object from it.
+            // Since the item on the evaluation stack is the object ref, we don't need to do anything here.
             return new OpCodeHandlingResult(null);
         }
 

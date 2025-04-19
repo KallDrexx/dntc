@@ -143,5 +143,6 @@ int32_t ScratchpadCSharp_AttributeTests_GetFirstNativeArrayNoBoundsCheckValue(vo
 int32_t ScratchpadCSharp_EnumTests_GetTestEnumValue(void);
 void ScratchpadCSharp_EnumTests_SetEnumValue(int32_t value);
 uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void);
+void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int32_t index, uint16_t value);
 
 #endif // SCRATCHPADCSHARP_H_H

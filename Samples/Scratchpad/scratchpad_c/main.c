@@ -178,6 +178,11 @@ int main(void) {
     int32_t enumValue = ScratchpadCSharp_EnumTests_GetTestEnumValue();
     assert(enumValue == 5);
 
+    uint16_t *items2 = malloc(sizeof(uint16_t) * ARRAY_ITEM_COUNT);
+    SystemUInt16Array array2 = {.length = ARRAY_ITEM_COUNT, .items = items2 };
+    ScratchpadCSharp_SimpleFunctions_LdIndRefTest(&array2, 1, 23);
+    assert(array2.items[1] == 23);
+
     printf("Tests passed!\n");
     return 0;
 }

@@ -1,4 +1,5 @@
-﻿using ScratchpadCSharp.Dependency;
+﻿using Dntc.Attributes;
+using ScratchpadCSharp.Dependency;
 
 namespace ScratchpadCSharp;
 
@@ -268,5 +269,10 @@ public static class SimpleFunctions
     public static int GetOtherAssemblyFieldValue()
     {
         return Misc.FieldInAnotherAssembly;
+    }
+
+    public static void LdIndRefTest(ref ushort[] array, int index, ushort value)
+    {
+        array[index] = value;
     }
 }

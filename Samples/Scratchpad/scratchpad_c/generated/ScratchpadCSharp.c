@@ -505,3 +505,12 @@ void ScratchpadCSharp_EnumTests_SetEnumValue(int32_t value) {
 uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void) {
 	return 3;
 }
+
+void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int32_t index, uint16_t value) {
+	if ((array->length) <= index) {
+		printf("Attempted to access to array[%d], but only %u items are in the array", index, (array->length));
+		abort();
+	}
+	(array->items)[index] = value;
+	return;
+}

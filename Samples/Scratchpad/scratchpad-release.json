@@ -70,7 +70,8 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetFirstNativeArrayNoBoundsCheckValue()",
     "ScratchpadCSharp.EnumTests/TestEnum ScratchpadCSharp.EnumTests::GetTestEnumValue()",
     "System.Void ScratchpadCSharp.EnumTests::SetEnumValue(ScratchpadCSharp.EnumTests/TestEnum)",
-    "ScratchpadCSharp.EnumTests/UShortEnum ScratchpadCSharp.EnumTests::GetUShortEnumValue()"
+    "ScratchpadCSharp.EnumTests/UShortEnum ScratchpadCSharp.EnumTests::GetUShortEnumValue()",
+    "System.Void ScratchpadCSharp.SimpleFunctions::LdIndRefTest(System.UInt16[]&,System.Int32,System.UInt16)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

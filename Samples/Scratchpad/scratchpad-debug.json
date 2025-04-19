@@ -49,7 +49,8 @@
     "System.Void ScratchpadCSharp.StringTests::LogStaticString()",
     "System.Int32 ScratchpadCSharp.GenericTests::GetGenericNumberFromDep(System.Int32)",
     "System.Void ScratchpadCSharp.AttributeTests::TestNativeGenericInDep()",
-    "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)"
+    "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::LdIndRefTest(System.UInt16[]&,System.Int32,System.UInt16)"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }
