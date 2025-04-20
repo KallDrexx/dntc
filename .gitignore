@@ -13,4 +13,7 @@ scratchpad_c
 !scratchpad_c/
 cmake_install.cmake
 Makefile
-
+.ninja*
+.cmake
+Testing/
+build.ninja

@@ -82,6 +82,10 @@ public class MethodBlock
         // Sometimes mid-function declarations are not allowed, and sometimes you get into odd edge cases where a
         // local declaration is not allowed directly after a jump label. To prevent this, move all local declarations
         // to the top of the function.
+        //
+        // We also need to set all local declarations to have starting IL offsets at 0, otherwise it's still possible
+        // that a jump label points to a local declaration, thus causing the local declaration after a goto label
+        // compilation error.
         var declarations = new List<LocalDeclarationStatementSet>();
         var nonDeclarations = new List<CStatementSet>();
 
@@ -93,7 +97,7 @@ public class MethodBlock
                 {
                     if (inner is LocalDeclarationStatementSet declaration)
                     {
-                        declarations.Add(declaration);
+                        declarations.Add(declaration with { StartingIlOffset = 0, LastIlOffset = 0 });
                     }
                     else
                     {
@@ -103,7 +107,7 @@ public class MethodBlock
             }
             else if (statement is LocalDeclarationStatementSet declaration)
             {
-                declarations.Add(declaration);
+                declarations.Add(declaration with { StartingIlOffset = 0, LastIlOffset = 0 });
             }
             else
             {
