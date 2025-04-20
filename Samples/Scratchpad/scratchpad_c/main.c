@@ -187,7 +187,7 @@ int main(void) {
     assert(negResults == -15);
 
     ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation();
-    assert(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[0] == 11);
+    assert(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] == 12);
 
     printf("Tests passed!\n");
     return 0;
