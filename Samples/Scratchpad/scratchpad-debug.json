@@ -52,7 +52,8 @@
     "System.Int32 ScratchpadCSharp.AttributeTests::GetCustomFieldStructValue(ScratchpadCSharp.AttributeTests/CustomFieldNameStruct)",
     "System.Void ScratchpadCSharp.SimpleFunctions::LdIndRefTest(System.UInt16[]&,System.Int32,System.UInt16)",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::NegOpCodeTest(System.Int32)",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::LocalDeclarationOrderingTest(System.Int32,System.Int32)"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::LocalDeclarationOrderingTest(System.Int32,System.Int32)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::ArrayItemIncrementValidation()"
   ],
   "OutputDirectory": "scratchpad_c/generated"
 }

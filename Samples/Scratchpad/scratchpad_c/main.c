@@ -186,6 +186,9 @@ int main(void) {
     uint32_t negResults = ScratchpadCSharp_SimpleFunctions_NegOpCodeTest(15);
     assert(negResults == -15);
 
+    ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation();
+    assert(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[0] == 11);
+
     printf("Tests passed!\n");
     return 0;
 }

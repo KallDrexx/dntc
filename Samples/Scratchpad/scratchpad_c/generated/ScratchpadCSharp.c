@@ -20,6 +20,7 @@ ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStati
 int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
 ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_EnumTests_GlobalEnumValue = {0};
+uint16_t ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[5] = {1,2,3,4,5};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
@@ -526,4 +527,9 @@ int32_t ScratchpadCSharp_SimpleFunctions_LocalDeclarationOrderingTest(int32_t a,
 	a = b;
 	b = __temp_0007;
 	return a;
+}
+
+void ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation(void) {
+	ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] = ((uint16_t)(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] + 10));
+	return;
 }

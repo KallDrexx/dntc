@@ -125,12 +125,6 @@ public class LoadHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var items = context.ExpressionStack.Pop(1);
-            if (!items[0].ProducesAPointer)
-            {
-                var message = "Expected top most expression to produce a pointer, but it does not";
-                throw new InvalidOperationException(message);
-            }
-
             var dereferencedExpression = new DereferencedValueExpression(items[0]);
             context.ExpressionStack.Push(dereferencedExpression);
 

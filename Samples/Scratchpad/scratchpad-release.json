@@ -73,7 +73,8 @@
     "ScratchpadCSharp.EnumTests/UShortEnum ScratchpadCSharp.EnumTests::GetUShortEnumValue()",
     "System.Void ScratchpadCSharp.SimpleFunctions::LdIndRefTest(System.UInt16[]&,System.Int32,System.UInt16)",
     "System.Int32 ScratchpadCSharp.SimpleFunctions::NegOpCodeTest(System.Int32)",
-    "System.Int32 ScratchpadCSharp.SimpleFunctions::LocalDeclarationOrderingTest(System.Int32,System.Int32)"
+    "System.Int32 ScratchpadCSharp.SimpleFunctions::LocalDeclarationOrderingTest(System.Int32,System.Int32)",
+    "System.Void ScratchpadCSharp.SimpleFunctions::ArrayItemIncrementValidation()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

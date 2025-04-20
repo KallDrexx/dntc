@@ -293,4 +293,13 @@ public static class SimpleFunctions
         b = temp;
         return a;
     }
+
+    [StaticallySizedArray(5, true)]
+    [InitialGlobalValue("{1,2,3,4,5}")]
+    public static ushort[] StaticallySizedUshortArray;
+
+    public static void ArrayItemIncrementValidation()
+    {
+        StaticallySizedUshortArray[1] += 10;
+    }
 }

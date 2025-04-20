@@ -6,7 +6,7 @@ public record ArrayIndexExpression(
     CBaseExpression Array,
     DereferencedValueExpression Index,
     TypeConversionInfo ValueType)
-    : CBaseExpression(true) // Indexing operation in C is essentially pointer arithmetic, so it produces a pointer
+    : CBaseExpression(false)
 {
     public override TypeConversionInfo ResultingType => ValueType;
     
