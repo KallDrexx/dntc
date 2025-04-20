@@ -145,5 +145,6 @@ void ScratchpadCSharp_EnumTests_SetEnumValue(int32_t value);
 uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void);
 void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int32_t index, uint16_t value);
 int32_t ScratchpadCSharp_SimpleFunctions_NegOpCodeTest(int32_t value);
+int32_t ScratchpadCSharp_SimpleFunctions_LocalDeclarationOrderingTest(int32_t a, int32_t b);
 
 #endif // SCRATCHPADCSHARP_H_H

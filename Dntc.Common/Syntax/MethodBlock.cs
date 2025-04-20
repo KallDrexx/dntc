@@ -18,9 +18,9 @@ public class MethodBlock
     {
         _methodConversionInfo = method;
         _methodDeclaration = declaration;
-        Statements = statements;
+        Statements = MoveDeclarationsToBeginning(statements);
 
-        _jumpOffsets = statements
+        _jumpOffsets = Statements
             .SelectMany(GetJumpOffsets)
             .OrderBy(x => x)
             .Distinct()
@@ -74,5 +74,43 @@ public class MethodBlock
             default:
                 return [];
         }
+    }
+
+    private static IReadOnlyList<CStatementSet> MoveDeclarationsToBeginning(IReadOnlyList<CStatementSet> statements)
+    {
+        // Some C compilers do not handle local declarations that are not at the beginning of the function well.
+        // Sometimes mid-function declarations are not allowed, and sometimes you get into odd edge cases where a
+        // local declaration is not allowed directly after a jump label. To prevent this, move all local declarations
+        // to the top of the function.
+        var declarations = new List<LocalDeclarationStatementSet>();
+        var nonDeclarations = new List<CStatementSet>();
+
+        foreach (var statement in statements)
+        {
+            if (statement is CompoundStatementSet compound)
+            {
+                foreach (var inner in compound.Flatten())
+                {
+                    if (inner is LocalDeclarationStatementSet declaration)
+                    {
+                        declarations.Add(declaration);
+                    }
+                    else
+                    {
+                        nonDeclarations.Add(inner);
+                    }
+                }
+            }
+            else if (statement is LocalDeclarationStatementSet declaration)
+            {
+                declarations.Add(declaration);
+            }
+            else
+            {
+                nonDeclarations.Add(statement);
+            }
+        }
+
+        return declarations.Concat(nonDeclarations).ToArray();
     }
 }

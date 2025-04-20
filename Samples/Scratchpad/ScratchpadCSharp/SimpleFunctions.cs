@@ -280,4 +280,17 @@ public static class SimpleFunctions
     {
         return -value;
     }
+
+    public static int LocalDeclarationOrderingTest(int a, int b)
+    {
+        // Validates that the temp variable the swap operation creates is declared
+        // at the top of the function before the assignment.
+        b = a + b;
+
+        // ReSharper disable once SwapViaDeconstruction
+        var temp = a;
+        a = b;
+        b = temp;
+        return a;
+    }
 }
