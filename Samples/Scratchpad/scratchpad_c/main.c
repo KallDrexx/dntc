@@ -189,6 +189,18 @@ int main(void) {
     ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation();
     assert(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] == 12);
 
+    uint16_t plusPlusValue1 = ScratchpadCSharp_SimpleFunctions_PlusPlusOrderOfOperationsValidation();
+    assert(plusPlusValue1 == 1);
+
+    uint16_t plusPlusValue2 = ScratchpadCSharp_SimpleFunctions_PlusPlusOrderOfOperationsValidation();
+    assert(plusPlusValue2 == 2);
+
+    uint16_t plusPlusValue3 = ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation();
+    assert(plusPlusValue3 == 1);
+
+    uint16_t plusPlusValue4 = ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation();
+    assert(plusPlusValue4 == 2);
+
     printf("Tests passed!\n");
     return 0;
 }

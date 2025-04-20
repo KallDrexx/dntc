@@ -21,6 +21,9 @@ int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt = {0};
 ScratchpadCSharp_AttributeTests_NonHeaderStruct NonHeaderGlobal = {0};
 int32_t ScratchpadCSharp_EnumTests_GlobalEnumValue = {0};
 uint16_t ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[5] = {1,2,3,4,5};
+uint16_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[5] = {1,2,3,4,5};
+uint8_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex = {0};
+ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
@@ -532,4 +535,18 @@ int32_t ScratchpadCSharp_SimpleFunctions_LocalDeclarationOrderingTest(int32_t a,
 void ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation(void) {
 	ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] = ((uint16_t)(ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[1] + 10));
 	return;
+}
+
+uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusOrderOfOperationsValidation(void) {
+	uint8_t __temp_000e = {0};
+	__temp_000e = ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex;
+	ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex = ((uint8_t)(ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex + 1));
+	return ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[__temp_000e];
+}
+
+uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation(void) {
+	uint8_t __local_0 = {0};
+	__local_0 = (*(&((&ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct)->Index)));
+	(*(&((&ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct)->Index))) = ((uint8_t)(__local_0 + 1));
+	return ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[__local_0];
 }

@@ -302,4 +302,30 @@ public static class SimpleFunctions
     {
         StaticallySizedUshortArray[1] += 10;
     }
+
+    [StaticallySizedArray(5, true)]
+    [InitialGlobalValue("{1,2,3,4,5}")]
+    public static ushort[] OrderOfOperationsTestArray;
+
+    public static byte OrderOfOperationsIndex;
+
+    public static ushort PlusPlusOrderOfOperationsValidation()
+    {
+        // Validates that a plus-plus operator inside indexing works as expected
+        return OrderOfOperationsTestArray[OrderOfOperationsIndex++];
+    }
+    
+    public struct PlusPlusOrderTestStruct
+    {
+        public byte Index;
+    }
+
+    public static PlusPlusOrderTestStruct PlusPlusOrderStruct;
+
+    public static ushort PlusPlusStructOrderOfOperationsValidation()
+    {
+        // Validates that the plus-plus operator inside an index works as expected
+        // when the variable we are invoking plus-plus on is inside a struct
+        return OrderOfOperationsTestArray[PlusPlusOrderStruct.Index++];
+    }
 }

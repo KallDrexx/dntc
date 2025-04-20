@@ -65,7 +65,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var field = reference.Resolve();
             var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
 
-            AssignmentStatementSet statement;
+            CompoundStatementSet statement;
             if (field.IsStatic)
             {
                 var items = context.ExpressionStack.Pop(1);
@@ -75,10 +75,23 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     fieldConversionInfo.FieldTypeConversionInfo,
                     fieldConversionInfo.NameInC.Value, 
                     false);
-                
+
                 var left = new VariableValueExpression(variable);
                 var right = value;
-                statement = new AssignmentStatementSet(left, right);
+                var assignment = new AssignmentStatementSet(left, right);
+
+                // If the static field is referenced elsewhere in the stack, we need to replace
+                // those expressions with a locally stored value of the static field before the
+                // assignment takes place. Otherwise, code coming up that uses the value in the expression
+                // stack will see the wrong value.
+                var referenceReplacements = HandleReferencedVariable(
+                    context.ExpressionStack,
+                    left,
+                    context.CurrentInstruction.Offset);
+
+                statement = referenceReplacements != null
+                    ? new CompoundStatementSet([referenceReplacements, assignment])
+                    : new CompoundStatementSet([assignment]);
             }
             else
             {
@@ -90,7 +103,13 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     new Variable(value.ResultingType, fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer));
 
                 var right = value;
-                statement = new AssignmentStatementSet(left, right);
+
+                // I think this might need to handle referenced variable replacement but using field access expression
+                // instead of variable value expressions. I can't get a good use case to reproduce it though, so
+                // I'm going to leave it as is for now pending a good test case. In most test cases I've tried, the
+                // field loading does not tend to use the dup trick that static fields use to keep a hanging reference
+                // on the evaluation stack.
+                statement = new CompoundStatementSet([new AssignmentStatementSet(left, right)]);
             }
 
             return new OpCodeHandlingResult(statement);
