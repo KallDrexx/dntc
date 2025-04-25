@@ -47,8 +47,8 @@ public class MethodBlock
                 // It's rare that a jump label is in between the expressions used by statements, so
                 // this should be fine. Ternaries are the main thing this will probably break on, but
                 // that requires a more complex solution anyway that we'll handle later.
-                //await writer.WriteLineAsync(); // Blank line for visual separation
-                await writer.WriteAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex], _methodConversionInfo)}:");
+                await writer.WriteLineAsync(); // Blank line for visual separation
+                await writer.WriteLineAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex], _methodConversionInfo)}:");
                 jumpOffsetIndex++;
             }
 

@@ -16,8 +16,8 @@ public record IfConditionJumpStatementSet(
     {
         await writer.WriteAsync("\tif (");
         await Expression.WriteCodeStringAsync(writer);
-        await writer.WriteAsync(") {");
-        await writer.WriteAsync($"\t\tgoto {Utils.IlOffsetToLabel(IlOffset, CurrentMethod)};");
-        await writer.WriteAsync("\t}");
+        await writer.WriteLineAsync(") {");
+        await writer.WriteLineAsync($"\t\tgoto {Utils.IlOffsetToLabel(IlOffset, CurrentMethod)};");
+        await writer.WriteLineAsync("\t}");
     }
 }

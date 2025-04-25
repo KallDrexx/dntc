@@ -10,6 +10,6 @@ public record AssignmentStatementSet(CBaseExpression Left, CBaseExpression Right
         await Left.WriteCodeStringAsync(writer);
         await writer.WriteAsync(" = ");
         await Right.WriteCodeStringAsync(writer);
-        await writer.WriteAsync(";");
+        await writer.WriteLineAsync(";");
     }
 }
