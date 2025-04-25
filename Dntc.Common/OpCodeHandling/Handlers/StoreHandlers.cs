@@ -250,7 +250,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
             var local = context.CurrentMethodConversion.Locals[localIndex];
             var localVariable = new VariableValueExpression(
-                new Variable(local.ConversionInfo, Utils.LocalName(localIndex), local.IsReference));
+                new Variable(local.ConversionInfo, Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex), local.IsReference));
 
             CBaseExpression left, right;
             if (items[0].ProducesAPointer && localVariable.ProducesAPointer)

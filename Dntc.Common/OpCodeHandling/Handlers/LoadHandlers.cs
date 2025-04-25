@@ -318,7 +318,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             var expression = new VariableValueExpression(
                 new Variable(
                     local.ConversionInfo,
-                    Utils.LocalName(localIndex),
+                    Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
                     local.IsReference || local.ConversionInfo.IlName.IsPointer()));
 
             CBaseExpression newExpression = getAddress

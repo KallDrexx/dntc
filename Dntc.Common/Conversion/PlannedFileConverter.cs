@@ -116,11 +116,11 @@ public class PlannedFileConverter
         }
         
         // Add local statements
-        for (var x = 0; x < dotNetDefinedMethod.Locals.Count; x++)
+        for (var x = 0; x < dotNetDefinedMethod.Definition.Body.Variables.Count; x++)
         {
             var local = dotNetDefinedMethod.Locals[x];
             var localType = _conversionCatalog.Find(local.Type);
-            var variable = new Variable(localType, Utils.LocalName(x), local.Type.IsPointer());
+            var variable = new Variable(localType, Utils.LocalName(dotNetDefinedMethod.Definition, x), local.Type.IsPointer());
             statements.Add(new LocalDeclarationStatementSet(variable));
         }
         
