@@ -47,8 +47,8 @@ public class MethodBlock
                 // It's rare that a jump label is in between the expressions used by statements, so
                 // this should be fine. Ternaries are the main thing this will probably break on, but
                 // that requires a more complex solution anyway that we'll handle later.
-                await writer.WriteLineAsync(); // Blank line for visual separation
-                await writer.WriteLineAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex], _methodConversionInfo)}:");
+                //await writer.WriteLineAsync(); // Blank line for visual separation
+                await writer.WriteAsync($"{Utils.IlOffsetToLabel(_jumpOffsets[jumpOffsetIndex], _methodConversionInfo)}:");
                 jumpOffsetIndex++;
             }
 
@@ -88,9 +88,20 @@ public class MethodBlock
         // compilation error.
         var declarations = new List<LocalDeclarationStatementSet>();
         var nonDeclarations = new List<CStatementSet>();
+        var initialLineStatements = new List<CStatementSet>();
 
-        foreach (var statement in statements)
+        // First, collect any LineStatementSets that appear before the first non-LineStatementSet
+        int i = 0;
+        while (i < statements.Count && statements[i] is LineStatementSet)
         {
+            initialLineStatements.Add(statements[i]);
+            i++;
+        }
+
+        // Then process the rest of the statements
+        for (; i < statements.Count; i++)
+        {
+            var statement = statements[i];
             if (statement is CompoundStatementSet compound)
             {
                 foreach (var inner in compound.Flatten())
@@ -115,6 +126,7 @@ public class MethodBlock
             }
         }
 
-        return declarations.Concat(nonDeclarations).ToArray();
+        // Combine in the order: initialLineStatements -> declarations -> other non-declarations
+        return initialLineStatements.Concat(declarations).Concat(nonDeclarations).ToArray();
     }
 }

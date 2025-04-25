@@ -4,6 +4,7 @@ using Dntc.Common.Planning;
 using Dntc.Common.Syntax;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
+using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion;
 
@@ -107,6 +108,13 @@ public class PlannedFileConverter
         
         var statements = new List<CStatementSet>();
         
+        var methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.FirstOrDefault();
+
+        if (methodInstruction != null)
+        {
+            CreateLineStatementFromSequencePoint(statements, CecilUtils.GetSequencePoint(dotNetDefinedMethod.Definition, methodInstruction), methodInstruction);
+        }
+        
         // Add local statements
         for (var x = 0; x < dotNetDefinedMethod.Locals.Count; x++)
         {
@@ -119,9 +127,11 @@ public class PlannedFileConverter
         var startingOffset = (int?) null;
         var expressionStack = new ExpressionStack();
         var checkpoints = new Dictionary<int, Variable>();
+
         foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
         {
             startingOffset ??= instruction.Offset;
+            var sequencePoint = CecilUtils.GetSequencePoint(dotNetDefinedMethod.Definition, instruction);
 
             if (checkpoints.TryGetValue(instruction.Offset, out var checkpointVariable))
             {
@@ -137,6 +147,8 @@ public class PlannedFileConverter
                 // Make sure the syntax tree has a local declaration for this checkpoint variable
                 var localDeclaration = new LocalDeclarationStatementSet(checkpointVariable);
                 statements.Insert(0, localDeclaration);
+                
+                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
             }
 
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
@@ -177,6 +189,8 @@ public class PlannedFileConverter
                 // any gotos go past the checkpoint.
                 statement.StartingIlOffset = instruction.Offset - 1;
                 statement.LastIlOffset = instruction.Offset - 1;
+                
+                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
                 statements.Add(statement);
             }
 
@@ -184,6 +198,8 @@ public class PlannedFileConverter
             {
                 result.StatementSet.StartingIlOffset = startingOffset.Value;
                 result.StatementSet.LastIlOffset = instruction.Offset;
+                
+                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
                 statements.Add(result.StatementSet);
 
                 startingOffset = null;
@@ -202,6 +218,14 @@ public class PlannedFileConverter
         }
 
         return statements;
+    }
+
+    private static void CreateLineStatementFromSequencePoint(List<CStatementSet> statements, SequencePoint? sequencePoint, Instruction instruction)
+    {
+        if (sequencePoint is { IsHidden: false })
+        {
+            statements.Add(new LineStatementSet(instruction.Offset, sequencePoint));
+        }
     }
 
     private static CStatementSet SaveCheckpoint(ExpressionStack stack, Dictionary<int, Variable> checkpoints, int targetOffset)

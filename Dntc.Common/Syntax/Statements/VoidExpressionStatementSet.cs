@@ -13,6 +13,6 @@ public record VoidExpressionStatementSet(CBaseExpression Expression) : CStatemen
     {
         await writer.WriteAsync("\t");
         await Expression.WriteCodeStringAsync(writer);
-        await writer.WriteLineAsync(";");
+        await writer.WriteAsync(";");
     }
 }

@@ -17,6 +17,6 @@ public record ReturnStatementSet(CBaseExpression? ReturnedExpression) : CStateme
             await ReturnedExpression.WriteCodeStringAsync(writer);
         }
 
-        await writer.WriteLineAsync(";");
+        await writer.WriteAsync(";");
     }
 }
