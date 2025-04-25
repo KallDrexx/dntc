@@ -1,9 +1,11 @@
-﻿using Dntc.Common.Definitions;
+﻿using Dntc.Common.Conversion.Mutators;
+using Dntc.Common.Definitions;
 using Dntc.Common.OpCodeHandling;
 using Dntc.Common.Planning;
 using Dntc.Common.Syntax;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
+using Dntc.Common.Syntax.Statements.Generators;
 using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion;
@@ -12,6 +14,7 @@ public class PlannedFileConverter
 {
     private readonly ConversionCatalog _conversionCatalog;
     private readonly DefinitionCatalog _definitionCatalog;
+    private readonly List<IStatementGenerator> _statementGenerators = [];
     private readonly bool _debugLogging; 
 
     public PlannedFileConverter(
@@ -61,6 +64,7 @@ public class PlannedFileConverter
                 var definition = _definitionCatalog.Get(x.MethodId);
                 var declaration = new MethodDeclaration(x, definition!, _conversionCatalog);
                 var statements = GetMethodStatements(definition!, x);
+                
                 return new MethodBlock(x, statements, declaration);
             })
             .Where(x => x.Statements.Count > 0)
@@ -112,7 +116,7 @@ public class PlannedFileConverter
 
         if (methodInstruction != null)
         {
-            CreateLineStatementFromSequencePoint(statements, CecilUtils.GetSequencePoint(dotNetDefinedMethod.Definition, methodInstruction), methodInstruction);
+            OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
         }
         
         // Add local statements
@@ -123,7 +127,12 @@ public class PlannedFileConverter
             var variable = new Variable(localType, Utils.LocalName(dotNetDefinedMethod.Definition, x), local.Type.IsPointer());
             statements.Add(new LocalDeclarationStatementSet(variable));
         }
-        
+
+        if (methodInstruction != null)
+        {
+            OnAfterGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
+        }
+
         var startingOffset = (int?) null;
         var expressionStack = new ExpressionStack();
         var checkpoints = new Dictionary<int, Variable>();
@@ -131,7 +140,6 @@ public class PlannedFileConverter
         foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
         {
             startingOffset ??= instruction.Offset;
-            var sequencePoint = CecilUtils.GetSequencePoint(dotNetDefinedMethod.Definition, instruction);
 
             if (checkpoints.TryGetValue(instruction.Offset, out var checkpointVariable))
             {
@@ -147,8 +155,6 @@ public class PlannedFileConverter
                 // Make sure the syntax tree has a local declaration for this checkpoint variable
                 var localDeclaration = new LocalDeclarationStatementSet(checkpointVariable);
                 statements.Insert(0, localDeclaration);
-                
-                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
             }
 
             if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
@@ -189,9 +195,10 @@ public class PlannedFileConverter
                 // any gotos go past the checkpoint.
                 statement.StartingIlOffset = instruction.Offset - 1;
                 statement.LastIlOffset = instruction.Offset - 1;
-                
-                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
+
+                OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 statements.Add(statement);
+                OnAfterGenerateInstruction(statements, dotNetDefinedMethod, instruction);
             }
 
             if (result.StatementSet != null)
@@ -199,9 +206,9 @@ public class PlannedFileConverter
                 result.StatementSet.StartingIlOffset = startingOffset.Value;
                 result.StatementSet.LastIlOffset = instruction.Offset;
                 
-                CreateLineStatementFromSequencePoint(statements, sequencePoint, instruction);
+                OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 statements.Add(result.StatementSet);
-
+                OnAfterGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 startingOffset = null;
             }
 
@@ -220,11 +227,21 @@ public class PlannedFileConverter
         return statements;
     }
 
-    private static void CreateLineStatementFromSequencePoint(List<CStatementSet> statements, SequencePoint? sequencePoint, Instruction instruction)
+    private void OnBeforeGenerateInstruction(List<CStatementSet> statements, DotNetDefinedMethod dotNetDefinedMethod,
+        Instruction methodInstruction)
     {
-        if (sequencePoint is { IsHidden: false })
+        foreach (var statementGenerator in _statementGenerators)
         {
-            statements.Add(new LineStatementSet(instruction.Offset, sequencePoint));
+            statements.AddRange(statementGenerator.Before(statements, dotNetDefinedMethod.Definition, methodInstruction));
+        }
+    }
+    
+    private void OnAfterGenerateInstruction(List<CStatementSet> statements, DotNetDefinedMethod dotNetDefinedMethod,
+        Instruction methodInstruction)
+    {
+        foreach (var instructionGenerator in _statementGenerators)
+        {
+            statements.AddRange(instructionGenerator.After(statements, dotNetDefinedMethod.Definition, methodInstruction));
         }
     }
 
@@ -255,5 +272,10 @@ public class PlannedFileConverter
         return statementSet != null
             ? [statementSet]
             : [];
+    }
+
+    public void AddInstructionGenerator(IStatementGenerator plugin)
+    {
+        _statementGenerators.Add(plugin);
     }
 }
