@@ -25,6 +25,9 @@ public class LineInfoStatementGenerator(LineInfoMode mode) : IStatementGenerator
 
             if (lastLineStatement != null && lastLineStatement.SequencePoint == sequencePoint)
             {
+                // The sequence point matches the last line statement so we have multiple CStatements
+                // representing the same line in the original C# code. We will remove the 
+                // endLineStatement so that all these CStatements will get bunched onto the same line.
                 var lastEndLineStatement = statements.OfType<EndLineStatementSet>().LastOrDefault();
                 if (lastEndLineStatement != null)
                 {
@@ -33,10 +36,14 @@ public class LineInfoStatementGenerator(LineInfoMode mode) : IStatementGenerator
             }
             else if (sequencePoint is { IsHidden: false })
             {
+                // This is a new non-hidden sequence point so we will add a new line statement
                 yield return new LineStatementSet(mode, methodInstruction.Offset, sequencePoint);
             }
             else
             {
+                // This is a hidden sequence point meaning we need to move the last endLineStatement
+                // to keep moving the endLineStatment until we find a non-hidden sequence point.
+                // The endLineStatement will be re-added in the call to After().
                 var lastEndLineStatement = statements.OfType<EndLineStatementSet>().LastOrDefault();
                 if (lastEndLineStatement != null)
                 {
