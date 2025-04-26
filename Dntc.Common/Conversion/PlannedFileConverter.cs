@@ -112,12 +112,9 @@ public class PlannedFileConverter
         
         var statements = new List<CStatementSet>();
         
-        var methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.FirstOrDefault();
+        Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
 
-        if (methodInstruction != null)
-        {
-            OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
-        }
+        OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
         
         // Add local statements
         for (var x = 0; x < dotNetDefinedMethod.Definition.Body.Variables.Count; x++)
@@ -128,10 +125,7 @@ public class PlannedFileConverter
             statements.Add(new LocalDeclarationStatementSet(variable));
         }
 
-        if (methodInstruction != null)
-        {
-            OnAfterGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
-        }
+        OnAfterGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
 
         var startingOffset = (int?) null;
         var expressionStack = new ExpressionStack();
