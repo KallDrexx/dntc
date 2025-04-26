@@ -1,0 +1,38 @@
+name: Build and Verify Clean Git State
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Needed to inspect git status properly
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' # Change to your required .NET version
+
+    - name: Make build_all.sh executable
+      run: chmod +x Samples/build_all.sh
+
+    - name: Run build_all.sh
+      run: ./Samples/build_all.sh
+
+    - name: Check for unstaged git changes
+      run: |
+        if [[ -n "$(git status --porcelain)" ]]; then
+          echo "Error: Unstaged git changes detected after building all samples. All sample generated code should be checked in with the commit causing them to change."
+          git status
+          git diff
+          exit 1
+        fi
+

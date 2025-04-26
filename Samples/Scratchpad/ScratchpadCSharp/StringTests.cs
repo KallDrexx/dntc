@@ -4,7 +4,7 @@ namespace ScratchpadCSharp;
 
 public static class StringTests
 {
-    [NativeFunctionCall("printf", "<string.h>")]
+    [NativeFunctionCall("printff", "<string.h>")]
     public static void LogSingleString(string value)
     {
     }
