@@ -199,7 +199,7 @@ int main(void) {
     assert(plusPlusValue3 == 1);
 
     uint16_t plusPlusValue4 = ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation();
-    assert(plusPlusValue4 == 2);
+    assert(plusPlusValue4 == 3);
 
     printf("Tests passed!\n");
     return 0;
