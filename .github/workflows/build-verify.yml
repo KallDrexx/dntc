@@ -1,4 +1,4 @@
-name: Build and Verify Clean Git State
+name: Build and Verify
 
 on:
   push:
