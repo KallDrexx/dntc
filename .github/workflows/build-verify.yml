@@ -30,7 +30,7 @@ jobs:
     - name: Check for unstaged git changes
       run: |
         if [[ -n "$(git status --porcelain)" ]]; then
-          echo "::error: Unstaged git changes detected after building all samples. All sample generated code should be checked in with the commit causing them to change."
+          echo "::error Unstaged git changes detected after building all samples. All sample generated code should be checked in with the commit causing them to change."
           git status
           git diff
           exit 1
