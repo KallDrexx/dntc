@@ -17,7 +17,6 @@ public record LineStatementSet(LineInfoMode Mode, int IlOffset, SequencePoint Se
 
         if (!string.IsNullOrEmpty(lineToWrite))
         {
-            await writer.WriteLineAsync();
             await writer.WriteLineAsync(lineToWrite.TrimStart('\n'));
             writer.NewLine = "";
         }

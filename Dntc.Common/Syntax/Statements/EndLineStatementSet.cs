@@ -10,6 +10,7 @@ public record EndLineStatementSet(LineInfoMode Mode, int IlOffset) : CStatementS
         {
             writer.NewLine = Environment.NewLine;
             await writer.WriteLineAsync();
+            await writer.WriteLineAsync();
         }
     }
 }
