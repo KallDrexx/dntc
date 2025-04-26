@@ -127,6 +127,6 @@ public class MethodBlock
         }
 
         // Combine in the order: initialLineStatements -> declarations -> other non-declarations
-        return initialLineStatements.Concat(declarations).Concat(nonDeclarations).ToArray();
+        return initialLineStatements.TakeLast(1).Concat(declarations).Concat(nonDeclarations).ToArray();
     }
 }
