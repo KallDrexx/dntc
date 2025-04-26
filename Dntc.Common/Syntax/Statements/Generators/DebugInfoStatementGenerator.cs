@@ -3,21 +3,21 @@ using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Syntax.Statements.Generators;
 
-public enum LineInfoMode
+public enum DebugInfoMode
 {
-    Directives,
-    Comments,
+    CLineSourceMaps,
+    LineNumberComments,
     None,
 }
 
-public class LineInfoStatementGenerator(LineInfoMode mode) : IStatementGenerator
+public class DebugInfoStatementGenerator(DebugInfoMode mode) : IStatementGenerator
 {
     private EndLineStatementSet? _movedStatementSet;
     
     public IEnumerable<CStatementSet> Before(List<CStatementSet> statements, MethodDefinition definition,
         Instruction methodInstruction)
     {
-        if (mode != LineInfoMode.None)
+        if (mode != DebugInfoMode.None)
         {
             var sequencePoint = CecilUtils.GetSequencePoint(definition, methodInstruction);
 
@@ -57,7 +57,7 @@ public class LineInfoStatementGenerator(LineInfoMode mode) : IStatementGenerator
     public IEnumerable<CStatementSet> After(List<CStatementSet> statements, MethodDefinition definition,
         Instruction methodInstruction)
     {
-        if (mode != LineInfoMode.None)
+        if (mode != DebugInfoMode.None)
         {
             if (_movedStatementSet != null)
             {

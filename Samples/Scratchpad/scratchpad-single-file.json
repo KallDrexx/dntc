@@ -10,5 +10,5 @@
   ],
   "OutputDirectory": "scratchpad_c_single_file",
   "SingleGeneratedSourceFileName": "main.c",
-  "LineInfoMode": "None"
+  "DebugInfoMode": "None"
 }

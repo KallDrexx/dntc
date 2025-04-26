@@ -58,5 +58,5 @@
     " System.UInt16 ScratchpadCSharp.SimpleFunctions::PlusPlusStructOrderOfOperationsValidation()"
   ],
   "OutputDirectory": "scratchpad_c/generated",
-  "LineInfoMode": "None"
+  "DebugInfoMode": "None"
 }

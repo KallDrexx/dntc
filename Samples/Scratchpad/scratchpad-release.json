@@ -87,5 +87,5 @@
     "System.Int32 ScratchpadCSharp.SimpleFunctions::GlobalWithNoInitialValue"
   ],
   "OutputDirectory": "scratchpad_c/generated",
-  "LineInfoMode": "None"
+  "DebugInfoMode": "None"
 }

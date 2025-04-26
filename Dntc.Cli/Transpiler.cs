@@ -81,7 +81,7 @@ public class Transpiler
         }
         
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
-        planConverter.AddInstructionGenerator(new LineInfoStatementGenerator(_manifest.LineInfoMode));
+        planConverter.AddInstructionGenerator(new DebugInfoStatementGenerator(_manifest.DebugInfoMode));
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
         var implementationPlan = new ImplementationPlan(conversionCatalog, definitionCatalog);

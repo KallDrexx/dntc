@@ -58,7 +58,7 @@ public class Manifest
     /// </summary>
     public string? SingleGeneratedSourceFileName { get; set; }
     
-    public LineInfoMode LineInfoMode { get; set; } = LineInfoMode.Directives;
+    public DebugInfoMode DebugInfoMode { get; set; } = DebugInfoMode.CLineSourceMaps;
 
     public static async Task<Manifest> ParseManifestAsync(string manifestFilePath)
     {

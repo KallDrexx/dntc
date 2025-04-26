@@ -2,11 +2,11 @@ using Dntc.Common.Syntax.Statements.Generators;
 
 namespace Dntc.Common.Syntax.Statements;
 
-public record EndLineStatementSet(LineInfoMode Mode, int IlOffset) : CStatementSet
+public record EndLineStatementSet(DebugInfoMode Mode, int IlOffset) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {
-        if (Mode != LineInfoMode.None)
+        if (Mode != DebugInfoMode.None)
         {
             writer.NewLine = Environment.NewLine;
             await writer.WriteLineAsync();

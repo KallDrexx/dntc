@@ -3,15 +3,15 @@ using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Syntax.Statements;
 
-public record LineStatementSet(LineInfoMode Mode, int IlOffset, SequencePoint SequencePoint) : CStatementSet
+public record LineStatementSet(DebugInfoMode Mode, int IlOffset, SequencePoint SequencePoint) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {
         string lineToWrite = Mode switch
         {
-            LineInfoMode.Directives => $"#line {SequencePoint.StartLine} \"{SequencePoint.Document.Url}\" // [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
-            LineInfoMode.Comments => $"// \"{SequencePoint.Document.Url}\" [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
-            LineInfoMode.None => string.Empty,
+            DebugInfoMode.CLineSourceMaps => $"#line {SequencePoint.StartLine} \"{SequencePoint.Document.Url}\" // [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
+            DebugInfoMode.LineNumberComments => $"// \"{SequencePoint.Document.Url}\" [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
+            DebugInfoMode.None => string.Empty,
             _ => throw new ArgumentOutOfRangeException()
         };
 
