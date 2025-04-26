@@ -152,7 +152,6 @@ float ScratchpadCSharp_SimpleFunctions_SquareRootTest(float value) {
 uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
 	uint16_t sum = {0};
 	int32_t x = {0};
-	int32_t x = {0};
 	x = 0;
 	goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_000d;
 
