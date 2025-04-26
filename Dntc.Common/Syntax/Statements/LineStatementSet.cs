@@ -7,20 +7,19 @@ public record LineStatementSet(LineInfoMode Mode, int IlOffset, SequencePoint Se
 {
     public override async Task WriteAsync(StreamWriter writer)
     {
-        switch (Mode)
+        string lineToWrite = Mode switch
         {
-            case LineInfoMode.Directives:
-                await writer.WriteLineAsync($"#line {SequencePoint.StartLine} \"{SequencePoint.Document.Url}\" // [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]");
-                writer.NewLine = "";
-                break;
-            case LineInfoMode.Comments:
-                await writer.WriteLineAsync($"// \"{SequencePoint.Document.Url}\" [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]");
-                writer.NewLine = "";
-                break;
-            case LineInfoMode.None:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            LineInfoMode.Directives => $"#line {SequencePoint.StartLine} \"{SequencePoint.Document.Url}\" // [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
+            LineInfoMode.Comments => $"// \"{SequencePoint.Document.Url}\" [{SequencePoint.StartLine} {SequencePoint.StartColumn} - {SequencePoint.EndLine} {SequencePoint.EndColumn}]",
+            LineInfoMode.None => string.Empty,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        if (!string.IsNullOrEmpty(lineToWrite))
+        {
+            await writer.WriteLineAsync();
+            await writer.WriteLineAsync(lineToWrite.TrimStart('\n'));
+            writer.NewLine = "";
         }
     }
 }
