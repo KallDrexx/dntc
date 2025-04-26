@@ -43,4 +43,4 @@ jobs:
         cd Samples/Scratchpad/scratchpad_c
         cmake .
         make
-		./scratchpad_c || { echo "[error] Running ./scratchpad_c failed. This indicates the C code being generated is not producing the expected values."; exit 1; }
+        ./scratchpad_c || { echo "[error] Running ./scratchpad_c failed. This indicates the C code being generated is not producing the expected values."; exit 1; }
