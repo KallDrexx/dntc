@@ -57,5 +57,6 @@
     "System.UInt16 ScratchpadCSharp.SimpleFunctions::PlusPlusOrderOfOperationsValidation()",
     " System.UInt16 ScratchpadCSharp.SimpleFunctions::PlusPlusStructOrderOfOperationsValidation()"
   ],
-  "OutputDirectory": "scratchpad_c/generated"
+  "OutputDirectory": "scratchpad_c/generated",
+  "DebugInfoMode": "None"
 }

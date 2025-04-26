@@ -1,9 +1,12 @@
-﻿using Dntc.Common.Definitions;
+﻿using Dntc.Common.Conversion.Mutators;
+using Dntc.Common.Definitions;
 using Dntc.Common.OpCodeHandling;
 using Dntc.Common.Planning;
 using Dntc.Common.Syntax;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
+using Dntc.Common.Syntax.Statements.Generators;
+using Mono.Cecil.Cil;
 
 namespace Dntc.Common.Conversion;
 
@@ -11,6 +14,7 @@ public class PlannedFileConverter
 {
     private readonly ConversionCatalog _conversionCatalog;
     private readonly DefinitionCatalog _definitionCatalog;
+    private readonly List<IStatementGenerator> _statementGenerators = [];
     private readonly bool _debugLogging; 
 
     public PlannedFileConverter(
@@ -60,6 +64,7 @@ public class PlannedFileConverter
                 var definition = _definitionCatalog.Get(x.MethodId);
                 var declaration = new MethodDeclaration(x, definition!, _conversionCatalog);
                 var statements = GetMethodStatements(definition!, x);
+                
                 return new MethodBlock(x, statements, declaration);
             })
             .Where(x => x.Statements.Count > 0)
@@ -107,18 +112,36 @@ public class PlannedFileConverter
         
         var statements = new List<CStatementSet>();
         
+        Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
+
+        OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
+        
+        HashSet<string> locals = new();
         // Add local statements
-        for (var x = 0; x < dotNetDefinedMethod.Locals.Count; x++)
+        for (var x = 0; x < dotNetDefinedMethod.Definition.Body.Variables.Count; x++)
         {
             var local = dotNetDefinedMethod.Locals[x];
             var localType = _conversionCatalog.Find(local.Type);
-            var variable = new Variable(localType, Utils.LocalName(x), local.Type.IsPointer());
-            statements.Add(new LocalDeclarationStatementSet(variable));
+            var name = Utils.LocalName(dotNetDefinedMethod.Definition, x);
+            var variable = new Variable(localType, name, local.Type.IsPointer());
+
+            if (locals.Add(name))
+            {
+                statements.Add(new LocalDeclarationStatementSet(variable));
+            }
+            else
+            {
+                // Error if the Variable is of a different type?
+                // but not possible? otherwise IL would not be valid?
+            }
         }
-        
+
+        OnAfterGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
+
         var startingOffset = (int?) null;
         var expressionStack = new ExpressionStack();
         var checkpoints = new Dictionary<int, Variable>();
+
         foreach (var instruction in dotNetDefinedMethod.Definition.Body.Instructions)
         {
             startingOffset ??= instruction.Offset;
@@ -177,15 +200,20 @@ public class PlannedFileConverter
                 // any gotos go past the checkpoint.
                 statement.StartingIlOffset = instruction.Offset - 1;
                 statement.LastIlOffset = instruction.Offset - 1;
+
+                OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 statements.Add(statement);
+                OnAfterGenerateInstruction(statements, dotNetDefinedMethod, instruction);
             }
 
             if (result.StatementSet != null)
             {
                 result.StatementSet.StartingIlOffset = startingOffset.Value;
                 result.StatementSet.LastIlOffset = instruction.Offset;
+                
+                OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 statements.Add(result.StatementSet);
-
+                OnAfterGenerateInstruction(statements, dotNetDefinedMethod, instruction);
                 startingOffset = null;
             }
 
@@ -202,6 +230,24 @@ public class PlannedFileConverter
         }
 
         return statements;
+    }
+
+    private void OnBeforeGenerateInstruction(List<CStatementSet> statements, DotNetDefinedMethod dotNetDefinedMethod,
+        Instruction methodInstruction)
+    {
+        foreach (var statementGenerator in _statementGenerators)
+        {
+            statements.AddRange(statementGenerator.Before(statements, dotNetDefinedMethod.Definition, methodInstruction));
+        }
+    }
+    
+    private void OnAfterGenerateInstruction(List<CStatementSet> statements, DotNetDefinedMethod dotNetDefinedMethod,
+        Instruction methodInstruction)
+    {
+        foreach (var instructionGenerator in _statementGenerators)
+        {
+            statements.AddRange(instructionGenerator.After(statements, dotNetDefinedMethod.Definition, methodInstruction));
+        }
     }
 
     private static CStatementSet SaveCheckpoint(ExpressionStack stack, Dictionary<int, Variable> checkpoints, int targetOffset)
@@ -231,5 +277,10 @@ public class PlannedFileConverter
         return statementSet != null
             ? [statementSet]
             : [];
+    }
+
+    public void AddInstructionGenerator(IStatementGenerator plugin)
+    {
+        _statementGenerators.Add(plugin);
     }
 }

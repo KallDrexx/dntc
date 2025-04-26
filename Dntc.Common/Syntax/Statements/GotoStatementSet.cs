@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Syntax.Statements;
 

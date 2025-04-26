@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Conversion;
+﻿using System.Globalization;
+using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -254,12 +255,12 @@ public class LoadHandlers : IOpCodeHandlerCollection
                         break;
 
                     case float floatValue:
-                        numericLiteral = floatValue.ToString();
+                        numericLiteral = floatValue.ToString(CultureInfo.InvariantCulture);
                         typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(float).FullName!));
                         break;
 
                     case double doubleValue:
-                        numericLiteral = doubleValue.ToString();
+                        numericLiteral = doubleValue.ToString(CultureInfo.InvariantCulture);
                         typeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(double).FullName!));
                         break;
 
@@ -318,7 +319,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             var expression = new VariableValueExpression(
                 new Variable(
                     local.ConversionInfo,
-                    Utils.LocalName(localIndex),
+                    Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
                     local.IsReference || local.ConversionInfo.IlName.IsPointer()));
 
             CBaseExpression newExpression = getAddress

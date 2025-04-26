@@ -9,5 +9,6 @@
     "System.Int32 ScratchpadCSharp.SingleFileTests::MainFunction()"
   ],
   "OutputDirectory": "scratchpad_c_single_file",
-  "SingleGeneratedSourceFileName": "main.c"
+  "SingleGeneratedSourceFileName": "main.c",
+  "DebugInfoMode": "None"
 }

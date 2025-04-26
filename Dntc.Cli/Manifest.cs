@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Dntc.Common.Syntax.Statements.Generators;
+using Newtonsoft.Json;
 
 namespace Dntc.Cli;
 
@@ -56,6 +57,8 @@ public class Manifest
     /// If specified, directs all transpiled code to a single source file with no 
     /// </summary>
     public string? SingleGeneratedSourceFileName { get; set; }
+    
+    public DebugInfoMode DebugInfoMode { get; set; } = DebugInfoMode.CLineSourceMaps;
 
     public static async Task<Manifest> ParseManifestAsync(string manifestFilePath)
     {

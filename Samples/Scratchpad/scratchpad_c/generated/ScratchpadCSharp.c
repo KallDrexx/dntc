@@ -150,41 +150,40 @@ float ScratchpadCSharp_SimpleFunctions_SquareRootTest(float value) {
 }
 
 uint16_t ScratchpadCSharp_SimpleFunctions_ArrayTest(SystemUInt16Array test) {
-	uint16_t __local_0 = {0};
-	int32_t __local_1 = {0};
-	int32_t __local_2 = {0};
-	__local_1 = 0;
+	uint16_t sum = {0};
+	int32_t x = {0};
+	x = 0;
 	goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_000d;
 
 ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0004:
-	if ((test.length) <= __local_1) {
-		printf("Attempted to access to test[%d], but only %u items are in the array", __local_1, (test.length));
+	if ((test.length) <= x) {
+		printf("Attempted to access to test[%d], but only %u items are in the array", x, (test.length));
 		abort();
 	}
-	(test.items)[__local_1] = ((uint16_t)__local_1);
-	__local_1 = (__local_1 + 1);
+	(test.items)[x] = ((uint16_t)x);
+	x = (x + 1);
 
 ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_000d:
-	if ((__local_1 < ((int32_t)(test.length)))) {
+	if ((x < ((int32_t)(test.length)))) {
 		goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0004;
 	}
-	__local_0 = 0;
-	__local_2 = 0;
+	sum = 0;
+	x = 0;
 	goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0024;
 
 ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0019:
-	if ((test.length) <= __local_2) {
-		printf("Attempted to access to test[%d], but only %u items are in the array", __local_2, (test.length));
+	if ((test.length) <= x) {
+		printf("Attempted to access to test[%d], but only %u items are in the array", x, (test.length));
 		abort();
 	}
-	__local_0 = ((uint16_t)(__local_0 + (test.items)[__local_2]));
-	__local_2 = (__local_2 + 1);
+	sum = ((uint16_t)(sum + (test.items)[x]));
+	x = (x + 1);
 
 ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0024:
-	if ((__local_2 < ((int32_t)(test.length)))) {
+	if ((x < ((int32_t)(test.length)))) {
 		goto ScratchpadCSharp_SimpleFunctions_ArrayTest_IL_0019;
 	}
-	return __local_0;
+	return sum;
 }
 
 void ScratchpadCSharp_SimpleFunctions_Vector3__ctor(ScratchpadCSharp_SimpleFunctions_Vector3 *__this, float x, float y, float z) {
@@ -217,19 +216,19 @@ int32_t ScratchpadCSharp_SimpleFunctions_SwapTest(int32_t x, int32_t y) {
 }
 
 float ScratchpadCSharp_SimpleFunctions_LocalSwapTest(float x0, float x1) {
-	ScratchpadCSharp_SimpleFunctions_Vector2 __local_0 = {0};
-	ScratchpadCSharp_SimpleFunctions_Vector2 __local_1 = {0};
+	ScratchpadCSharp_SimpleFunctions_Vector2 first = {0};
+	ScratchpadCSharp_SimpleFunctions_Vector2 temp = {0};
 	ScratchpadCSharp_SimpleFunctions_Vector2 __local_2 = {0};
 	(*(&__local_2)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
 	((&__local_2)->X) = x0;
 	((&__local_2)->Y) = 0;
-	__local_0 = __local_2;
+	first = __local_2;
 	(*(&__local_2)) = ((ScratchpadCSharp_SimpleFunctions_Vector2){0});
 	((&__local_2)->X) = x1;
 	((&__local_2)->Y) = 0;
-	__local_1 = __local_0;
-	__local_0 = __local_2;
-	return (__local_1.X);
+	temp = first;
+	first = __local_2;
+	return (temp.X);
 }
 
 int32_t ScratchpadCSharp_SimpleFunctions_TernaryTest(int32_t a, int32_t b) {
@@ -409,25 +408,25 @@ int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void) {
 }
 
 int32_t ScratchpadCSharp_GenericTests_RefArgTest(int32_t value) {
-	int32_t __local_0 = {0};
-	__local_0 = 0;
-	generic_ref_test((&__local_0), value);
-	return __local_0;
+	int32_t test = {0};
+	test = 0;
+	generic_ref_test((&test), value);
+	return test;
 }
 
 void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t *input) {
-	int32_t* __local_0 = {0};
-	int32_t* __local_1 = {0};
+	int32_t* first = {0};
+	int32_t* second = {0};
 	int32_t* __temp_000f = {0};
 	int32_t* __temp_0025 = {0};
 	int32_t* __temp_003a = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(int32_t));
 	input = __temp_000f;
 	__temp_0025 = generic_pointer_return_type_test(sizeof(int32_t));
-	__local_0 = __temp_0025;
+	first = __temp_0025;
 	__temp_003a = generic_pointer_return_type_test(sizeof(int32_t));
-	__local_1 = __temp_003a;
-	(*input) = ((*__local_0) + (*__local_1));
+	second = __temp_003a;
+	(*input) = ((*first) + (*second));
 	return;
 }
 

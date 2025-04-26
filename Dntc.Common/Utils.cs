@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Dntc.Attributes;
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 using Mono.Cecil;
 
 namespace Dntc.Common;
@@ -10,6 +11,17 @@ public static class Utils
     public static string IlOffsetToLabel(int ilOffset, MethodConversionInfo method) => $"{method.NameInC}_IL_{ilOffset:x4}";
 
     public static string LocalName(int localIndex) => $"__local_{localIndex}";
+
+    public static string LocalName(MethodDefinition method, int localIndex)
+    {
+        if (method.DebugInformation.TryGetName(method.Body.Variables[localIndex],
+                out var name))
+        {
+            return name;
+        }
+        
+        return LocalName(localIndex);
+    } 
 
     public static CSourceFileName GetSourceFileName(IlNamespace csharpNamespace)
     {
