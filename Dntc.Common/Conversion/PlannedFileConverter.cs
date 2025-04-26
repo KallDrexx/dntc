@@ -116,13 +116,24 @@ public class PlannedFileConverter
 
         OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
         
+        HashSet<string> locals = new();
         // Add local statements
         for (var x = 0; x < dotNetDefinedMethod.Definition.Body.Variables.Count; x++)
         {
             var local = dotNetDefinedMethod.Locals[x];
             var localType = _conversionCatalog.Find(local.Type);
-            var variable = new Variable(localType, Utils.LocalName(dotNetDefinedMethod.Definition, x), local.Type.IsPointer());
-            statements.Add(new LocalDeclarationStatementSet(variable));
+            var name = Utils.LocalName(dotNetDefinedMethod.Definition, x);
+            var variable = new Variable(localType, name, local.Type.IsPointer());
+
+            if (locals.Add(name))
+            {
+                statements.Add(new LocalDeclarationStatementSet(variable));
+            }
+            else
+            {
+                // Error if the Variable is of a different type?
+                // but not possible? otherwise IL would not be valid?
+            }
         }
 
         OnAfterGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
