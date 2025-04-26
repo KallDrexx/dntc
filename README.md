@@ -199,6 +199,22 @@ and source file that the type will be declared and implemented in.
 Methods, fields, and types annotated with `[IgnoreInHeader]` will only be declared in a source file
 and not exist in a header file.
 
+## DebugInfo
+
+C #Line directives are added to the transpiled code so that the original C# source can be debugged.
+This can be controlled via the manifest using the property  "DebugInfoMode".
+
+This will compress the C statements for each line of C# onto a single line.
+
+The default setting (if unspecified) is: "CLineSourceMaps". This generates standard C #Line directives.
+
+Alternative options are:
+LineNumberComments - this will generate a comment that custom tooling can deal with in the format 
+// filename [StartLine:StartColumn] -[EndLine:EndColumn]
+
+None - turns this feature off, the transpiled C would become the debug source which is helpful
+for debugging the generated code.
+
 # Samples
 
 ## Octahedron
