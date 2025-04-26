@@ -36,11 +36,14 @@ jobs:
           exit 1
         fi
 
-    - name: Install CMake and Build Scratchpad
+    - name: Validate scratchpad_c Assertions
       run: |
         sudo apt-get update
         sudo apt-get install -y cmake make
         cd Samples/Scratchpad/scratchpad_c
         cmake .
         make
-        ./scratchpad_c
+		if ! ./scratchpad_c; then
+		  echo "[error] Running ./scratchpad_c failed. This indicates the C code being generated is not producing the expected values."
+		  exit 1
+		fi
