@@ -134,6 +134,25 @@ public static class Utils
             ? $"{typeInfo.NameInC}*"
             : typeInfo.NameInC.Value;
     }
+    
+    public static string NativeNameWithPointer(this TypeConversionInfo typeInfo)
+    {
+        return $"{typeInfo.NameInC}*";
+    }
+
+    public static string NativeTypeName(this Variable variable)
+    {
+        return variable.IsPointer
+            ? variable.Type.NativeNameWithPointer()
+            : variable.Type.NativeNameWithPossiblePointer(); // todo pointer to pointer (pointer to reference type)
+    }
+    
+    public static string NativeTypeName(this TypeConversionInfo typeInfo)
+    {
+        return typeInfo.IsPointer
+            ? $"{typeInfo.NameInC}*"
+            : typeInfo.NameInC.Value;
+    }
 
     public static CustomAttribute? GetCustomAttribute(Type attributeType, MethodDefinition method)
     {
