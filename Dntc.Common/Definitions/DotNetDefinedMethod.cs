@@ -164,7 +164,7 @@ public class DotNetDefinedMethod : DefinedMethod
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            definition.ParameterType.IsByReference || definition.ParameterType.IsPointer);
+            definition.ParameterType.IsByReference || definition.ParameterType.IsPointer || !definition.ParameterType.IsValueType);
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>
