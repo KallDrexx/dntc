@@ -89,6 +89,11 @@ public class TypeConversionInfo
         NameInC = new CTypeName(Utils.MakeValidCName(type.IlName.Value));
         Header = Utils.GetHeaderName(type.Namespace);
         SourceFileName = null;
+
+        if (!type.Definition.IsValueType)
+        {
+            ReferencedHeaders = [new HeaderName("<stdlib.h>"), new HeaderName("<string.h>")];
+        }
     }
 
     private void SetupDotNetFunctionPointer(DotNetFunctionPointerType functionPointer)
