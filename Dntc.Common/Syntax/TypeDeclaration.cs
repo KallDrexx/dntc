@@ -42,7 +42,16 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await declaration.WriteAsync(writer);
         }
 
-        if (dotNetDefinedType.InstanceFields.Count == 0)
+        if (dotNetDefinedType.Definition.BaseType != null)
+        {
+            if (dotNetDefinedType.Definition.FullName != dotNetDefinedType.Definition.BaseType.FullName)
+            {
+                var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
+
+                await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+            }
+        }
+        else if (dotNetDefinedType.InstanceFields.Count == 0)
         {
             // C doesn't allow empty structs
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
