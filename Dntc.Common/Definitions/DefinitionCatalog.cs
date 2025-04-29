@@ -15,6 +15,8 @@ public class DefinitionCatalog
     {
         _definerPipeline = definerPipeline;
     }
+    
+    public IEnumerable<DefinedMethod> Methods => _methods.Values;
 
     /// <summary>
     /// Adds the specified type to the catalog, along with all of its methods and nested types
@@ -57,6 +59,83 @@ public class DefinitionCatalog
     {
         return _fields.GetValueOrDefault(fieldId);
     }
+
+    public IEnumerable<DefinedMethod> GetMethodOverrides(DefinedMethod method)
+    {
+        if (method is DotNetDefinedMethod { Definition.IsVirtual: true } dntMethod)
+        {
+            var baseType = dntMethod.Definition.DeclaringType;
+            var methodName = dntMethod.Definition.Name;
+            var parameters = dntMethod.Definition.Parameters;
+
+            foreach (var type in _types.Values.OfType<DotNetDefinedType>())
+            {
+                if (IsSubclassOf(type.Definition, baseType))
+                {
+                    foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
+                    {
+                        if (IsOverrideOf(derivedMethod.Definition, dntMethod.Definition))
+                        {
+                            yield return _methods[derivedMethod.Id];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    private static bool IsSubclassOf(TypeDefinition type, TypeDefinition baseType)
+    {
+        if (type == null || baseType == null)
+            return false;
+        
+        // Check direct inheritance chain
+        var current = type;
+        while (current != null && current.BaseType != null)
+        {
+            if (current.BaseType.FullName == baseType.FullName)
+                return true;
+            
+            // Continue up the inheritance chain
+            var resolved = current.BaseType.Resolve();
+            if (resolved == null) 
+                break;
+            
+            current = resolved;
+        }
+    
+        return false;
+    }
+
+// Helper method to check if a method overrides another
+    private static bool IsOverrideOf(MethodDefinition method, MethodDefinition baseMethod)
+    {
+        // Method must be virtual and reuse slot (override keyword)
+        if (!method.IsVirtual || !method.IsReuseSlot)
+            return false;
+        
+        // Names must match
+        if (method.Name != baseMethod.Name)
+            return false;
+        
+        // Return types must be compatible
+        if (method.ReturnType.FullName != baseMethod.ReturnType.FullName)
+            return false;
+        
+        // Parameter counts must match
+        if (method.Parameters.Count != baseMethod.Parameters.Count)
+            return false;
+        
+        // Parameter types must match
+        for (int i = 0; i < method.Parameters.Count; i++)
+        {
+            if (method.Parameters[i].ParameterType.FullName != baseMethod.Parameters[i].ParameterType.FullName)
+                return false;
+        }
+    
+        return true;
+    }
+
 
     private void Add(TypeDefinition type)
     {

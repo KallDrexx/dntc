@@ -31,7 +31,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
     private async Task WriteDotNetDefinedTypeAsync(StreamWriter writer, DotNetDefinedType dotNetDefinedType)
     {
-        await writer.WriteLineAsync("typedef struct {");
+        await writer.WriteLineAsync($"typedef struct {TypeConversion.NativeNameWithPossiblePointer()} {{");
         foreach (var field in dotNetDefinedType.InstanceFields)
         {
             var declaration = new FieldDeclaration(
@@ -49,6 +49,37 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                 var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
 
                 await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+
+                foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual))
+                {
+                    // TODO add virtual method pointers to the struct.
+                    // void (*VirtualMethod)(struct HelloWorld_ConsoleBase*);
+
+                    var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+                    await writer.WriteAsync($"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
+                    
+            
+                    for (var x = 0; x < methodInfo.Parameters.Count; x++)
+                    {
+                        if (x > 0) await writer.WriteAsync(", ");
+                        var param = methodInfo.Parameters[x];
+                        var paramType = param.ConversionInfo;
+
+                        string structKeyword = "";
+                        if (x == 0)
+                        {
+                            structKeyword = "struct ";
+                            // add struct keyword for the this ptr.
+                        }
+
+                        var pointerSymbol = param.IsReference ? "*" : "";
+                        await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                    }
+
+                    await writer.WriteLineAsync(");");
+                    
+                    
+                }
             }
         }
         else if (dotNetDefinedType.InstanceFields.Count == 0)

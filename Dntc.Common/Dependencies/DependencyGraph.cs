@@ -13,7 +13,8 @@ public class DependencyGraph
 
     public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node(IsPredeclared);
 
-    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared) : Node(IsPredeclared);
+    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared, bool IsOverride)
+        : Node(IsPredeclared);
 
     public record FieldNode(IlFieldId FieldId, bool IsGlobal, bool IsPredeclared) : Node(IsPredeclared);
     
@@ -65,7 +66,7 @@ public class DependencyGraph
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }
 
-    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
+    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path, bool isOverride = false)
     {
         if (IsInPath(path, methodId))
         {
@@ -81,8 +82,19 @@ public class DependencyGraph
 
         var isStaticConstructor = method is DotNetDefinedMethod { Definition: { IsConstructor: true, IsStatic: true } };
         var isPredeclared = method is NativeDefinedMethod;
-        var node = new MethodNode(methodId, isStaticConstructor, isPredeclared);
+        
+        var node = new MethodNode(methodId, isStaticConstructor, isPredeclared, isOverride);
         path.Add(node);
+        
+        foreach (var derivedMethod in definitionCatalog.GetMethodOverrides(method))
+        {
+            var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
+
+            if (derivedNode != null)
+            {
+                node.Children.Add(derivedNode);
+            }
+        }
 
         foreach (var type in method.GetReferencedTypes)
         {
