@@ -1,0 +1,14 @@
+﻿{
+  "DotNetProjectDirectory": "./",
+  "BuildInDebugMode": false,
+  "AssemblyDirectory": "./bin/Release/net8.0/",
+  "AssembliesToLoad": [
+    "HelloWorld.dll"
+  ],
+  "MethodsToTranspile": [
+    "System.Int32 HelloWorld.Program::Main()"
+  ],
+  "OutputDirectory": "./generated",
+  "SingleGeneratedSourceFileName":"HelloWorld.c",
+  "DebugInfoMode": "None"
+}
