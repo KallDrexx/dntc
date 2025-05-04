@@ -47,6 +47,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
     public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
+        //TODO turn this into syntax instread of string builder.
         var typeName = Utils.MakeValidCName(_typeDefinition.FullName);
 
         var sb = new StringBuilder();
