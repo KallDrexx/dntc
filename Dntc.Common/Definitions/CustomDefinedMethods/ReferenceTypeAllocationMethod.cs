@@ -105,15 +105,14 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     
         while (currentBaseType != null)
         {
-            var type = catalog.Find(new IlTypeName(currentBaseType.FullName));
-        
-            foreach (var method in type.OriginalTypeDefinition.Methods)
+            foreach (var method in currentBaseType.Methods.Where(x=>x.IsVirtual && x.IsNewSlot))
             {
-                var methodInfo = catalog.Find(method);
-
-                if (sourceMethod.SignatureCompatibleWith(methodInfo))
+                if (catalog.TryFind(new IlMethodId(method.FullName), out var c))
                 {
-                    return methodInfo;
+                    if (sourceMethod.SignatureCompatibleWith(c))
+                    {
+                        return c;
+                    }
                 }
             }
         
