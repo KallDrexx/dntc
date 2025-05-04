@@ -72,7 +72,7 @@ public class DefinitionCatalog
                 {
                     foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
                     {
-                        if (derivedMethod.Definition.IsOverrideOf(derivedMethod.Definition))
+                        if (derivedMethod.Definition.IsOverrideOf(dntMethod.Definition))
                         {
                             yield return _methods[derivedMethod.Id];
                         }
