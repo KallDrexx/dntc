@@ -61,6 +61,11 @@ public class ConversionCatalog
         return _methods.TryGetValue(name, out info);
     }
 
+    public bool TryFind(IlTypeName name, [MaybeNullWhen(false)] out TypeConversionInfo info)
+    {
+        return _types.TryGetValue(name, out info);
+    }
+
     public FieldConversionInfo Find(IlFieldId fieldId)
     {
         if (_fields.TryGetValue(fieldId, out var info))

@@ -38,9 +38,10 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         {
             if (dotNetDefinedType.Definition.BaseType.FullName != typeof(Object).FullName)
             {
-                var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
-
-                await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                if (Catalog.TryFind(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName), out var baseType))
+                {
+                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                }
             }
         }
 
