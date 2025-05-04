@@ -117,13 +117,22 @@ public class DependencyGraph
             foreach (var calledMethod in dotNetDefinedMethod.InvokedMethods)
             {
                 Node? methodNode;
-                if (calledMethod is GenericInvokedMethod generic)
+                switch (calledMethod)
                 {
-                    methodNode = CreateNode(definitionCatalog, generic, path);
-                }
-                else
-                {
-                    methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
+                    case GenericInvokedMethod generic:
+                        methodNode = CreateNode(definitionCatalog, generic, path);
+                        break;
+                    case CustomInvokedMethod custom:
+                        if (definitionCatalog.Get(custom.MethodId) == null)
+                        {
+                            definitionCatalog.Add([custom.InvokedMethod]);
+                        }
+                        
+                        methodNode = CreateNode(definitionCatalog, custom.MethodId, path);
+                        break;
+                    default:
+                        methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
+                        break;
                 }
 
                 if (methodNode != null)

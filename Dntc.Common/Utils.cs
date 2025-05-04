@@ -165,4 +165,32 @@ public static class Utils
         return field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == attributeType.FullName);
     }
+    
+    public static bool IsOverrideOf(this MethodDefinition method, MethodDefinition baseMethod)
+    {
+        // Method must be virtual and reuse slot (override keyword)
+        if (!method.IsVirtual || !method.IsReuseSlot)
+            return false;
+        
+        // Names must match
+        if (method.Name != baseMethod.Name)
+            return false;
+        
+        // Return types must be compatible
+        if (method.ReturnType.FullName != baseMethod.ReturnType.FullName)
+            return false;
+        
+        // Parameter counts must match
+        if (method.Parameters.Count != baseMethod.Parameters.Count)
+            return false;
+        
+        // Parameter types must match
+        for (int i = 0; i < method.Parameters.Count; i++)
+        {
+            if (method.Parameters[i].ParameterType.FullName != baseMethod.Parameters[i].ParameterType.FullName)
+                return false;
+        }
+    
+        return true;
+    }
 }

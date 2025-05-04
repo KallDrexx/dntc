@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -126,10 +127,15 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
-            };
+                return new OpCodeAnalysisResult
+                {
+                    CalledMethods = [ callTarget ]
+                };
+            }
+
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -192,8 +198,12 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                var allocateStatement = new AllocatingStatementSet(variable);
-                statements.Add(allocateStatement);
+                var createFunction = new CreateDefinedMethod(constructor.DeclaringType.Resolve());
+                var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
+                var fnExpression1 = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
+                var methodCall1 = new MethodCallExpression(fnExpression1, createFunctionInfo.Parameters, [], objType);
+                var assignment = new AssignmentStatementSet(new VariableValueExpression(variable), methodCall1);
+                statements.Add(assignment);
             }
 
             var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
@@ -209,9 +219,22 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
+            var extraCalls = new List<InvokedMethod>();
+            var constructor = (MethodReference)context.CurrentInstruction.Operand;
+
+            if (!constructor.DeclaringType.IsValueType)
+            {
+                extraCalls.Add(new CustomInvokedMethod(new CreateDefinedMethod(constructor.DeclaringType.Resolve())));
+            }
+            
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
+            {
+                extraCalls.Add(callTarget);
+            }
+            
             return new OpCodeAnalysisResult
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
+                CalledMethods = extraCalls
             };
         }
     }
@@ -235,10 +258,10 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             return new OpCodeAnalysisResult
             {
-                CalledMethod = new InvokedMethod(
+                CalledMethods = [ new InvokedMethod(
                     VirtualCallConverter.Convert(
                         context.CurrentInstruction,
-                        context.CurrentMethod))
+                        context.CurrentMethod)) ]
             };
         }
     }
@@ -267,12 +290,21 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
+            {
+                return new OpCodeAnalysisResult
+                {
+                    // Even though the method isn't called, we need to analyze it as a
+                    // called method so the dependency graph gets generated for it, so it gets
+                    // transpiled and can have a pointer created from it.
+                
+                    CalledMethods = [ callTarget ],
+                };
+            }
+            
             return new OpCodeAnalysisResult
             {
-                // Even though the method isn't called, we need to analyze it as a
-                // called method so the dependency graph gets generated for it, so it gets
-                // transpiled and can have a pointer created from it.
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
+                CalledMethods = [ ]
             };
         }
     }

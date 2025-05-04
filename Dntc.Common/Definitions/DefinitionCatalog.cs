@@ -65,8 +65,6 @@ public class DefinitionCatalog
         if (method is DotNetDefinedMethod { Definition.IsVirtual: true } dntMethod)
         {
             var baseType = dntMethod.Definition.DeclaringType;
-            var methodName = dntMethod.Definition.Name;
-            var parameters = dntMethod.Definition.Parameters;
 
             foreach (var type in _types.Values.OfType<DotNetDefinedType>())
             {
@@ -74,7 +72,7 @@ public class DefinitionCatalog
                 {
                     foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
                     {
-                        if (IsOverrideOf(derivedMethod.Definition, dntMethod.Definition))
+                        if (derivedMethod.Definition.IsOverrideOf(derivedMethod.Definition))
                         {
                             yield return _methods[derivedMethod.Id];
                         }
@@ -106,36 +104,6 @@ public class DefinitionCatalog
     
         return false;
     }
-
-// Helper method to check if a method overrides another
-    private static bool IsOverrideOf(MethodDefinition method, MethodDefinition baseMethod)
-    {
-        // Method must be virtual and reuse slot (override keyword)
-        if (!method.IsVirtual || !method.IsReuseSlot)
-            return false;
-        
-        // Names must match
-        if (method.Name != baseMethod.Name)
-            return false;
-        
-        // Return types must be compatible
-        if (method.ReturnType.FullName != baseMethod.ReturnType.FullName)
-            return false;
-        
-        // Parameter counts must match
-        if (method.Parameters.Count != baseMethod.Parameters.Count)
-            return false;
-        
-        // Parameter types must match
-        for (int i = 0; i < method.Parameters.Count; i++)
-        {
-            if (method.Parameters[i].ParameterType.FullName != baseMethod.Parameters[i].ParameterType.FullName)
-                return false;
-        }
-    
-        return true;
-    }
-
 
     private void Add(TypeDefinition type)
     {

@@ -89,7 +89,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         if (!dotNetDefinedType.Definition.IsValueType)
         {
             // Add create method.
-            var returnType = TypeConversion.NativeNameWithPointer();
+            /*var returnType = TypeConversion.NativeNameWithPointer();
             var methodName = TypeConversion.NameInC + "__Create";
 
             await writer.WriteLineAsync();
@@ -139,7 +139,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             
             await writer.WriteLineAsync($"\treturn result;");
 
-            await writer.WriteLineAsync("}");
+            await writer.WriteLineAsync("}");*/
         }
     }
     

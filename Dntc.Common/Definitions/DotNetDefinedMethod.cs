@@ -194,9 +194,10 @@ public class DotNetDefinedMethod : DefinedMethod
             }
 
             var results = handler.Analyze(new AnalyzeContext(instruction, this));
-            if (results.CalledMethod != null)
+
+            foreach (var method in results.CalledMethods)
             {
-                _invokedMethods.Add(results.CalledMethod);
+                _invokedMethods.Add(method);
             }
 
             foreach (var referencedType in results.ReferencedTypes)
