@@ -110,28 +110,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             foreach (var method in type.OriginalTypeDefinition.Methods)
             {
                 var methodInfo = catalog.Find(method);
-            
-                if (sourceMethod.Name != methodInfo.Name)
-                    continue;
-            
-                if (sourceMethod.ReturnTypeInfo != methodInfo.ReturnTypeInfo)
-                    continue;
 
-                if (sourceMethod.Parameters.Count != methodInfo.Parameters.Count)
-                    continue;
-
-                bool parametersMatch = true;
-                for (int i = 1; i < sourceMethod.Parameters.Count; i++)
-                {
-                    if (sourceMethod.Parameters[i].ConversionInfo != 
-                        methodInfo.Parameters[i].ConversionInfo)
-                    {
-                        parametersMatch = false;
-                        break;
-                    }
-                }
-
-                if (parametersMatch)
+                if (sourceMethod.SignatureCompatibleWith(methodInfo))
                 {
                     return methodInfo;
                 }

@@ -146,13 +146,6 @@ public static class Utils
             ? variable.Type.NativeNameWithPointer()
             : variable.Type.NativeNameWithPossiblePointer(); // todo pointer to pointer (pointer to reference type)
     }
-    
-    public static string NativeTypeName(this TypeConversionInfo typeInfo)
-    {
-        return typeInfo.IsPointer
-            ? $"{typeInfo.NameInC}*"
-            : typeInfo.NameInC.Value;
-    }
 
     public static CustomAttribute? GetCustomAttribute(Type attributeType, MethodDefinition method)
     {
@@ -171,26 +164,91 @@ public static class Utils
         // Method must be virtual and reuse slot (override keyword)
         if (!method.IsVirtual || !method.IsReuseSlot)
             return false;
-        
+
+        return method.SignatureCompatibleWith(baseMethod);
+    }
+    
+    public static bool SignatureCompatibleWith(this MethodDefinition method, MethodDefinition other)
+    {
         // Names must match
-        if (method.Name != baseMethod.Name)
+        if (method.Name != other.Name)
             return false;
         
         // Return types must be compatible
-        if (method.ReturnType.FullName != baseMethod.ReturnType.FullName)
+        if (method.ReturnType.FullName != other.ReturnType.FullName)
             return false;
         
         // Parameter counts must match
-        if (method.Parameters.Count != baseMethod.Parameters.Count)
+        if (method.Parameters.Count != other.Parameters.Count)
             return false;
         
         // Parameter types must match
         for (int i = 0; i < method.Parameters.Count; i++)
         {
-            if (method.Parameters[i].ParameterType.FullName != baseMethod.Parameters[i].ParameterType.FullName)
+            // TODO check if the parameters can be cast.
+            if (method.Parameters[i].ParameterType.FullName != other.Parameters[i].ParameterType.FullName)
                 return false;
         }
     
         return true;
     }
+    
+    public static bool IsSubclassOf(this TypeDefinition type, TypeDefinition baseType)
+    {
+        // Check direct inheritance chain
+        var current = type;
+        while (current.BaseType != null)
+        {
+            if (current.BaseType.FullName == baseType.FullName)
+                return true;
+            
+            // Continue up the inheritance chain
+            var resolved = current.BaseType.Resolve();
+            if (resolved == null) 
+                break;
+            
+            current = resolved;
+        }
+    
+        return false;
+    }
+    
+    public static bool SignatureCompatibleWith(this MethodConversionInfo method, MethodConversionInfo other)
+    {
+        // Names must match
+        if (method.Name != other.Name)
+            return false;
+        
+        // Return types must be compatible
+        if (method.ReturnTypeInfo.IlName.Value != other.ReturnTypeInfo.IlName.Value)
+            return false;
+        
+        // Parameter counts must match
+        if (method.Parameters.Count != other.Parameters.Count)
+            return false;
+        
+        // Parameter types must match
+        for (int i = 0; i < method.Parameters.Count; i++)
+        {
+            if (method.Parameters[i].ConversionInfo.OriginalTypeDefinition is DotNetDefinedType t1 && other
+                .Parameters[i].ConversionInfo.OriginalTypeDefinition is DotNetDefinedType t2)
+            {
+                if (t1.IlName == t2.IlName)
+                {
+                    return true;
+                }
+
+                if (t1.Definition.IsSubclassOf(t2.Definition))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+    
+    
 }

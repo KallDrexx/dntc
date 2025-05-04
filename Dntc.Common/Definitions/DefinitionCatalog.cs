@@ -68,7 +68,7 @@ public class DefinitionCatalog
 
             foreach (var type in _types.Values.OfType<DotNetDefinedType>())
             {
-                if (IsSubclassOf(type.Definition, baseType))
+                if (type.Definition.IsSubclassOf(baseType))
                 {
                     foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
                     {
@@ -80,29 +80,6 @@ public class DefinitionCatalog
                 }
             }
         }
-    }
-    
-    private static bool IsSubclassOf(TypeDefinition type, TypeDefinition baseType)
-    {
-        if (type == null || baseType == null)
-            return false;
-        
-        // Check direct inheritance chain
-        var current = type;
-        while (current != null && current.BaseType != null)
-        {
-            if (current.BaseType.FullName == baseType.FullName)
-                return true;
-            
-            // Continue up the inheritance chain
-            var resolved = current.BaseType.Resolve();
-            if (resolved == null) 
-                break;
-            
-            current = resolved;
-        }
-    
-        return false;
     }
 
     private void Add(TypeDefinition type)
