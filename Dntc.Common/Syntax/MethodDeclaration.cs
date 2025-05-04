@@ -46,8 +46,14 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
                 var param = dotNetDefinedMethod.Parameters[x];
                 var paramType = Catalog.Find(param.Type);
 
-                var pointerSymbol = param.IsReference ? "*" : "";
-                await writer.WriteAsync($"{paramType.NameInC}{pointerSymbol} {param.Name}");
+                var pointerSymbol = param.IsReference ? " *" : " ";
+
+                if (paramType.OriginalTypeDefinition is DotNetFunctionPointerType)
+                {
+                    pointerSymbol = " ";
+                }
+                
+                await writer.WriteAsync($"{paramType.NameInC}{pointerSymbol}{param.Name}");
             }
 
             await writer.WriteAsync(")");
