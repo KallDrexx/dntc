@@ -1,6 +1,5 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
-using Mono.Cecil;
 
 namespace Dntc.Common.Syntax;
 
@@ -38,9 +37,12 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         {
             if (dotNetDefinedType.Definition.FullName != dotNetDefinedType.Definition.BaseType.FullName)
             {
-                var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
+                if (dotNetDefinedType.Definition.BaseType.FullName != typeof(Object).FullName)
+                {
+                    var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
 
-                await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                }
 
                 foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
                 {
@@ -85,108 +87,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
-
-        if (!dotNetDefinedType.Definition.IsValueType)
-        {
-            // Add create method.
-            /*var returnType = TypeConversion.NativeNameWithPointer();
-            var methodName = TypeConversion.NameInC + "__Create";
-
-            await writer.WriteLineAsync();
-            await writer.WriteLineAsync($"{returnType} {methodName}(void){{");
-            
-            await writer.WriteLineAsync($"\t{returnType} result = ({returnType}) malloc(sizeof({TypeConversion.NameInC}));");
-            await writer.WriteLineAsync($"\tmemset(result, 0, sizeof({TypeConversion.NameInC}));");
-            
-            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual))
-            {
-                if (virtualMethod.IsReuseSlot)
-                {
-                    var sourceMethod = Catalog.Find(new IlMethodId(virtualMethod.FullName));
-                    var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
-                    
-                    var targetMethod = FindMatchingMethodInBaseTypes(sourceMethod, baseType);
-
-                    if (targetMethod != null)
-                    {
-                        var thisExpression = targetMethod.Parameters[0];
-
-                        await writer.WriteAsync($"\t(({thisExpression.ConversionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
-
-                        var methodInfo = targetMethod;
-                        await writer.WriteAsync($"{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
-                    
-                        for (var x = 0; x < methodInfo.Parameters.Count; x++)
-                        {
-                            if (x > 0) await writer.WriteAsync(", ");
-                            var param = methodInfo.Parameters[x];
-                            var paramType = param.ConversionInfo;
-
-                            var pointerSymbol = param.IsReference ? "*" : "";
-                            await writer.WriteAsync($"{paramType.NameInC}{pointerSymbol}");
-                        }
-                        
-                        await writer.WriteLineAsync($")){sourceMethod.NameInC};");
-                    }
-                }
-                else
-                {
-                    var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
-
-                    await writer.WriteLineAsync($"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};");
-                }
-            }
-            
-            await writer.WriteLineAsync($"\treturn result;");
-
-            await writer.WriteLineAsync("}");*/
-        }
-    }
-    
-    private MethodConversionInfo? FindMatchingMethodInBaseTypes(MethodConversionInfo sourceMethod, TypeDefinition startingBaseType)
-    {
-        var currentBaseType = startingBaseType;
-    
-        while (currentBaseType != null)
-        {
-            var type = Catalog.Find(new IlTypeName(currentBaseType.FullName));
-        
-            foreach (var method in type.OriginalTypeDefinition.Methods)
-            {
-                var methodInfo = Catalog.Find(method);
-            
-                if (sourceMethod.Name != methodInfo.Name)
-                    continue;
-            
-                if (sourceMethod.ReturnTypeInfo != methodInfo.ReturnTypeInfo)
-                    continue;
-
-                if (sourceMethod.Parameters.Count != methodInfo.Parameters.Count)
-                    continue;
-
-                bool parametersMatch = true;
-                for (int i = 1; i < sourceMethod.Parameters.Count; i++)
-                {
-                    if (sourceMethod.Parameters[i].ConversionInfo != 
-                        methodInfo.Parameters[i].ConversionInfo)
-                    {
-                        parametersMatch = false;
-                        break;
-                    }
-                }
-
-                if (parametersMatch)
-                {
-                    return methodInfo;
-                }
-            }
-        
-            // Move to the next base type in the hierarchy
-            currentBaseType = currentBaseType.BaseType.Resolve();
-        }
-    
-        // If we've gone through all base types and found nothing
-        return null;
     }
 
 

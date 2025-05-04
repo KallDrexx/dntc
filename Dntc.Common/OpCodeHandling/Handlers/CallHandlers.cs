@@ -19,7 +19,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
             // type, we don't need this intermediary step.
             new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
-           // new IlMethodId("System.Void System.Object::.ctor()")
+            new IlMethodId("System.Void System.Object::.ctor()")
             
         ];
 
@@ -198,7 +198,7 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                var createFunction = new CreateDefinedMethod(constructor.DeclaringType.Resolve());
+                var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var fnExpression1 = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
                 var methodCall1 = new MethodCallExpression(fnExpression1, createFunctionInfo.Parameters, [], objType);
@@ -224,7 +224,7 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                extraCalls.Add(new CustomInvokedMethod(new CreateDefinedMethod(constructor.DeclaringType.Resolve())));
+                extraCalls.Add(new CustomInvokedMethod(new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve())));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)

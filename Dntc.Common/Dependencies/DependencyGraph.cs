@@ -85,16 +85,6 @@ public class DependencyGraph
         
         var node = new MethodNode(methodId, isStaticConstructor, isPredeclared, isOverride);
         path.Add(node);
-        
-        foreach (var derivedMethod in definitionCatalog.GetMethodOverrides(method))
-        {
-            var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
-
-            if (derivedNode != null)
-            {
-                node.Children.Add(derivedNode);
-            }
-        }
 
         foreach (var type in method.GetReferencedTypes)
         {
@@ -102,6 +92,33 @@ public class DependencyGraph
             if (typeNode != null)
             {
                 node.Children.Add(typeNode);
+            }
+        }
+        
+        foreach (var calledMethod in method.InvokedMethods)
+        {
+            Node? methodNode;
+            switch (calledMethod)
+            {
+                case GenericInvokedMethod generic:
+                    methodNode = CreateNode(definitionCatalog, generic, path);
+                    break;
+                case CustomInvokedMethod custom:
+                    if (definitionCatalog.Get(custom.MethodId) == null)
+                    {
+                        definitionCatalog.Add([custom.InvokedMethod]);
+                    }
+                        
+                    methodNode = CreateNode(definitionCatalog, custom.MethodId, path);
+                    break;
+                default:
+                    methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
+                    break;
+            }
+
+            if (methodNode != null)
+            {
+                node.Children.Add(methodNode);
             }
         }
 
@@ -112,33 +129,6 @@ public class DependencyGraph
                 var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
                               $"calls to concrete methods can be invoked";
                 throw new InvalidOperationException(message);
-            }
-
-            foreach (var calledMethod in dotNetDefinedMethod.InvokedMethods)
-            {
-                Node? methodNode;
-                switch (calledMethod)
-                {
-                    case GenericInvokedMethod generic:
-                        methodNode = CreateNode(definitionCatalog, generic, path);
-                        break;
-                    case CustomInvokedMethod custom:
-                        if (definitionCatalog.Get(custom.MethodId) == null)
-                        {
-                            definitionCatalog.Add([custom.InvokedMethod]);
-                        }
-                        
-                        methodNode = CreateNode(definitionCatalog, custom.MethodId, path);
-                        break;
-                    default:
-                        methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
-                        break;
-                }
-
-                if (methodNode != null)
-                {
-                    node.Children.Add(methodNode);
-                }
             }
 
             foreach (var type in dotNetDefinedMethod.ReferencedTypes)
@@ -157,6 +147,20 @@ public class DependencyGraph
                 {
                     node.Children.Add(globalNode);
                 }
+            }
+        }
+        
+        foreach (var derivedMethod in definitionCatalog.GetMethodOverrides(method))
+        {
+            var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
+
+            if (derivedNode != null)
+            {
+                derivedNode.Children.Add(node);
+                path.RemoveAt(path.Count - 1);
+                return derivedNode;
+                //path.Add(node);
+                //node.Children.Add(derivedNode);
             }
         }
         

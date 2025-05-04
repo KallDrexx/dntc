@@ -20,7 +20,7 @@ public class DotNetDefinedMethod : DefinedMethod
 
     // We don't want to bother analyzing methods we aren't going to transpile, so only analyze
     // if we enter a code path looking for globals, types, and other methods this method utilizes.
-    public List<InvokedMethod> InvokedMethods
+    public override List<InvokedMethod> InvokedMethods
     {
         get
         {

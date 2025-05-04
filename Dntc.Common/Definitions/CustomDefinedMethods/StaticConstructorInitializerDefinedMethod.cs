@@ -34,7 +34,7 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
         return new CustomCodeStatementSet($"void {FunctionName}(void)");
     }
 
-    public override CustomCodeStatementSet GetCustomImplementation()
+    public override CustomCodeStatementSet GetCustomImplementation(ConversionCatalog catalog)
     {
         var content = new StringBuilder();
         foreach (var constructor in _staticConstructors)

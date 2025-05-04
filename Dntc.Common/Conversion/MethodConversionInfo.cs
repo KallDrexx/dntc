@@ -7,6 +7,8 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class MethodConversionInfo
 {
+    private readonly ConversionCatalog _conversionCatalog;
+
     public record Parameter(TypeConversionInfo ConversionInfo, string Name, bool IsReference);
 
     public record Local(TypeConversionInfo ConversionInfo, bool IsReference);
@@ -73,6 +75,7 @@ public class MethodConversionInfo
    
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
+        _conversionCatalog = conversionCatalog;
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
@@ -135,6 +138,6 @@ public class MethodConversionInfo
         Header = method.HeaderName;
         NameInC = method.NativeName;
         SourceFileName = method.SourceFileName;
-        IsDeclarationOnlyMethod = method.GetCustomDeclaration() != null && method.GetCustomImplementation() == null;
+        IsDeclarationOnlyMethod = !method.HasImplementation;
     }
 }

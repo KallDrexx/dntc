@@ -4,13 +4,6 @@ using System;
 using Dntc.Attributes;
 using HelloWorld;
 
-namespace System
-{
-    public class Object
-    {
-    }
-}
-
 namespace HelloWorld
 {
     public class ConsoleBase

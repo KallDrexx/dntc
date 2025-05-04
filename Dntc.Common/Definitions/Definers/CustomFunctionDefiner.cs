@@ -1,4 +1,5 @@
 using Dntc.Attributes;
+using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 
@@ -66,7 +67,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             return new CustomCodeStatementSet(_declaration);
         }
 
-        public override CustomCodeStatementSet? GetCustomImplementation()
+        public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
         {
             return _implementation != null
                 ? new CustomCodeStatementSet(_implementation)
