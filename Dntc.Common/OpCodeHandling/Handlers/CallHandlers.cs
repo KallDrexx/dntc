@@ -200,9 +200,9 @@ public class CallHandlers : IOpCodeHandlerCollection
             {
                 var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
-                var fnExpression1 = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
-                var methodCall1 = new MethodCallExpression(fnExpression1, createFunctionInfo.Parameters, [], objType);
-                var assignment = new AssignmentStatementSet(new VariableValueExpression(variable), methodCall1);
+                var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
+                var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
+                var assignment = new AssignmentStatementSet(new VariableValueExpression(variable), createFnCall);
                 statements.Add(assignment);
             }
 

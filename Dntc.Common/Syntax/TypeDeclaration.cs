@@ -33,43 +33,45 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
     {
         await writer.WriteLineAsync($"typedef struct {TypeConversion.NativeNameWithPossiblePointer()} {{");
 
+        // Add the entry for the base class. This must be the first entry for pointer casting to work.
         if (dotNetDefinedType.Definition.BaseType != null)
         {
-            if (dotNetDefinedType.Definition.FullName != dotNetDefinedType.Definition.BaseType.FullName)
+            if (dotNetDefinedType.Definition.BaseType.FullName != typeof(Object).FullName)
             {
-                if (dotNetDefinedType.Definition.BaseType.FullName != typeof(Object).FullName)
-                {
-                    var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
+                var baseType = Catalog.Find(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
 
-                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
-                }
-
-                foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
-                {
-                    var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
-                    await writer.WriteAsync($"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
-                    
-                    for (var x = 0; x < methodInfo.Parameters.Count; x++)
-                    {
-                        if (x > 0) await writer.WriteAsync(", ");
-                        var param = methodInfo.Parameters[x];
-                        var paramType = param.ConversionInfo;
-
-                        string structKeyword = "";
-                        if (x == 0)
-                        {
-                            structKeyword = "struct ";
-                        }
-
-                        var pointerSymbol = param.IsReference ? "*" : "";
-                        await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
-                    }
-
-                    await writer.WriteLineAsync(");");
-                }
+                await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
             }
         }
+
+        // Write the virtual table for virtual methods.
+        foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
+        {
+            var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+            await writer.WriteAsync($"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
+                    
+            for (var x = 0; x < methodInfo.Parameters.Count; x++)
+            {
+                if (x > 0) await writer.WriteAsync(", ");
+                var param = methodInfo.Parameters[x];
+                var paramType = param.ConversionInfo;
+
+                string structKeyword = "";
+                if (x == 0)
+                {
+                    structKeyword = "struct ";
+                }
+
+                var pointerSymbol = param.IsReference ? "*" : "";
+                await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+            }
+
+            await writer.WriteLineAsync(");");
+        }
         
+        // TODO Write the interface methods union vtables.
+        
+        // Write all the fields.
         foreach (var field in dotNetDefinedType.InstanceFields)
         {
             var declaration = new FieldDeclaration(
@@ -79,7 +81,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteAsync("\t");
             await declaration.WriteAsync(writer);
         }
-        
+
         if (dotNetDefinedType.InstanceFields.Count == 0)
         {
             // C doesn't allow empty structs
