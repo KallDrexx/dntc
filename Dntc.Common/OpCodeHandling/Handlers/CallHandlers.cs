@@ -116,8 +116,12 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (IgnoredMethods.Contains(methodId))
             {
-                context.ExpressionStack.Pop(1);
-                // we are ignoring this method so we must pop arguments.
+                if (context.CurrentDotNetMethod.Definition.IsConstructor)
+                {
+                    context.ExpressionStack.Pop(1); 
+                    // specifically, because System_Object::ctor is excluded.
+                    // otherwise it will try to add "return __this at the end.
+                }
                 
                 return new OpCodeHandlingResult(null);
             }
