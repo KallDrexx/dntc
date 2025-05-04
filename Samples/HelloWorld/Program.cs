@@ -13,12 +13,17 @@ namespace HelloWorld
         public ConsoleBase(int arg)
         {
             _arg = arg;
-            Program.Printf("consolebase: %u", arg);
+            Program.Printf("consolebase: %u \n", arg);
         }
         
         public virtual void VirtualMethod()
         {
-            Program.Printf("virtual method %u", _arg);
+            Program.Printf("virtual method %u \n", _arg);
+        }
+
+        public virtual void VirtualMethod2()
+        {
+            Program.Printf("virtual method 2 %u \n", _arg);
         }
     }
 
@@ -29,18 +34,24 @@ namespace HelloWorld
         public Console(int arg) : base(arg + 1)
         {
             _arg1 = arg;
-            Program.Printf("Console: %u", arg);
+            Program.Printf("Console: %u \n", arg);
         }
 
         public void Test(object obj)
         {
-            Program.Printf("test");
+            Program.Printf("test \n");
         }
         
-        public override void VirtualMethod()
+       public override void VirtualMethod()
         {
             base.VirtualMethod();
-            Program.Printf("virtual method override %u", _arg1);
+            Program.Printf("virtual method override %u \n", _arg1);
+        }
+
+        public override void VirtualMethod2()
+        {
+            base.VirtualMethod2();
+            Program.Printf("virtual method 2 override %u \n", _arg1);;
         }
     }
 
@@ -61,7 +72,8 @@ namespace HelloWorld
         {
             var console = new Console(1);
             
-            console.VirtualMethod();
+            //console.VirtualMethod();
+            console.VirtualMethod2();
         }
 
         [CustomFunctionName("main")]
