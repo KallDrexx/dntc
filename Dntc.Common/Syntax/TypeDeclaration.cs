@@ -46,30 +46,34 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         // Write the virtual table for virtual methods.
-        foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
+        if (!dotNetDefinedType.Definition.IsValueType)
         {
-            var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
-            await writer.WriteAsync($"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
-                    
-            for (var x = 0; x < methodInfo.Parameters.Count; x++)
+            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
             {
-                if (x > 0) await writer.WriteAsync(", ");
-                var param = methodInfo.Parameters[x];
-                var paramType = param.ConversionInfo;
+                var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+                await writer.WriteAsync(
+                    $"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
 
-                string structKeyword = "";
-                if (x == 0)
+                for (var x = 0; x < methodInfo.Parameters.Count; x++)
                 {
-                    structKeyword = "struct ";
+                    if (x > 0) await writer.WriteAsync(", ");
+                    var param = methodInfo.Parameters[x];
+                    var paramType = param.ConversionInfo;
+
+                    string structKeyword = "";
+                    if (x == 0)
+                    {
+                        structKeyword = "struct ";
+                    }
+
+                    var pointerSymbol = param.IsReference ? "*" : "";
+                    await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
                 }
 
-                var pointerSymbol = param.IsReference ? "*" : "";
-                await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                await writer.WriteLineAsync(");");
             }
-
-            await writer.WriteLineAsync(");");
         }
-        
+
         // TODO Write the interface methods union vtables.
         
         // Write all the fields.
