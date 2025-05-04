@@ -27,6 +27,25 @@ namespace HelloWorld
         }
     }
 
+    public class Console1 : Console
+    {
+        public Console1(int arg) : base(arg)
+        {
+        }
+
+        public override void VirtualMethod2()
+        {
+            base.VirtualMethod2();
+            Program.Printf("Console 1 vm2 + \n");
+        }
+
+        public override void VirtualMethod()
+        {
+            Program.Printf("Console 1 vm + \n");
+            base.VirtualMethod();
+        }
+    }
+
     public class Console : ConsoleBase
     {
         private int _arg1;
@@ -70,9 +89,9 @@ namespace HelloWorld
 
         public static void Test()
         {
-            var console = new Console(1);
+            var console = new Console1(1);
             
-            //console.VirtualMethod();
+            console.VirtualMethod();
             console.VirtualMethod2();
         }
 
