@@ -6,6 +6,13 @@ using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.CustomDefinedMethods;
 
+/// <summary>
+/// Writes the ReferenceType__Create() methods.
+/// These methods are responsible for:
+/// 1. allocating the memory that the reference type will be stored in.
+/// 2. clearing the allocated memory.
+/// 3. setting up the virtual table of the reference type. (ctors are called seperately)
+/// </summary>
 public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 {
     private readonly TypeDefinition _typeDefinition;
@@ -25,20 +32,6 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             if (virtualMethod.IsReuseSlot)
             {
                 InvokedMethods.Add(new InvokedMethod(new IlMethodId(virtualMethod.FullName)));
-                //var sourceMethod = catalog.Find(new IlMethodId(virtualMethod.FullName));
-               /* var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
-
-                foreach (var method in baseType.Methods)
-                {
-                    if (method.Name == virtualMethod.Name && method.Parameters.Count == virtualMethod.Parameters.Count && method.ReturnType.FullName == virtualMethod.ReturnType.FullName)
-                    {
-                        InvokedMethods.Add(new InvokedMethod(new IlMethodId(method.FullName)));
-                    }
-                }*/
-                
-                //var child = new ReferenceTypeAllocationMethod(catalog, baseType);
-
-                //var targetMethod = FindMatchingMethodInBaseTypes(catalog, sourceMethod, baseType);
             }
         }
     }
@@ -49,8 +42,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     {
         var typeName = Utils.MakeValidCName(_typeDefinition.FullName);
         
-        return new CustomCodeStatementSet($@"
-    {typeName}* {NativeName}(void)");
+        return new CustomCodeStatementSet($"{typeName}* {NativeName}(void)");
     }
 
     public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
@@ -59,8 +51,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
         var sb = new StringBuilder();
         
-        sb.AppendLine($@"
-	{typeName}* result = ({typeName}*) malloc(sizeof({typeName}));
+        sb.AppendLine($@"    {typeName}* result = ({typeName}*) malloc(sizeof({typeName}));
 	memset(result, 0, sizeof({typeName}));");
         
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
@@ -102,11 +93,9 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             }
         }
 
-        sb.Append("return result;");
+        sb.AppendLine("\treturn result;");
 
         return new CustomCodeStatementSet(sb.ToString());
-
-        ////((HelloWorld_ConsoleBase*)result)->HelloWorld_ConsoleBase_VirtualMethod = (void (*)(HelloWorld_ConsoleBase*))HelloWorld_Console_VirtualMethod;
     }
     
     private MethodConversionInfo? FindMatchingMethodInBaseTypes(ConversionCatalog catalog, MethodConversionInfo sourceMethod, TypeDefinition startingBaseType)
