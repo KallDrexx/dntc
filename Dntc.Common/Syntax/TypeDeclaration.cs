@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
+using Mono.Cecil;
 
 namespace Dntc.Common.Syntax;
 
@@ -50,15 +51,11 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
                 await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
 
-                foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual))
+                foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
                 {
-                    // TODO add virtual method pointers to the struct.
-                    // void (*VirtualMethod)(struct HelloWorld_ConsoleBase*);
-
                     var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
                     await writer.WriteAsync($"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
                     
-            
                     for (var x = 0; x < methodInfo.Parameters.Count; x++)
                     {
                         if (x > 0) await writer.WriteAsync(", ");
@@ -69,7 +66,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                         if (x == 0)
                         {
                             structKeyword = "struct ";
-                            // add struct keyword for the this ptr.
                         }
 
                         var pointerSymbol = param.IsReference ? "*" : "";
@@ -77,8 +73,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                     }
 
                     await writer.WriteLineAsync(");");
-                    
-                    
                 }
             }
         }
@@ -89,7 +83,109 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
+
+        if (!dotNetDefinedType.Definition.IsValueType)
+        {
+            // Add create method.
+            var returnType = TypeConversion.NativeNameWithPointer();
+            var methodName = TypeConversion.NameInC + "__Create";
+
+            await writer.WriteLineAsync();
+            await writer.WriteLineAsync($"{returnType} {methodName}(void){{");
+            
+            await writer.WriteLineAsync($"\t{returnType} result = ({returnType}) malloc(sizeof({TypeConversion.NameInC}));");
+            await writer.WriteLineAsync($"\tmemset(result, 0, sizeof({TypeConversion.NameInC}));");
+            
+            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual))
+            {
+                if (virtualMethod.IsReuseSlot)
+                {
+                    var sourceMethod = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+                    var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
+                    
+                    var targetMethod = FindMatchingMethodInBaseTypes(sourceMethod, baseType, out var depth);
+
+                    await writer.WriteAsync($"\tresult");
+                    
+                    if (targetMethod != null)
+                    {
+                        if (depth > 0)
+                        {
+                            await writer.WriteAsync($"->base");
+                        }
+
+                        for (int i = 1; i < depth; i++)
+                        {
+                            await writer.WriteAsync($".base");
+                        }
+                        
+                        await writer.WriteLineAsync($".{targetMethod.NameInC} = {sourceMethod.NameInC};");
+                    }
+                }
+                else
+                {
+                    var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+
+                    await writer.WriteLineAsync($"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};");
+                }
+            }
+            
+            await writer.WriteLineAsync($"\treturn result;");
+
+            await writer.WriteLineAsync("}");
+        }
+        
+        
     }
+    
+    private MethodConversionInfo? FindMatchingMethodInBaseTypes(MethodConversionInfo sourceMethod, TypeDefinition startingBaseType, out int depth)
+    {
+        var currentBaseType = startingBaseType;
+        depth = 1;
+    
+        while (currentBaseType != null)
+        {
+            var type = Catalog.Find(new IlTypeName(currentBaseType.FullName));
+        
+            foreach (var method in type.OriginalTypeDefinition.Methods)
+            {
+                var methodInfo = Catalog.Find(method);
+            
+                if (sourceMethod.Name != methodInfo.Name)
+                    continue;
+            
+                if (sourceMethod.ReturnTypeInfo != methodInfo.ReturnTypeInfo)
+                    continue;
+
+                if (sourceMethod.Parameters.Count != methodInfo.Parameters.Count)
+                    continue;
+
+                bool parametersMatch = true;
+                for (int i = 1; i < sourceMethod.Parameters.Count; i++)
+                {
+                    if (sourceMethod.Parameters[i].ConversionInfo != 
+                        methodInfo.Parameters[i].ConversionInfo)
+                    {
+                        parametersMatch = false;
+                        break;
+                    }
+                }
+
+                if (parametersMatch)
+                {
+                    return methodInfo;
+                }
+            }
+        
+            // Move to the next base type in the hierarchy
+            currentBaseType = currentBaseType.BaseType.Resolve();
+            depth++;
+        }
+    
+        // If we've gone through all base types and found nothing
+        return null;
+    }
+
 
     private async Task WriteCustomDefinedType(
         StreamWriter writer,

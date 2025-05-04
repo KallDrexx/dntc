@@ -2,14 +2,12 @@
 
 using System;
 using Dntc.Attributes;
+using HelloWorld;
 
 namespace System
 {
     public class Object
     {
-        public Object()
-        {
-        }
     }
 }
 
@@ -63,16 +61,20 @@ namespace HelloWorld
         [NativeFunctionCall("printf", "<stdio.h>")]
         public static void Printf<T>(string template, T input1)
         {
+            
+        }
+
+        public static void Test()
+        {
+            var console = new Console(1);
+            
+            console.VirtualMethod();
         }
 
         [CustomFunctionName("main")]
         public static int Main()
         {
-            var console = new Console(1);
-
-            console.Test(console);
-            
-            console.VirtualMethod();
+            Test();
             return 0;
         }
     }

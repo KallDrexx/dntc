@@ -18,7 +18,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
             // type, we don't need this intermediary step.
             new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
-            new IlMethodId("System.Void System.Object::.ctor()")
+           // new IlMethodId("System.Void System.Object::.ctor()")
             
         ];
 

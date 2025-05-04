@@ -37,6 +37,8 @@ public class MethodConversionInfo
     /// The name of the function when defined in C
     /// </summary>
     public CFunctionName NameInC { get; set; }
+    
+    public string Name { get; set; } // The name of the function on its own.
    
     /// <summary>
     /// Type conversion information for the type this method returns.
@@ -117,6 +119,7 @@ public class MethodConversionInfo
         }
         
         NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
+        Name = method.Definition.Name;
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)
