@@ -249,13 +249,16 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
+            
+            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod && !dntDefinedMethod.Definition.DeclaringType.IsValueType;
+            
             if (targetMethodDefinition == null)
             {
                 var message = $"No known definition for the method '{methodToCall}'";
                 throw new InvalidOperationException(message);
             }
 
-            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, true);
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
