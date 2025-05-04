@@ -33,15 +33,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
     private async Task WriteDotNetDefinedTypeAsync(StreamWriter writer, DotNetDefinedType dotNetDefinedType)
     {
         await writer.WriteLineAsync($"typedef struct {TypeConversion.NativeNameWithPossiblePointer()} {{");
-        foreach (var field in dotNetDefinedType.InstanceFields)
-        {
-            var declaration = new FieldDeclaration(
-                Catalog.Find(field.Id),
-                FieldDeclaration.FieldFlags.IgnoreValueInitialization);
-
-            await writer.WriteAsync("\t");
-            await declaration.WriteAsync(writer);
-        }
 
         if (dotNetDefinedType.Definition.BaseType != null)
         {
@@ -76,7 +67,18 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                 }
             }
         }
-        else if (dotNetDefinedType.InstanceFields.Count == 0)
+        
+        foreach (var field in dotNetDefinedType.InstanceFields)
+        {
+            var declaration = new FieldDeclaration(
+                Catalog.Find(field.Id),
+                FieldDeclaration.FieldFlags.IgnoreValueInitialization);
+
+            await writer.WriteAsync("\t");
+            await declaration.WriteAsync(writer);
+        }
+        
+        if (dotNetDefinedType.InstanceFields.Count == 0)
         {
             // C doesn't allow empty structs
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
@@ -103,23 +105,28 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                     var sourceMethod = Catalog.Find(new IlMethodId(virtualMethod.FullName));
                     var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
                     
-                    var targetMethod = FindMatchingMethodInBaseTypes(sourceMethod, baseType, out var depth);
+                    var targetMethod = FindMatchingMethodInBaseTypes(sourceMethod, baseType);
 
-                    await writer.WriteAsync($"\tresult");
-                    
                     if (targetMethod != null)
                     {
-                        if (depth > 0)
-                        {
-                            await writer.WriteAsync($"->base");
-                        }
+                        var thisExpression = targetMethod.Parameters[0];
 
-                        for (int i = 1; i < depth; i++)
+                        await writer.WriteAsync($"\t(({thisExpression.ConversionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
+
+                        var methodInfo = targetMethod;
+                        await writer.WriteAsync($"{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
+                    
+                        for (var x = 0; x < methodInfo.Parameters.Count; x++)
                         {
-                            await writer.WriteAsync($".base");
+                            if (x > 0) await writer.WriteAsync(", ");
+                            var param = methodInfo.Parameters[x];
+                            var paramType = param.ConversionInfo;
+
+                            var pointerSymbol = param.IsReference ? "*" : "";
+                            await writer.WriteAsync($"{paramType.NameInC}{pointerSymbol}");
                         }
                         
-                        await writer.WriteLineAsync($".{targetMethod.NameInC} = {sourceMethod.NameInC};");
+                        await writer.WriteLineAsync($")){sourceMethod.NameInC};");
                     }
                 }
                 else
@@ -134,14 +141,11 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
             await writer.WriteLineAsync("}");
         }
-        
-        
     }
     
-    private MethodConversionInfo? FindMatchingMethodInBaseTypes(MethodConversionInfo sourceMethod, TypeDefinition startingBaseType, out int depth)
+    private MethodConversionInfo? FindMatchingMethodInBaseTypes(MethodConversionInfo sourceMethod, TypeDefinition startingBaseType)
     {
         var currentBaseType = startingBaseType;
-        depth = 1;
     
         while (currentBaseType != null)
         {
@@ -179,7 +183,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         
             // Move to the next base type in the hierarchy
             currentBaseType = currentBaseType.BaseType.Resolve();
-            depth++;
         }
     
         // If we've gone through all base types and found nothing

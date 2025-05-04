@@ -61,7 +61,7 @@ public class CallHandlers : IOpCodeHandlerCollection
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
         IlMethodId methodId, 
-        IlTypeName returnTypeName)
+        IlTypeName returnTypeName, bool isVirtualCall = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
@@ -74,13 +74,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             .Reverse() 
             .ToArray();
 
-        // Check if we need to cast this parameter...
-        // Check if the argument type matches the parameter type
-
-        var argumentCastDepths = ArgumentCastDepths(context, arguments, conversionInfo.Parameters.Select(x=>x.ConversionInfo.NameInC).ToArray());
-
         var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
-        var methodCallExpression = new MethodCallExpression(fnExpression, arguments,  argumentCastDepths, returnType);
+        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -107,49 +102,6 @@ public class CallHandlers : IOpCodeHandlerCollection
         // Otherwise we can just inline the method call.
         context.ExpressionStack.Push(methodCallExpression);
         return new OpCodeHandlingResult(null);
-    }
-    
-    private static List<int> ArgumentCastDepths(HandleContext context, CBaseExpression[] arguments, CTypeName[] parameters)
-    {
-        var argumentCastDepths = new List<int>();
-        for (int i = 0; i < arguments.Length; i++)
-        {
-            var argument = arguments[i];
-            var parameter = parameters[i];
-
-            if (argument.ResultingType.NameInC != parameter)
-            {
-                // We need to check if the argument type can be cast to the parameter type
-                // This means accessing base->base->base until the types match.
-
-                int n = 0;
-
-                var dotNetDefinedType = argument.ResultingType.OriginalTypeDefinition as DotNetDefinedType;
-
-                while (dotNetDefinedType != null)
-                {
-                    n++;
-                    var baseType =
-                        context.ConversionCatalog.Find(
-                            new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName));
-
-                    if (baseType.NameInC == parameter)
-                    {
-                        break;
-                    }
-                        
-                    dotNetDefinedType = baseType.OriginalTypeDefinition as DotNetDefinedType;
-                }
-                
-                argumentCastDepths.Add(n);
-            }
-            else
-            {
-                argumentCastDepths.Add(0);
-            }
-        }
-
-        return argumentCastDepths;
     }
 
     private class CallHandler : IOpCodeHandler
@@ -193,10 +145,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             var fnPointerExpression = allItems[0];
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
             var returnType = context.ConversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
-            var castDepths = ArgumentCastDepths(context, argumentsInCallingOrder, allItems.Select(x=>x.ResultingType.NameInC).ToArray());
             
-            // TODO calculate the argument cast depths
-            var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder, castDepths, returnType);
+            var expression = new MethodCallExpression(fnPointerExpression, context.CurrentMethodConversion.Parameters, argumentsInCallingOrder, returnType);
             if (ReturnsVoid(callSite.ReturnType))
             {
                 var statement = new VoidExpressionStatementSet(expression);
@@ -246,11 +196,8 @@ public class CallHandlers : IOpCodeHandlerCollection
                 statements.Add(allocateStatement);
             }
 
-            var castDepths = ArgumentCastDepths(context, argumentsInCallingOrder.ToArray(),
-                constructorInfo.Parameters.Select(x => x.ConversionInfo.NameInC).ToArray());
-
             var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
-            var methodCall = new MethodCallExpression(fnExpression, argumentsInCallingOrder, castDepths, voidType);
+            var methodCall = new MethodCallExpression(fnExpression, constructorInfo.Parameters, argumentsInCallingOrder, voidType);
             var methodCallStatement = new VoidExpressionStatementSet(methodCall);
             
             statements.Add(methodCallStatement);
@@ -281,7 +228,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
-            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType);
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, true);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
