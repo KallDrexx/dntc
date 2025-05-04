@@ -149,21 +149,22 @@ public class DependencyGraph
                 }
             }
         }
-        
-        foreach (var derivedMethod in definitionCatalog.GetMethodOverrides(method))
-        {
-            var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
 
-            if (derivedNode != null)
+        if (method is DotNetDefinedMethod { Definition: { IsVirtual: true, IsNewSlot: true } })
+        {
+            var overrides = definitionCatalog.GetMethodOverrides(method);
+
+            foreach (var derivedMethod in overrides)
             {
-                derivedNode.Children.Add(node);
-                path.RemoveAt(path.Count - 1);
-                return derivedNode;
-                //path.Add(node);
-                //node.Children.Add(derivedNode);
+                var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
+
+                if (derivedNode != null)
+                {
+                    node.Children.Add(derivedNode);
+                }
             }
         }
-        
+
         path.RemoveAt(path.Count - 1);
         return node;
     }
