@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "ScratchpadCSharp.h"
 
-typedef struct {
+typedef struct ScratchpadCSharp_AttributeTests_CustomFileTestStruct {
 	int32_t Value;
 } ScratchpadCSharp_AttributeTests_CustomFileTestStruct;
 

@@ -12,7 +12,7 @@
 #include <string.h>
 #include "ScratchpadCSharp_Dependency.h"
 
-typedef struct {
+typedef struct ScratchpadCSharp_AttributeTests_NonHeaderStruct {
 	int32_t Value;
 } ScratchpadCSharp_AttributeTests_NonHeaderStruct;
 

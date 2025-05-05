@@ -13,50 +13,50 @@
 #include "fn_pointer_types.h"
 #include "ScratchpadCSharp_Dependency.h"
 
-typedef struct {
+typedef struct ScratchpadCSharp_SimpleFunctions_Vector3 {
 	float X;
 	float Y;
 	float Z;
 } ScratchpadCSharp_SimpleFunctions_Vector3;
 
-typedef struct {
+typedef struct ScratchpadCSharp_SimpleFunctions_Vector2 {
 	float X;
 	float Y;
 } ScratchpadCSharp_SimpleFunctions_Vector2;
 
-typedef struct {
+typedef struct ScratchpadCSharp_SimpleFunctions_Triangle {
 	ScratchpadCSharp_SimpleFunctions_Vector2 First;
 	ScratchpadCSharp_SimpleFunctions_Vector2 Second;
 	ScratchpadCSharp_SimpleFunctions_Vector2 Third;
 } ScratchpadCSharp_SimpleFunctions_Triangle;
 
-typedef struct {
+typedef struct ScratchpadCSharp_GenericTests_AddNumberGetter {
 	int32_t _first_P;
 	int32_t _second_P;
 } ScratchpadCSharp_GenericTests_AddNumberGetter;
 
-typedef struct {
+typedef struct ScratchpadCSharp_GenericTests_StaticNumberGetter {
 	int32_t _number_P;
 } ScratchpadCSharp_GenericTests_StaticNumberGetter;
 
-typedef struct {
+typedef struct ScratchpadCSharp_AttributeTests_CustomFieldNameStruct {
 	int32_t some_value;
 } ScratchpadCSharp_AttributeTests_CustomFieldNameStruct;
 
-typedef struct {
+typedef struct ScratchpadCSharp_AttributeTests_StaticallySizedTest {
 	int32_t NumberArray[10];
 	int32_t NumberArray2[10];
 } ScratchpadCSharp_AttributeTests_StaticallySizedTest;
 
-typedef struct {
+typedef struct ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct {
 	INT_FIELD(field);
 } ScratchpadCSharp_AttributeTests_CustomDeclaredFieldStruct;
 
-typedef struct {
+typedef struct ScratchpadCSharp_GenericTests_SimpleStruct {
 	int32_t Value;
 } ScratchpadCSharp_GenericTests_SimpleStruct;
 
-typedef struct {
+typedef struct ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct {
 	uint8_t Index;
 } ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct;
 

@@ -161,10 +161,17 @@ public class DotNetDefinedMethod : DefinedMethod
             return new Parameter(new IlTypeName(definition.ParameterType.FullName), definition.Name, false);
         }
 
+        var isConsideredReferenceType =
+            definition.ParameterType.IsByReference ||
+            definition.ParameterType.IsPointer ||
+            !(definition.ParameterType.IsValueType || definition.ParameterType.IsGenericParameter ||
+              definition.ParameterType.IsFunctionPointer);
+
+
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            definition.ParameterType.IsByReference || definition.ParameterType.IsPointer || !(definition.ParameterType.IsValueType || definition.ParameterType.IsGenericParameter));
+            isConsideredReferenceType);
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>

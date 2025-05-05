@@ -9,43 +9,43 @@
 #include "dotnet_arrays.h"
 #include "dotnet_math.h"
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_Vector3 {
 	float X;
 	float Y;
 	float Z;
 } Dntc_Samples_Octahedron_Common_Vector3;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_Camera {
 	Dntc_Samples_Octahedron_Common_Vector3 Right;
 	Dntc_Samples_Octahedron_Common_Vector3 Up;
 	int32_t PixelHeight;
 	int32_t PixelWidth;
 } Dntc_Samples_Octahedron_Common_Camera;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_OctahedronShape {
 	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_OctahedronShape;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_PyramidShape {
 	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_PyramidShape;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_CubeShape {
 	char __dummy; // Placeholder for empty type
 } Dntc_Samples_Octahedron_Common_CubeShape;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_Triangle {
 	Dntc_Samples_Octahedron_Common_Vector3 V1;
 	Dntc_Samples_Octahedron_Common_Vector3 V2;
 	Dntc_Samples_Octahedron_Common_Vector3 V3;
 } Dntc_Samples_Octahedron_Common_Triangle;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_Point {
 	int32_t X;
 	int32_t Y;
 } Dntc_Samples_Octahedron_Common_Point;
 
-typedef struct {
+typedef struct Dntc_Samples_Octahedron_Common_PointPair {
 	Dntc_Samples_Octahedron_Common_Point First;
 	Dntc_Samples_Octahedron_Common_Point Second;
 	float DeltaX;
