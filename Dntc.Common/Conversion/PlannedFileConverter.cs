@@ -78,7 +78,6 @@ public class PlannedFileConverter
         var typeDeclarations = plannedSourceFile.DeclaredTypes
             .Select(x => new { ConversionInfo = x, Definition = _definitionCatalog.Get(x.IlName) })
             .Select(x => new TypeDeclaration(x.ConversionInfo, x.Definition!, _conversionCatalog))
-            .Reverse() // We need to reverse this so that the derived types are declared before their inherited types // TODO fix this in the dependency graph!
             .ToArray();
 
         var methodDeclarations = plannedSourceFile.DeclaredMethods
