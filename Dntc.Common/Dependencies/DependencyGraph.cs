@@ -124,12 +124,13 @@ public class DependencyGraph
 
         if (method is DotNetDefinedMethod dotNetDefinedMethod)
         {
-            if (dotNetDefinedMethod.Definition.Body == null)
+            // TODO is it ok to remove this?
+            /*if (!dotNetDefinedMethod.Definition.HasBody)
             {
                 var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
                               $"calls to concrete methods can be invoked";
                 throw new InvalidOperationException(message);
-            }
+            }*/
 
             foreach (var type in dotNetDefinedMethod.ReferencedTypes)
             {

@@ -7,7 +7,7 @@ public record MethodCallExpression(
     IReadOnlyList<MethodConversionInfo.Parameter> Parameters,
     IReadOnlyList<CBaseExpression> Arguments,
     TypeConversionInfo ReturnType,
-    bool IsVirtualCall = false)
+    bool IsVirtualCall = false, bool IsInterface = false)
     : CBaseExpression(ReturnType.IsPointer)
 {
     // Note: Right now method can only return value types. That may change depending on how
@@ -19,15 +19,31 @@ public record MethodCallExpression(
     {
         if (IsVirtualCall)
         {
-            var thisExpression = Arguments[0];
-            var targetExpression = Parameters[0];
-            await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
-            await thisExpression.WriteCodeStringAsync(writer);
-            await writer.WriteAsync(")->");
-            await FnExpression.WriteCodeStringAsync(writer);
-            await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
-            await thisExpression.WriteCodeStringAsync(writer);
-            await writer.WriteAsync(")");
+            if (IsInterface)
+            {
+                var thisExpression = Arguments[0];
+                await thisExpression.WriteCodeStringAsync(writer);
+                var targetInterface = Parameters[0].ConversionInfo.NameInC.Value;
+                await writer.WriteAsync("->");
+                await writer.WriteAsync(targetInterface);
+                await writer.WriteAsync(".");
+                await FnExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync($"(");
+                await thisExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync(")");
+            }
+            else
+            {
+                var thisExpression = Arguments[0];
+                var targetExpression = Parameters[0];
+                await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
+                await thisExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync(")->");
+                await FnExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
+                await thisExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync(")");
+            }
         }
         else
         {

@@ -6,6 +6,13 @@ using HelloWorld;
 
 namespace HelloWorld
 {
+    public interface IMyInterface
+    {
+        void Foo();
+        
+        void Bar();
+    }
+
     public class ConsoleBase
     {
         private int _arg;
@@ -27,7 +34,7 @@ namespace HelloWorld
         }
     }
 
-    public class Console1 : Console
+    public class Console1 : Console, IMyInterface
     {
         public Console1(int arg) : base(arg)
         {
@@ -43,6 +50,16 @@ namespace HelloWorld
         {
             Program.Printf("Console 1 vm + \n");
             base.VirtualMethod();
+        }
+
+        public void Foo()
+        {
+            Program.Printf("Console1::Foo \n");
+        }
+
+        public void Bar()
+        {
+            Program.Printf("Console1::Bar \n");
         }
     }
 
@@ -89,10 +106,15 @@ namespace HelloWorld
 
         public static void Test()
         {
-            var console = new Console1(1);
+            Console1 console = new Console1(1);
+            
             
             console.VirtualMethod();
             console.VirtualMethod2();
+
+            IMyInterface iface = new Console1(2);
+            iface.Foo();
+            iface.Bar();
         }
 
         [CustomFunctionName("main")]

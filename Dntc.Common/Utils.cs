@@ -162,7 +162,7 @@ public static class Utils
     public static bool IsOverrideOf(this MethodDefinition method, MethodDefinition baseMethod)
     {
         // Method must be virtual and reuse slot (override keyword)
-        if (!method.IsVirtual || !method.IsReuseSlot)
+        if (!method.IsVirtual || method is { IsReuseSlot: false, IsDefinition: false })
             return false;
 
         return method.SignatureCompatibleWith(baseMethod);
@@ -199,7 +199,7 @@ public static class Utils
         var current = type;
         while (current.BaseType != null)
         {
-            if (current.BaseType.FullName == baseType.FullName)
+            if (current.BaseType.FullName == baseType.FullName || current.Interfaces.Any(x=>x.InterfaceType.FullName == baseType.FullName))
                 return true;
             
             // Continue up the inheritance chain

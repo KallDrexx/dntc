@@ -112,7 +112,11 @@ public class PlannedFileConverter
         }
         
         var statements = new List<CStatementSet>();
-        
+
+        if (dotNetDefinedMethod.Definition.HasBody == false)
+        {
+            return statements;
+        }
         Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
 
         OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);

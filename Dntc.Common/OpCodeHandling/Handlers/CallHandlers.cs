@@ -62,7 +62,7 @@ public class CallHandlers : IOpCodeHandlerCollection
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
         IlMethodId methodId, 
-        IlTypeName returnTypeName, bool isVirtualCall = false)
+        IlTypeName returnTypeName, bool isVirtualCall = false, bool isInterface = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
@@ -76,7 +76,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             .ToArray();
 
         var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
-        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
+        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall, isInterface);
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -251,6 +251,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
             
             bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod && !dntDefinedMethod.Definition.DeclaringType.IsValueType;
+            bool isInterface = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod2 && dntDefinedMethod2.Definition.DeclaringType.IsInterface;
             
             if (targetMethodDefinition == null)
             {
@@ -258,7 +259,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
-            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall);
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall, isInterface);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

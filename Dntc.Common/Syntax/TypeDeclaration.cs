@@ -45,10 +45,22 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             }
         }
 
+        if (dotNetDefinedType.Definition.HasInterfaces)
+        {
+            foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+            {
+                if (Catalog.TryFind(new IlTypeName(iface.InterfaceType.FullName), out var ifaceType))
+                {
+                    await writer.WriteLineAsync($"\t{ifaceType.NativeNameWithPossiblePointer()} {ifaceType.NameInC};");
+                }
+            }
+        }
+
         // Write the virtual table for virtual methods.
         if (!dotNetDefinedType.Definition.IsValueType)
         {
-            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
+            // IsFinal will be set for interfaces.
+            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x is { IsVirtual: true, IsNewSlot: true, IsFinal: false }))
             {
                 var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
                 await writer.WriteAsync(
@@ -66,8 +78,17 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                         structKeyword = "struct ";
                     }
 
-                    var pointerSymbol = param.IsReference ? "*" : "";
-                    await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                    if (dotNetDefinedType.Definition.IsInterface && x == 0)
+                    {
+                        // this argument for interface... change to void*
+                        await writer.WriteAsync($"void* {param.Name}");    
+                    }
+                    else
+                    {
+                        var pointerSymbol = param.IsReference ? "*" : "";
+                        await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");    
+                    }
+                    
                 }
 
                 await writer.WriteLineAsync(");");
