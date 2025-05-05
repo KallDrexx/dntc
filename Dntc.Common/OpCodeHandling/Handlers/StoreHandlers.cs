@@ -274,6 +274,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     left = localVariable;
                     right = new InterfaceDynamicCastExpression(localVariable, items[0], dotNetDefinedType.Definition.MetadataToken.RID);
                 }
+                else if (items[0].ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsValueType: false })
+                {
+                    left = localVariable;
+                    right = items[0];
+                }
                 else
                 {
                     // Set the local's value to the dereferenced value of the assigment's expression
@@ -281,6 +286,15 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     right = new DereferencedValueExpression(items[0]);    
                 }
                 
+            }
+            else if (!localVariable.ProducesAPointer && !items[0].ProducesAPointer &&
+                     localVariable.ResultingType.OriginalTypeDefinition is DotNetDefinedType
+                     {
+                         Definition.IsInterface: true
+                     } dotNetDefinedType)
+            {
+                left = localVariable;
+                right = new InterfaceDynamicCastExpression(localVariable, items[0], dotNetDefinedType.Definition.MetadataToken.RID);
             }
             else
             {
