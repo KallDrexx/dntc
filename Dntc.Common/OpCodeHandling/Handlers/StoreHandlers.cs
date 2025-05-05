@@ -1,4 +1,6 @@
-﻿using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
+using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -267,9 +269,18 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
             else if (!localVariable.ProducesAPointer && items[0].ProducesAPointer)
             {
-                // Set the local's value to the dereferenced value of the assigment's expression
-                left = localVariable;
-                right = new DereferencedValueExpression(items[0]);
+                if (localVariable.ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsInterface: true } dotNetDefinedType)
+                {
+                    left = localVariable;
+                    right = new InterfaceDynamicCastExpression(localVariable, items[0], dotNetDefinedType.Definition.MetadataToken.RID);
+                }
+                else
+                {
+                    // Set the local's value to the dereferenced value of the assigment's expression
+                    left = localVariable;
+                    right = new DereferencedValueExpression(items[0]);    
+                }
+                
             }
             else
             {

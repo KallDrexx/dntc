@@ -92,7 +92,13 @@ public class TypeConversionInfo
 
         if (!type.Definition.IsValueType)
         {
-            ReferencedHeaders = [new HeaderName("<stdlib.h>"), new HeaderName("<string.h>"), new HeaderName("dntc.h")];
+            ReferencedHeaders =
+            [
+                new HeaderName("<stdlib.h>"), 
+                new HeaderName("<string.h>"), 
+                new HeaderName("<stddef.h>"),
+                new HeaderName("dntc.h")
+            ];
         }
     }
 

@@ -162,11 +162,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteLineAsync($"\t{dotNetDefinedType.Definition.Interfaces.Count}");
             await writer.WriteLineAsync("};");
         }
-        /*await writer.WriteLineAsync("\t},");
-        await writer.WriteLineAsync("\t(size_t[]){");
-        foreach (var iface in dotNetDefinedType.Definition.Interfaces)
-        {}*/
-        
     }
 
 

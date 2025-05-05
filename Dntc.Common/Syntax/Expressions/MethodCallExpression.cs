@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Syntax.Expressions;
 
@@ -22,11 +23,21 @@ public record MethodCallExpression(
             if (IsInterface)
             {
                 var thisExpression = Arguments[0];
+
+                var isInterfacePtrCall =
+                    thisExpression.ResultingType.OriginalTypeDefinition is DotNetDefinedType dotNetDefinedType &&
+                    dotNetDefinedType.Definition.IsInterface;
+                
                 await thisExpression.WriteCodeStringAsync(writer);
                 var targetInterface = Parameters[0].ConversionInfo.NameInC.Value;
                 await writer.WriteAsync("->");
-                await writer.WriteAsync(targetInterface);
-                await writer.WriteAsync(".");
+
+                if (!isInterfacePtrCall)
+                {
+                    await writer.WriteAsync(targetInterface);
+                    await writer.WriteAsync(".");
+                }
+
                 await FnExpression.WriteCodeStringAsync(writer);
                 await writer.WriteAsync($"(");
                 await thisExpression.WriteCodeStringAsync(writer);
