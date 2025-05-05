@@ -3,7 +3,6 @@ using Dntc.Common.Conversion;
 using Dntc.Common.OpCodeHandling;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
-using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.Definitions.CustomDefinedMethods;
 
@@ -55,6 +54,9 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         
         sb.AppendLine($@"    {typeName}* result = ({typeName}*) malloc(sizeof({typeName}));
 	memset(result, 0, sizeof({typeName}));");
+        
+        var typeInfoName =typeName + "_TypeInfo";
+        sb.AppendLine($"\t((ReferenceType_Base*)result)->type_info = &{typeInfoName};");
 
         var interfaceMethods = new HashSet<IlMethodId>();
         

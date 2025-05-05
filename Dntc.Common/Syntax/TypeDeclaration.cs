@@ -43,6 +43,11 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                     await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
                 }
             }
+            else
+            {
+                // We replace Object with ReferenceType_base. This type is provided by dntc.h
+                await writer.WriteLineAsync("\tReferenceType_Base base;");
+            }
         }
 
         if (dotNetDefinedType.Definition.HasInterfaces)
@@ -115,6 +120,53 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
+        
+        // Write TypeInformation.
+        if (dotNetDefinedType.Definition is { IsValueType: false, IsInterface: false })
+        {
+            await writer.WriteLineAsync();
+            await writer.WriteLineAsync("TypeInfo " + TypeConversion.NameInC + "_TypeInfo = {");
+
+            if (dotNetDefinedType.Definition.HasInterfaces)
+            {
+                await writer.WriteAsync("\t(uint32_t[]){ ");
+                foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+                {
+                    await writer.WriteAsync($"{iface.InterfaceType.MetadataToken.RID}, ");
+                }
+
+                await writer.WriteLineAsync(" },");
+            }
+            else
+            {
+                await writer.WriteLineAsync("\tNULL,");
+            }
+
+            if (dotNetDefinedType.Definition.HasInterfaces)
+            {
+                await writer.WriteAsync("\t(size_t[]){ ");
+                foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+                {
+                    var ifaceType = Catalog.Find(new IlTypeName(iface.InterfaceType.FullName));
+
+                    await writer.WriteAsync($"offsetof({TypeConversion.NameInC}, {ifaceType.NameInC}), ");
+                }
+
+                await writer.WriteLineAsync("},");
+            }
+            else
+            {
+                await writer.WriteLineAsync("\tNULL,");
+            }
+
+            await writer.WriteLineAsync($"\t{dotNetDefinedType.Definition.Interfaces.Count}");
+            await writer.WriteLineAsync("};");
+        }
+        /*await writer.WriteLineAsync("\t},");
+        await writer.WriteLineAsync("\t(size_t[]){");
+        foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+        {}*/
+        
     }
 
 
