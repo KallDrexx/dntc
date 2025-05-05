@@ -63,6 +63,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
         { Code.Ldobj, new LdObjHandler() },
         { Code.Ldstr, new LdStrHandler() },
+        { Code.Ldnull, new LdNullHandler() }
     };
 
     private class LdFldHandler(bool getAddress) : IOpCodeHandler
@@ -346,6 +347,22 @@ public class LoadHandlers : IOpCodeHandlerCollection
             var objectAddress = items[0];
 
             context.ExpressionStack.Push(new DereferencedValueExpression(objectAddress));
+
+            return new OpCodeHandlingResult(null);
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
+    }
+
+    private class LdNullHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            context.ExpressionStack.Push(new LiteralValueExpression("NULL", voidType));
 
             return new OpCodeHandlingResult(null);
         }
