@@ -93,6 +93,8 @@ namespace HelloWorld
 
     static class Program
     {
+        public static int Value = 0;
+        
         [NativeFunctionCall("printf", "<stdio.h>")]
         public static void Printf(string value)
         {
@@ -106,15 +108,23 @@ namespace HelloWorld
 
         public static void Test()
         {
+            Printf("%u", Value);
             Console1 console = new Console1(1);
-            
-            
+            IMyInterface myInterface = new Console1(2);
             console.VirtualMethod();
             console.VirtualMethod2();
 
-            IMyInterface iface = new Console1(2);
-            iface.Foo();
-            iface.Bar();
+            
+            
+            myInterface.Foo();
+            myInterface.Bar();
+
+
+            if (console is IMyInterface iface)
+            {
+                iface.Foo();
+                iface.Bar();
+            }
         }
 
         [CustomFunctionName("main")]
