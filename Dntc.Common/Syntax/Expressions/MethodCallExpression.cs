@@ -51,7 +51,8 @@ public record MethodCallExpression(
                 await thisExpression.WriteCodeStringAsync(writer);
                 await writer.WriteAsync(")->");
                 await FnExpression.WriteCodeStringAsync(writer);
-                await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
+                
+                await writer.WriteAsync("(");
                 await WriteParametersAsync(writer);
                 await writer.WriteAsync(")");
             }
@@ -59,10 +60,9 @@ public record MethodCallExpression(
         else
         {
             await FnExpression.WriteCodeStringAsync(writer);
+            
             await writer.WriteAsync("(");
-
             await WriteParametersAsync(writer);
-
             await writer.WriteAsync(")");
         }
     }
