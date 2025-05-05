@@ -28,6 +28,20 @@ public class DotNetDefinedType : DefinedType
             .Select(ConvertToField)
             .ToArray();
 
+
+        var referencedTypes = new List<IlTypeName>();
+        
+        if (definition.BaseType != null && definition.BaseType.FullName != typeof(object).FullName)
+        {
+            var baseTypeName = new IlTypeName(definition.BaseType.FullName);
+            
+            referencedTypes.Add(baseTypeName);
+        }
+
+        referencedTypes.AddRange(definition.Interfaces.Select(x => new IlTypeName(x.InterfaceType.FullName)));
+        
+        OtherReferencedTypes = referencedTypes.ToArray();
+
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))
             .ToArray();
