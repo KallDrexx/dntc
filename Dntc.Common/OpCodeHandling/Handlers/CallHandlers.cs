@@ -274,7 +274,8 @@ public class CallHandlers : IOpCodeHandlerCollection
                         virtualCall = false;
                     }
 
-                    if (virtualCall && isInterface && thisType.Definition.ImplementsInterface(declaringType))
+                    // TODO - some scenarios can be devirtualized... or should we just rely on msil to do it better?
+                    /*if (virtualCall && isInterface && thisType.Definition.ImplementsInterface(declaringType) && context.ExpressionStack.Count == dntDefinedMethod.Parameters.Count + 1)
                     {
                         var devirtualizeCall = thisType.Definition.Methods.FirstOrDefault(x =>
                             x.SignatureCompatibleWith(dntDefinedMethod.Definition));
@@ -284,7 +285,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                             virtualCall = false;
                             methodToCall = new IlMethodId(devirtualizeCall.FullName);
                         }
-                    }
+                    }*/
                 }
             }
             
