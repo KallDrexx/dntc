@@ -62,6 +62,9 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         
         foreach (var iface in _typeDefinition.Interfaces)
         {
+            var ifaceType = catalog.Find(new IlTypeName(iface.InterfaceType.FullName));
+            sb.AppendLine($"\tresult->{ifaceType.NameInC}.implementer = result;");
+            
             foreach (var interfaceMethod in iface.InterfaceType.Resolve().Methods)
             {
                 var implementingMethod = _typeDefinition.Methods.SingleOrDefault(x => interfaceMethod.SignatureCompatibleWith(x));
@@ -72,7 +75,6 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                     var interfaceMethodInfo = catalog.Find(new IlMethodId(interfaceMethod.FullName));
                     var implementingMethodInfo = catalog.Find(new IlMethodId(implementingMethod.FullName));
                     
-                    var ifaceType = catalog.Find(new IlTypeName(iface.InterfaceType.FullName));
                     sb.Append($"\tresult->{ifaceType.NameInC}.{interfaceMethodInfo.NameInC} = ");
                     
                     sb.Append($"({interfaceMethodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");

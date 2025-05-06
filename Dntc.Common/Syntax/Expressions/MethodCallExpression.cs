@@ -40,7 +40,13 @@ public record MethodCallExpression(
 
                 await FnExpression.WriteCodeStringAsync(writer);
                 await writer.WriteAsync($"(");
-                await WriteParametersAsync(writer);
+                if (isInterfacePtrCall)
+                {
+                    await thisExpression.WriteCodeStringAsync(writer);
+                    await writer.WriteAsync("->implementer");
+                }
+                
+                await WriteParametersAsync(writer, isInterfacePtrCall ? 1 : 0);
                 await writer.WriteAsync(")");
             }
             else
@@ -67,9 +73,9 @@ public record MethodCallExpression(
         }
     }
 
-    private async ValueTask WriteParametersAsync(StreamWriter writer)
+    private async ValueTask WriteParametersAsync(StreamWriter writer, int startIndex = 0)
     {
-        for (var x = 0; x < Arguments.Count; x++)
+        for (var x = startIndex; x < Arguments.Count; x++)
         {
             if (x > 0) await writer.WriteAsync(", ");
 

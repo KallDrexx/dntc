@@ -64,6 +64,11 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         // Write the virtual table for virtual methods.
         if (!dotNetDefinedType.Definition.IsValueType)
         {
+            if (dotNetDefinedType.Definition.IsInterface)
+            {
+                await writer.WriteLineAsync($"\tvoid* implementer;");
+            }
+            
             // IsFinal will be set for interfaces.
             foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x is { IsVirtual: true, IsNewSlot: true, IsFinal: false }))
             {
