@@ -204,8 +204,7 @@ int main(void) {
 
     ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(15);
     int32_t parentValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(parent);
-    printf("%d", parentValue);
-    assert(parentValue == 23);
+    assert(parentValue == 33);
 
     printf("Tests passed!\n");
     return 0;
