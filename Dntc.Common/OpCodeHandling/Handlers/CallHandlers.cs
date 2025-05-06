@@ -118,7 +118,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             {
                 if (context.CurrentDotNetMethod.Definition.HasThis)
                 {
-                    context.ExpressionStack.Pop(context.CurrentDotNetMethod.Definition.Parameters.Count); 
+                    context.ExpressionStack.Pop(context.CurrentDotNetMethod.Parameters.Count); 
                     // specifically, because System_Object::ctor is excluded.
                     // otherwise it will try to add "return __this at the end.
                 }
