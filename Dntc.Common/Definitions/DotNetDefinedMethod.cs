@@ -1,6 +1,7 @@
 ﻿using Dntc.Attributes;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.Definitions;
 
@@ -50,8 +51,18 @@ public class DotNetDefinedMethod : DefinedMethod
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
-        ReturnType = new IlTypeName(definition.ReturnType.FullName);
-        
+
+        var returnsReferenceType = definition.ReturnType.FullName != typeof(void).FullName &&
+                                   !definition.ReturnType.IsValueType &&
+                                   !definition.ReturnType.IsGenericParameter &&
+                                   !definition.ReturnType.IsFunctionPointer;
+
+        var addAsterisk = returnsReferenceType && !definition.ReturnType.FullName.EndsWith("*");
+
+        ReturnType = addAsterisk
+            ? new IlTypeName(definition.ReturnType.FullName + "*")
+            : new IlTypeName(definition.ReturnType.FullName);
+
         // If this is a generic method we need to replace the named generic parameters with their
         // index values (e.g. !!0) so that we can correctly identify this method when called from
         // another .net assembly.
@@ -161,17 +172,10 @@ public class DotNetDefinedMethod : DefinedMethod
             return new Parameter(new IlTypeName(definition.ParameterType.FullName), definition.Name, false);
         }
 
-        var isConsideredReferenceType =
-            definition.ParameterType.IsByReference ||
-            definition.ParameterType.IsPointer ||
-            !(definition.ParameterType.IsValueType || definition.ParameterType.IsGenericParameter ||
-              definition.ParameterType.IsFunctionPointer);
-
-
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            isConsideredReferenceType);
+            definition.IsConsideredReferenceType());
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>

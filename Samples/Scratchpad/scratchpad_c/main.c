@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "generated/fn_pointer_types.h"
 #include "generated/ScratchpadCSharp.h"
+#include "generated/ScratchpadCSharp_ReferenceTypes.h"
 #include "generated/dntc_utils.h"
 #include "native_test.h"
 
@@ -200,6 +201,10 @@ int main(void) {
 
     uint16_t plusPlusValue4 = ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation();
     assert(plusPlusValue4 == 2);
+
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(15);
+    int32_t parentValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(parent);
+    assert(parentValue == 33);
 
     printf("Tests passed!\n");
     return 0;

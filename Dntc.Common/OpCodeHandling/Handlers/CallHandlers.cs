@@ -65,7 +65,6 @@ public class CallHandlers : IOpCodeHandlerCollection
         IlTypeName returnTypeName, bool isVirtualCall = false, bool isInterface = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
-        var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var returnType = conversionInfo.ReturnTypeInfo;
 
         // Arguments (including the instance if this isn't a static call) are pushed onto the stack in the order
@@ -75,7 +74,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             .Reverse() 
             .ToArray();
 
-        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
+        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
         var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall, isInterface);
 
         if (ReturnsVoid(returnTypeName))
@@ -116,9 +115,10 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (IgnoredMethods.Contains(methodId))
             {
-                if (context.CurrentDotNetMethod.Definition.HasThis)
+                if (methodReference.HasThis)
                 {
-                    context.ExpressionStack.Pop(context.CurrentDotNetMethod.Definition.Parameters.Count); 
+                    // + 1 to include the this parameter.
+                    context.ExpressionStack.Pop(methodReference.Parameters.Count + 1); 
                     // specifically, because System_Object::ctor is excluded.
                     // otherwise it will try to add "return __this at the end.
                 }
@@ -202,6 +202,12 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
+                if (!ExperimentalFlags.AllowReferenceTypes)
+                {
+                    var message = "Cannot call `newobj` on a reference type, as reference types are not yet supported";
+                    throw new NotSupportedException(message);
+                }
+
                 var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
