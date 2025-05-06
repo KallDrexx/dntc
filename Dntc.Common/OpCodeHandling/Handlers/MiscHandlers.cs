@@ -111,6 +111,13 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 ? context.ExpressionStack.Pop(1)[0]
                 : null;
 
+            if (innerExpression != null && innerExpression.ResultingType.IlName != context.CurrentMethodConversion.ReturnTypeInfo.IlName)
+            {
+                // we need to cast the return value to the correct type
+                var castExpression = new CastExpression(innerExpression, context.CurrentMethodConversion.ReturnTypeInfo);
+                innerExpression = castExpression;
+            }
+
             return new OpCodeHandlingResult(new ReturnStatementSet(innerExpression));
         }
 
