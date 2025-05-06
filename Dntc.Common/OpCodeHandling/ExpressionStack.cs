@@ -9,6 +9,8 @@ public class ExpressionStack
     private readonly List<CBaseExpression> _expressions = [];
 
     public int Count => _expressions.Count;
+    
+    public CBaseExpression this[int index] => _expressions[index];
 
     /// <summary>
     /// Pops the specified number of expressions from the stack. The expressions are returned

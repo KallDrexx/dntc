@@ -272,7 +272,15 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 if (localVariable.ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsInterface: true } dotNetDefinedType)
                 {
                     left = localVariable;
-                    right = new InterfaceDynamicCastExpression(localVariable, items[0], dotNetDefinedType.Definition.MetadataToken.RID);
+                    if (localVariable.ResultingType.IlName != items[0].ResultingType.IlName)
+                    {
+                        right = new InterfaceDynamicCastExpression(localVariable, items[0],
+                            dotNetDefinedType.Definition.MetadataToken.RID);
+                    }
+                    else
+                    {
+                        right = items[0];
+                    }
                 }
                 else if (items[0].ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsValueType: false })
                 {
@@ -294,7 +302,15 @@ public class StoreHandlers : IOpCodeHandlerCollection
                      } dotNetDefinedType)
             {
                 left = localVariable;
-                right = new InterfaceDynamicCastExpression(localVariable, items[0], dotNetDefinedType.Definition.MetadataToken.RID);
+                if (localVariable.ResultingType.IlName != items[0].ResultingType.IlName)
+                {
+                    right = new InterfaceDynamicCastExpression(localVariable, items[0],
+                        dotNetDefinedType.Definition.MetadataToken.RID);
+                }
+                else
+                {
+                    right = items[0];
+                }
             }
             else
             {

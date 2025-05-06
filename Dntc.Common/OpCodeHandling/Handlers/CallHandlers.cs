@@ -256,8 +256,38 @@ public class CallHandlers : IOpCodeHandlerCollection
             var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
             
-            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod && !dntDefinedMethod.Definition.DeclaringType.IsValueType;
-            bool isInterface = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod2 && dntDefinedMethod2.Definition.DeclaringType.IsInterface;
+            bool virtualCall = false;
+            bool isInterface = false;
+
+            if (targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod)
+            {
+                var declaringType = dntDefinedMethod.Definition.DeclaringType;
+                isInterface = declaringType.IsInterface;
+                virtualCall = !declaringType.IsValueType;
+                
+                if (virtualCall)
+                {
+                    // If the this ptr declaring type matches the method declaring type, we can (need to) de-virtualize the call.
+                    var thisType = (DotNetDefinedType)context.ExpressionStack[0].ResultingType.OriginalTypeDefinition;
+                    if (declaringType.FullName == thisType.Definition.FullName && !thisType.Definition.IsInterface)
+                    {
+                        virtualCall = false;
+                    }
+
+                    if (virtualCall && isInterface && thisType.Definition.ImplementsInterface(declaringType))
+                    {
+                        var devirtualizeCall = thisType.Definition.Methods.FirstOrDefault(x =>
+                            x.SignatureCompatibleWith(dntDefinedMethod.Definition));
+
+                        if (devirtualizeCall != null)
+                        {
+                            virtualCall = false;
+                            methodToCall = new IlMethodId(devirtualizeCall.FullName);
+                        }
+                    }
+                }
+            }
+            
             
             if (targetMethodDefinition == null)
             {
