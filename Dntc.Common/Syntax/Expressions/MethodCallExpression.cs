@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Syntax.Expressions;
 
@@ -25,31 +26,36 @@ public record MethodCallExpression(
             await thisExpression.WriteCodeStringAsync(writer);
             await writer.WriteAsync(")->");
             await FnExpression.WriteCodeStringAsync(writer);
-            await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
-            await thisExpression.WriteCodeStringAsync(writer);
+
+            await writer.WriteAsync("(");
+            await WriteParametersAsync(writer);
             await writer.WriteAsync(")");
         }
         else
         {
             await FnExpression.WriteCodeStringAsync(writer);
+            
             await writer.WriteAsync("(");
+            await WriteParametersAsync(writer);
+            await writer.WriteAsync(")");
+        }
+    }
 
-            for (var x = 0; x < Arguments.Count; x++)
+    private async ValueTask WriteParametersAsync(StreamWriter writer, int startIndex = 0)
+    {
+        for (var x = startIndex; x < Arguments.Count; x++)
+        {
+            if (x > 0) await writer.WriteAsync(", ");
+
+            if (Parameters[x].IsReference &&
+                Parameters[x].ConversionInfo.NameInC != Arguments[x].ResultingType.NameInC)
             {
-                if (x > 0) await writer.WriteAsync(", ");
-
-                if (Parameters[x].IsReference &&
-                    Parameters[x].ConversionInfo.NameInC != Arguments[x].ResultingType.NameInC)
-                {
-                    await writer.WriteAsync($"({Parameters[x].ConversionInfo.NameInC}*)");
-                }
-
-                var param = Arguments[x];
-
-                await param.WriteCodeStringAsync(writer);
+                await writer.WriteAsync($"({Parameters[x].ConversionInfo.NameInC}*)");
             }
 
-            await writer.WriteAsync(")");
+            var param = Arguments[x];
+
+            await param.WriteCodeStringAsync(writer);
         }
     }
 
