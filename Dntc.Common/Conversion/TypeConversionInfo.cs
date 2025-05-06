@@ -52,7 +52,12 @@ public class TypeConversionInfo
     /// <summary>
     /// Designates if this type is a pointer variation of a type or not.
     /// </summary>
-    public bool IsPointer { get; }
+    public bool IsPointer { get; private set; }
+
+    /// <summary>
+    /// Designates if this type is a reference type or not
+    /// </summary>
+    public bool IsReferenceType { get; private set; }
 
     public TypeConversionInfo(DefinedType type, bool isPointer)
     {
@@ -92,6 +97,7 @@ public class TypeConversionInfo
 
         if (!type.Definition.IsValueType)
         {
+            IsReferenceType = true;
             ReferencedHeaders = [new HeaderName("<stdlib.h>"), new HeaderName("<string.h>")];
         }
     }

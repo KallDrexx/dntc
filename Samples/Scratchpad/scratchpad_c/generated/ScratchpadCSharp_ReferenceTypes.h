@@ -1,0 +1,20 @@
+#ifndef SCRATCHPADCSHARP_REFERENCETYPES_H_H
+#define SCRATCHPADCSHARP_REFERENCETYPES_H_H
+
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent {
+	int32_t FieldValue;
+} ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent;
+
+
+
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create(void);
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *__this, int32_t value);
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(int32_t value);
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent);
+
+#endif // SCRATCHPADCSHARP_REFERENCETYPES_H_H

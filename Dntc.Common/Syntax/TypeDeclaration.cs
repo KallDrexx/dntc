@@ -31,7 +31,12 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
     private async Task WriteDotNetDefinedTypeAsync(StreamWriter writer, DotNetDefinedType dotNetDefinedType)
     {
-        await writer.WriteLineAsync($"typedef struct {TypeConversion.NativeNameWithPossiblePointer()} {{");
+        // We have to make sure that the type declaration doesn't include the pointer in the name
+        var nativeName = TypeConversion.IsReferenceType
+            ? TypeConversion.NameInC.Value
+            : TypeConversion.NativeNameWithPossiblePointer();
+
+        await writer.WriteLineAsync($"typedef struct {nativeName} {{");
 
         // Add the entry for the base class. This must be the first entry for pointer casting to work.
         if (dotNetDefinedType.Definition.BaseType != null)
@@ -93,7 +98,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
         }
 
-        await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
+        await writer.WriteLineAsync($"}} {nativeName};");
     }
 
 
