@@ -124,14 +124,6 @@ public class DependencyGraph
 
         if (method is DotNetDefinedMethod dotNetDefinedMethod)
         {
-            // TODO is it ok to remove this?
-            /*if (!dotNetDefinedMethod.Definition.HasBody)
-            {
-                var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
-                              $"calls to concrete methods can be invoked";
-                throw new InvalidOperationException(message);
-            }*/
-
             foreach (var type in dotNetDefinedMethod.ReferencedTypes)
             {
                 var typeNode = CreateNode(definitionCatalog, type, path);
@@ -158,6 +150,18 @@ public class DependencyGraph
             foreach (var derivedMethod in overrides)
             {
                 var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
+
+                if (derivedNode != null)
+                {
+                    node.Children.Add(derivedNode);
+                }
+            }
+
+            var interfaces = definitionCatalog.GetInterfaceMethods(method);
+
+            foreach (var interfaceDefinedMethod in interfaces)
+            {
+                var derivedNode = CreateNode(definitionCatalog, interfaceDefinedMethod.Id, path, true);
 
                 if (derivedNode != null)
                 {

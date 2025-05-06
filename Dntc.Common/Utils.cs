@@ -200,6 +200,18 @@ public static class Utils
     
         return true;
     }
+
+    public static bool ImplementsInterface(this TypeDefinition type, TypeDefinition interfaceType)
+    {
+        // Check direct interfaces
+        foreach (var @interface in type.Interfaces)
+        {
+            if (@interface.InterfaceType.FullName == interfaceType.FullName)
+                return true;
+        }
+        
+        return false;
+    }
     
     public static bool IsSubclassOf(this TypeDefinition type, TypeDefinition baseType)
     {
