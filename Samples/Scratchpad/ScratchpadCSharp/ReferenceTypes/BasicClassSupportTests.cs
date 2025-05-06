@@ -2,7 +2,15 @@ namespace ScratchpadCSharp.ReferenceTypes;
 
 public static class BasicClassSupportTests
 {
-    public class Parent
+    public class ParentBase
+    {
+        public virtual int Sum(int a, int b)
+        {
+            return a + b;
+        }
+    }
+    
+    public class Parent : ParentBase
     {
         public int FieldValue;
 
@@ -10,15 +18,29 @@ public static class BasicClassSupportTests
         {
             FieldValue = value;
         }
+
+        public override int Sum(int a, int b)
+        {
+            var result = base.Sum(a, b);
+            
+            return FieldValue + result;
+        }
     }
 
-    public static Parent CreateParent(int value)
+    public static void Test()
+    {
+        var parent = CreateParent(10);
+        var value = GetParentValue(parent);
+    }
+
+    private static Parent CreateParent(int value)
     {
         return new Parent(value);
     }
 
-    public static int GetParentValue(Parent parent)
+    private static int GetParentValue(Parent parent)
     {
-        return parent.FieldValue;
+        var sum = parent.Sum(1, 2);
+        return parent.FieldValue + sum;
     }
 }

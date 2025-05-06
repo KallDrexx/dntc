@@ -78,7 +78,8 @@
     "System.UInt16 ScratchpadCSharp.SimpleFunctions::PlusPlusOrderOfOperationsValidation()",
     "System.UInt16 ScratchpadCSharp.SimpleFunctions::PlusPlusStructOrderOfOperationsValidation()",
     "ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::CreateParent(System.Int32)",
-    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::GetParentValue(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)"
+    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::GetParentValue(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)",
+    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::Test()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",
