@@ -65,7 +65,6 @@ public class CallHandlers : IOpCodeHandlerCollection
         IlTypeName returnTypeName, bool isVirtualCall = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
-        var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var returnType = conversionInfo.ReturnTypeInfo;
 
         // Arguments (including the instance if this isn't a static call) are pushed onto the stack in the order
@@ -75,7 +74,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             .Reverse() 
             .ToArray();
 
-        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
+        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
         var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
 
         if (ReturnsVoid(returnTypeName))
