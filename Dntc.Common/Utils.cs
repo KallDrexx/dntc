@@ -158,7 +158,15 @@ public static class Utils
         return field.CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == attributeType.FullName);
     }
-    
+
+    public static bool IsConsideredReferenceType(this ParameterDefinition definition)
+    {
+        return definition.ParameterType.IsByReference ||
+               definition.ParameterType.IsPointer ||
+               !(definition.ParameterType.IsValueType || definition.ParameterType.IsGenericParameter ||
+                 definition.ParameterType.IsFunctionPointer);
+    }
+
     public static bool IsOverrideOf(this MethodDefinition method, MethodDefinition baseMethod)
     {
         // Method must be virtual and reuse slot (override keyword)
