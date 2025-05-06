@@ -54,7 +54,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             IlNamespace ilNamespace,
             IReadOnlyList<Parameter> parameters)
             : base(methodId, returnType, ilNamespace, Utils.GetHeaderName(ilNamespace),
-                Utils.GetSourceFileName(ilNamespace), functionName, parameters)
+                Utils.GetSourceFileName(ilNamespace), functionName, parameters, implementation != null)
         {
             _declaration = declaration;
             _implementation = implementation;

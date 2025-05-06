@@ -10,6 +10,7 @@ typedef struct ScratchpadCSharp_SingleFileTests_SomeStruct {
 
 int32_t ScratchpadCSharp_SingleFileTests_NumberArray[10] = {1,2,3,4,5,6,7,8,9,10};
 
+#define addOneMacro(a) ((a) + 1)
 int32_t main(void) {
 	ScratchpadCSharp_SingleFileTests_SomeStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_SingleFileTests_SomeStruct){0});
