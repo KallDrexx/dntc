@@ -57,6 +57,11 @@ public class Manifest
     /// If specified, directs all transpiled code to a single source file with no 
     /// </summary>
     public string? SingleGeneratedSourceFileName { get; set; }
+
+    /// <summary>
+    /// If provided, allows enabling experimental reference type support.
+    /// </summary>
+    public bool AllowExperimentalReferenceTypeSupport { get; set; }
     
     public DebugInfoMode DebugInfoMode { get; set; } = DebugInfoMode.CLineSourceMaps;
 

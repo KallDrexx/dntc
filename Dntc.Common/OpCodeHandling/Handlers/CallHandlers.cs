@@ -202,6 +202,12 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
+                if (!ExperimentalFlags.AllowReferenceTypes)
+                {
+                    var message = "Cannot call `newobj` on a reference type, as reference types are not yet supported";
+                    throw new NotSupportedException(message);
+                }
+
                 var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
