@@ -13,7 +13,8 @@ public class DependencyGraph
 
     public record TypeNode(IlTypeName TypeName, bool IsPredeclared) : Node(IsPredeclared);
 
-    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared) : Node(IsPredeclared);
+    public record MethodNode(IlMethodId MethodId, bool IsStaticConstructor, bool IsPredeclared, bool IsOverride)
+        : Node(IsPredeclared);
 
     public record FieldNode(IlFieldId FieldId, bool IsGlobal, bool IsPredeclared) : Node(IsPredeclared);
     
@@ -65,7 +66,7 @@ public class DependencyGraph
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }
 
-    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path)
+    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path, bool isOverride = false)
     {
         if (IsInPath(path, methodId))
         {
@@ -81,7 +82,8 @@ public class DependencyGraph
 
         var isStaticConstructor = method is DotNetDefinedMethod { Definition: { IsConstructor: true, IsStatic: true } };
         var isPredeclared = method is NativeDefinedMethod;
-        var node = new MethodNode(methodId, isStaticConstructor, isPredeclared);
+        
+        var node = new MethodNode(methodId, isStaticConstructor, isPredeclared, isOverride);
         path.Add(node);
 
         foreach (var type in method.GetReferencedTypes)
@@ -92,6 +94,33 @@ public class DependencyGraph
                 node.Children.Add(typeNode);
             }
         }
+        
+        foreach (var calledMethod in method.InvokedMethods)
+        {
+            Node? methodNode;
+            switch (calledMethod)
+            {
+                case GenericInvokedMethod generic:
+                    methodNode = CreateNode(definitionCatalog, generic, path);
+                    break;
+                case CustomInvokedMethod custom:
+                    if (definitionCatalog.Get(custom.MethodId) == null)
+                    {
+                        definitionCatalog.Add([custom.InvokedMethod]);
+                    }
+                        
+                    methodNode = CreateNode(definitionCatalog, custom.MethodId, path);
+                    break;
+                default:
+                    methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
+                    break;
+            }
+
+            if (methodNode != null)
+            {
+                node.Children.Add(methodNode);
+            }
+        }
 
         if (method is DotNetDefinedMethod dotNetDefinedMethod)
         {
@@ -100,24 +129,6 @@ public class DependencyGraph
                 var message = $"Method call seen to '{methodId}', which is an abstract or interface method. Only " +
                               $"calls to concrete methods can be invoked";
                 throw new InvalidOperationException(message);
-            }
-
-            foreach (var calledMethod in dotNetDefinedMethod.InvokedMethods)
-            {
-                Node? methodNode;
-                if (calledMethod is GenericInvokedMethod generic)
-                {
-                    methodNode = CreateNode(definitionCatalog, generic, path);
-                }
-                else
-                {
-                    methodNode = CreateNode(definitionCatalog, calledMethod.MethodId, path);
-                }
-
-                if (methodNode != null)
-                {
-                    node.Children.Add(methodNode);
-                }
             }
 
             foreach (var type in dotNetDefinedMethod.ReferencedTypes)
@@ -138,7 +149,22 @@ public class DependencyGraph
                 }
             }
         }
-        
+
+        if (method is DotNetDefinedMethod { Definition: { IsVirtual: true, IsNewSlot: true } })
+        {
+            var overrides = definitionCatalog.GetMethodOverrides(method);
+
+            foreach (var derivedMethod in overrides)
+            {
+                var derivedNode = CreateNode(definitionCatalog, derivedMethod.Id, path, true);
+
+                if (derivedNode != null)
+                {
+                    node.Children.Add(derivedNode);
+                }
+            }
+        }
+
         path.RemoveAt(path.Count - 1);
         return node;
     }

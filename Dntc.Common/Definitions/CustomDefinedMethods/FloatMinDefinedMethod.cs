@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Syntax.Statements;
+﻿using Dntc.Common.Conversion;
+using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.CustomDefinedMethods;
 
@@ -15,7 +16,7 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
         [
             new Parameter(new IlTypeName("System.Single"), "first", false),
             new Parameter(new IlTypeName("System.Single"), "second", false),
-        ])
+        ], false)
     {
     }
 
@@ -29,7 +30,7 @@ static float dn_min_float(float first, float second){{
         return new CustomCodeStatementSet(content);
     }
 
-    public override CustomCodeStatementSet? GetCustomImplementation()
+    public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         return null;
     }

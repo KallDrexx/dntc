@@ -170,9 +170,12 @@ public class ImplementationPlan
             return;
         }
 
-        foreach (var child in node.Children)
+        if (node is not DependencyGraph.MethodNode)
         {
-            ProcessNode(child);
+            foreach (var child in node.Children)
+            {
+                ProcessNode(child);
+            }
         }
 
         if (node is DependencyGraph.TypeNode typeNode)
@@ -181,12 +184,25 @@ public class ImplementationPlan
         }
         else if (node is DependencyGraph.MethodNode methodNode)
         {
+            foreach (var child in node.Children)
+            {
+                if(child is DependencyGraph.MethodNode { IsOverride: true })
+                    continue;
+                
+                ProcessNode(child);
+            }
             DeclareMethod(methodNode);
             AddMethodImplementation(methodNode);
 
             if (methodNode.IsStaticConstructor)
             {
                 AddStaticConstructorInitializer();
+            }
+            
+            foreach (var child in node.Children)
+            {
+                if(child is DependencyGraph.MethodNode { IsOverride: true })
+                    ProcessNode(child);
             }
         }
         else if (node is DependencyGraph.FieldNode fieldNode)
@@ -313,7 +329,7 @@ public class ImplementationPlan
         }
 
         _staticConstructorInitializerAdded = true;
-        var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false, false);
+        var node = new DependencyGraph.MethodNode(StaticConstructorInitializerDefinedMethod.MethodId, false, false, false);
         ProcessNode(node);
     }
 

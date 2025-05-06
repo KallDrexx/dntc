@@ -7,6 +7,8 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class MethodConversionInfo
 {
+    private readonly ConversionCatalog _conversionCatalog;
+
     public record Parameter(TypeConversionInfo ConversionInfo, string Name, bool IsReference);
 
     public record Local(TypeConversionInfo ConversionInfo, bool IsReference);
@@ -37,6 +39,11 @@ public class MethodConversionInfo
     /// The name of the function when defined in C
     /// </summary>
     public CFunctionName NameInC { get; set; }
+
+    /// <summary>
+    /// The name of the function on its own.
+    /// </summary>
+    public string Name { get; set; } = "";
    
     /// <summary>
     /// Type conversion information for the type this method returns.
@@ -71,6 +78,7 @@ public class MethodConversionInfo
    
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
+        _conversionCatalog = conversionCatalog;
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
@@ -117,6 +125,7 @@ public class MethodConversionInfo
         }
         
         NameInC = new CFunctionName(Utils.MakeValidCName(functionName));
+        Name = method.Definition.Name;
     }
 
     private void SetupNativeMethod(NativeDefinedMethod method)
@@ -132,6 +141,6 @@ public class MethodConversionInfo
         Header = method.HeaderName;
         NameInC = method.NativeName;
         SourceFileName = method.SourceFileName;
-        IsDeclarationOnlyMethod = method.GetCustomDeclaration() != null && method.GetCustomImplementation() == null;
+        IsDeclarationOnlyMethod = !method.HasImplementation;
     }
 }

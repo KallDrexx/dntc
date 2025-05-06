@@ -27,6 +27,15 @@ public class DotNetDefinedType : DefinedType
             .Where(x => !x.IsStatic)
             .Select(ConvertToField)
             .ToArray();
+        
+        if (definition.BaseType != null &&
+            definition.BaseType.FullName != typeof(object).FullName &&
+            definition.BaseType.FullName != typeof(ValueType).FullName)
+        {
+            var baseTypeName = new IlTypeName(definition.BaseType.FullName);
+
+            OtherReferencedTypes = [ baseTypeName ];
+        }
 
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))

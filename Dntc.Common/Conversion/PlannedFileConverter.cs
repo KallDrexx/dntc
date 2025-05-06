@@ -273,7 +273,7 @@ public class PlannedFileConverter
 
     private IReadOnlyList<CStatementSet> GetMethodStatements(CustomDefinedMethod customDefinedMethod)
     {
-        var statementSet = customDefinedMethod.GetCustomImplementation();
+        var statementSet = customDefinedMethod.GetCustomImplementation(_conversionCatalog);
         return statementSet != null
             ? [statementSet]
             : [];

@@ -1,4 +1,7 @@
-﻿using Dntc.Common.Syntax.Expressions;
+﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -16,6 +19,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
             // type, we don't need this intermediary step.
             new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
+            new IlMethodId("System.Void System.Object::.ctor()")
+            
         ];
 
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
@@ -57,10 +62,9 @@ public class CallHandlers : IOpCodeHandlerCollection
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
         IlMethodId methodId, 
-        IlTypeName returnTypeName)
+        IlTypeName returnTypeName, bool isVirtualCall = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
-        var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var returnType = conversionInfo.ReturnTypeInfo;
 
         // Arguments (including the instance if this isn't a static call) are pushed onto the stack in the order
@@ -70,8 +74,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             .Reverse() 
             .ToArray();
 
-        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, voidType);
-        var methodCallExpression = new MethodCallExpression(fnExpression, arguments, returnType);
+        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
+        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -99,7 +103,7 @@ public class CallHandlers : IOpCodeHandlerCollection
         context.ExpressionStack.Push(methodCallExpression);
         return new OpCodeHandlingResult(null);
     }
-    
+
     private class CallHandler : IOpCodeHandler
     {
         public OpCodeHandlingResult Handle(HandleContext context)
@@ -111,6 +115,14 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (IgnoredMethods.Contains(methodId))
             {
+                if (methodReference.HasThis)
+                {
+                    // + 1 to include the this parameter.
+                    context.ExpressionStack.Pop(methodReference.Parameters.Count + 1); 
+                    // specifically, because System_Object::ctor is excluded.
+                    // otherwise it will try to add "return __this at the end.
+                }
+                
                 return new OpCodeHandlingResult(null);
             }
 
@@ -119,10 +131,15 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
-            };
+                return new OpCodeAnalysisResult
+                {
+                    CalledMethods = [ callTarget ]
+                };
+            }
+
+            return new OpCodeAnalysisResult();
         }
     }
     
@@ -138,8 +155,8 @@ public class CallHandlers : IOpCodeHandlerCollection
             var fnPointerExpression = allItems[0];
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
             var returnType = context.ConversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
-
-            var expression = new MethodCallExpression(fnPointerExpression, argumentsInCallingOrder, returnType);
+            
+            var expression = new MethodCallExpression(fnPointerExpression, context.CurrentMethodConversion.Parameters, argumentsInCallingOrder, returnType);
             if (ReturnsVoid(callSite.ReturnType))
             {
                 var statement = new VoidExpressionStatementSet(expression);
@@ -164,17 +181,10 @@ public class CallHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var constructor = (MethodReference)context.CurrentInstruction.Operand;
-            if (!constructor.DeclaringType.IsValueType)
-            {
-                var message = $"Cannot call `newobj` on {constructor.DeclaringType.FullName} as it " +
-                              $"is a reference type and only value types are currently supported";
-                throw new InvalidOperationException(message);
-            }
-
             var constructorId = new IlMethodId(constructor.FullName);
             var constructorInfo = context.ConversionCatalog.Find(constructorId);
             var objType = context.ConversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
-            var variable = new Variable(objType, $"__temp_{context.CurrentInstruction.Offset:x4}", false);
+            var variable = new Variable(objType, $"__temp_{context.CurrentInstruction.Offset:x4}", !constructor.DeclaringType.IsValueType);
             var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
 
             var argumentsInCallingOrder = context.ExpressionStack.Pop(constructorInfo.Parameters.Count - 1)
@@ -185,21 +195,56 @@ public class CallHandlers : IOpCodeHandlerCollection
             var variableExpression = new VariableValueExpression(variable);
             argumentsInCallingOrder.Insert(0, new AddressOfValueExpression(variableExpression));
 
+            var statements = new List<CStatementSet>();
+            
             var initStatement = new LocalDeclarationStatementSet(variable);
+            statements.Add(initStatement);
+
+            if (!constructor.DeclaringType.IsValueType)
+            {
+                if (!ExperimentalFlags.AllowReferenceTypes)
+                {
+                    var message = "Cannot call `newobj` on a reference type, as reference types are not yet supported";
+                    throw new NotSupportedException(message);
+                }
+
+                var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
+                var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
+                var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
+                var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
+                var assignment = new AssignmentStatementSet(new VariableValueExpression(variable), createFnCall);
+                statements.Add(assignment);
+            }
+
             var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
-            var methodCall = new MethodCallExpression(fnExpression, argumentsInCallingOrder, voidType);
+            var methodCall = new MethodCallExpression(fnExpression, constructorInfo.Parameters, argumentsInCallingOrder, voidType);
             var methodCallStatement = new VoidExpressionStatementSet(methodCall);
+            
+            statements.Add(methodCallStatement);
 
             context.ExpressionStack.Push(variableExpression);
 
-            return new OpCodeHandlingResult(new CompoundStatementSet([initStatement, methodCallStatement]));
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
+            var extraCalls = new List<InvokedMethod>();
+            var constructor = (MethodReference)context.CurrentInstruction.Operand;
+
+            if (!constructor.DeclaringType.IsValueType)
+            {
+                extraCalls.Add(new CustomInvokedMethod(new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve())));
+            }
+            
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
+            {
+                extraCalls.Add(callTarget);
+            }
+            
             return new OpCodeAnalysisResult
             {
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
+                CalledMethods = extraCalls
             };
         }
     }
@@ -210,23 +255,26 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
+            
+            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod && !dntDefinedMethod.Definition.DeclaringType.IsValueType;
+            
             if (targetMethodDefinition == null)
             {
                 var message = $"No known definition for the method '{methodToCall}'";
                 throw new InvalidOperationException(message);
             }
 
-            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType);
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             return new OpCodeAnalysisResult
             {
-                CalledMethod = new InvokedMethod(
+                CalledMethods = [ new InvokedMethod(
                     VirtualCallConverter.Convert(
                         context.CurrentInstruction,
-                        context.CurrentMethod))
+                        context.CurrentMethod)) ]
             };
         }
     }
@@ -255,12 +303,21 @@ public class CallHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
+            if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
+            {
+                return new OpCodeAnalysisResult
+                {
+                    // Even though the method isn't called, we need to analyze it as a
+                    // called method so the dependency graph gets generated for it, so it gets
+                    // transpiled and can have a pointer created from it.
+                
+                    CalledMethods = [ callTarget ],
+                };
+            }
+            
             return new OpCodeAnalysisResult
             {
-                // Even though the method isn't called, we need to analyze it as a
-                // called method so the dependency graph gets generated for it, so it gets
-                // transpiled and can have a pointer created from it.
-                CalledMethod = GetCallTarget(context.CurrentInstruction),
+                CalledMethods = [ ]
             };
         }
     }

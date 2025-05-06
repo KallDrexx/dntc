@@ -1,0 +1,109 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+
+        <SelfContained>false</SelfContained>
+        <UseAppHost>true</UseAppHost>
+        <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+
+        <!-- Force the creation of a proper runtimeconfig.json -->
+        <RuntimeFrameworkVersion>8.0.0</RuntimeFrameworkVersion>
+        
+
+    </PropertyGroup>
+
+    <!-- Custom target to ensure runtimeconfig.json has framework information -->
+    <Target Name="FixRuntimeConfig" AfterTargets="Build">
+        <PropertyGroup>
+            <RuntimeConfigPath>$(OutputPath)$(AssemblyName).runtimeconfig.json</RuntimeConfigPath>
+            <TempConfigPath>$(OutputPath)$(AssemblyName).runtimeconfig.tmp.json</TempConfigPath>
+        </PropertyGroup>
+
+        <!-- Read the current config file -->
+        <ReadLinesFromFile File="$(RuntimeConfigPath)" Condition="Exists('$(RuntimeConfigPath)')">
+            <Output TaskParameter="Lines" ItemName="ConfigFileContent" />
+        </ReadLinesFromFile>
+
+        <!-- Convert to a single string for JSON manipulation -->
+        <PropertyGroup>
+            <ConfigContent>@(ConfigFileContent, '%0A')</ConfigContent>
+        </PropertyGroup>
+
+        <!-- Check if the framework section exists -->
+        <PropertyGroup>
+            <HasFrameworkSection>$([System.Text.RegularExpressions.Regex]::IsMatch('$(ConfigContent)', '"framework"'))</HasFrameworkSection>
+        </PropertyGroup>
+
+        <!-- If no framework section exists, add it -->
+        <PropertyGroup Condition="'$(HasFrameworkSection)' != 'true'">
+            <UpdatedConfig>$([System.Text.RegularExpressions.Regex]::Replace('$(ConfigContent)', '"runtimeOptions":\s*{', '"runtimeOptions": {"framework": {"name": "Microsoft.NETCore.App","version": "8.0.0"},'))</UpdatedConfig>
+        </PropertyGroup>
+
+        <!-- Save the updated config -->
+        <WriteLinesToFile File="$(TempConfigPath)" Lines="$(UpdatedConfig)" Overwrite="true" Condition="'$(HasFrameworkSection)' != 'true'" />
+        <Copy SourceFiles="$(TempConfigPath)" DestinationFiles="$(RuntimeConfigPath)" Condition="'$(HasFrameworkSection)' != 'true'" />
+        <Delete Files="$(TempConfigPath)" Condition="Exists('$(TempConfigPath)')" />
+
+        <Message Text="Runtime config file updated with framework information." Importance="high" Condition="'$(HasFrameworkSection)' != 'true'" />
+        <Message Text="Runtime config file already contains framework information." Importance="high" Condition="'$(HasFrameworkSection)' == 'true'" />
+    </Target>
+
+
+
+    <PropertyGroup>
+        <!-- Extract the version from TargetFramework (net8.0 -> 8.0) -->
+        <NetCoreAppVersion>$([MSBuild]::GetTargetFrameworkVersion('$(TargetFramework)'))</NetCoreAppVersion>
+
+        <!-- Base directory for ref pack -->
+        <RefPackBaseDir>$(NetCoreTargetingPackRoot)/Microsoft.NETCore.App.Ref</RefPackBaseDir>
+
+        <!-- Simple approach: try to find the specific version first, then fallback -->
+        <NetCoreAppVersionFull Condition="Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).15')">$(NetCoreAppVersion).15</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).10')">$(NetCoreAppVersion).10</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).9')">$(NetCoreAppVersion).9</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).8')">$(NetCoreAppVersion).8</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).7')">$(NetCoreAppVersion).7</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion).0')">$(NetCoreAppVersion).0</NetCoreAppVersionFull>
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == '' AND Exists('$(RefPackBaseDir)/$(NetCoreAppVersion)')">$(NetCoreAppVersion)</NetCoreAppVersionFull>
+
+        <!-- Final fallback -->
+        <NetCoreAppVersionFull Condition="'$(NetCoreAppVersionFull)' == ''">$(NetCoreAppVersion)</NetCoreAppVersionFull>
+
+        <!-- Construct the reference path -->
+        <RefPackPath>$(RefPackBaseDir)/$(NetCoreAppVersionFull)/ref/$(TargetFramework)/</RefPackPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="System.Runtime"
+                   HintPath="$(RefPackPath)System.Runtime.dll" />
+    </ItemGroup>
+
+    <!-- For debugging -->
+    <Target Name="DumpProperties" BeforeTargets="Build">
+        <Message Text="TargetFramework = $(TargetFramework)" Importance="high" />
+        <Message Text="NetCoreAppVersion = $(NetCoreAppVersion)" Importance="high" />
+        <Message Text="RefPackBaseDir = $(RefPackBaseDir)" Importance="high" />
+        <Message Text="NetCoreAppVersionFull = $(NetCoreAppVersionFull)" Importance="high" />
+        <Message Text="RefPackPath = $(RefPackPath)" Importance="high" />
+    </Target>
+
+
+
+    <Target Name="PrintRuntimeDir" BeforeTargets="CoreCompile">
+        <Message Text="Runtime Directory: $(NetCoreAppRefPath)" Importance="high" />
+    </Target>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\..\Dntc.Attributes\Dntc.Attributes.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ClCompile Include="generated\original_file.c" />
+      <ClCompile Include="generated\Test.c" />
+    </ItemGroup>
+
+</Project>

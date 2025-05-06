@@ -1,4 +1,5 @@
 using Dntc.Attributes;
+using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 
@@ -33,7 +34,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             new IlTypeName(method.ReturnType.FullName),
             Utils.GetNamespace(method.DeclaringType),
             method.Parameters
-                .Select(x => new DefinedMethod.Parameter(new IlTypeName(x.ParameterType.FullName), x.Name, true))
+                .Select(x => new DefinedMethod.Parameter(new IlTypeName(x.ParameterType.FullName), x.Name, x.IsConsideredReferenceType()))
                 .ToArray());
     }
 
@@ -53,7 +54,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             IlNamespace ilNamespace,
             IReadOnlyList<Parameter> parameters)
             : base(methodId, returnType, ilNamespace, Utils.GetHeaderName(ilNamespace),
-                Utils.GetSourceFileName(ilNamespace), functionName, parameters)
+                Utils.GetSourceFileName(ilNamespace), functionName, parameters, implementation != null)
         {
             _declaration = declaration;
             _implementation = implementation;
@@ -66,7 +67,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             return new CustomCodeStatementSet(_declaration);
         }
 
-        public override CustomCodeStatementSet? GetCustomImplementation()
+        public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
         {
             return _implementation != null
                 ? new CustomCodeStatementSet(_implementation)

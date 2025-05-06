@@ -15,6 +15,8 @@ public class DefinitionCatalog
     {
         _definerPipeline = definerPipeline;
     }
+    
+    public IEnumerable<DefinedMethod> Methods => _methods.Values;
 
     /// <summary>
     /// Adds the specified type to the catalog, along with all of its methods and nested types
@@ -56,6 +58,28 @@ public class DefinitionCatalog
     public DefinedField? Get(IlFieldId fieldId)
     {
         return _fields.GetValueOrDefault(fieldId);
+    }
+
+    public IEnumerable<DefinedMethod> GetMethodOverrides(DefinedMethod method)
+    {
+        if (method is DotNetDefinedMethod { Definition.IsVirtual: true } dntMethod)
+        {
+            var baseType = dntMethod.Definition.DeclaringType;
+
+            foreach (var type in _types.Values.OfType<DotNetDefinedType>())
+            {
+                if (type.Definition.IsSubclassOf(baseType))
+                {
+                    foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
+                    {
+                        if (derivedMethod.Definition.IsOverrideOf(dntMethod.Definition))
+                        {
+                            yield return _methods[derivedMethod.Id];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void Add(TypeDefinition type)

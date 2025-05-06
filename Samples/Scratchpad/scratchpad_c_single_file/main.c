@@ -4,7 +4,7 @@
 #include "header_test2.h"
 #include "header_test1.h"
 
-typedef struct {
+typedef struct ScratchpadCSharp_SingleFileTests_SomeStruct {
 	int32_t Value;
 } ScratchpadCSharp_SingleFileTests_SomeStruct;
 

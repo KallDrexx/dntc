@@ -31,7 +31,57 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
     private async Task WriteDotNetDefinedTypeAsync(StreamWriter writer, DotNetDefinedType dotNetDefinedType)
     {
-        await writer.WriteLineAsync("typedef struct {");
+        // We have to make sure that the type declaration doesn't include the pointer in the name
+        var nativeName = TypeConversion.IsReferenceType
+            ? TypeConversion.NameInC.Value
+            : TypeConversion.NativeNameWithPossiblePointer();
+
+        await writer.WriteLineAsync($"typedef struct {nativeName} {{");
+
+        // Add the entry for the base class. This must be the first entry for pointer casting to work.
+        if (dotNetDefinedType.Definition.BaseType != null)
+        {
+            if (dotNetDefinedType.Definition.BaseType.FullName != typeof(Object).FullName)
+            {
+                if (Catalog.TryFind(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName), out var baseType))
+                {
+                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                }
+            }
+        }
+
+        // Write the virtual table for virtual methods.
+        if (!dotNetDefinedType.Definition.IsValueType)
+        {
+            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
+            {
+                var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
+                await writer.WriteAsync(
+                    $"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
+
+                for (var x = 0; x < methodInfo.Parameters.Count; x++)
+                {
+                    if (x > 0) await writer.WriteAsync(", ");
+                    var param = methodInfo.Parameters[x];
+                    var paramType = param.ConversionInfo;
+
+                    string structKeyword = "";
+                    if (x == 0)
+                    {
+                        structKeyword = "struct ";
+                    }
+
+                    var pointerSymbol = param.IsReference ? "*" : "";
+                    await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                }
+
+                await writer.WriteLineAsync(");");
+            }
+        }
+
+        // TODO Write the interface methods union vtables.
+        
+        // Write all the fields.
         foreach (var field in dotNetDefinedType.InstanceFields)
         {
             var declaration = new FieldDeclaration(
@@ -48,8 +98,9 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");
         }
 
-        await writer.WriteLineAsync($"}} {TypeConversion.NativeNameWithPossiblePointer()};");
+        await writer.WriteLineAsync($"}} {nativeName};");
     }
+
 
     private async Task WriteCustomDefinedType(
         StreamWriter writer,

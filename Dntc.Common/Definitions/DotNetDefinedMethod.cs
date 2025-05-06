@@ -1,6 +1,7 @@
 ﻿using Dntc.Attributes;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.Definitions;
 
@@ -20,7 +21,7 @@ public class DotNetDefinedMethod : DefinedMethod
 
     // We don't want to bother analyzing methods we aren't going to transpile, so only analyze
     // if we enter a code path looking for globals, types, and other methods this method utilizes.
-    public List<InvokedMethod> InvokedMethods
+    public override List<InvokedMethod> InvokedMethods
     {
         get
         {
@@ -50,8 +51,18 @@ public class DotNetDefinedMethod : DefinedMethod
     public DotNetDefinedMethod(MethodDefinition definition)
     {
         Definition = definition;
-        ReturnType = new IlTypeName(definition.ReturnType.FullName);
-        
+
+        var returnsReferenceType = definition.ReturnType.FullName != typeof(void).FullName &&
+                                   !definition.ReturnType.IsValueType &&
+                                   !definition.ReturnType.IsGenericParameter &&
+                                   !definition.ReturnType.IsFunctionPointer;
+
+        var addAsterisk = returnsReferenceType && !definition.ReturnType.FullName.EndsWith("*");
+
+        ReturnType = addAsterisk
+            ? new IlTypeName(definition.ReturnType.FullName + "*")
+            : new IlTypeName(definition.ReturnType.FullName);
+
         // If this is a generic method we need to replace the named generic parameters with their
         // index values (e.g. !!0) so that we can correctly identify this method when called from
         // another .net assembly.
@@ -164,7 +175,7 @@ public class DotNetDefinedMethod : DefinedMethod
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            definition.ParameterType.IsByReference || definition.ParameterType.IsPointer);
+            definition.IsConsideredReferenceType());
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>
@@ -194,9 +205,10 @@ public class DotNetDefinedMethod : DefinedMethod
             }
 
             var results = handler.Analyze(new AnalyzeContext(instruction, this));
-            if (results.CalledMethod != null)
+
+            foreach (var method in results.CalledMethods)
             {
-                _invokedMethods.Add(results.CalledMethod);
+                _invokedMethods.Add(method);
             }
 
             foreach (var referencedType in results.ReferencedTypes)

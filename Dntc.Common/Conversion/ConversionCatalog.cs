@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Definitions;
+﻿using System.Diagnostics.CodeAnalysis;
+using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Dependencies;
 
@@ -53,6 +54,16 @@ public class ConversionCatalog
 
         var message = $"Conversion catalog did not contain the type '{method.Value}'";
         throw new InvalidOperationException(message);
+    }
+
+    public bool TryFind(IlMethodId name, [MaybeNullWhen(false)] out MethodConversionInfo info)
+    {
+        return _methods.TryGetValue(name, out info);
+    }
+
+    public bool TryFind(IlTypeName name, [MaybeNullWhen(false)] out TypeConversionInfo info)
+    {
+        return _types.TryGetValue(name, out info);
     }
 
     public FieldConversionInfo Find(IlFieldId fieldId)
