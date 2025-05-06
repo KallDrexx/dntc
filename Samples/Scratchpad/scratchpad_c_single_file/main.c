@@ -16,7 +16,7 @@ int32_t main(void) {
 	((&__local_0)->Value) = 33;
 	do_stuff2();
 	do_stuff();
-	addOneMacro((int32_t*)10);
+	addOneMacro(10);
 	if (10 <= 3) {
 		printf("Attempted to access to ScratchpadCSharp_SingleFileTests_NumberArray[%d], but only %u items are in the array", 3, 10);
 		abort();
