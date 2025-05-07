@@ -46,7 +46,10 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
                 var param = dotNetDefinedMethod.Parameters[x];
                 var paramType = Catalog.Find(param.Type);
 
-                var pointerSymbol = param.IsReference ? " *" : " ";
+                // Don't prepend the parameter with an asterisk if it's a reference type but parameter's C name
+                // already contains an asterisk. This usually causes unintended behavior, especially with instances
+                // of strings, where the type is already `char *`.
+                var pointerSymbol = param.IsReference && !paramType.NameInC.Value.EndsWith('*') ? " *" : " ";
 
                 if (paramType.OriginalTypeDefinition is DotNetFunctionPointerType)
                 {

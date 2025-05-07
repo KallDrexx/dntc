@@ -206,6 +206,8 @@ int main(void) {
     int32_t parentValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(parent);
     assert(parentValue == 33);
 
+    ScratchpadCSharp_StringTests_LogString("String as parameter test\n");
+
     printf("Tests passed!\n");
     return 0;
 }
