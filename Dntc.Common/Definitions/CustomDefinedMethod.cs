@@ -44,6 +44,7 @@ public abstract class CustomDefinedMethod : DefinedMethod
     [
         new FloatMinDefinedMethod(),
         new StaticConstructorInitializerDefinedMethod(),
+        new DynamicCastInterfaceDefinedMethod()
     ];
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() => [];

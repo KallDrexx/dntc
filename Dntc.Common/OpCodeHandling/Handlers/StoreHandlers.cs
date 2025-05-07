@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -333,7 +334,13 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            return new OpCodeAnalysisResult()
+            {
+                CalledMethods = 
+                [
+                    new InvokedMethod(DynamicCastInterfaceDefinedMethod.MethodId)
+                ]
+            };
         }
     }
 }

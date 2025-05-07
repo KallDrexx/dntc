@@ -4,9 +4,6 @@ namespace Dntc.Common.Syntax.Expressions;
 
 public record InterfaceDynamicCastExpression(VariableValueExpression Variable, CBaseExpression Local, uint TypeCode) : CBaseExpression(Variable.ResultingType.IsPointer)
 {
-    // NOTE: Not sure if we need to determine if the type we are casting to is a pointer or not. This
-    // all depends on how reference types end up looking.
-
     public override TypeConversionInfo ResultingType => Variable.ResultingType;
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)

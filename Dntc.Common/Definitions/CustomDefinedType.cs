@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions;
@@ -32,4 +33,10 @@ public abstract class CustomDefinedType : DefinedType
     }
     
     public abstract CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
+
+    public static IReadOnlyList<CustomDefinedType> StandardCustomTypes { get; } =
+    [
+        new ReferenceTypeBaseDefinedType(),
+        new TypeInfoDefinedType()
+    ];
 }
