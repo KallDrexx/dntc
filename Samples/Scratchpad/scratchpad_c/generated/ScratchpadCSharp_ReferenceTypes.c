@@ -42,9 +42,16 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(Sc
 	return ((parent->FieldValue) + sum);
 }
 
-void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test(void) {
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test(void) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0002 = {0};
 	__temp_0002 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(10);
-	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
-	return;
+	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
+}
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *__this) {
+	return (__this->FieldValue);
+}
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
+	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(parent);
 }

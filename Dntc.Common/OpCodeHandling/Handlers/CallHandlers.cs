@@ -62,7 +62,8 @@ public class CallHandlers : IOpCodeHandlerCollection
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
         IlMethodId methodId, 
-        IlTypeName returnTypeName, bool isVirtualCall = false)
+        IlTypeName returnTypeName,
+        bool isVirtualCall = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var returnType = conversionInfo.ReturnTypeInfo;
@@ -255,8 +256,10 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
-            
-            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod && !dntDefinedMethod.Definition.DeclaringType.IsValueType;
+
+            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod
+                               && !dntDefinedMethod.Definition.DeclaringType.IsValueType
+                               && dntDefinedMethod.Definition.IsVirtual;
             
             if (targetMethodDefinition == null)
             {

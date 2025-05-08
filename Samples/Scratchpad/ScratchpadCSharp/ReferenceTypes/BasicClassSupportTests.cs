@@ -14,6 +14,8 @@ public static class BasicClassSupportTests
     {
         public int FieldValue;
 
+        public int FieldValueViaProperty => FieldValue;
+
         public Parent(int value)
         {
             FieldValue = value;
@@ -27,10 +29,10 @@ public static class BasicClassSupportTests
         }
     }
 
-    public static void Test()
+    public static int Test()
     {
         var parent = CreateParent(10);
-        var value = GetParentValue(parent);
+        return GetParentValue(parent);
     }
 
     private static Parent CreateParent(int value)
@@ -42,5 +44,10 @@ public static class BasicClassSupportTests
     {
         var sum = parent.Sum(1, 2);
         return parent.FieldValue + sum;
+    }
+
+    private static int GetParentValueFromProperty(Parent parent)
+    {
+        return parent.FieldValueViaProperty;
     }
 }

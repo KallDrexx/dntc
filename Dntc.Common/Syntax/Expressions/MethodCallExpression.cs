@@ -11,9 +11,6 @@ public record MethodCallExpression(
     bool IsVirtualCall = false)
     : CBaseExpression(ReturnType.IsPointer)
 {
-    // Note: Right now method can only return value types. That may change depending on how
-    // reference types end up being handled
-
     public override TypeConversionInfo ResultingType => ReturnType;
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)

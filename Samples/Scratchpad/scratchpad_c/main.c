@@ -208,6 +208,12 @@ int main(void) {
 
     ScratchpadCSharp_StringTests_LogString("String as parameter test\n");
 
+    int32_t testValue1 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test();
+    assert(testValue1 == 23);
+
+    int32_t parentValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(parent);
+    assert(parentValue2 == 15);
+
     printf("Tests passed!\n");
     return 0;
 }
