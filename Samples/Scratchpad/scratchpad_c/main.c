@@ -206,6 +206,20 @@ int main(void) {
     int32_t parentValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(parent);
     assert(parentValue == 33);
 
+    ScratchpadCSharp_StringTests_LogString("String as parameter test\n");
+
+    int32_t testValue1 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test();
+    assert(testValue1 == 23);
+
+    int32_t parentValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(parent);
+    assert(parentValue2 == 15);
+
+    int32_t baseFieldValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(parent, 10);
+    assert(baseFieldValue == 15);
+
+    int32_t baseFieldValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(parent);
+    assert(baseFieldValue2 == 10);
+
     printf("Tests passed!\n");
     return 0;
 }

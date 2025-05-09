@@ -33,7 +33,8 @@ public class DotNetDefinedType : DefinedType
         
         if (definition.BaseType != null &&
             definition.BaseType.FullName != typeof(object).FullName &&
-            definition.BaseType.FullName != typeof(ValueType).FullName)
+            definition.BaseType.FullName != typeof(ValueType).FullName &&
+            definition.BaseType.FullName != typeof(Enum).FullName)
         {
             var baseTypeName = new IlTypeName(definition.BaseType.FullName);
 

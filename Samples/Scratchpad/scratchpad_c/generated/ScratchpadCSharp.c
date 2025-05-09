@@ -549,3 +549,8 @@ uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidat
 	(*(&((&ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct)->Index))) = ((uint8_t)(__local_0 + 1));
 	return ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[__local_0];
 }
+
+void ScratchpadCSharp_StringTests_LogString(char* input) {
+	printf(input);
+	return;
+}

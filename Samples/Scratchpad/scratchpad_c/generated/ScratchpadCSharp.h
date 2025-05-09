@@ -157,5 +157,6 @@ int32_t ScratchpadCSharp_SimpleFunctions_LocalDeclarationOrderingTest(int32_t a,
 void ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation(void);
 uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusOrderOfOperationsValidation(void);
 uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation(void);
+void ScratchpadCSharp_StringTests_LogString(char* input);
 
 #endif // SCRATCHPADCSHARP_H_H

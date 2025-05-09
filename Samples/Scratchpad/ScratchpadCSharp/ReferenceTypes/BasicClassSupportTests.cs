@@ -4,15 +4,24 @@ public static class BasicClassSupportTests
 {
     public class ParentBase
     {
+        public int BaseField;
+
         public virtual int Sum(int a, int b)
         {
             return a + b;
+        }
+
+        public int GetBaseFieldValue()
+        {
+            return BaseField;
         }
     }
     
     public class Parent : ParentBase
     {
         public int FieldValue;
+
+        public int FieldValueViaProperty => FieldValue;
 
         public Parent(int value)
         {
@@ -27,10 +36,10 @@ public static class BasicClassSupportTests
         }
     }
 
-    public static void Test()
+    public static int Test()
     {
         var parent = CreateParent(10);
-        var value = GetParentValue(parent);
+        return GetParentValue(parent);
     }
 
     private static Parent CreateParent(int value)
@@ -42,5 +51,22 @@ public static class BasicClassSupportTests
     {
         var sum = parent.Sum(1, 2);
         return parent.FieldValue + sum;
+    }
+
+    private static int GetParentValueFromProperty(Parent parent)
+    {
+        return parent.FieldValueViaProperty;
+    }
+
+    private static int TestBaseFieldValue(Parent parent, int value)
+    {
+        parent.BaseField = value;
+
+        return parent.BaseField + 5;
+    }
+
+    private static int TestBaseMethodCall(Parent parent)
+    {
+        return parent.GetBaseFieldValue();
     }
 }

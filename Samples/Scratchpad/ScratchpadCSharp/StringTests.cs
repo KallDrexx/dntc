@@ -13,4 +13,9 @@ public static class StringTests
     {
         LogSingleString("abcdefg\n");
     }
+
+    public static void LogString(string input)
+    {
+        LogSingleString(input);
+    }
 }

@@ -67,6 +67,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         // Write the virtual table for virtual methods.
+        var virtualMethodCount = 0;
         if (!dotNetDefinedType.Definition.IsValueType)
         {
             if (dotNetDefinedType.Definition.IsInterface)
@@ -77,6 +78,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             // IsFinal will be set for interfaces.
             foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x is { IsVirtual: true, IsNewSlot: true, IsFinal: false }))
             {
+                virtualMethodCount++;
                 var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
                 await writer.WriteAsync(
                     $"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
@@ -122,7 +124,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await declaration.WriteAsync(writer);
         }
 
-        if (dotNetDefinedType.InstanceFields.Count == 0)
+        if (dotNetDefinedType.InstanceFields.Count == 0 && virtualMethodCount == 0)
         {
             // C doesn't allow empty structs
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");

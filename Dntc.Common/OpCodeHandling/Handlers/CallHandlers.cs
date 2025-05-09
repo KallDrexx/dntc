@@ -62,7 +62,9 @@ public class CallHandlers : IOpCodeHandlerCollection
     private static OpCodeHandlingResult CallMethodReference(
         HandleContext context, 
         IlMethodId methodId, 
-        IlTypeName returnTypeName, bool isVirtualCall = false, bool isInterface = false)
+        IlTypeName returnTypeName,
+        bool isVirtualCall = false,
+        bool isInterface = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var returnType = conversionInfo.ReturnTypeInfo;
@@ -263,7 +265,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             {
                 var declaringType = dntDefinedMethod.Definition.DeclaringType;
                 isInterface = declaringType.IsInterface;
-                virtualCall = !declaringType.IsValueType;
+                virtualCall = !declaringType.IsValueType && dntDefinedMethod.Definition.IsVirtual;
                 
                 if (virtualCall)
                 {
