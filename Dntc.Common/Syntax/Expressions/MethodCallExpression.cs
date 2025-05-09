@@ -8,7 +8,7 @@ public record MethodCallExpression(
     IReadOnlyList<MethodConversionInfo.Parameter> Parameters,
     IReadOnlyList<CBaseExpression> Arguments,
     TypeConversionInfo ReturnType,
-    bool IsVirtualCall = false)
+    bool IsVirtualCall = false, bool IsInterface = false)
     : CBaseExpression(ReturnType.IsPointer)
 {
     public override TypeConversionInfo ResultingType => ReturnType;
@@ -17,16 +17,48 @@ public record MethodCallExpression(
     {
         if (IsVirtualCall)
         {
-            var thisExpression = Arguments[0];
-            var targetExpression = Parameters[0];
-            await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
-            await thisExpression.WriteCodeStringAsync(writer);
-            await writer.WriteAsync(")->");
-            await FnExpression.WriteCodeStringAsync(writer);
+            if (IsInterface)
+            {
+                var thisExpression = Arguments[0];
 
-            await writer.WriteAsync("(");
-            await WriteParametersAsync(writer);
-            await writer.WriteAsync(")");
+                var isInterfacePtrCall =
+                    thisExpression.ResultingType.OriginalTypeDefinition is DotNetDefinedType dotNetDefinedType &&
+                    dotNetDefinedType.Definition.IsInterface;
+                
+                await thisExpression.WriteCodeStringAsync(writer);
+                var targetInterface = Parameters[0].ConversionInfo.NameInC.Value;
+                await writer.WriteAsync("->");
+
+                if (!isInterfacePtrCall)
+                {
+                    await writer.WriteAsync(targetInterface);
+                    await writer.WriteAsync(".");
+                }
+
+                await FnExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync($"(");
+                if (isInterfacePtrCall)
+                {
+                    await thisExpression.WriteCodeStringAsync(writer);
+                    await writer.WriteAsync("->implementer");
+                }
+                
+                await WriteParametersAsync(writer, isInterfacePtrCall ? 1 : 0);
+                await writer.WriteAsync(")");
+            }
+            else
+            {
+                var thisExpression = Arguments[0];
+                var targetExpression = Parameters[0];
+                await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
+                await thisExpression.WriteCodeStringAsync(writer);
+                await writer.WriteAsync(")->");
+                await FnExpression.WriteCodeStringAsync(writer);
+                
+                await writer.WriteAsync("(");
+                await WriteParametersAsync(writer);
+                await writer.WriteAsync(")");
+            }
         }
         else
         {

@@ -1,7 +1,6 @@
 using Dntc.Common.Conversion;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
-using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.CustomDefinedTypes;
 

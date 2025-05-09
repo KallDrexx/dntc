@@ -63,7 +63,8 @@ public class CallHandlers : IOpCodeHandlerCollection
         HandleContext context, 
         IlMethodId methodId, 
         IlTypeName returnTypeName,
-        bool isVirtualCall = false)
+        bool isVirtualCall = false,
+        bool isInterface = false)
     {
         var conversionInfo = context.ConversionCatalog.Find(methodId);
         var returnType = conversionInfo.ReturnTypeInfo;
@@ -76,7 +77,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             .ToArray();
 
         var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
-        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
+        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall, isInterface);
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -256,10 +257,40 @@ public class CallHandlers : IOpCodeHandlerCollection
         {
             var methodToCall = VirtualCallConverter.Convert(context.CurrentInstruction, context.CurrentDotNetMethod);
             var targetMethodDefinition = context.DefinitionCatalog.Get(methodToCall);
+            
+            bool virtualCall = false;
+            bool isInterface = false;
 
-            bool virtualCall = targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod
-                               && !dntDefinedMethod.Definition.DeclaringType.IsValueType
-                               && dntDefinedMethod.Definition.IsVirtual;
+            if (targetMethodDefinition is DotNetDefinedMethod dntDefinedMethod)
+            {
+                var declaringType = dntDefinedMethod.Definition.DeclaringType;
+                isInterface = declaringType.IsInterface;
+                virtualCall = !declaringType.IsValueType && dntDefinedMethod.Definition.IsVirtual;
+                
+                if (virtualCall)
+                {
+                    // If the this ptr declaring type matches the method declaring type, we can (need to) de-virtualize the call.
+                    var thisType = (DotNetDefinedType)context.ExpressionStack[0].ResultingType.OriginalTypeDefinition;
+                    if (declaringType.FullName == thisType.Definition.FullName && !thisType.Definition.IsInterface)
+                    {
+                        virtualCall = false;
+                    }
+
+                    // TODO - some scenarios can be devirtualized... or should we just rely on msil to do it better?
+                    /*if (virtualCall && isInterface && thisType.Definition.ImplementsInterface(declaringType) && context.ExpressionStack.Count == dntDefinedMethod.Parameters.Count + 1)
+                    {
+                        var devirtualizeCall = thisType.Definition.Methods.FirstOrDefault(x =>
+                            x.SignatureCompatibleWith(dntDefinedMethod.Definition));
+
+                        if (devirtualizeCall != null)
+                        {
+                            virtualCall = false;
+                            methodToCall = new IlMethodId(devirtualizeCall.FullName);
+                        }
+                    }*/
+                }
+            }
+            
             
             if (targetMethodDefinition == null)
             {
@@ -267,7 +298,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
-            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall);
+            return CallMethodReference(context, methodToCall, targetMethodDefinition.ReturnType, virtualCall, isInterface);
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

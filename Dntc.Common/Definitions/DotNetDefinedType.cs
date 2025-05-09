@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
@@ -28,6 +29,8 @@ public class DotNetDefinedType : DefinedType
             .Select(ConvertToField)
             .ToArray();
         
+        var referencedTypes = new List<IlTypeName>();
+        
         if (definition.BaseType != null &&
             definition.BaseType.FullName != typeof(object).FullName &&
             definition.BaseType.FullName != typeof(ValueType).FullName &&
@@ -35,8 +38,19 @@ public class DotNetDefinedType : DefinedType
         {
             var baseTypeName = new IlTypeName(definition.BaseType.FullName);
 
-            OtherReferencedTypes = [ baseTypeName ];
+            referencedTypes.Add(baseTypeName);
         }
+        else
+        {
+            if (!definition.IsValueType)
+            {
+                referencedTypes.Add(ReferenceTypeBaseDefinedType.TypeName);
+            }
+        }
+
+        referencedTypes.AddRange(definition.Interfaces.Select(x => new IlTypeName(x.InterfaceType.FullName)));
+        
+        OtherReferencedTypes = referencedTypes.ToArray();
 
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))

@@ -10,5 +10,6 @@
   ],
   "OutputDirectory": "./generated",
   "SingleGeneratedSourceFileName":"HelloWorld.c",
-  "DebugInfoMode": "None"
+  "DebugInfoMode": "None",
+  "AllowExperimentalReferenceTypeSupport": true
 }

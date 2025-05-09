@@ -81,6 +81,28 @@ public class DefinitionCatalog
             }
         }
     }
+    
+    public IEnumerable<DefinedMethod> GetInterfaceMethods(DefinedMethod method)
+    {
+        if (method is DotNetDefinedMethod { Definition.IsVirtual: true } dntMethod)
+        {
+            var baseType = dntMethod.Definition.DeclaringType;
+
+            foreach (var type in _types.Values.OfType<DotNetDefinedType>().Where(x=>x.Definition.IsInterface))
+            {
+                if (baseType.ImplementsInterface(type.Definition))
+                {
+                    foreach (var derivedMethod in type.Methods.Select(Get).OfType<DotNetDefinedMethod>())
+                    {
+                        if (derivedMethod.Definition.IsOverrideOf(dntMethod.Definition))
+                        {
+                            yield return _methods[derivedMethod.Id];
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private void Add(TypeDefinition type)
     {

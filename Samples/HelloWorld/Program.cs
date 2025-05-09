@@ -6,6 +6,18 @@ using HelloWorld;
 
 namespace HelloWorld
 {
+    public interface IMyInterface
+    {
+        void Foo();
+        
+        void Bar();
+    }
+
+    public interface IMyInterface2
+    {
+        int Sum(int a, int b);
+    }
+
     public class ConsoleBase
     {
         private int _arg;
@@ -27,7 +39,7 @@ namespace HelloWorld
         }
     }
 
-    public class Console1 : Console
+    public class Console1 : Console, IMyInterface, IMyInterface2
     {
         public Console1(int arg) : base(arg)
         {
@@ -43,6 +55,21 @@ namespace HelloWorld
         {
             Program.Printf("Console 1 vm + \n");
             base.VirtualMethod();
+        }
+
+        public void Foo()
+        {
+            Program.Printf("Console1::Foo \n");
+        }
+
+        public void Bar()
+        {
+            Program.Printf("Console1::Bar \n");
+        }
+
+        public int Sum(int a, int b)
+        {
+            return a + b;
         }
     }
 
@@ -76,6 +103,8 @@ namespace HelloWorld
 
     static class Program
     {
+        public static int Value = 0;
+        
         [NativeFunctionCall("printf", "<stdio.h>")]
         public static void Printf(string value)
         {
@@ -89,10 +118,30 @@ namespace HelloWorld
 
         public static void Test()
         {
-            var console = new Console1(1);
-            
+            Printf("%u", Value);
+            Console1 console = new Console1(1);
+            IMyInterface myInterface = new Console1(2);
             console.VirtualMethod();
             console.VirtualMethod2();
+
+            
+            
+            myInterface.Foo();
+            myInterface.Bar();
+
+
+            if (console is IMyInterface iface)
+            {
+                iface.Foo();
+                iface.Bar();
+            }
+
+            if (console is IMyInterface2 iface2)
+            {
+                var sum = iface2.Sum(1, 2);
+                
+                Printf("sum: %u\n", sum);
+            }
         }
 
         [CustomFunctionName("main")]

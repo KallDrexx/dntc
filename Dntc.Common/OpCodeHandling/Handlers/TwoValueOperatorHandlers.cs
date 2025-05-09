@@ -39,12 +39,20 @@ public class TwoValueOperatorHandlers : IOpCodeHandlerCollection
             var items = context.ExpressionStack.Pop(2);
             var right = items[0];
             var left = items[1];
+            
+            var actualOperator = @operator;
 
-            var resultingType = BoolOperators.Contains(@operator)
+            if (actualOperator == ">" && right.ResultingType.IlName.Value == typeof(void).FullName)
+            {
+                // You cant do > NULL
+                actualOperator = "!=";
+            }
+
+            var resultingType = BoolOperators.Contains(actualOperator)
                 ? context.ConversionCatalog.Find(new IlTypeName(typeof(bool).FullName!))
                 : left.ResultingType; // Assume non-bool operators use the same type. This is probably incomplete.
 
-            var newExpression = new TwoExpressionEvalExpression(left, @operator, right, resultingType);
+            var newExpression = new TwoExpressionEvalExpression(left, actualOperator, right, resultingType);
             context.ExpressionStack.Push(newExpression);
 
             return new OpCodeHandlingResult(null);
