@@ -10,6 +10,11 @@ public static class BasicClassSupportTests
         {
             return a + b;
         }
+
+        public int GetBaseFieldValue()
+        {
+            return BaseField;
+        }
     }
     
     public class Parent : ParentBase
@@ -58,5 +63,10 @@ public static class BasicClassSupportTests
         parent.BaseField = value;
 
         return parent.BaseField + 5;
+    }
+
+    private static int TestBaseMethodCall(Parent parent)
+    {
+        return parent.GetBaseFieldValue();
     }
 }

@@ -217,6 +217,9 @@ int main(void) {
     int32_t baseFieldValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(parent, 10);
     assert(baseFieldValue == 15);
 
+    int32_t baseFieldValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(parent);
+    assert(baseFieldValue2 == 10);
+
     printf("Tests passed!\n");
     return 0;
 }

@@ -82,7 +82,8 @@
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::Test()",
     "System.Void ScratchpadCSharp.StringTests::LogString(System.String)",
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::GetParentValueFromProperty(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)",
-    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::TestBaseFieldValue(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent,System.Int32)"
+    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::TestBaseFieldValue(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent,System.Int32)",
+    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::TestBaseMethodCall(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

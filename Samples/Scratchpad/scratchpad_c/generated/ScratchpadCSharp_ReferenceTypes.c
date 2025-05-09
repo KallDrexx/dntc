@@ -60,3 +60,11 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValu
 	((parent->base).BaseField) = value;
 	return (((parent->base).BaseField) + 5);
 }
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this) {
+	return (__this->BaseField);
+}
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
+	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
+}
