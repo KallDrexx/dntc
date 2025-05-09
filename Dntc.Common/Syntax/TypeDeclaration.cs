@@ -51,10 +51,12 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         // Write the virtual table for virtual methods.
+        var virtualMethodCount = 0;
         if (!dotNetDefinedType.Definition.IsValueType)
         {
             foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
             {
+                virtualMethodCount++;
                 var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
                 await writer.WriteAsync(
                     $"\t{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*{methodInfo.NameInC})(");
@@ -92,7 +94,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             await declaration.WriteAsync(writer);
         }
 
-        if (dotNetDefinedType.InstanceFields.Count == 0)
+        if (dotNetDefinedType.InstanceFields.Count == 0 && virtualMethodCount == 0)
         {
             // C doesn't allow empty structs
             await writer.WriteLineAsync("\tchar __dummy; // Placeholder for empty type");

@@ -8,7 +8,6 @@
 
 typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase {
 	int32_t (*ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum)(struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* __this, int32_t a, int32_t b);
-	char __dummy; // Placeholder for empty type
 } ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase;
 
 typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent {
