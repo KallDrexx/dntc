@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions;
 using Dntc.Common.Syntax.Expressions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -86,10 +87,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 var items = context.ExpressionStack.Pop(1);
                 var objectExpression = items[0];
 
-                newExpression = new FieldAccessExpression(
-                    objectExpression,
-                    new Variable(fieldConversionInfo.FieldTypeConversionInfo, fieldConversionInfo.NameInC.Value,
-                        field.FieldType.IsByReference));
+                newExpression = GetFieldAccessExpression(field, fieldConversionInfo, objectExpression, context);
             }
 
             if (getAddress)
@@ -118,6 +116,50 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 ReferencedTypes = new HashSet<IlTypeName>(declaringTypes),
                 ReferencedGlobal = field.IsStatic ? field : null,
             };
+        }
+
+        private static CBaseExpression GetFieldAccessExpression(
+            FieldDefinition field,
+            FieldConversionInfo fieldConversionInfo,
+            CBaseExpression objectExpression,
+            HandleContext context)
+        {
+            var originalObjectExpression = objectExpression;
+            while (true)
+            {
+                var objectInfo = objectExpression.ResultingType;
+                var containsField = objectInfo.OriginalTypeDefinition
+                    .InstanceFields
+                    .Any(x => x.Id.Value == field.FullName);
+
+                if (containsField)
+                {
+                    var fieldVariable = new Variable(
+                        fieldConversionInfo.FieldTypeConversionInfo,
+                        fieldConversionInfo.NameInC.Value,
+                        field.FieldType.IsByReference);
+
+                    return new FieldAccessExpression(objectExpression, fieldVariable);
+                }
+
+                // If this is a dotnet expression, then check the type's base class
+                if (objectInfo.OriginalTypeDefinition is DotNetDefinedType dotNetType
+                    && dotNetType.Definition.BaseType != null)
+                {
+                    // Repeat the process for the base class
+                    var parent = context.ConversionCatalog.Find(
+                        new IlTypeName(dotNetType.Definition.BaseType.FullName));
+
+                    var fieldVariable = new Variable(parent, "base", false);
+                    objectExpression = new FieldAccessExpression(objectExpression, fieldVariable);
+                    continue;
+                }
+
+                // No matching field found
+                var message = $"The type {originalObjectExpression.ResultingType.IlName} or its base types do not have " +
+                              $"the field {field.FullName}";
+                throw new InvalidOperationException(message);
+            }
         }
     }
 

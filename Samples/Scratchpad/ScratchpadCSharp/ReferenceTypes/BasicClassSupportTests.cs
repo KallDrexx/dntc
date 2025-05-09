@@ -4,6 +4,8 @@ public static class BasicClassSupportTests
 {
     public class ParentBase
     {
+        public int BaseField;
+
         public virtual int Sum(int a, int b)
         {
             return a + b;
@@ -49,5 +51,12 @@ public static class BasicClassSupportTests
     private static int GetParentValueFromProperty(Parent parent)
     {
         return parent.FieldValueViaProperty;
+    }
+
+    private static int TestBaseFieldValue(Parent parent, int value)
+    {
+        parent.BaseField = value;
+
+        return parent.BaseField + 5;
     }
 }

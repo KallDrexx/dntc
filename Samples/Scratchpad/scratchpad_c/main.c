@@ -214,6 +214,9 @@ int main(void) {
     int32_t parentValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(parent);
     assert(parentValue2 == 15);
 
+    int32_t baseFieldValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(parent, 10);
+    assert(baseFieldValue == 15);
+
     printf("Tests passed!\n");
     return 0;
 }

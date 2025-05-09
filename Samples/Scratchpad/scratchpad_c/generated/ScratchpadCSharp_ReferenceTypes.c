@@ -55,3 +55,8 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldV
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
 	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(parent);
 }
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent, int32_t value) {
+	((parent->base).BaseField) = value;
+	return (((parent->base).BaseField) + 5);
+}
