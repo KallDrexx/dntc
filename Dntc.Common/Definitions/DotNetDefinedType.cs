@@ -1,4 +1,5 @@
-﻿using Mono.Cecil;
+﻿using Dntc.Common.Definitions.ReferenceTypeSupport.ReferenceCounting;
+using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
 
@@ -27,15 +28,29 @@ public class DotNetDefinedType : DefinedType
             .Where(x => !x.IsStatic)
             .Select(ConvertToField)
             .ToArray();
-        
-        if (definition.BaseType != null &&
-            definition.BaseType.FullName != typeof(object).FullName &&
-            definition.BaseType.FullName != typeof(ValueType).FullName &&
-            definition.BaseType.FullName != typeof(Enum).FullName)
-        {
-            var baseTypeName = new IlTypeName(definition.BaseType.FullName);
 
-            OtherReferencedTypes = [ baseTypeName ];
+        if (!definition.IsValueType)
+        {
+            // If this is a class reference type, we need to add the parent classes to its inheritance chain
+            if (definition.BaseType != null &&
+                definition.BaseType.FullName != typeof(object).FullName &&
+                definition.BaseType.FullName != typeof(ValueType).FullName &&
+                definition.BaseType.FullName != typeof(Enum).FullName)
+            {
+                var baseTypeName = new IlTypeName(definition.BaseType.FullName);
+
+                OtherReferencedTypes = [baseTypeName];
+            }
+            else
+            {
+                // It has no parent, so we need to ensure it references the reference counter
+                InstanceFields = new List<Field>(
+                [
+                    new Field(ReferenceCountConstants.CounterIlTypeName, ReferenceCountConstants.CounterIlFieldId)
+                ])
+                    .Concat(InstanceFields)
+                    .ToArray();
+            }
         }
 
         Methods = definition.Methods

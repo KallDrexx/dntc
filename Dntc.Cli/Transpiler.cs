@@ -5,6 +5,7 @@ using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.Definers;
 using Dntc.Common.Definitions.Mutators;
+using Dntc.Common.Definitions.ReferenceTypeSupport.ReferenceCounting;
 using Dntc.Common.Dependencies;
 using Dntc.Common.Planning;
 using Dntc.Common.Syntax.Statements.Generators;
@@ -84,7 +85,11 @@ public class Transpiler
         {
             conversionCatalog.Add(requiredType);
         }
-        
+
+        definitionCatalog.Add([new ReferenceCountingDefinedType()]);
+        definitionCatalog.Add([new ReferenceCountIncrementMethod()]);
+        definitionCatalog.Add([new ReferenceCounterField()]);
+
         var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
         planConverter.AddInstructionGenerator(new DebugInfoStatementGenerator(_manifest.DebugInfoMode));
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods

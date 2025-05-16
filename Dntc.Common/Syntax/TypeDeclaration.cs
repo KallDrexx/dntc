@@ -50,6 +50,17 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             }
         }
 
+        // Write all the fields.
+        foreach (var field in dotNetDefinedType.InstanceFields)
+        {
+            var declaration = new FieldDeclaration(
+                Catalog.Find(field.Id),
+                FieldDeclaration.FieldFlags.IgnoreValueInitialization);
+
+            await writer.WriteAsync("\t");
+            await declaration.WriteAsync(writer);
+        }
+
         // Write the virtual table for virtual methods.
         var virtualMethodCount = 0;
         if (!dotNetDefinedType.Definition.IsValueType)
@@ -79,19 +90,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
 
                 await writer.WriteLineAsync(");");
             }
-        }
-
-        // TODO Write the interface methods union vtables.
-        
-        // Write all the fields.
-        foreach (var field in dotNetDefinedType.InstanceFields)
-        {
-            var declaration = new FieldDeclaration(
-                Catalog.Find(field.Id),
-                FieldDeclaration.FieldFlags.IgnoreValueInitialization);
-
-            await writer.WriteAsync("\t");
-            await declaration.WriteAsync(writer);
         }
 
         if (dotNetDefinedType.InstanceFields.Count == 0 && virtualMethodCount == 0)
