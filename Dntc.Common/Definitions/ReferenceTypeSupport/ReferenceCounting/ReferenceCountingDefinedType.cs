@@ -10,10 +10,10 @@ public class ReferenceCountingDefinedType : CustomDefinedType
 {
     public ReferenceCountingDefinedType()
         : base(
-            new IlTypeName(ReferenceCountConstants.CounterIlTypeName),
-            new HeaderName(ReferenceCountConstants.HeaderFileName),
-            new CSourceFileName(ReferenceCountConstants.SourceFileName),
-            new CTypeName(ReferenceCountConstants.CounterTypeNativeName),
+            ReferenceCountConstants.CounterIlTypeName,
+            ReferenceCountConstants.HeaderFileName,
+            ReferenceCountConstants.SourceFileName,
+            ReferenceCountConstants.CounterTypeNativeName,
             [
                 new IlTypeName(typeof(int).FullName!),
             ],
@@ -25,7 +25,7 @@ public class ReferenceCountingDefinedType : CustomDefinedType
     {
         return new CustomCodeStatementSet($@"
 typedef struct {NativeName} {{
-    int {ReferenceCountConstants.CountFieldName};
+    int {ReferenceCountConstants.CurrentCountFieldName};
 }} {NativeName};
 ");
     }

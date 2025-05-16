@@ -45,6 +45,14 @@ public class DefinitionCatalog
         }
     }
 
+    public void Add(IEnumerable<DefinedField> fields)
+    {
+        foreach (var field in fields)
+        {
+            Add(field);
+        }
+    }
+
     public DefinedType? Get(IlTypeName ilName)
     {
         return _types.GetValueOrDefault(ilName);
