@@ -173,6 +173,17 @@ public class DependencyGraph
     {
         if (IsInPath(path, typeName))
         {
+            // If this type is a reference type, then we can't allow circular references for now,
+            // (unless the GC strategy later on supports it).
+            var redundantType = definitionCatalog.Get(typeName); // we know it will be found if it's in the path
+            if (redundantType is DotNetDefinedType dotNetDefinedType && !dotNetDefinedType.Definition.IsValueType)
+            {
+                var message = $"A circular dependency was found for the reference type '{typeName.Value}'. Circular " +
+                              $"references for reference types are not allowed.";
+                throw new InvalidOperationException(message);
+            }
+
+
             return null;
         }
         
