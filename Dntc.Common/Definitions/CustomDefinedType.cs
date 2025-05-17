@@ -36,7 +36,6 @@ public abstract class CustomDefinedType : DefinedType
 
     public static IReadOnlyList<CustomDefinedType> StandardCustomTypes { get; } =
     [
-        new ReferenceTypeBaseDefinedType(),
         new TypeInfoDefinedType()
     ];
 }

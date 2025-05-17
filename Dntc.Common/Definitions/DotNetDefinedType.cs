@@ -31,15 +31,6 @@ public class DotNetDefinedType : DefinedType
             .ToArray();
         
         var referencedTypes = new List<IlTypeName>();
-        
-        if (definition.BaseType != null &&
-            definition.BaseType.FullName != typeof(object).FullName &&
-            definition.BaseType.FullName != typeof(ValueType).FullName &&
-            definition.BaseType.FullName != typeof(Enum).FullName)
-        {
-            var baseTypeName = new IlTypeName(definition.BaseType.FullName);
-
-            referencedTypes.Add(baseTypeName);
 
         if (!definition.IsValueType)
         {
@@ -50,8 +41,7 @@ public class DotNetDefinedType : DefinedType
                 definition.BaseType.FullName != typeof(Enum).FullName)
             {
                 var baseTypeName = new IlTypeName(definition.BaseType.FullName);
-
-                OtherReferencedTypes = [baseTypeName];
+                referencedTypes.Add(baseTypeName);
             }
             else
             {
@@ -64,13 +54,6 @@ public class DotNetDefinedType : DefinedType
                 ])
                     .Concat(InstanceFields)
                     .ToArray();
-            }
-        }
-        else
-        {
-            if (!definition.IsValueType)
-            {
-                referencedTypes.Add(ReferenceTypeBaseDefinedType.TypeName);
             }
         }
 

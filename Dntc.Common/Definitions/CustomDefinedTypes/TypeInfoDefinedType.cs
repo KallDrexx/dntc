@@ -1,4 +1,5 @@
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport.TypeInfo;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.CustomDefinedTypes;
@@ -10,7 +11,7 @@ public class TypeInfoDefinedType() : CustomDefinedType(TypeName,
     [],
     [])
 {
-    public static readonly IlTypeName TypeName = new IlTypeName("[Platform: TypeInfo]");
+    public static readonly IlTypeName TypeName = TypeInfoConstants.TypeInfoTypeId;
 
     public override CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)
     {

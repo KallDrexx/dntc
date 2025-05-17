@@ -1,4 +1,5 @@
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 
 namespace Dntc.Common.Syntax.Expressions;
 
@@ -8,7 +9,8 @@ public record InterfaceDynamicCastExpression(VariableValueExpression Variable, C
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
-        await writer.WriteAsync($"({ResultingType.NameInC}*)dynamic_cast_interface((ReferenceType_Base*)");
+        var referenceTypeBase = ReferenceTypeConstants.ReferenceTypeBaseTypeName;
+        await writer.WriteAsync($"({ResultingType.NameInC}*)dynamic_cast_interface(({referenceTypeBase}*)");
         await Local.WriteCodeStringAsync(writer);
         await writer.WriteAsync($", {TypeCode})");
     }

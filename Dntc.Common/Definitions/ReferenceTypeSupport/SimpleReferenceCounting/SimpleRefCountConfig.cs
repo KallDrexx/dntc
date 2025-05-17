@@ -7,11 +7,12 @@ public class SimpleRefCountConfig : IRefCountImplementationConfig
 {
     public void UpdateCatalog(DefinitionCatalog catalog)
     {
-        catalog.Add([new ActiveRefCountField()]);
+        catalog.Add([new TypeInfoField(), new ActiveRefCountField()]);
     }
 
     public void AddFieldsToReferenceTypeBase(ReferenceTypeBaseDefinedType referenceTypeBase)
     {
+        referenceTypeBase.AddField(new TypeInfoField());
         referenceTypeBase.AddField(new ActiveRefCountField());
     }
 }

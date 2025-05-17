@@ -52,6 +52,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         var typeInfo = catalog.Find(new IlTypeName(_typeDefinition.FullName));
+        var typeName = typeInfo.NameInC;
         var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
         var variable = new Variable(typeInfo, "result", true);
         var statements = new List<CStatementSet>

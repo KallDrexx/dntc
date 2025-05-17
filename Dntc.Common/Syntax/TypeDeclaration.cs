@@ -48,11 +48,6 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                     await writer.WriteLineAsync($"\t{baseType.NameInC} base;");
                 }
             }
-            else
-            {
-                // We replace Object with ReferenceType_base. This type is provided by dntc.h
-                await writer.WriteLineAsync("\tReferenceType_Base base;");
-            }
         }
 
         if (dotNetDefinedType.Definition.HasInterfaces)
