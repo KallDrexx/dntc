@@ -1,6 +1,8 @@
 using System.Text;
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
+using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 
@@ -16,6 +18,7 @@ namespace Dntc.Common.Definitions.CustomDefinedMethods;
 public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 {
     private readonly TypeDefinition _typeDefinition;
+    private readonly IMemoryManagementActions _memoryManagement = new StandardMemoryManagementActions();
 
     public ReferenceTypeAllocationMethod(TypeDefinition typeDefinition) 
         :  base(new IlMethodId(typeDefinition.FullName + "__Create"),
@@ -26,7 +29,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             new CFunctionName(Utils.MakeValidCName(typeDefinition.FullName + "__Create")), [])
     {
         _typeDefinition = typeDefinition;
-        
+        ReferencedHeaders = _memoryManagement.RequiredHeaders;
+
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
         {
             if (virtualMethod.IsReuseSlot || virtualMethod.IsFinal)
@@ -45,10 +49,16 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         return new CustomCodeStatementSet($"{typeName}* {NativeName}(void)");
     }
 
-    public override CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog)
+    public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
-        //TODO turn this into syntax instread of string builder.
-        var typeName = Utils.MakeValidCName(_typeDefinition.FullName);
+        var typeInfo = catalog.Find(new IlTypeName(_typeDefinition.FullName));
+        var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
+        var variable = new Variable(typeInfo, "result", true);
+        var statements = new List<CStatementSet>
+        {
+            new LocalDeclarationStatementSet(variable),
+            _memoryManagement.AllocateCall(variable, typeNameExpression, catalog)
+        };
 
         var sb = new StringBuilder();
         
@@ -112,6 +122,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                 {
                     var thisExpression = targetMethod.Parameters[0];
 
+                    sb.Clear();
                     sb.Append($"\t(({thisExpression.ConversionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
 
                     var methodInfo = targetMethod;
@@ -128,19 +139,22 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                     }
                         
                     sb.AppendLine($")){sourceMethod.NameInC};");
+                    statements.Add(new CustomCodeStatementSet(sb.ToString()));
                 }
             }
             else
             {
                 var methodInfo = catalog.Find(new IlMethodId(virtualMethod.FullName));
+                var customStatement = new CustomCodeStatementSet(
+                    $"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};)");
 
-                sb.AppendLine($"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};");
+                statements.Add(customStatement);
             }
         }
 
-        sb.AppendLine("\treturn result;");
+        statements.Add(new ReturnStatementSet(new VariableValueExpression(variable)));
 
-        return new CustomCodeStatementSet(sb.ToString());
+        return new CompoundStatementSet(statements);
     }
     
     private MethodConversionInfo? FindMatchingMethodInBaseTypes(ConversionCatalog catalog, MethodConversionInfo sourceMethod, TypeDefinition startingBaseType)

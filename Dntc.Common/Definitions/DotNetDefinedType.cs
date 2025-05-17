@@ -1,3 +1,4 @@
+﻿using Dntc.Common.Definitions.ReferenceTypeSupport;
 ﻿using Dntc.Common.Definitions.CustomDefinedTypes;
 using Mono.Cecil;
 
@@ -39,6 +40,31 @@ public class DotNetDefinedType : DefinedType
             var baseTypeName = new IlTypeName(definition.BaseType.FullName);
 
             referencedTypes.Add(baseTypeName);
+
+        if (!definition.IsValueType)
+        {
+            // If this is a class reference type, we need to add the parent classes to its inheritance chain
+            if (definition.BaseType != null &&
+                definition.BaseType.FullName != typeof(object).FullName &&
+                definition.BaseType.FullName != typeof(ValueType).FullName &&
+                definition.BaseType.FullName != typeof(Enum).FullName)
+            {
+                var baseTypeName = new IlTypeName(definition.BaseType.FullName);
+
+                OtherReferencedTypes = [baseTypeName];
+            }
+            else
+            {
+                // It has no parent, so we need to ensure it references the reference type base struct
+                InstanceFields = new List<Field>(
+                [
+                    new Field(
+                        ReferenceTypeConstants.ReferenceTypeBaseId,
+                        ReferenceTypeConstants.ReferenceTypeBaseFieldId)
+                ])
+                    .Concat(InstanceFields)
+                    .ToArray();
+            }
         }
         else
         {

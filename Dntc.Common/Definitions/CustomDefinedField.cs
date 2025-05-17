@@ -47,7 +47,8 @@ public abstract class CustomDefinedField : DefinedField
     }
 
     /// <summary>
-    /// Generates a C statement set representing the declaration of the global or instance field.
+    /// Generates a C statement set representing the declaration of the global or instance field. If left blank
+    /// then the normal declaration logic is used.
     /// </summary>
-    public abstract CustomCodeStatementSet GetCustomDeclaration();
+    public abstract CustomCodeStatementSet? GetCustomDeclaration();
 }

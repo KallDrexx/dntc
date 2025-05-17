@@ -38,7 +38,7 @@ public abstract class CustomDefinedMethod : DefinedMethod
 
     public abstract CustomCodeStatementSet? GetCustomDeclaration();
 
-    public abstract CustomCodeStatementSet? GetCustomImplementation(ConversionCatalog catalog);
+    public abstract CStatementSet? GetCustomImplementation(ConversionCatalog catalog);
 
     public static IReadOnlyList<CustomDefinedMethod> StandardCustomMethods { get; } =
     [

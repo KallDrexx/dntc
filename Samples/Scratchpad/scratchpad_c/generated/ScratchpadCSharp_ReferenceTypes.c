@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "ScratchpadCSharp_ReferenceTypes.h"
+#include <stdlib.h>
 
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this, int32_t a, int32_t b) {
@@ -13,8 +14,8 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_Sum(Scratc
 }
 
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create(void) {
-    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* result = (ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent*) malloc(sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent));
-	memset(result, 0, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent));
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent));
 	((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)result)->ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum = (int32_t (*)(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*, int32_t, int32_t))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_Sum;
 	return result;
 }
