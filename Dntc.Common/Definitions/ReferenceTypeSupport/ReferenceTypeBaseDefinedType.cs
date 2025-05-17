@@ -1,5 +1,6 @@
 using System.Text;
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.ReferenceTypeSupport;
@@ -15,8 +16,8 @@ public class ReferenceTypeBaseDefinedType : CustomDefinedType
         ReferenceTypeConstants.ReferenceTypeBaseId,
         ReferenceTypeConstants.HeaderFileName,
         ReferenceTypeConstants.SourceFileName,
-        new CTypeName("DntcReferenceTypeBase"),
-        [],
+        ReferenceTypeConstants.ReferenceTypeBaseTypeName,
+        [TypeInfoDefinedType.TypeName],
         [])
     {
     }
@@ -37,8 +38,10 @@ public class ReferenceTypeBaseDefinedType : CustomDefinedType
         {
             var typeInfo = catalog.Find(field.Type);
             var fieldInfo = catalog.Find(field.Id);
+            
+            
 
-            code.AppendLine($"\t{typeInfo.NameInC} {fieldInfo.NameInC};");
+            code.AppendLine($"\t{typeInfo.NativeNameWithPossiblePointer()} {fieldInfo.NameInC};");
         }
 
         code.AppendLine($"}} {NativeName};");

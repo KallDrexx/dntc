@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -311,9 +312,48 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
             else if (!localVariable.ProducesAPointer && items[0].ProducesAPointer)
             {
-                // Set the local's value to the dereferenced value of the assigment's expression
+                if (localVariable.ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsInterface: true } dotNetDefinedType)
+                {
+                    left = localVariable;
+                    if (localVariable.ResultingType.IlName != items[0].ResultingType.IlName)
+                    {
+                        right = new InterfaceDynamicCastExpression(localVariable, items[0],
+                            dotNetDefinedType.Definition.MetadataToken.RID);
+                    }
+                    else
+                    {
+                        right = items[0];
+                    }
+                }
+                else if (items[0].ResultingType.OriginalTypeDefinition is DotNetDefinedType { Definition.IsValueType: false })
+                {
+                    left = localVariable;
+                    right = items[0];
+                }
+                else
+                {
+                    // Set the local's value to the dereferenced value of the assigment's expression
+                    left = localVariable;
+                    right = new DereferencedValueExpression(items[0]);    
+                }
+                
+            }
+            else if (!localVariable.ProducesAPointer && !items[0].ProducesAPointer &&
+                     localVariable.ResultingType.OriginalTypeDefinition is DotNetDefinedType
+                     {
+                         Definition.IsInterface: true
+                     } dotNetDefinedType)
+            {
                 left = localVariable;
-                right = new DereferencedValueExpression(items[0]);
+                if (localVariable.ResultingType.IlName != items[0].ResultingType.IlName)
+                {
+                    right = new InterfaceDynamicCastExpression(localVariable, items[0],
+                        dotNetDefinedType.Definition.MetadataToken.RID);
+                }
+                else
+                {
+                    right = items[0];
+                }
             }
             else
             {
@@ -336,7 +376,13 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            return new OpCodeAnalysisResult();
+            return new OpCodeAnalysisResult()
+            {
+                CalledMethods = 
+                [
+                    new InvokedMethod(DynamicCastInterfaceDefinedMethod.MethodId)
+                ]
+            };
         }
     }
 }

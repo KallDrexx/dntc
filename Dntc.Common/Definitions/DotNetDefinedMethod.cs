@@ -191,39 +191,43 @@ public class DotNetDefinedMethod : DefinedMethod
         }
 
         var referencedHeaders = new HashSet<HeaderName>();
-        foreach (var instruction in Definition.Body.Instructions)
+
+        if (Definition.HasBody)
         {
-            if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+            foreach (var instruction in Definition.Body.Instructions)
             {
-                var debugInfo = CecilUtils.LoggedSequencePointInfo(
-                    CecilUtils.GetSequencePoint(
-                        Definition,
-                        instruction));
+                if (!KnownOpCodeHandlers.OpCodeHandlers.TryGetValue(instruction.OpCode.Code, out var handler))
+                {
+                    var debugInfo = CecilUtils.LoggedSequencePointInfo(
+                        CecilUtils.GetSequencePoint(
+                            Definition,
+                            instruction));
 
-                var message = $"No handler for op code '{instruction.OpCode.Code}' {debugInfo}";
-                throw new InvalidOperationException(message);
-            }
+                    var message = $"No handler for op code '{instruction.OpCode.Code}' {debugInfo}";
+                    throw new InvalidOperationException(message);
+                }
 
-            var results = handler.Analyze(new AnalyzeContext(instruction, this));
+                var results = handler.Analyze(new AnalyzeContext(instruction, this));
 
-            foreach (var method in results.CalledMethods)
-            {
-                _invokedMethods.Add(method);
-            }
+                foreach (var method in results.CalledMethods)
+                {
+                    _invokedMethods.Add(method);
+                }
 
-            foreach (var referencedType in results.ReferencedTypes)
-            {
-                _referencedTypes.Add(referencedType);
-            }
+                foreach (var referencedType in results.ReferencedTypes)
+                {
+                    _referencedTypes.Add(referencedType);
+                }
 
-            foreach (var header in results.ReferencedHeaders)
-            {
-                referencedHeaders.Add(header);
-            }
+                foreach (var header in results.ReferencedHeaders)
+                {
+                    referencedHeaders.Add(header);
+                }
 
-            if (results.ReferencedGlobal != null)
-            {
-                _referencedGlobals.Add(new IlFieldId(results.ReferencedGlobal.FullName));
+                if (results.ReferencedGlobal != null)
+                {
+                    _referencedGlobals.Add(new IlFieldId(results.ReferencedGlobal.FullName));
+                }
             }
         }
 

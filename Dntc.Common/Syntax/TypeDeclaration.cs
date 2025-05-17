@@ -45,7 +45,18 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             {
                 if (Catalog.TryFind(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName), out var baseType))
                 {
-                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                    await writer.WriteLineAsync($"\t{baseType.NameInC} base;");
+                }
+            }
+        }
+
+        if (dotNetDefinedType.Definition.HasInterfaces)
+        {
+            foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+            {
+                if (Catalog.TryFind(new IlTypeName(iface.InterfaceType.FullName), out var ifaceType))
+                {
+                    await writer.WriteLineAsync($"\t{ifaceType.NativeNameWithPossiblePointer()} {ifaceType.NameInC};");
                 }
             }
         }
@@ -65,7 +76,13 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         var virtualMethodCount = 0;
         if (!dotNetDefinedType.Definition.IsValueType)
         {
-            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x.IsVirtual && x.IsNewSlot))
+            if (dotNetDefinedType.Definition.IsInterface)
+            {
+                await writer.WriteLineAsync($"\tvoid* implementer;");
+            }
+            
+            // IsFinal will be set for interfaces.
+            foreach (var virtualMethod in dotNetDefinedType.Definition.Methods.Where(x => x is { IsVirtual: true, IsNewSlot: true, IsFinal: false }))
             {
                 virtualMethodCount++;
                 var methodInfo = Catalog.Find(new IlMethodId(virtualMethod.FullName));
@@ -84,10 +101,18 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                         structKeyword = "struct ";
                     }
 
-                    var pointerSymbol = param.IsReference ? "*" : "";
-                    await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                    if (dotNetDefinedType.Definition.IsInterface && x == 0)
+                    {
+                        // this argument for interface... change to void*
+                        await writer.WriteAsync($"void* {param.Name}");    
+                    }
+                    else
+                    {
+                        var pointerSymbol = param.IsReference ? "*" : "";
+                        await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");    
+                    }
+                    
                 }
-
                 await writer.WriteLineAsync(");");
             }
         }
@@ -99,6 +124,48 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
         }
 
         await writer.WriteLineAsync($"}} {nativeName};");
+        
+        // Write TypeInformation.
+        if (dotNetDefinedType.Definition is { IsValueType: false, IsInterface: false })
+        {
+            await writer.WriteLineAsync();
+            await writer.WriteLineAsync("TypeInfo " + TypeConversion.NameInC + "_TypeInfo = {");
+
+            if (dotNetDefinedType.Definition.HasInterfaces)
+            {
+                await writer.WriteAsync("\t(uint32_t[]){ ");
+                foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+                {
+                    await writer.WriteAsync($"{iface.InterfaceType.MetadataToken.RID}, ");
+                }
+
+                await writer.WriteLineAsync(" },");
+            }
+            else
+            {
+                await writer.WriteLineAsync("\tNULL,");
+            }
+
+            if (dotNetDefinedType.Definition.HasInterfaces)
+            {
+                await writer.WriteAsync("\t(size_t[]){ ");
+                foreach (var iface in dotNetDefinedType.Definition.Interfaces)
+                {
+                    var ifaceType = Catalog.Find(new IlTypeName(iface.InterfaceType.FullName));
+
+                    await writer.WriteAsync($"offsetof({TypeConversion.NameInC}, {ifaceType.NameInC}), ");
+                }
+
+                await writer.WriteLineAsync("},");
+            }
+            else
+            {
+                await writer.WriteLineAsync("\tNULL,");
+            }
+
+            await writer.WriteLineAsync($"\t{dotNetDefinedType.Definition.Interfaces.Count}");
+            await writer.WriteLineAsync("};");
+        }
     }
 
 

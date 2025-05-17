@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Definitions.ReferenceTypeSupport;
+﻿using Dntc.Common.Definitions.CustomDefinedTypes;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
@@ -28,6 +29,8 @@ public class DotNetDefinedType : DefinedType
             .Where(x => !x.IsStatic)
             .Select(ConvertToField)
             .ToArray();
+        
+        var referencedTypes = new List<IlTypeName>();
 
         if (!definition.IsValueType)
         {
@@ -38,8 +41,7 @@ public class DotNetDefinedType : DefinedType
                 definition.BaseType.FullName != typeof(Enum).FullName)
             {
                 var baseTypeName = new IlTypeName(definition.BaseType.FullName);
-
-                OtherReferencedTypes = [baseTypeName];
+                referencedTypes.Add(baseTypeName);
             }
             else
             {
@@ -54,6 +56,10 @@ public class DotNetDefinedType : DefinedType
                     .ToArray();
             }
         }
+
+        referencedTypes.AddRange(definition.Interfaces.Select(x => new IlTypeName(x.InterfaceType.FullName)));
+        
+        OtherReferencedTypes = referencedTypes.ToArray();
 
         Methods = definition.Methods
             .Select(x => new IlMethodId(x.FullName))

@@ -98,7 +98,12 @@ public class TypeConversionInfo
         if (!type.Definition.IsValueType)
         {
             IsReferenceType = true;
-            ReferencedHeaders = [new HeaderName("<stdlib.h>"), new HeaderName("<string.h>")];
+            ReferencedHeaders =
+            [
+                new HeaderName("<stdlib.h>"), 
+                new HeaderName("<string.h>"), 
+                new HeaderName("<stddef.h>")
+            ];
         }
     }
 

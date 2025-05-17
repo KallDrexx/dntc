@@ -111,7 +111,11 @@ public class PlannedFileConverter
         }
         
         var statements = new List<CStatementSet>();
-        
+
+        if (dotNetDefinedMethod.Definition.HasBody == false)
+        {
+            return statements;
+        }
         Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
 
         OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
@@ -123,7 +127,11 @@ public class PlannedFileConverter
             var local = dotNetDefinedMethod.Locals[x];
             var localType = _conversionCatalog.Find(local.Type);
             var name = Utils.LocalName(dotNetDefinedMethod.Definition, x);
-            var variable = new Variable(localType, name, local.Type.IsPointer());
+            var variable = new Variable(localType, name,
+                local.Type.IsPointer() || localType.OriginalTypeDefinition is DotNetDefinedType
+                {
+                    Definition.IsValueType: false
+                });
 
             if (locals.Add(name))
             {

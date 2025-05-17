@@ -3,6 +3,7 @@ using Dntc.Common;
 using Dntc.Common.Conversion;
 using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Dntc.Common.Definitions.Definers;
 using Dntc.Common.Definitions.Mutators;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
@@ -75,6 +76,7 @@ public class Transpiler
             definitionCatalog.Add(NativeDefinedType.StandardTypes.Values);
             definitionCatalog.Add(NativeDefinedMethod.StandardMethods);
             definitionCatalog.Add(CustomDefinedMethod.StandardCustomMethods);
+            definitionCatalog.Add(CustomDefinedType.StandardCustomTypes);
         }
 
         foreach (var plugin in plugins)

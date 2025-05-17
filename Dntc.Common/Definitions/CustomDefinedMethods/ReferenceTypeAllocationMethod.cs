@@ -33,7 +33,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
         {
-            if (virtualMethod.IsReuseSlot)
+            if (virtualMethod.IsReuseSlot || virtualMethod.IsFinal)
             {
                 InvokedMethods.Add(new InvokedMethod(new IlMethodId(virtualMethod.FullName)));
             }
@@ -52,6 +52,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         var typeInfo = catalog.Find(new IlTypeName(_typeDefinition.FullName));
+        var typeName = typeInfo.NameInC;
         var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
         var variable = new Variable(typeInfo, "result", true);
         var statements = new List<CStatementSet>
@@ -61,7 +62,55 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         };
 
         var sb = new StringBuilder();
-        foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
+        
+        sb.AppendLine($@"    {typeName}* result = ({typeName}*) malloc(sizeof({typeName}));
+	memset(result, 0, sizeof({typeName}));");
+        
+        var typeInfoName =typeName + "_TypeInfo";
+        sb.AppendLine($"\t((ReferenceType_Base*)result)->type_info = &{typeInfoName};");
+
+        var interfaceMethods = new HashSet<IlMethodId>();
+        
+        foreach (var iface in _typeDefinition.Interfaces)
+        {
+            var ifaceType = catalog.Find(new IlTypeName(iface.InterfaceType.FullName));
+            sb.AppendLine($"\tresult->{ifaceType.NameInC}.implementer = result;");
+            
+            foreach (var interfaceMethod in iface.InterfaceType.Resolve().Methods)
+            {
+                var implementingMethod = _typeDefinition.Methods.SingleOrDefault(x => interfaceMethod.SignatureCompatibleWith(x));
+                
+                if (implementingMethod != null)
+                {
+                    interfaceMethods.Add(new IlMethodId(implementingMethod.FullName));
+                    var interfaceMethodInfo = catalog.Find(new IlMethodId(interfaceMethod.FullName));
+                    var implementingMethodInfo = catalog.Find(new IlMethodId(implementingMethod.FullName));
+                    
+                    sb.Append($"\tresult->{ifaceType.NameInC}.{interfaceMethodInfo.NameInC} = ");
+                    
+                    sb.Append($"({interfaceMethodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
+                    
+                    for (var x = 0; x < interfaceMethodInfo.Parameters.Count; x++)
+                    {
+                        if (x > 0) sb.Append(", ");
+                        var param = interfaceMethodInfo.Parameters[x];
+                        var paramType = param.ConversionInfo.NameInC.Value;
+
+                        if (x == 0)
+                        {
+                            paramType = "void";
+                        }
+
+                        var pointerSymbol = param.IsReference ? "*" : "";
+                        sb.Append($"{paramType}{pointerSymbol}");
+                    }
+                    
+                    sb.AppendLine($")){implementingMethodInfo.NameInC};");
+                }
+            }
+        }
+        
+        foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual && !interfaceMethods.Contains(new IlMethodId(x.FullName))))
         {
             if (virtualMethod.IsReuseSlot)
             {
