@@ -8,7 +8,7 @@
 #include "dntc.h"
 
 typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase {
-	dntc_reference_counter referenceCounter;
+	DntcReferenceTypeBase __reference_type_base;
 	int32_t BaseField;
 	int32_t (*ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum)(struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* __this, int32_t a, int32_t b);
 } ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase;

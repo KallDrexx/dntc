@@ -1,4 +1,4 @@
-﻿using Dntc.Common.Definitions.ReferenceTypeSupport.ReferenceCounting;
+﻿using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions;
@@ -43,10 +43,12 @@ public class DotNetDefinedType : DefinedType
             }
             else
             {
-                // It has no parent, so we need to ensure it references the reference counter
+                // It has no parent, so we need to ensure it references the reference type base struct
                 InstanceFields = new List<Field>(
                 [
-                    new Field(ReferenceCountConstants.CounterIlTypeName, ReferenceCountConstants.CounterIlFieldId)
+                    new Field(
+                        ReferenceTypeConstants.ReferenceTypeBaseId,
+                        ReferenceTypeConstants.ReferenceTypeBaseFieldId)
                 ])
                     .Concat(InstanceFields)
                     .ToArray();

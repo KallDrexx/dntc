@@ -4,10 +4,9 @@
 
 #include <stdint.h>
 
-
-typedef struct dntc_reference_counter {
-    int currentCount;
-} dntc_reference_counter;
+typedef struct DntcReferenceTypeBase {
+	int32_t activeReferenceCount;
+} DntcReferenceTypeBase;
 
 
 
