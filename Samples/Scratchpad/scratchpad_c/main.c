@@ -8,6 +8,8 @@
 
 #define ARRAY_ITEM_COUNT (10)
 
+void validate_reference_counting();
+
 int main(void) {
     dntc_utils_init_static_constructors();
 
@@ -220,6 +222,14 @@ int main(void) {
     int32_t baseFieldValue2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(parent);
     assert(baseFieldValue2 == 10);
 
+    validate_reference_counting();
+
     printf("Tests passed!\n");
     return 0;
+}
+
+void validate_reference_counting() {
+    // Creation and return should have a single active reference count
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(15);
+    assert(parent->base.__reference_type_base.activeReferenceCount == 1);
 }

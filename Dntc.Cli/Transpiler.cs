@@ -91,7 +91,7 @@ public class Transpiler
         definitionCatalog.Add([referenceTypeBaseDefinition]);
         definitionCatalog.Add([new ReferenceTypeBaseField()]);
 
-        var refCountImplementation = new SimpleRefCountConfig();
+        var refCountImplementation = new SimpleRefCountImplementation();
         refCountImplementation.UpdateCatalog(definitionCatalog);
         refCountImplementation.AddFieldsToReferenceTypeBase(referenceTypeBaseDefinition);
 

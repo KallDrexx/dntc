@@ -1,6 +1,8 @@
 ﻿using Dntc.Common.Conversion;
 using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
+using Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -213,8 +215,18 @@ public class CallHandlers : IOpCodeHandlerCollection
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
                 var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
-                var assignment = new AssignmentStatementSet(new VariableValueExpression(variable), createFnCall);
+                var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
+
+                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.RcIncrementMethodId);
+                var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
+                var incrementFnCall = new MethodCallExpression(
+                    incrementFnExpression,
+                    incrementInfo.Parameters,
+                    [variableExpression],
+                    voidType);
+
+                statements.Add(new VoidExpressionStatementSet(incrementFnCall));
             }
 
             var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
@@ -236,6 +248,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             if (!constructor.DeclaringType.IsValueType)
             {
                 extraCalls.Add(new CustomInvokedMethod(new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve())));
+                extraCalls.Add(new CustomInvokedMethod(new RefCountIncrementMethod()));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)

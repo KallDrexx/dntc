@@ -15,7 +15,7 @@ public class ReferenceTypeBaseDefinedType : CustomDefinedType
         ReferenceTypeConstants.ReferenceTypeBaseId,
         ReferenceTypeConstants.HeaderFileName,
         ReferenceTypeConstants.SourceFileName,
-        new CTypeName("DntcReferenceTypeBase"),
+        ReferenceTypeConstants.ReferenceTypeBaseName,
         [],
         [])
     {

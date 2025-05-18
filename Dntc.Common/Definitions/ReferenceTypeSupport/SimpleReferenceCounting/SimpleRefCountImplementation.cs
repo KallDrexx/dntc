@@ -3,7 +3,7 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 /// <summary>
 /// Implementation of a simple, non-thread, and non-cyclic reference counter.
 /// </summary>
-public class SimpleRefCountConfig : IRefCountImplementationConfig
+public class SimpleRefCountImplementation : IRefCountImplementation
 {
     public void UpdateCatalog(DefinitionCatalog catalog)
     {

@@ -10,5 +10,6 @@ typedef struct DntcReferenceTypeBase {
 
 
 
+void DntcReferenceTypeBase_Rc_Increment(DntcReferenceTypeBase *referenceType);
 
 #endif // DNTC_H_H

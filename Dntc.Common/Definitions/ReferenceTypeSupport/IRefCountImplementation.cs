@@ -3,7 +3,7 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport;
 /// <summary>
 /// Defines how a reference counting implementation is hooked into the dntc pipeline
 /// </summary>
-public interface IRefCountImplementationConfig
+public interface IRefCountImplementation
 {
     /// <summary>
     /// Adds any required definitions to the definition catalog
