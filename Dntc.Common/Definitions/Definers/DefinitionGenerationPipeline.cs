@@ -1,4 +1,5 @@
 using Dntc.Common.Definitions.Mutators;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Definers;
@@ -13,9 +14,11 @@ public class DefinitionGenerationPipeline
     private readonly List<IDotNetTypeDefiner> _typeDefiners = [];
     private readonly List<IFieldDefinitionMutator> _fieldMutators = [];
     private readonly List<IMethodDefinitionMutator> _methodMutators = [];
+    private readonly IMemoryManagementActions _memoryManagement;
 
-    public DefinitionGenerationPipeline()
+    public DefinitionGenerationPipeline(IMemoryManagementActions memoryManagement)
     {
+        _memoryManagement = memoryManagement;
         Reset();
     }
 
@@ -29,7 +32,7 @@ public class DefinitionGenerationPipeline
         _typeDefiners.Clear();
         
         _globalDefiners.Add(new DefaultFieldDefiner());
-        _methodDefiners.Add(new DefaultDotNetMethodDefiner());
+        _methodDefiners.Add(new DefaultDotNetMethodDefiner(_memoryManagement));
         _typeDefiners.Add(new DefaultTypeDefiner());
     }
 

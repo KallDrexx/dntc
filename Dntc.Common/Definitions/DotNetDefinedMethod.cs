@@ -1,4 +1,5 @@
 ﻿using Dntc.Attributes;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil;
 using Mono.Cecil.Rocks;
@@ -12,8 +13,10 @@ public class DotNetDefinedMethod : DefinedMethod
     private readonly List<InvokedMethod> _invokedMethods = [];
     private readonly HashSet<IlTypeName> _referencedTypes = [];
     private readonly HashSet<IlFieldId> _referencedGlobals = [];
+    private readonly IMemoryManagementActions _memoryManagement;
+
     private bool _hasBeenAnalyzed;
-    
+
     public MethodDefinition Definition { get; }
     public IReadOnlyList<TypeReference> ReferencedArrayTypes { get; }
     public IReadOnlyDictionary<string, IlTypeName> GenericArgumentTypes { get; } = new Dictionary<string, IlTypeName>();
@@ -48,8 +51,9 @@ public class DotNetDefinedMethod : DefinedMethod
         }
     }
     
-    public DotNetDefinedMethod(MethodDefinition definition)
+    public DotNetDefinedMethod(MethodDefinition definition, IMemoryManagementActions memoryManagement)
     {
+        _memoryManagement = memoryManagement;
         Definition = definition;
 
         var returnsReferenceType = definition.ReturnType.FullName != typeof(void).FullName &&
@@ -117,7 +121,9 @@ public class DotNetDefinedMethod : DefinedMethod
     private DotNetDefinedMethod(
         MethodDefinition method, 
         IlMethodId methodId,
-        IReadOnlyList<IlTypeName> genericArgumentTypes) : this(method)
+        IReadOnlyList<IlTypeName> genericArgumentTypes,
+        IMemoryManagementActions memoryManagementActions)
+        : this(method, memoryManagementActions)
     {
         Id = methodId;
 
@@ -161,7 +167,7 @@ public class DotNetDefinedMethod : DefinedMethod
 
     public override DefinedMethod MakeGenericInstance(IlMethodId methodId, IReadOnlyList<IlTypeName> genericArguments)
     {
-        return new DotNetDefinedMethod(Definition, methodId, genericArguments);
+        return new DotNetDefinedMethod(Definition, methodId, genericArguments, _memoryManagement);
     }
 
     private static Parameter GenerateParameter(ParameterDefinition definition)
@@ -204,7 +210,7 @@ public class DotNetDefinedMethod : DefinedMethod
                 throw new InvalidOperationException(message);
             }
 
-            var results = handler.Analyze(new AnalyzeContext(instruction, this));
+            var results = handler.Analyze(new AnalyzeContext(instruction, this, _memoryManagement));
 
             foreach (var method in results.CalledMethods)
             {

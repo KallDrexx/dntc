@@ -3,16 +3,16 @@ using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 
-public class RefCountIncrementMethod : CustomDefinedMethod
+public class RefCountTrackMethod : CustomDefinedMethod
 {
-    public RefCountIncrementMethod()
+    public RefCountTrackMethod()
         : base(
-            ReferenceTypeConstants.RcIncrementMethodId,
+            ReferenceTypeConstants.GcTrackMethodId,
             new IlTypeName(typeof(void).FullName!),
             ReferenceTypeConstants.IlNamespace,
             ReferenceTypeConstants.HeaderFileName,
             ReferenceTypeConstants.SourceFileName,
-            new CFunctionName("DntcReferenceTypeBase_Rc_Increment"),
+            new CFunctionName("DntcReferenceTypeBase_Gc_Track"),
             [
                 new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true),
             ])

@@ -1,3 +1,4 @@
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Mono.Cecil;
 
 namespace Dntc.Common.Definitions.Definers;
@@ -7,8 +8,15 @@ namespace Dntc.Common.Definitions.Definers;
 /// </summary>
 public class DefaultDotNetMethodDefiner : IDotNetMethodDefiner
 {
+    private readonly IMemoryManagementActions _memoryManagement;
+
+    public DefaultDotNetMethodDefiner(IMemoryManagementActions memoryManagement)
+    {
+        _memoryManagement = memoryManagement;
+    }
+
     public DefinedMethod Define(MethodDefinition method)
     {
-        return new DotNetDefinedMethod(method);
+        return new DotNetDefinedMethod(method, _memoryManagement);
     }
 }

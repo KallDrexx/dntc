@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
@@ -211,14 +210,17 @@ public class CallHandlers : IOpCodeHandlerCollection
                     throw new NotSupportedException(message);
                 }
 
-                var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
+                var createFunction = new ReferenceTypeAllocationMethod(
+                    context.MemoryManagementActions,
+                    constructor.DeclaringType.Resolve());
+
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
                 var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
                 var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
 
-                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.RcIncrementMethodId);
+                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
                 var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
                 var incrementFnCall = new MethodCallExpression(
                     incrementFnExpression,
@@ -247,8 +249,11 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                extraCalls.Add(new CustomInvokedMethod(new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve())));
-                extraCalls.Add(new CustomInvokedMethod(new RefCountIncrementMethod()));
+                extraCalls.Add(new CustomInvokedMethod(
+                    new ReferenceTypeAllocationMethod(context.MemoryManagementActions,
+                        constructor.DeclaringType.Resolve())));
+
+                extraCalls.Add(new CustomInvokedMethod(new RefCountTrackMethod()));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)

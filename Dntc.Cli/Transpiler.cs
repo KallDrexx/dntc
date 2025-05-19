@@ -33,8 +33,9 @@ public class Transpiler
         var plugins = LoadPlugins();
         var modules = GetModules();
         var charArrayType = modules.First().ImportReference(typeof(char[]));
+        var memoryManagement = new StandardMemoryManagementActions();
         
-        var transpilerPipeline = new TranspilerContext();
+        var transpilerPipeline = new TranspilerContext(memoryManagement);
         var definerPipeline = transpilerPipeline.Definers;
         var conversionInfoCreator = transpilerPipeline.ConversionInfoCreator;
         var definitionCatalog = transpilerPipeline.DefinitionCatalog;
@@ -95,7 +96,7 @@ public class Transpiler
         refCountImplementation.UpdateCatalog(definitionCatalog);
         refCountImplementation.AddFieldsToReferenceTypeBase(referenceTypeBaseDefinition);
 
-        var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false);
+        var planConverter = new PlannedFileConverter(conversionCatalog, definitionCatalog, false, memoryManagement);
         planConverter.AddInstructionGenerator(new DebugInfoStatementGenerator(_manifest.DebugInfoMode));
         definitionCatalog.Add(modules.SelectMany(x => x.Types)); // adding types via type definition automatically adds its methods
 
