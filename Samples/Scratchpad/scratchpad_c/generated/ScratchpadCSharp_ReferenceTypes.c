@@ -36,8 +36,6 @@ ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_
 	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0001, value);
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
-	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
 	return __temp_0001;
 }
 

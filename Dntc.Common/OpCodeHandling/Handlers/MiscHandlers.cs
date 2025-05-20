@@ -114,25 +114,35 @@ public class MiscHandlers : IOpCodeHandlerCollection
 
             var returnStatement = new ReturnStatementSet(innerExpression);
 
-            // If the value being returned is a .net reference type, then we need to mark it as tracked so we
-            // don't accidentally free it.
-            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            // If any locals are .net reference types, we need to untrack them
             var statements = new List<CStatementSet>();
-            if (innerExpression?.ResultingType.IsReferenceType == true)
+            var innerExpressionContainsVariable = false;
+            foreach (var variable in context.ReferenceTypeVariables)
             {
-                statements.Add(new GcTrackFunctionCallStatement(innerExpression, context.ConversionCatalog));
+                if (innerExpression is VariableValueExpression variableValueExpression &&
+                    variableValueExpression.Variable == variable)
+                {
+                    // Since we are returning the variable, there's no reason to track + untrack it
+                    // as part of the return process.
+                    innerExpressionContainsVariable = true;
+                    continue;
+                }
+
+                statements.Add(
+                    new GcUntrackFunctionCallStatement(
+                        new VariableValueExpression(variable),
+                        context.ConversionCatalog));
             }
 
-            // If any locals are .net reference types, we need to untrack them
-            if (context.ReferenceTypeVariables.Any())
+            // If the value being returned is a .net reference type, then we need to mark it as tracked so we
+            // don't accidentally free it. Don't bother doing this though if we are returning a local, since
+            // it should already be tracked, and we explicitly are not untracking it as part of the pre-return
+            // gc cleanup.
+            if (innerExpression?.ResultingType.IsReferenceType == true && !innerExpressionContainsVariable)
             {
-                foreach (var variable in context.ReferenceTypeVariables)
-                {
-                    statements.Add(
-                        new GcUntrackFunctionCallStatement(
-                            new VariableValueExpression(variable),
-                            context.ConversionCatalog));
-                }
+                // This needs to be added first, so it comes before any untrack calls. Otherwise, it might be
+                // freed before we are able to track it and return it.
+                statements.Insert(0, new GcTrackFunctionCallStatement(innerExpression, context.ConversionCatalog));
             }
 
             statements.Add(returnStatement);
