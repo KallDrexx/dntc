@@ -232,4 +232,8 @@ void validate_reference_counting() {
     // Creation and return should have a single active reference count
     ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(15);
     assert(parent->base.__reference_type_base.activeReferenceCount == 1);
+
+    // Verify untracking nulls out the pointer
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
+    assert(parent == NULL);
 }

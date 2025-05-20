@@ -20,6 +20,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
             ])
     {
         _memoryManagement = memoryManagement;
+        ReferencedHeaders = memoryManagement.RequiredHeaders;
     }
 
     public override CustomCodeStatementSet? GetCustomDeclaration()
@@ -33,7 +34,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
         var intType = catalog.Find(new IlTypeName(typeof(int).FullName!));
         var statements = new List<CStatementSet>();
         statements.Add(new CustomCodeStatementSet($@"
-    {{ReferenceTypeConstants.ReferenceTypeBaseName}} singlePointerVariable = *referenceType;
+    {ReferenceTypeConstants.ReferenceTypeBaseName} *singlePointerVariable = *referenceType;
     {intType.NameInC} count = --(singlePointerVariable->{SimpleRefCountConstants.CurrentCountFieldName});
     if (count <= 0) {{
 "));
@@ -41,9 +42,8 @@ public class RefCountUntrackMethod : CustomDefinedMethod
         var variable = new Variable(referenceTypeInfo, "singlePointerVariable", true);
         statements.Add(_memoryManagement.FreeCall(variable, catalog));
 
-        statements.Add(new CustomCodeStatementSet($@"
-        referenceType = NULL;
-}}
+        statements.Add(new CustomCodeStatementSet($@"   referenceType = NULL;
+    }}
 "));
 
         return new CompoundStatementSet(statements);

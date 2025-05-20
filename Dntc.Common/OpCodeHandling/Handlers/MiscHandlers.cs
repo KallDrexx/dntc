@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -111,7 +112,44 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 ? context.ExpressionStack.Pop(1)[0]
                 : null;
 
-            return new OpCodeHandlingResult(new ReturnStatementSet(innerExpression));
+            var returnStatement = new ReturnStatementSet(innerExpression);
+
+            // If the value being returned is a .net reference type, then we need to mark it as tracked so we
+            // don't accidentally free it.
+            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            var statements = new List<CStatementSet>();
+            if (innerExpression?.ResultingType.IsReferenceType == true)
+            {
+                var trackMethod = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
+                var fnCall = new MethodCallExpression(
+                    new LiteralValueExpression(trackMethod.NameInC.Value, voidType),
+                    trackMethod.Parameters,
+                    [innerExpression],
+                    voidType);
+
+                statements.Add(new VoidExpressionStatementSet(fnCall));
+            }
+
+            // If any locals are .net reference types, we need to untrack them
+            if (context.ReferenceTypeVariables.Any())
+            {
+                var untrackMethod = context.ConversionCatalog.Find(ReferenceTypeConstants.GcUntrackMethodId);
+                foreach (var variable in context.ReferenceTypeVariables)
+                {
+                    var baseType = context.ConversionCatalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
+                    var doublePointerVariable = new LiteralValueExpression($"({baseType.NameInC}**)&{variable.Name}", baseType);
+                    var fnCall = new MethodCallExpression(
+                        new LiteralValueExpression(untrackMethod.NameInC.Value, voidType),
+                        untrackMethod.Parameters,
+                        [doublePointerVariable],
+                        voidType);
+
+                    statements.Add(new VoidExpressionStatementSet(fnCall));
+                }
+            }
+
+            statements.Add(returnStatement);
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

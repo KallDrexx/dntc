@@ -97,8 +97,20 @@ public class CallHandlers : IOpCodeHandlerCollection
             var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
             var assignment = new AssignmentStatementSet(tempVariableExpression, methodCallExpression);
 
+            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
+            var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
+            var incrementFnCall = new MethodCallExpression(
+                incrementFnExpression,
+                incrementInfo.Parameters,
+                [tempVariableExpression],
+                voidType);
+
+            var incrementStatement = new VoidExpressionStatementSet(incrementFnCall);
+
             context.ExpressionStack.Push(tempVariableExpression);
-            return new OpCodeHandlingResult(new CompoundStatementSet([localDeclaration, assignment]));
+            return new OpCodeHandlingResult(
+                new CompoundStatementSet([localDeclaration, assignment, incrementStatement]));
         }
 
         // Otherwise we can just inline the method call.
@@ -119,7 +131,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             {
                 if (methodReference.HasThis)
                 {
-                    // + 1 to include the this parameter.
+                    // + 1 to include the parameter.
                     context.ExpressionStack.Pop(methodReference.Parameters.Count + 1); 
                     // specifically, because System_Object::ctor is excluded.
                     // otherwise it will try to add "return __this at the end.
@@ -253,7 +265,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                     new ReferenceTypeAllocationMethod(context.MemoryManagementActions,
                         constructor.DeclaringType.Resolve())));
 
-                extraCalls.Add(new CustomInvokedMethod(new RefCountTrackMethod()));
+                extraCalls.Add(new CustomInvokedMethod(new RefCountTrackMethod(context.MemoryManagementActions)));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)

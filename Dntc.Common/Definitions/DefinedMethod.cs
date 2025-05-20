@@ -19,6 +19,8 @@ public abstract class DefinedMethod
     
     // We don't want to bother analyzing methods we aren't going to transpile, so only analyze
     // if we enter a code path looking for globals, types, and other methods this method utilizes.
+    //
+    // We need this to be virtual so that we can hook into it for lazy analysis for .net methods.
     public virtual List<InvokedMethod> InvokedMethods { get; } = [];
 
     /// <summary>

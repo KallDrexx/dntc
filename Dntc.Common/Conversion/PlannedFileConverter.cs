@@ -172,6 +172,13 @@ public class PlannedFileConverter
                 throw new InvalidOperationException(message);
             }
 
+            var referenceTypeLocalVariables = statements
+                .Flatten()
+                .OfType<LocalDeclarationStatementSet>()
+                .Select(x => x.Variable)
+                .Where(x => x.Type.IsReferenceType)
+                .ToArray();
+
             var startStackSize = expressionStack.Count;
             OpCodeHandlingResult result;
             try
@@ -183,7 +190,8 @@ public class PlannedFileConverter
                     dotNetDefinedMethod,
                     _conversionCatalog,
                     _definitionCatalog,
-                    _memoryManagement));
+                    _memoryManagement,
+                    referenceTypeLocalVariables));
             }
             catch (Exception exception)
             {

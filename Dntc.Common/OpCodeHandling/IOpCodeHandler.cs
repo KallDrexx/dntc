@@ -12,7 +12,8 @@ public record HandleContext(
     DotNetDefinedMethod CurrentDotNetMethod,
     ConversionCatalog ConversionCatalog,
     DefinitionCatalog DefinitionCatalog,
-    IMemoryManagementActions MemoryManagementActions);
+    IMemoryManagementActions MemoryManagementActions,
+    IReadOnlyList<Variable> ReferenceTypeVariables);
 
 public record AnalyzeContext(
     Instruction CurrentInstruction,
