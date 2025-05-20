@@ -9,5 +9,6 @@ public class ReferenceTypeConstants
     public static CTypeName ReferenceTypeBaseName = new("DntcReferenceTypeBase");
     public static IlFieldId ReferenceTypeBaseFieldId = new($"{ReferenceTypeBaseId} {IlNamespace}::base");
     public static CFieldName ReferenceTypeBaseFieldName = new("__reference_type_base");
-    public static IlMethodId RcIncrementMethodId = new($"System.Void {ReferenceTypeBaseId}.RcIncrement");
+    public static IlMethodId GcTrackMethodId = new($"System.Void {ReferenceTypeBaseId}.GcTrack");
+    public static IlMethodId GcUntrackMethodId = new($"System.Void {ReferenceTypeBaseId}.GcUntrack");
 }

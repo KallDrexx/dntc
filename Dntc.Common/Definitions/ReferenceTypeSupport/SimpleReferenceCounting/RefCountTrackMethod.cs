@@ -1,22 +1,30 @@
 using Dntc.Common.Conversion;
+using Dntc.Common.OpCodeHandling;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 
-public class RefCountIncrementMethod : CustomDefinedMethod
+public class RefCountTrackMethod : CustomDefinedMethod
 {
-    public RefCountIncrementMethod()
+    public sealed override List<InvokedMethod> InvokedMethods { get; } = [];
+
+    public RefCountTrackMethod(IMemoryManagementActions memoryManagement)
         : base(
-            ReferenceTypeConstants.RcIncrementMethodId,
+            ReferenceTypeConstants.GcTrackMethodId,
             new IlTypeName(typeof(void).FullName!),
             ReferenceTypeConstants.IlNamespace,
             ReferenceTypeConstants.HeaderFileName,
             ReferenceTypeConstants.SourceFileName,
-            new CFunctionName("DntcReferenceTypeBase_Rc_Increment"),
+            new CFunctionName("DntcReferenceTypeBase_Gc_Track"),
             [
                 new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true),
             ])
     {
+        // While untrack won't be called by track, we should include it as an invoked method so the
+        // dependency graph will pick it up. It's much easier to heuristically know that untrack is needed if
+        // track is needed.
+        InvokedMethods = [new CustomInvokedMethod(new RefCountUntrackMethod(memoryManagement))];
+        ReferencedHeaders = memoryManagement.RequiredHeaders;
     }
 
     public override CustomCodeStatementSet? GetCustomDeclaration()

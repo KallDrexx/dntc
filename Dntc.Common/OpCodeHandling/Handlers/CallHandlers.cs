@@ -1,5 +1,4 @@
-﻿using Dntc.Common.Conversion;
-using Dntc.Common.Definitions;
+﻿using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
@@ -98,8 +97,14 @@ public class CallHandlers : IOpCodeHandlerCollection
             var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
             var assignment = new AssignmentStatementSet(tempVariableExpression, methodCallExpression);
 
+            var statements = new List<CStatementSet>([localDeclaration, assignment]);
+            if (returnType.IsReferenceType)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog));
+            }
+
             context.ExpressionStack.Push(tempVariableExpression);
-            return new OpCodeHandlingResult(new CompoundStatementSet([localDeclaration, assignment]));
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         // Otherwise we can just inline the method call.
@@ -120,7 +125,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             {
                 if (methodReference.HasThis)
                 {
-                    // + 1 to include the this parameter.
+                    // + 1 to include the parameter.
                     context.ExpressionStack.Pop(methodReference.Parameters.Count + 1); 
                     // specifically, because System_Object::ctor is excluded.
                     // otherwise it will try to add "return __this at the end.
@@ -211,14 +216,17 @@ public class CallHandlers : IOpCodeHandlerCollection
                     throw new NotSupportedException(message);
                 }
 
-                var createFunction = new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve());
+                var createFunction = new ReferenceTypeAllocationMethod(
+                    context.MemoryManagementActions,
+                    constructor.DeclaringType.Resolve());
+
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
                 var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
                 var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
 
-                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.RcIncrementMethodId);
+                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
                 var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
                 var incrementFnCall = new MethodCallExpression(
                     incrementFnExpression,
@@ -247,8 +255,11 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                extraCalls.Add(new CustomInvokedMethod(new ReferenceTypeAllocationMethod(constructor.DeclaringType.Resolve())));
-                extraCalls.Add(new CustomInvokedMethod(new RefCountIncrementMethod()));
+                extraCalls.Add(new CustomInvokedMethod(
+                    new ReferenceTypeAllocationMethod(context.MemoryManagementActions,
+                        constructor.DeclaringType.Resolve())));
+
+                extraCalls.Add(new CustomInvokedMethod(new RefCountTrackMethod(context.MemoryManagementActions)));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)

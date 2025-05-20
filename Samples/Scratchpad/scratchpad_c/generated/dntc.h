@@ -3,6 +3,7 @@
 
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct DntcReferenceTypeBase {
 	int32_t activeReferenceCount;
@@ -10,6 +11,7 @@ typedef struct DntcReferenceTypeBase {
 
 
 
-void DntcReferenceTypeBase_Rc_Increment(DntcReferenceTypeBase *referenceType);
+void DntcReferenceTypeBase_Gc_Untrack(DntcReferenceTypeBase **referenceType);
+void DntcReferenceTypeBase_Gc_Track(DntcReferenceTypeBase *referenceType);
 
 #endif // DNTC_H_H

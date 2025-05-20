@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -111,7 +112,31 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 ? context.ExpressionStack.Pop(1)[0]
                 : null;
 
-            return new OpCodeHandlingResult(new ReturnStatementSet(innerExpression));
+            var returnStatement = new ReturnStatementSet(innerExpression);
+
+            // If the value being returned is a .net reference type, then we need to mark it as tracked so we
+            // don't accidentally free it.
+            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
+            var statements = new List<CStatementSet>();
+            if (innerExpression?.ResultingType.IsReferenceType == true)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(innerExpression, context.ConversionCatalog));
+            }
+
+            // If any locals are .net reference types, we need to untrack them
+            if (context.ReferenceTypeVariables.Any())
+            {
+                foreach (var variable in context.ReferenceTypeVariables)
+                {
+                    statements.Add(
+                        new GcUntrackFunctionCallStatement(
+                            new VariableValueExpression(variable),
+                            context.ConversionCatalog));
+                }
+            }
+
+            statements.Add(returnStatement);
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

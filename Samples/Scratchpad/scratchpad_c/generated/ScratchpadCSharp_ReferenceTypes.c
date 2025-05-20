@@ -34,8 +34,10 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(int32_t value) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0001 = {0};
 	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
-	DntcReferenceTypeBase_Rc_Increment((DntcReferenceTypeBase*)__temp_0001);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0001, value);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
 	return __temp_0001;
 }
 
@@ -48,6 +50,8 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(Sc
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test(void) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0002 = {0};
 	__temp_0002 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(10);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0002);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
 	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
 }
 

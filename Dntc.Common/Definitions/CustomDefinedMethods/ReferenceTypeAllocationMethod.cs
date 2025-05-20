@@ -18,9 +18,9 @@ namespace Dntc.Common.Definitions.CustomDefinedMethods;
 public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 {
     private readonly TypeDefinition _typeDefinition;
-    private readonly IMemoryManagementActions _memoryManagement = new StandardMemoryManagementActions();
+    private readonly IMemoryManagementActions _memoryManagement;
 
-    public ReferenceTypeAllocationMethod(TypeDefinition typeDefinition) 
+    public ReferenceTypeAllocationMethod(IMemoryManagementActions memoryManagement, TypeDefinition typeDefinition)
         :  base(new IlMethodId(typeDefinition.FullName + "__Create"),
             new IlTypeName(typeDefinition.FullName),
             Utils.GetNamespace(typeDefinition),
@@ -29,7 +29,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             new CFunctionName(Utils.MakeValidCName(typeDefinition.FullName + "__Create")), [])
     {
         _typeDefinition = typeDefinition;
-        ReferencedHeaders = _memoryManagement.RequiredHeaders;
+        _memoryManagement = memoryManagement;
+        ReferencedHeaders = memoryManagement.RequiredHeaders;
 
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
         {

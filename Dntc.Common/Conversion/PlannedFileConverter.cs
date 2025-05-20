@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Conversion.Mutators;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
 using Dntc.Common.Planning;
 using Dntc.Common.Syntax;
@@ -15,16 +16,19 @@ public class PlannedFileConverter
     private readonly ConversionCatalog _conversionCatalog;
     private readonly DefinitionCatalog _definitionCatalog;
     private readonly List<IStatementGenerator> _statementGenerators = [];
-    private readonly bool _debugLogging; 
+    private readonly bool _debugLogging;
+    private readonly IMemoryManagementActions _memoryManagement;
 
     public PlannedFileConverter(
         ConversionCatalog conversionCatalog, 
         DefinitionCatalog definitionCatalog, 
-        bool debugLogging)
+        bool debugLogging,
+        IMemoryManagementActions memoryManagement)
     {
         _conversionCatalog = conversionCatalog;
         _definitionCatalog = definitionCatalog;
         _debugLogging = debugLogging;
+        _memoryManagement = memoryManagement;
     }
 
     public HeaderFile Convert(PlannedHeaderFile plannedHeaderFile)
@@ -168,6 +172,13 @@ public class PlannedFileConverter
                 throw new InvalidOperationException(message);
             }
 
+            var referenceTypeLocalVariables = statements
+                .Flatten()
+                .OfType<LocalDeclarationStatementSet>()
+                .Select(x => x.Variable)
+                .Where(x => x.Type.IsReferenceType)
+                .ToArray();
+
             var startStackSize = expressionStack.Count;
             OpCodeHandlingResult result;
             try
@@ -178,7 +189,9 @@ public class PlannedFileConverter
                     conversionInfo,
                     dotNetDefinedMethod,
                     _conversionCatalog,
-                    _definitionCatalog));
+                    _definitionCatalog,
+                    _memoryManagement,
+                    referenceTypeLocalVariables));
             }
             catch (Exception exception)
             {
