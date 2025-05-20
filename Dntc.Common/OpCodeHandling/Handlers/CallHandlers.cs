@@ -97,20 +97,14 @@ public class CallHandlers : IOpCodeHandlerCollection
             var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
             var assignment = new AssignmentStatementSet(tempVariableExpression, methodCallExpression);
 
-            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
-            var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
-            var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
-            var incrementFnCall = new MethodCallExpression(
-                incrementFnExpression,
-                incrementInfo.Parameters,
-                [tempVariableExpression],
-                voidType);
-
-            var incrementStatement = new VoidExpressionStatementSet(incrementFnCall);
+            var statements = new List<CStatementSet>([localDeclaration, assignment]);
+            if (returnType.IsReferenceType)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog));
+            }
 
             context.ExpressionStack.Push(tempVariableExpression);
-            return new OpCodeHandlingResult(
-                new CompoundStatementSet([localDeclaration, assignment, incrementStatement]));
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         // Otherwise we can just inline the method call.

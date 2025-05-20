@@ -403,7 +403,6 @@ int32_t ScratchpadCSharp_AttributeTests_GetCustomDeclaredField(ScratchpadCSharp_
 int32_t* ScratchpadCSharp_GenericTests_GenericPointerTest(void) {
 	int32_t* __temp_000f = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(int32_t));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000f);
 	(*__temp_000f) = 25;
 	return __temp_000f;
 }
@@ -422,13 +421,10 @@ void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t *input) {
 	int32_t* __temp_0025 = {0};
 	int32_t* __temp_003a = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(int32_t));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000f);
 	input = __temp_000f;
 	__temp_0025 = generic_pointer_return_type_test(sizeof(int32_t));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0025);
 	first = __temp_0025;
 	__temp_003a = generic_pointer_return_type_test(sizeof(int32_t));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_003a);
 	second = __temp_003a;
 	(*input) = ((*first) + (*second));
 	return;
@@ -437,14 +433,12 @@ void ScratchpadCSharp_GenericTests_PointerAssignmentTest(int32_t *input) {
 bool ScratchpadCSharp_GenericTests_PointerNullCheck(void) {
 	ScratchpadCSharp_GenericTests_SimpleStruct* __temp_000f = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(ScratchpadCSharp_GenericTests_SimpleStruct));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000f);
 	return (__temp_000f == ((uint32_t)0));
 }
 
 int32_t ScratchpadCSharp_GenericTests_PointerNullCheck2(void) {
 	ScratchpadCSharp_GenericTests_SimpleStruct* __temp_000f = {0};
 	__temp_000f = generic_pointer_return_type_test(sizeof(ScratchpadCSharp_GenericTests_SimpleStruct));
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000f);
 	if ((__temp_000f == ((uint32_t)0))) {
 		goto ScratchpadCSharp_GenericTests_PointerNullCheck2_IL_001a;
 	}

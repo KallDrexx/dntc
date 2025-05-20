@@ -40,11 +40,12 @@ public class RefCountUntrackMethod : CustomDefinedMethod
 "));
         var referenceTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
         var variable = new Variable(referenceTypeInfo, "singlePointerVariable", true);
+
+        statements.Add(new CustomCodeStatementSet("\t"));
         statements.Add(_memoryManagement.FreeCall(variable, catalog));
 
-        statements.Add(new CustomCodeStatementSet($@"   referenceType = NULL;
-    }}
-"));
+        statements.Add(new CustomCodeStatementSet("\t\t*referenceType = NULL;\n"));
+        statements.Add(new CustomCodeStatementSet("\t}\n"));
 
         return new CompoundStatementSet(statements);
     }

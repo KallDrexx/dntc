@@ -233,6 +233,17 @@ void validate_reference_counting() {
     ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(15);
     assert(parent->base.__reference_type_base.activeReferenceCount == 1);
 
+    // Verify tracking increments as expected
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
+    int32_t count1 = parent->base.__reference_type_base.activeReferenceCount;
+    assert(count1 == 2);
+
+    // Untracking decrements without nulling the pointer
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
+    assert(parent != NULL);
+    int32_t count2 = parent->base.__reference_type_base.activeReferenceCount;
+    assert(count2 == 1);
+
     // Verify untracking nulls out the pointer
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
     assert(parent == NULL);

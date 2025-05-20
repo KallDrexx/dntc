@@ -120,31 +120,18 @@ public class MiscHandlers : IOpCodeHandlerCollection
             var statements = new List<CStatementSet>();
             if (innerExpression?.ResultingType.IsReferenceType == true)
             {
-                var trackMethod = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
-                var fnCall = new MethodCallExpression(
-                    new LiteralValueExpression(trackMethod.NameInC.Value, voidType),
-                    trackMethod.Parameters,
-                    [innerExpression],
-                    voidType);
-
-                statements.Add(new VoidExpressionStatementSet(fnCall));
+                statements.Add(new GcTrackFunctionCallStatement(innerExpression, context.ConversionCatalog));
             }
 
             // If any locals are .net reference types, we need to untrack them
             if (context.ReferenceTypeVariables.Any())
             {
-                var untrackMethod = context.ConversionCatalog.Find(ReferenceTypeConstants.GcUntrackMethodId);
                 foreach (var variable in context.ReferenceTypeVariables)
                 {
-                    var baseType = context.ConversionCatalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
-                    var doublePointerVariable = new LiteralValueExpression($"({baseType.NameInC}**)&{variable.Name}", baseType);
-                    var fnCall = new MethodCallExpression(
-                        new LiteralValueExpression(untrackMethod.NameInC.Value, voidType),
-                        untrackMethod.Parameters,
-                        [doublePointerVariable],
-                        voidType);
-
-                    statements.Add(new VoidExpressionStatementSet(fnCall));
+                    statements.Add(
+                        new GcUntrackFunctionCallStatement(
+                            new VariableValueExpression(variable),
+                            context.ConversionCatalog));
                 }
             }
 
