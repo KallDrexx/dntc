@@ -6,7 +6,7 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 
 public class RefCountTrackMethod : CustomDefinedMethod
 {
-    public sealed override List<InvokedMethod> InvokedMethods { get; } = [];
+    public sealed override List<InvokedMethod> InvokedMethods { get; }
 
     public RefCountTrackMethod(IMemoryManagementActions memoryManagement)
         : base(
@@ -23,7 +23,7 @@ public class RefCountTrackMethod : CustomDefinedMethod
         // While untrack won't be called by track, we should include it as an invoked method so the
         // dependency graph will pick it up. It's much easier to heuristically know that untrack is needed if
         // track is needed.
-        InvokedMethods = [new CustomInvokedMethod(new RefCountUntrackMethod(memoryManagement))];
+        InvokedMethods = [new InvokedMethod(ReferenceTypeConstants.GcUntrackMethodId)];
         ReferencedHeaders = memoryManagement.RequiredHeaders;
     }
 

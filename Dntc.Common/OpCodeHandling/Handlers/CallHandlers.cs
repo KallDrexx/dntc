@@ -259,7 +259,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                     new ReferenceTypeAllocationMethod(context.MemoryManagementActions,
                         constructor.DeclaringType.Resolve())));
 
-                extraCalls.Add(new CustomInvokedMethod(new RefCountTrackMethod(context.MemoryManagementActions)));
+                extraCalls.Add(new InvokedMethod(ReferenceTypeConstants.GcTrackMethodId));
             }
             
             if (GetCallTarget(context.CurrentInstruction) is { } callTarget)
