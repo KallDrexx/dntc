@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 typedef struct DntcReferenceTypeBase {
+void (*PrepForFree)(void* object);
 	int32_t activeReferenceCount;
 } DntcReferenceTypeBase;
 

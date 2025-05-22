@@ -61,6 +61,22 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             _memoryManagement.AllocateCall(variable, typeNameExpression, catalog)
         };
 
+        // Set the prep for free function pointer to the correct function
+        var referenceBaseTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
+        var voidType = catalog.Find(new IlTypeName(typeof(void).FullName!));
+        var cast = new CastExpression(new VariableValueExpression(variable), referenceBaseTypeInfo, true);
+        var fnPointerAccess = new FieldAccessExpression(
+            cast,
+            new Variable(voidType, ReferenceTypeConstants.PrepForFreeFnPointerName.Value, false));
+
+        var prepFnInfo = catalog.Find(
+            ReferenceTypeConstants.PrepTypeToFreeMethodId(
+                new IlTypeName(_typeDefinition.FullName)));
+
+        var prepFnExpression = new LiteralValueExpression(prepFnInfo.NameInC.Value, voidType);
+        var assignment = new AssignmentStatementSet(fnPointerAccess, prepFnExpression);
+        statements.Add(assignment);
+
         var sb = new StringBuilder();
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
         {
