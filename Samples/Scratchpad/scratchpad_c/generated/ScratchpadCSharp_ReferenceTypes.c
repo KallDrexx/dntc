@@ -4,6 +4,14 @@
 #include "dntc.h"
 
 
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* object) {
+	// No cleanup necessary
+}
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* object) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(&(object->base));
+}
+
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this, int32_t a, int32_t b) {
 	return (a + b);
 }

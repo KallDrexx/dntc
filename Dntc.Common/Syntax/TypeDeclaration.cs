@@ -76,7 +76,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                 {
                     if (x > 0) await writer.WriteAsync(", ");
                     var param = methodInfo.Parameters[x];
-                    var paramType = param.ConversionInfo;
+                    var paramInfo = Catalog.Find(param.TypeName);
 
                     string structKeyword = "";
                     if (x == 0)
@@ -85,7 +85,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
                     }
 
                     var pointerSymbol = param.IsReference ? "*" : "";
-                    await writer.WriteAsync($"{structKeyword}{paramType.NameInC}{pointerSymbol} {param.Name}");
+                    await writer.WriteAsync($"{structKeyword}{paramInfo.NameInC}{pointerSymbol} {param.Name}");
                 }
 
                 await writer.WriteLineAsync(");");

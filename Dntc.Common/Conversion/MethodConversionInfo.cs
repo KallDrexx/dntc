@@ -7,11 +7,9 @@ namespace Dntc.Common.Conversion;
 /// </summary>
 public class MethodConversionInfo
 {
-    private readonly ConversionCatalog _conversionCatalog;
+    public record Parameter(IlTypeName TypeName, string Name, bool IsReference);
 
-    public record Parameter(TypeConversionInfo ConversionInfo, string Name, bool IsReference);
-
-    public record Local(TypeConversionInfo ConversionInfo, bool IsReference);
+    public record Local(IlTypeName TypeName, bool IsReference);
     
     public IlMethodId MethodId { get; }
     
@@ -78,15 +76,14 @@ public class MethodConversionInfo
    
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
-        _conversionCatalog = conversionCatalog;
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
-            .Select(x => new Parameter(conversionCatalog.Find(x.Type), x.Name, x.IsReference))
+            .Select(x => new Parameter(x.Type, x.Name, x.IsReference))
             .ToArray();
 
         Locals = method.Locals
-            .Select(x => new Local(conversionCatalog.Find(x.Type), x.IsReference))
+            .Select(x => new Local(x.Type, x.IsReference))
             .ToArray();
 
         switch (method)

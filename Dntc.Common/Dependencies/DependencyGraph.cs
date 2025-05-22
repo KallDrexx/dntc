@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil.Rocks;
 
@@ -173,16 +174,12 @@ public class DependencyGraph
     {
         if (IsInPath(path, typeName))
         {
-            // If this type is a reference type, then we can't allow circular references for now,
-            // (unless the GC strategy later on supports it).
-            var redundantType = definitionCatalog.Get(typeName); // we know it will be found if it's in the path
-            if (redundantType is DotNetDefinedType dotNetDefinedType && !dotNetDefinedType.Definition.IsValueType)
+            if (IsTypeCircularReference(path, typeName))
             {
                 var message = $"A circular dependency was found for the reference type '{typeName.Value}'. Circular " +
                               $"references for reference types are not allowed.";
                 throw new InvalidOperationException(message);
             }
-
 
             return null;
         }
@@ -217,6 +214,23 @@ public class DependencyGraph
             if (typeNode != null)
             {
                 node.Children.Add(typeNode);
+            }
+        }
+
+        // If this is a .net reference type, then we need to add the prep to free call to its dependency graph
+        if (type is DotNetDefinedType dotNetType && !dotNetType.Definition.IsValueType)
+        {
+            var prepMethod = definitionCatalog.Get(ReferenceTypeConstants.PrepTypeToFreeMethodId(type.IlName));
+            if (prepMethod == null)
+            {
+                prepMethod = new PrepToFreeDefinedMethod(dotNetType);
+                definitionCatalog.Add([prepMethod]);
+            }
+
+            var prepNode = CreateNode(definitionCatalog, prepMethod.Id, path);
+            if (prepNode != null)
+            {
+                node.Children.Add(prepNode);
             }
         }
 
@@ -305,6 +319,24 @@ public class DependencyGraph
         foreach (var node in path)
         {
             if (node is FieldNode globalNode && globalNode.FieldId == id)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsTypeCircularReference(List<Node> path, IlTypeName id)
+    {
+        for (var x = path.Count - 1; x >= 0; x--)
+        {
+            if (path[x] is not TypeNode typeNode)
+            {
+                return false;
+            }
+
+            if (typeNode.TypeName == id)
             {
                 return true;
             }

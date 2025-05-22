@@ -23,7 +23,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
         ReferencedHeaders = memoryManagement.RequiredHeaders;
     }
 
-    public override CustomCodeStatementSet? GetCustomDeclaration()
+    public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
         return new CustomCodeStatementSet(
             $"void {NativeName}({ReferenceTypeConstants.ReferenceTypeBaseName} **referenceType)");

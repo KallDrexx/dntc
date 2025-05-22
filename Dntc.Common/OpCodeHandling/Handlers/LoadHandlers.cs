@@ -223,7 +223,8 @@ public class LoadHandlers : IOpCodeHandlerCollection
             }
 
             var parameter = context.CurrentMethodConversion.Parameters[index];
-            var variable = new Variable(parameter.ConversionInfo, parameter.Name, parameter.IsReference);
+            var parameterInfo = context.ConversionCatalog.Find(parameter.TypeName);
+            var variable = new Variable(parameterInfo, parameter.Name, parameter.IsReference);
             CBaseExpression newExpression = new VariableValueExpression(variable);
             if (loadAddress)
             {
@@ -358,11 +359,12 @@ public class LoadHandlers : IOpCodeHandlerCollection
             }
 
             var local = context.CurrentMethodConversion.Locals[localIndex];
+            var localInfo = context.ConversionCatalog.Find(local.TypeName);
             var expression = new VariableValueExpression(
                 new Variable(
-                    local.ConversionInfo,
+                    localInfo,
                     Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
-                    local.IsReference || local.ConversionInfo.IlName.IsPointer()));
+                    local.IsReference || localInfo.IlName.IsPointer()));
 
             CBaseExpression newExpression = getAddress
                 ? new AddressOfValueExpression(expression)

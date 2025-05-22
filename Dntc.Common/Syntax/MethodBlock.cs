@@ -13,7 +13,7 @@ public class MethodBlock
 
     public MethodBlock(
         MethodConversionInfo method, 
-        IReadOnlyList<CStatementSet> statements, 
+        IReadOnlyList<CStatementSet> statements,
         MethodDeclaration declaration)
     {
         _methodConversionInfo = method;

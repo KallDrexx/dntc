@@ -43,7 +43,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
     public sealed override List<InvokedMethod> InvokedMethods { get; } = [];
 
-    public override CustomCodeStatementSet? GetCustomDeclaration()
+    public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
         var typeName = Utils.MakeValidCName(_typeDefinition.FullName);
         
@@ -74,9 +74,10 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                 if (targetMethod != null)
                 {
                     var thisExpression = targetMethod.Parameters[0];
+                    var thisExpressionInfo = catalog.Find(thisExpression.TypeName);
 
                     sb.Clear();
-                    sb.Append($"\t(({thisExpression.ConversionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
+                    sb.Append($"\t(({thisExpressionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
 
                     var methodInfo = targetMethod;
                     sb.Append($"{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
@@ -85,7 +86,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                     {
                         if (x > 0) sb.Append(", ");
                         var param = methodInfo.Parameters[x];
-                        var paramType = param.ConversionInfo;
+                        var paramInfo = catalog.Find(param.TypeName);
+                        var paramType = paramInfo;
 
                         var pointerSymbol = param.IsReference ? "*" : "";
                         sb.Append($"{paramType.NameInC}{pointerSymbol}");
@@ -120,7 +122,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             {
                 if (catalog.TryFind(new IlMethodId(method.FullName), out var c))
                 {
-                    if (sourceMethod.SignatureCompatibleWith(c))
+                    if (sourceMethod.SignatureCompatibleWith(c, catalog))
                     {
                         return c;
                     }

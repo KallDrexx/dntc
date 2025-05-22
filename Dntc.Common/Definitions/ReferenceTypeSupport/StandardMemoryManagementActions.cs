@@ -21,14 +21,15 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
         var callocCall = new MethodCallExpression(
             new LiteralValueExpression("calloc", variableToAllocate.Type),
             [
-                new MethodConversionInfo.Parameter(intType, "n", false),
-                new MethodConversionInfo.Parameter(intType, "size", false)
+                new MethodConversionInfo.Parameter(intType.IlName, "n", false),
+                new MethodConversionInfo.Parameter(intType.IlName, "size", false)
             ],
             [
                 new LiteralValueExpression("1", intType),
                 new LiteralValueExpression($"sizeof({cTypeName.Value})", intType)
             ],
-            variableToAllocate.Type);
+            variableToAllocate.Type,
+            conversionCatalog);
 
         var assignment = new AssignmentStatementSet(variableValueExpression, callocCall);
 
@@ -40,9 +41,10 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
         var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var freeCall = new MethodCallExpression(
             new LiteralValueExpression("free", voidType),
-            [new MethodConversionInfo.Parameter(variableToFree.Type, "ptr", true)],
+            [new MethodConversionInfo.Parameter(variableToFree.Type.IlName, "ptr", true)],
             [new VariableValueExpression(variableToFree)],
-            voidType);
+            voidType,
+            conversionCatalog);
 
         return new VoidExpressionStatementSet(freeCall);
     }

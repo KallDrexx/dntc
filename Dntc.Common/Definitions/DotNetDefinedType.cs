@@ -6,7 +6,6 @@ namespace Dntc.Common.Definitions;
 public class DotNetDefinedType : DefinedType
 {
     public TypeDefinition Definition { get; }
-    
     public ModuleDefinition DefinedModule { get; }
     public IlNamespace Namespace { get; }
 
@@ -29,13 +28,15 @@ public class DotNetDefinedType : DefinedType
             .Select(ConvertToField)
             .ToArray();
 
+        Methods = definition.Methods
+            .Select(x => new IlMethodId(x.FullName))
+            .ToArray();
+
         if (!definition.IsValueType)
         {
             // If this is a class reference type, we need to add the parent classes to its inheritance chain
-            if (definition.BaseType != null &&
-                definition.BaseType.FullName != typeof(object).FullName &&
-                definition.BaseType.FullName != typeof(ValueType).FullName &&
-                definition.BaseType.FullName != typeof(Enum).FullName)
+            var baseType = Utils.GetNonSystemBaseType(definition);
+            if (baseType != null)
             {
                 var baseTypeName = new IlTypeName(definition.BaseType.FullName);
 
@@ -54,10 +55,6 @@ public class DotNetDefinedType : DefinedType
                     .ToArray();
             }
         }
-
-        Methods = definition.Methods
-            .Select(x => new IlMethodId(x.FullName))
-            .ToArray();
     }
 
     private static Field ConvertToField(FieldDefinition fieldDefinition)

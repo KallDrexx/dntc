@@ -1,5 +1,4 @@
 ﻿using Dntc.Common.Conversion;
-using Dntc.Common.Definitions;
 
 namespace Dntc.Common.Syntax.Expressions;
 
@@ -8,6 +7,7 @@ public record MethodCallExpression(
     IReadOnlyList<MethodConversionInfo.Parameter> Parameters,
     IReadOnlyList<CBaseExpression> Arguments,
     TypeConversionInfo ReturnType,
+    ConversionCatalog Catalog,
     bool IsVirtualCall = false)
     : CBaseExpression(ReturnType.IsPointer)
 {
@@ -19,7 +19,8 @@ public record MethodCallExpression(
         {
             var thisExpression = Arguments[0];
             var targetExpression = Parameters[0];
-            await writer.WriteAsync($"(({targetExpression.ConversionInfo.NativeNameWithPointer()})");
+            var targetExpressionInfo = Catalog.Find(targetExpression.TypeName);
+            await writer.WriteAsync($"(({targetExpressionInfo.NativeNameWithPointer()})");
             await thisExpression.WriteCodeStringAsync(writer);
             await writer.WriteAsync(")->");
             await FnExpression.WriteCodeStringAsync(writer);
@@ -44,10 +45,10 @@ public record MethodCallExpression(
         {
             if (x > 0) await writer.WriteAsync(", ");
 
-            if (Parameters[x].IsReference &&
-                Parameters[x].ConversionInfo.NameInC != Arguments[x].ResultingType.NameInC)
+            var paramInfo = Catalog.Find(Parameters[x].TypeName);
+            if (Parameters[x].IsReference && paramInfo.NameInC != Arguments[x].ResultingType.NameInC)
             {
-                await writer.WriteAsync($"({Parameters[x].ConversionInfo.NameInC}*)");
+                await writer.WriteAsync($"({paramInfo.NameInC}*)");
             }
 
             var param = Arguments[x];

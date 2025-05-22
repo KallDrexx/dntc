@@ -221,7 +221,10 @@ public static class Utils
         return false;
     }
     
-    public static bool SignatureCompatibleWith(this MethodConversionInfo method, MethodConversionInfo other)
+    public static bool SignatureCompatibleWith(
+        this MethodConversionInfo method,
+        MethodConversionInfo other,
+        ConversionCatalog catalog)
     {
         // Names must match
         if (method.Name != other.Name)
@@ -236,10 +239,12 @@ public static class Utils
             return false;
         
         // Parameter types must match
-        for (int i = 0; i < method.Parameters.Count; i++)
+        for (var i = 0; i < method.Parameters.Count; i++)
         {
-            if (method.Parameters[i].ConversionInfo.OriginalTypeDefinition is DotNetDefinedType t1 && other
-                .Parameters[i].ConversionInfo.OriginalTypeDefinition is DotNetDefinedType t2)
+            var methodParamInfo = catalog.Find(method.Parameters[i].TypeName);
+            var otherParamInfo = catalog.Find(other.Parameters[i].TypeName);
+            if (methodParamInfo.OriginalTypeDefinition is DotNetDefinedType t1 &&
+                otherParamInfo.OriginalTypeDefinition is DotNetDefinedType t2)
             {
                 if (t1.IlName == t2.IlName)
                 {
@@ -254,5 +259,20 @@ public static class Utils
         }
 
         return false;
+    }
+
+    public static TypeReference? GetNonSystemBaseType(TypeDefinition type)
+    {
+        if (type.BaseType == null)
+        {
+            return null;
+        }
+
+        if (type.BaseType.Namespace.StartsWith("System"))
+        {
+            return null;
+        }
+
+        return type.BaseType;
     }
 }

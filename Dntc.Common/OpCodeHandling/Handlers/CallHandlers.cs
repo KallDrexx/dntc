@@ -15,14 +15,14 @@ public class CallHandlers : IOpCodeHandlerCollection
     /// Methods that should not be executed and be bypassed.
     /// </summary>
     private static readonly HashSet<IlMethodId> IgnoredMethods =
-        [
-            // GetTypeFromHandle comes from a `typeof()` expression and usually follows a
-            // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
-            // type, we don't need this intermediary step.
-            new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
-            new IlMethodId("System.Void System.Object::.ctor()")
+    [
+        // GetTypeFromHandle comes from a `typeof()` expression and usually follows a
+        // `ldtoken` op code. Since the `ldtoken` will translate the call directly to the
+        // type, we don't need this intermediary step.
+        new IlMethodId("System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)"),
+        new IlMethodId("System.Void System.Object::.ctor()")
             
-        ];
+    ];
 
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
@@ -77,7 +77,13 @@ public class CallHandlers : IOpCodeHandlerCollection
             .ToArray();
 
         var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
-        var methodCallExpression = new MethodCallExpression(fnExpression, conversionInfo.Parameters, arguments, returnType, isVirtualCall);
+        var methodCallExpression = new MethodCallExpression(
+            fnExpression,
+            conversionInfo.Parameters,
+            arguments,
+            returnType,
+            context.ConversionCatalog,
+            isVirtualCall);
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -164,7 +170,13 @@ public class CallHandlers : IOpCodeHandlerCollection
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
             var returnType = context.ConversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
             
-            var expression = new MethodCallExpression(fnPointerExpression, context.CurrentMethodConversion.Parameters, argumentsInCallingOrder, returnType);
+            var expression = new MethodCallExpression(
+                fnPointerExpression,
+                context.CurrentMethodConversion.Parameters,
+                argumentsInCallingOrder,
+                returnType,
+                context.ConversionCatalog);
+
             if (ReturnsVoid(callSite.ReturnType))
             {
                 var statement = new VoidExpressionStatementSet(expression);
@@ -222,7 +234,13 @@ public class CallHandlers : IOpCodeHandlerCollection
 
                 var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
                 var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
-                var createFnCall = new MethodCallExpression(createFnExpression, createFunctionInfo.Parameters, [], objType);
+                var createFnCall = new MethodCallExpression(
+                    createFnExpression,
+                    createFunctionInfo.Parameters,
+                    [],
+                    objType,
+                    context.ConversionCatalog);
+
                 var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
 
@@ -232,13 +250,20 @@ public class CallHandlers : IOpCodeHandlerCollection
                     incrementFnExpression,
                     incrementInfo.Parameters,
                     [variableExpression],
-                    voidType);
+                    voidType,
+                    context.ConversionCatalog);
 
                 statements.Add(new VoidExpressionStatementSet(incrementFnCall));
             }
 
             var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
-            var methodCall = new MethodCallExpression(fnExpression, constructorInfo.Parameters, argumentsInCallingOrder, voidType);
+            var methodCall = new MethodCallExpression(
+                fnExpression,
+                constructorInfo.Parameters,
+                argumentsInCallingOrder,
+                voidType,
+                context.ConversionCatalog);
+
             var methodCallStatement = new VoidExpressionStatementSet(methodCall);
             
             statements.Add(methodCallStatement);

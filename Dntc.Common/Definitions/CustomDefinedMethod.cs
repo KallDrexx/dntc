@@ -36,7 +36,7 @@ public abstract class CustomDefinedMethod : DefinedMethod
         HasImplementation = hasImplementation;
     }
 
-    public abstract CustomCodeStatementSet? GetCustomDeclaration();
+    public abstract CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog);
 
     public abstract CStatementSet? GetCustomImplementation(ConversionCatalog catalog);
 

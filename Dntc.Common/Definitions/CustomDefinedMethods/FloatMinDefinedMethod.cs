@@ -20,7 +20,7 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
     {
     }
 
-    public override CustomCodeStatementSet? GetCustomDeclaration()
+    public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
         const string content = @"
 static float dn_min_float(float first, float second){{

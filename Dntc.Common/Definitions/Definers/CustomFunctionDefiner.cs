@@ -62,7 +62,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             IsMacroDefinition = declaration.StartsWith("#define "); // kind of a hack
         }
 
-        public override CustomCodeStatementSet? GetCustomDeclaration()
+        public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
         {
             return new CustomCodeStatementSet(_declaration);
         }

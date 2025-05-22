@@ -65,7 +65,7 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
 
     private async Task WriteAsync(StreamWriter writer, CustomDefinedMethod customDefinedMethod)
     {
-        var customCode = customDefinedMethod.GetCustomDeclaration();
+        var customCode = customDefinedMethod.GetCustomDeclaration(Catalog);
         if (customCode != null)
         {
             await customCode.WriteAsync(writer);

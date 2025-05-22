@@ -241,8 +241,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
 
             var argument = context.CurrentMethodConversion.Parameters[argIndex];
+            var argumentInfo = context.ConversionCatalog.Find(argument.TypeName);
             var storedVariableExpression = new VariableValueExpression(
-                new Variable(argument.ConversionInfo, argument.Name, argument.IsReference));
+                new Variable(argumentInfo, argument.Name, argument.IsReference));
 
             var statement = new AssignmentStatementSet(storedVariableExpression, value);
 
@@ -293,8 +294,9 @@ public class StoreHandlers : IOpCodeHandlerCollection
             }
 
             var local = context.CurrentMethodConversion.Locals[localIndex];
+            var localInfo = context.ConversionCatalog.Find(local.TypeName);
             var localVariable = new VariableValueExpression(
-                new Variable(local.ConversionInfo, Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex), local.IsReference));
+                new Variable(localInfo, Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex), local.IsReference));
 
             CBaseExpression left, right;
             if (items[0].ProducesAPointer && localVariable.ProducesAPointer)

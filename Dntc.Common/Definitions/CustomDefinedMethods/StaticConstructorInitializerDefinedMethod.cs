@@ -29,7 +29,7 @@ public class StaticConstructorInitializerDefinedMethod : CustomDefinedMethod
     {
     }
     
-    public override CustomCodeStatementSet GetCustomDeclaration()
+    public override CustomCodeStatementSet GetCustomDeclaration(ConversionCatalog catalog)
     {
         return new CustomCodeStatementSet($"void {FunctionName}(void)");
     }

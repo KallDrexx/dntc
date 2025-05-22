@@ -11,4 +11,9 @@ public class ReferenceTypeConstants
     public static CFieldName ReferenceTypeBaseFieldName = new("__reference_type_base");
     public static IlMethodId GcTrackMethodId = new($"System.Void {ReferenceTypeBaseId}.GcTrack");
     public static IlMethodId GcUntrackMethodId = new($"System.Void {ReferenceTypeBaseId}.GcUntrack");
+
+    public static IlMethodId PrepTypeToFreeMethodId(IlTypeName typeToTrack)
+    {
+        return new IlMethodId($"{typeof(void).FullName} {typeToTrack}.__PrepForFree()");
+    }
 }
