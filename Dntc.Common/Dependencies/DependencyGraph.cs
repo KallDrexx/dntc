@@ -1,4 +1,5 @@
-﻿using Dntc.Common.Definitions;
+﻿using System.Text;
+using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil.Rocks;
@@ -176,8 +177,10 @@ public class DependencyGraph
         {
             if (IsTypeCircularReference(path, typeName))
             {
-                var message = $"A circular dependency was found for the reference type '{typeName.Value}'. Circular " +
-                              $"references for reference types are not allowed.";
+                var pathString = GetPathString(path.Concat([new TypeNode(typeName, false)]).ToArray());
+                var message = $"A circular type dependency was found, but circular type references are not allowed. " +
+                              $"Path is: \n{pathString}";
+
                 throw new InvalidOperationException(message);
             }
 
@@ -329,11 +332,18 @@ public class DependencyGraph
 
     private static bool IsTypeCircularReference(List<Node> path, IlTypeName id)
     {
+        // We have a circular reference only if the gap between the duplicates contains types
+        // and fields. Method nodes don't count
         for (var x = path.Count - 1; x >= 0; x--)
         {
-            if (path[x] is not TypeNode typeNode)
+            if (path[x] is MethodNode)
             {
                 return false;
+            }
+
+            if (path[x] is not TypeNode typeNode)
+            {
+                continue;
             }
 
             if (typeNode.TypeName == id)
@@ -343,5 +353,24 @@ public class DependencyGraph
         }
 
         return false;
+    }
+
+    private static string GetPathString(IReadOnlyList<Node> path)
+    {
+        var builder = new StringBuilder();
+        foreach (var node in path)
+        {
+            var nodeString = node switch
+            {
+                MethodNode methodNode => $"Method: {methodNode.MethodId.Value}",
+                TypeNode typeNode => $"Type: {typeNode.TypeName.Value}",
+                FieldNode fieldNode => $"Field: {fieldNode.FieldId.Value}",
+                _ => throw new NotSupportedException(node.GetType().FullName),
+            };
+
+            builder.AppendLine($"\t{nodeString}");
+        }
+
+        return builder.ToString();
     }
 }

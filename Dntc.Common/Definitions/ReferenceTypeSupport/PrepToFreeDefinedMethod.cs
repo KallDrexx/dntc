@@ -46,6 +46,8 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             statements.Add(
                 new CustomCodeStatementSet(
                     $"\t{untrackMethod.NameInC}(({ReferenceTypeConstants.ReferenceTypeBaseName}**)&object->{fieldInfo.NameInC});"));
+
+            statements.Add(new CustomCodeStatementSet("\n")); // Need to come up with a better white space strategy
         }
 
         var baseType = Utils.GetNonSystemBaseType(_dotNetType.Definition);
