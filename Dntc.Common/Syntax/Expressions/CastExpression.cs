@@ -5,7 +5,11 @@ namespace Dntc.Common.Syntax.Expressions;
 /// <summary>
 /// Casts the result of the expression to the specified type.
 /// </summary>
-public record CastExpression(CBaseExpression Expression, TypeConversionInfo CastTo) : CBaseExpression(CastTo.IsPointer)
+public record CastExpression(
+    CBaseExpression Expression,
+    TypeConversionInfo CastTo,
+    bool ForceCastToPointer = false)
+    : CBaseExpression(ForceCastToPointer || CastTo.IsPointer)
 {
     // NOTE: Not sure if we need to determine if the type we are casting to is a pointer or not. This
     // all depends on how reference types end up looking.
@@ -14,7 +18,13 @@ public record CastExpression(CBaseExpression Expression, TypeConversionInfo Cast
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)
     {
-        await writer.WriteAsync($"(({CastTo.NativeNameWithPossiblePointer()})");
+        var nativeName = CastTo.NameInC.Value;
+        if (ForceCastToPointer || CastTo.IsPointer)
+        {
+            nativeName = $"{nativeName}*";
+        }
+
+        await writer.WriteAsync($"(({nativeName})");
         await Expression.WriteCodeStringAsync(writer);
         await writer.WriteAsync(")");
     }

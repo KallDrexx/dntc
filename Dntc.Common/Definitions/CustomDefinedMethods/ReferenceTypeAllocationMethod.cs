@@ -61,6 +61,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             _memoryManagement.AllocateCall(variable, typeNameExpression, catalog)
         };
 
+        AssignPrepPointer(catalog, variable, statements);
+
         var sb = new StringBuilder();
         foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
         {
@@ -111,7 +113,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
         return new CompoundStatementSet(statements);
     }
-    
+
     private MethodConversionInfo? FindMatchingMethodInBaseTypes(ConversionCatalog catalog, MethodConversionInfo sourceMethod, TypeDefinition startingBaseType)
     {
         var currentBaseType = startingBaseType;
@@ -135,5 +137,19 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     
         // If we've gone through all base types and found nothing
         return null;
+    }
+
+    private void AssignPrepPointer(ConversionCatalog catalog, Variable variable, List<CStatementSet> statements)
+    {
+        // Set the prep for free function pointer to the correct function
+        // We can't use expressions since we would need a custom type info for the pointer type
+        var referenceBaseTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
+        var prepFnInfo = catalog.Find(
+            ReferenceTypeConstants.PrepTypeToFreeMethodId(
+                new IlTypeName(_typeDefinition.FullName)));
+
+        statements.Add(
+            new CustomCodeStatementSet(
+                $"\t((({referenceBaseTypeInfo.NameInC}*)result)->PrepForFree) = (void (*)(void*)){prepFnInfo.NameInC};\n"));
     }
 }

@@ -39,13 +39,16 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             .Select(x => new IlFieldId(x.FullName))
             .ToArray();
 
-        var untrackMethod = catalog.Find(ReferenceTypeConstants.GcUntrackMethodId);
+        var thisTypeInfo = catalog.Find(_dotNetType.IlName);
+        var objectVariable = new Variable(thisTypeInfo, "object", true);
+        var objectVariableExpression = new VariableValueExpression(objectVariable);
         foreach (var field in referenceTypeFields)
         {
             var fieldInfo = catalog.Find(field);
-            statements.Add(
-                new CustomCodeStatementSet(
-                    $"\t{untrackMethod.NameInC}(({ReferenceTypeConstants.ReferenceTypeBaseName}**)&object->{fieldInfo.NameInC});"));
+            var fieldVariable = new Variable(fieldInfo.FieldTypeConversionInfo, fieldInfo.NameInC.Value, true);
+            var fieldAccess = new FieldAccessExpression(objectVariableExpression, fieldVariable);
+            statements.Add(new GcUntrackFunctionCallStatement(fieldAccess, catalog));
+            statements.Add(new CustomCodeStatementSet("\n")); // Need to come up with a better white space strategy
         }
 
         var baseType = Utils.GetNonSystemBaseType(_dotNetType.Definition);
