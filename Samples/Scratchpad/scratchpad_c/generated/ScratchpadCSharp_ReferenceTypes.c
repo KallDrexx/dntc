@@ -25,7 +25,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_Sum(Scratc
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create(void) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* result = {0};
 	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent));
-	(((DntcReferenceTypeBase*)result)->PrepForFree) = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree;
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree;
 	((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)result)->ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum = (int32_t (*)(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*, int32_t, int32_t))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_Sum;
 	return result;
 }

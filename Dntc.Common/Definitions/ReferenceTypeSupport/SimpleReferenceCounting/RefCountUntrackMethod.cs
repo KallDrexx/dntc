@@ -41,6 +41,12 @@ public class RefCountUntrackMethod : CustomDefinedMethod
         var referenceTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
         var variable = new Variable(referenceTypeInfo, "singlePointerVariable", true);
 
+        // TODO: Find a way to generalize this so it doesn't have to be manually included
+        // in every RC implementation.
+        statements.Add(
+            new CustomCodeStatementSet(
+                "\t\tsinglePointerVariable->PrepForFree(singlePointerVariable);\n"));
+
         statements.Add(new CustomCodeStatementSet("\t"));
         statements.Add(_memoryManagement.FreeCall(variable, catalog));
 

@@ -32,7 +32,7 @@ public class ReferenceTypeBaseDefinedType : CustomDefinedType
     {
         var code = new StringBuilder();
         code.AppendLine($"typedef struct {NativeName} {{");
-        code.AppendLine($"void (*{ReferenceTypeConstants.PrepForFreeFnPointerName})(void* object);");
+        code.AppendLine($"\tvoid (*{ReferenceTypeConstants.PrepForFreeFnPointerName})(void* object);");
 
         foreach (var field in InstanceFields)
         {
