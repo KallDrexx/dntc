@@ -67,7 +67,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var field = reference.Resolve();
             var fieldConversionInfo = context.ConversionCatalog.Find(new IlFieldId(field.FullName));
 
-            CompoundStatementSet statement;
+            var statements = new List<CStatementSet>();
             if (field.IsStatic)
             {
                 var items = context.ExpressionStack.Pop(1);
@@ -91,9 +91,12 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     left,
                     context.CurrentInstruction.Offset);
 
-                statement = referenceReplacements != null
-                    ? new CompoundStatementSet([referenceReplacements, assignment])
-                    : new CompoundStatementSet([assignment]);
+                if (referenceReplacements != null)
+                {
+                    statements.Add(referenceReplacements);
+                }
+
+                statements.Add(assignment);
             }
             else
             {
@@ -104,15 +107,21 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var left = GetFieldAccessExpression(field, fieldConversionInfo, obj, context);
                 var right = value;
 
+                if (left.ResultingType.IsReferenceType)
+                {
+                    statements.Add(new GcUntrackIfNotNullStatementSet(left, context.ConversionCatalog));
+                    statements.Add(new GcTrackFunctionCallStatement(left, context.ConversionCatalog));
+                }
+
                 // I think this might need to handle referenced variable replacement but using field access expression
                 // instead of variable value expressions. I can't get a good use case to reproduce it though, so
                 // I'm going to leave it as is for now pending a good test case. In most test cases I've tried, the
                 // field loading does not tend to use the dup trick that static fields use to keep a hanging reference
                 // on the evaluation stack.
-                statement = new CompoundStatementSet([new AssignmentStatementSet(left, right)]);
+                statements.Add(new AssignmentStatementSet(left, right));
             }
 
-            return new OpCodeHandlingResult(statement);
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

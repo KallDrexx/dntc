@@ -45,7 +45,7 @@ public record TypeDeclaration(TypeConversionInfo TypeConversion, DefinedType Typ
             {
                 if (Catalog.TryFind(new IlTypeName(dotNetDefinedType.Definition.BaseType.FullName), out var baseType))
                 {
-                    await writer.WriteLineAsync($"\t{baseType.NativeNameWithPossiblePointer()} base;");
+                    await writer.WriteLineAsync($"\t{baseType.NameInC} base;");
                 }
             }
         }

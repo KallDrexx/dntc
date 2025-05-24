@@ -130,7 +130,7 @@ public static class Utils
 
     public static string NativeNameWithPossiblePointer(this TypeConversionInfo typeInfo)
     {
-        return typeInfo.IsPointer
+        return typeInfo.IsPointer || typeInfo.IsReferenceType
             ? $"{typeInfo.NameInC}*"
             : typeInfo.NameInC.Value;
     }

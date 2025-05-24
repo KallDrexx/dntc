@@ -235,16 +235,30 @@ void validate_reference_counting() {
 
     // Verify tracking increments as expected
     DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
-    int32_t count1 = parent->base.__reference_type_base.activeReferenceCount;
-    assert(count1 == 2);
+    assert(parent->base.__reference_type_base.activeReferenceCount == 2);
 
-    // Untracking decrements without nulling the pointer
+    // Inner class isn't incremented by tracking root
+    assert(parent->InnerClassInstance->__reference_type_base.activeReferenceCount == 1);
+
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* inner = parent->InnerClassInstance;
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner);
+    assert(inner->__reference_type_base.activeReferenceCount == 2);
+
+    // Untracking decrements without null-ing the pointer
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
     assert(parent != NULL);
-    int32_t count2 = parent->base.__reference_type_base.activeReferenceCount;
-    assert(count2 == 1);
+    assert(parent->base.__reference_type_base.activeReferenceCount == 1);
+
+    // Inner class isn't incremented by tracking root
+    assert(parent->InnerClassInstance->__reference_type_base.activeReferenceCount == 2);
 
     // Verify untracking nulls out the pointer
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
     assert(parent == NULL);
+
+    // Inner object is still valid with one less track
+    assert(inner->__reference_type_base.activeReferenceCount == 1);
+
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
+    assert(inner == NULL);
 }

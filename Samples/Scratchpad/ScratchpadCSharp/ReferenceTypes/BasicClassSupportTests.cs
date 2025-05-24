@@ -16,24 +16,33 @@ public static class BasicClassSupportTests
             return BaseField;
         }
     }
-    
+
     public class Parent : ParentBase
     {
         public int FieldValue;
-
+        public InnerClass InnerClassInstance;
         public int FieldValueViaProperty => FieldValue;
 
         public Parent(int value)
         {
             FieldValue = value;
+            InnerClassInstance = new InnerClass
+            {
+                TestValue = value,
+            };
         }
 
         public override int Sum(int a, int b)
         {
             var result = base.Sum(a, b);
-            
+
             return FieldValue + result;
         }
+    }
+
+    public class InnerClass
+    {
+        public int TestValue;
     }
 
     public static int Test()

@@ -4,11 +4,17 @@
 #include "dntc.h"
 
 
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object) {
+	// No cleanup necessary
+}
+
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* object) {
 	// No cleanup necessary
 }
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* object) {
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(object->InnerClassInstance));
+
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(&(object->base));
 }
 
@@ -34,9 +40,32 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor(Scr
 	return;
 }
 
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree;
+	return result;
+}
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *__this) {
+	return;
+}
+
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *__this, int32_t value) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* __temp_000e = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)__this);
 	(__this->FieldValue) = value;
+	__temp_000e = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000e);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_000e);
+	(__temp_000e->TestValue) = value;
+	if ((__this->InnerClassInstance) != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(__this->InnerClassInstance));
+
+	}
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(__this->InnerClassInstance));
+	(__this->InnerClassInstance) = __temp_000e;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
 	return;
 }
 
