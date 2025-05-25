@@ -110,7 +110,6 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 if (left.ResultingType.IsReferenceType)
                 {
                     statements.Add(new GcUntrackIfNotNullStatementSet(left, context.ConversionCatalog));
-                    statements.Add(new GcTrackFunctionCallStatement(left, context.ConversionCatalog));
                 }
 
                 // I think this might need to handle referenced variable replacement but using field access expression
@@ -119,6 +118,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 // field loading does not tend to use the dup trick that static fields use to keep a hanging reference
                 // on the evaluation stack.
                 statements.Add(new AssignmentStatementSet(left, right));
+
+                if (left.ResultingType.IsReferenceType)
+                {
+                    statements.Add(new GcTrackFunctionCallStatement(left, context.ConversionCatalog));
+                }
             }
 
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));
