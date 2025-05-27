@@ -7,7 +7,7 @@ namespace Dntc.Common.Syntax.Expressions;
 /// </summary>
 public abstract record CBaseExpression
 {
-    public bool ProducesAPointer { get; }
+    public bool ProducesAPointer { get; protected set; }
     public abstract TypeConversionInfo ResultingType { get; }
     
     protected CBaseExpression(bool producesAPointer)

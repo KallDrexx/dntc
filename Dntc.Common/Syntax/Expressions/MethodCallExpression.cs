@@ -2,15 +2,47 @@
 
 namespace Dntc.Common.Syntax.Expressions;
 
-public record MethodCallExpression(
-    CBaseExpression FnExpression,
-    IReadOnlyList<MethodConversionInfo.Parameter> Parameters,
-    IReadOnlyList<CBaseExpression> Arguments,
-    TypeConversionInfo ReturnType,
-    ConversionCatalog Catalog,
-    bool IsVirtualCall = false)
-    : CBaseExpression(ReturnType.IsPointer)
+public record MethodCallExpression : CBaseExpression
 {
+    private CBaseExpression FnExpression { get; set; }
+    private IReadOnlyList<MethodConversionInfo.Parameter> Parameters { get; }
+    private IReadOnlyList<CBaseExpression> Arguments { get; }
+    private TypeConversionInfo ReturnType { get; }
+    private ConversionCatalog Catalog { get; }
+    public bool IsVirtualCall { get; set;  }
+
+    public MethodCallExpression(
+        IlMethodId method,
+        ConversionCatalog catalog,
+        params CBaseExpression[] arguments) : base(false)
+    {
+        Catalog = catalog;
+        Arguments = arguments;
+
+        var functionInfo = catalog.Find(method);
+        FnExpression = new LiteralValueExpression(functionInfo.NameInC.Value, functionInfo.ReturnTypeInfo);
+        Parameters = functionInfo.Parameters;
+        ReturnType = functionInfo.ReturnTypeInfo;
+        IsVirtualCall = false;
+    }
+
+    public MethodCallExpression(
+        CBaseExpression fnExpression,
+        IReadOnlyList<MethodConversionInfo.Parameter> parameters,
+        IReadOnlyList<CBaseExpression> arguments,
+        TypeConversionInfo returnType,
+        ConversionCatalog catalog,
+        bool isVirtualCall = false
+    ) : base(returnType.IsPointer)
+    {
+        FnExpression = fnExpression;
+        Parameters = parameters;
+        Arguments = arguments;
+        Catalog = catalog;
+        IsVirtualCall = isVirtualCall;
+        ReturnType = returnType;
+    }
+
     public override TypeConversionInfo ResultingType => ReturnType;
 
     public override async ValueTask WriteCodeStringAsync(StreamWriter writer)

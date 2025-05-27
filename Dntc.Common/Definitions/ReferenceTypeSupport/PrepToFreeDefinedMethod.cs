@@ -55,17 +55,10 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
         if (baseType != null)
         {
             var baseTypeInfo = catalog.Find(new IlTypeName(baseType.FullName));
-            var voidType = catalog.Find(new IlTypeName(typeof(void).FullName!));
-            var prepMethod = catalog.Find(ReferenceTypeConstants.PrepTypeToFreeMethodId(baseTypeInfo.IlName));
-            var fnExpression = new LiteralValueExpression(prepMethod.NameInC.Value, voidType);
             var methodCall = new MethodCallExpression(
-                fnExpression,
-                prepMethod.Parameters,
-                [
-                    new LiteralValueExpression($"&(object->base)", baseTypeInfo),
-                ],
-                voidType,
-                catalog);
+                ReferenceTypeConstants.PrepTypeToFreeMethodId(baseTypeInfo.IlName),
+                catalog,
+                new LiteralValueExpression($"&(object->base)", baseTypeInfo));
 
             statements.Add(new VoidExpressionStatementSet(methodCall));
         }

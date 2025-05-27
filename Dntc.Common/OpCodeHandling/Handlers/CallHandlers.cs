@@ -1,7 +1,6 @@
 ﻿using Dntc.Common.Definitions;
 using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
-using Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -76,14 +75,10 @@ public class CallHandlers : IOpCodeHandlerCollection
             .Reverse() 
             .ToArray();
 
-        var fnExpression = new LiteralValueExpression(conversionInfo.NameInC.Value, conversionInfo.ReturnTypeInfo);
-        var methodCallExpression = new MethodCallExpression(
-            fnExpression,
-            conversionInfo.Parameters,
-            arguments,
-            returnType,
-            context.ConversionCatalog,
-            isVirtualCall);
+        var methodCallExpression = new MethodCallExpression(methodId, context.ConversionCatalog, arguments)
+        {
+            IsVirtualCall = isVirtualCall,
+        };
 
         if (ReturnsVoid(returnTypeName))
         {
@@ -134,7 +129,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                     // + 1 to include the parameter.
                     context.ExpressionStack.Pop(methodReference.Parameters.Count + 1); 
                     // specifically, because System_Object::ctor is excluded.
-                    // otherwise it will try to add "return __this at the end.
+                    // otherwise it will try to add return __this at the end.
                 }
                 
                 return new OpCodeHandlingResult(null);
@@ -169,7 +164,7 @@ public class CallHandlers : IOpCodeHandlerCollection
             var fnPointerExpression = allItems[0];
             var argumentsInCallingOrder = allItems.Skip(1).Reverse().ToArray();
             var returnType = context.ConversionCatalog.Find(new IlTypeName(callSite.ReturnType.FullName));
-            
+
             var expression = new MethodCallExpression(
                 fnPointerExpression,
                 context.CurrentMethodConversion.Parameters,
@@ -205,7 +200,6 @@ public class CallHandlers : IOpCodeHandlerCollection
             var constructorInfo = context.ConversionCatalog.Find(constructorId);
             var objType = context.ConversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
             var variable = new Variable(objType, $"__temp_{context.CurrentInstruction.Offset:x4}", !constructor.DeclaringType.IsValueType);
-            var voidType = context.ConversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
 
             var argumentsInCallingOrder = context.ExpressionStack.Pop(constructorInfo.Parameters.Count - 1)
                 .Reverse()
@@ -232,37 +226,22 @@ public class CallHandlers : IOpCodeHandlerCollection
                     context.MemoryManagementActions,
                     constructor.DeclaringType.Resolve());
 
-                var createFunctionInfo = context.ConversionCatalog.Find(createFunction.Id);
-                var createFnExpression = new LiteralValueExpression(createFunctionInfo.NameInC.Value, objType);
-                var createFnCall = new MethodCallExpression(
-                    createFnExpression,
-                    createFunctionInfo.Parameters,
-                    [],
-                    objType,
-                    context.ConversionCatalog);
-
+                var createFnCall = new MethodCallExpression(createFunction.Id, context.ConversionCatalog);
                 var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
 
-                var incrementInfo = context.ConversionCatalog.Find(ReferenceTypeConstants.GcTrackMethodId);
-                var incrementFnExpression = new LiteralValueExpression(incrementInfo.NameInC.Value, voidType);
                 var incrementFnCall = new MethodCallExpression(
-                    incrementFnExpression,
-                    incrementInfo.Parameters,
-                    [variableExpression],
-                    voidType,
-                    context.ConversionCatalog);
+                    ReferenceTypeConstants.GcTrackMethodId,
+                    context.ConversionCatalog,
+                    variableExpression);
 
                 statements.Add(new VoidExpressionStatementSet(incrementFnCall));
             }
 
-            var fnExpression = new LiteralValueExpression(constructorInfo.NameInC.Value, voidType);
             var methodCall = new MethodCallExpression(
-                fnExpression,
-                constructorInfo.Parameters,
-                argumentsInCallingOrder,
-                voidType,
-                context.ConversionCatalog);
+                constructorId,
+                context.ConversionCatalog,
+                argumentsInCallingOrder.ToArray());
 
             var methodCallStatement = new VoidExpressionStatementSet(methodCall);
             
