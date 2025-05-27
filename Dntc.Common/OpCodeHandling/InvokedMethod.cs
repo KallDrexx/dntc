@@ -10,6 +10,5 @@ public record GenericInvokedMethod(
     IlMethodId OriginalMethodId, 
     IReadOnlyList<IlTypeName> GenericArguments) : InvokedMethod(MethodId);
 
-public record CustomInvokedMethod(
-    CustomDefinedMethod InvokedMethod) : InvokedMethod(InvokedMethod.Id);
+public record CustomInvokedMethod(CustomDefinedMethod InvokedMethod) : InvokedMethod(InvokedMethod.Id);
     

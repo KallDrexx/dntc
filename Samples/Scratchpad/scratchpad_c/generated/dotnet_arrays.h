@@ -4,12 +4,21 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "dntc.h"
+#include "ScratchpadCSharp_ReferenceTypes.h"
 
 
 typedef struct {
+    DntcReferenceTypeBase __reference_type_base;
     int32_t length;
     uint16_t *items;
 } SystemUInt16Array;
+
+typedef struct {
+    DntcReferenceTypeBase __reference_type_base;
+    int32_t length;
+    ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct *items;
+} ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray;
 
 
 

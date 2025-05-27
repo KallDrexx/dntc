@@ -86,8 +86,16 @@ public class DotNetDefinedMethod : DefinedMethod
         }
 
         Parameters = parameters;
-        ReferencedArrayTypes = definition.Parameters
-            .Select(x => x.ParameterType)
+
+        var parameterTypes = definition.Parameters.Select(x => x.ParameterType);
+        var variableTypes = definition.HasBody // Generics do not have a body
+            ? definition.Body.Variables.Select(x => x.VariableType)
+            : [];
+
+        var returnTypes = new[] {definition.ReturnType};
+
+        ReferencedArrayTypes = parameterTypes.Concat(variableTypes)
+            .Concat(returnTypes)
             .Where(x => x.IsArray)
             .Distinct()
             .ToArray();

@@ -31,5 +31,5 @@ public abstract class CustomDefinedType : DefinedType
         Methods = Array.Empty<IlMethodId>();
     }
     
-    public abstract CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
+    public abstract CStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
 }

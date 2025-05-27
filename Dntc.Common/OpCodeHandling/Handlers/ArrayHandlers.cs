@@ -1,6 +1,8 @@
-﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+﻿using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Dntc.Common.OpCodeHandling.Handlers;
@@ -10,6 +12,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
         { Code.Ldlen, new LdLenHandler() },
+        { Code.Newarr, new NewArrHandler() },
 
         { Code.Ldelema, new LdElemHandler() },
         { Code.Ldelem_I, new LdElemHandler() },
@@ -140,6 +143,28 @@ public class ArrayHandlers : IOpCodeHandlerCollection
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             return new OpCodeAnalysisResult();
+        }
+    }
+    
+    private class NewArrHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var items = context.ExpressionStack.Pop(1);
+            var count = items[0];
+
+
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            var definition = (TypeDefinition)context.CurrentInstruction.Operand;
+            var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
+
+            return new OpCodeAnalysisResult
+            {
+                CalledMethods = [new CustomInvokedMethod(allocationMethod)],
+            };
         }
     }
 }
