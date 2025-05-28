@@ -18,13 +18,18 @@ public interface IMemoryManagementActions
     /// Provides the statements to perform an allocation. It is assumed that the statement sets will
     /// zero out all memory for the allocated variable.
     /// </summary>
-    /// <param name="variableToAllocate">The variable to allocate memory into</param>
+    /// <param name="variableToAllocate">The expression to allocate memory into</param>
     /// <param name="cTypeName">The name of the type to allocate to. Usually used for sizeof() calls</param>
     /// <param name="conversionCatalog">Conversion catalog to get type conversion info structures</param>
+    /// <param name="countToAllocate">
+    /// Expression used to specify how many items should be allocated. If `null` then only a single item is
+    /// assumed.
+    /// </param>
     CStatementSet AllocateCall(
-        Variable variableToAllocate,
+        CBaseExpression variableToAllocate,
         LiteralValueExpression cTypeName,
-        ConversionCatalog conversionCatalog);
+        ConversionCatalog conversionCatalog,
+        CBaseExpression? countToAllocate = null);
 
     /// <summary>
     /// Provides statements to perform a deallocation for the provided variable. It should be assumed that

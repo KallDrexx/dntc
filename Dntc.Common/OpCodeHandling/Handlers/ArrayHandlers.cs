@@ -4,6 +4,7 @@ using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.OpCodeHandling.Handlers;
 
@@ -150,10 +151,42 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
+            var intType = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
+            var arrayElementType = (TypeReference)context.CurrentInstruction.Operand;
+            var arrayType = arrayElementType.MakeArrayType();
+            var elementTypeInfo = context.ConversionCatalog.Find(new IlTypeName(arrayElementType.FullName));
+            var arrayInfo = context.ConversionCatalog.Find(new IlTypeName(arrayType.FullName));
+
             var items = context.ExpressionStack.Pop(1);
             var count = items[0];
 
+            var name = $"__temp_{context.CurrentInstruction.Offset:x4}";
+            var tempVariable = new Variable(arrayInfo, name, true);
+            var tempVariableExpression = new VariableValueExpression(tempVariable);
 
+            var createFnCall = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, arrayType.Resolve());
+            var createFnMCallExpression = new MethodCallExpression(createFnCall.Id, context.ConversionCatalog);
+
+            // Allocate items pointer
+            var itemAllocator = context.MemoryManagementActions.AllocateCall(
+                new LiteralValueExpression($"{name}->items", elementTypeInfo),
+                new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo),
+                context.ConversionCatalog,
+                count);
+
+            // Set the item size value
+            var sizeAssignment = new AssignmentStatementSet(
+                new LiteralValueExpression($"{name}->length", intType),
+                count);
+
+            context.ExpressionStack.Push(new VariableValueExpression(tempVariable));
+
+            return new OpCodeHandlingResult(new CompoundStatementSet([
+                new LocalDeclarationStatementSet(tempVariable),
+                new AssignmentStatementSet(tempVariableExpression, createFnMCallExpression),
+                itemAllocator,
+                sizeAssignment
+            ]));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

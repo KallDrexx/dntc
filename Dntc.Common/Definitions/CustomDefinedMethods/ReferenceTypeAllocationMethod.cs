@@ -55,10 +55,11 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         var typeInfo = catalog.Find(new IlTypeName(_typeDefinition.FullName));
         var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
         var variable = new Variable(typeInfo, "result", true);
+        var variableExpression = new VariableValueExpression(variable);
         var statements = new List<CStatementSet>
         {
             new LocalDeclarationStatementSet(variable),
-            _memoryManagement.AllocateCall(variable, typeNameExpression, catalog)
+            _memoryManagement.AllocateCall(variableExpression, typeNameExpression, catalog)
         };
 
         AssignPrepPointer(catalog, variable, statements);
