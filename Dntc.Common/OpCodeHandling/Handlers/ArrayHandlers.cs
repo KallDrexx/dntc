@@ -1,5 +1,6 @@
 ﻿using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.CustomDefinedTypes;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -191,12 +192,21 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            var definition = (TypeDefinition)context.CurrentInstruction.Operand;
+            if (!ExperimentalFlags.AllowReferenceTypes)
+            {
+                var message = "The newarr MSIL opcode requires reference type support, which is not enabled.";
+                throw new InvalidOperationException(message);
+            }
+
+            var definition = ((TypeDefinition)context.CurrentInstruction.Operand).MakeArrayType();
             var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
+
+            // Use the newarr opcode to know when we need to add the prep for free function for this array type
+            var prepMethod = new PrepToFreeDefinedMethod(new HeapArrayDefinedType(definition.MakeArrayType()));
 
             return new OpCodeAnalysisResult
             {
-                CalledMethods = [new CustomInvokedMethod(allocationMethod)],
+                CalledMethods = [new CustomInvokedMethod(allocationMethod), new CustomInvokedMethod(prepMethod)],
             };
         }
     }

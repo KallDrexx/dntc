@@ -27,8 +27,8 @@ public abstract class CustomDefinedType : DefinedType
         NativeName = nativeName;
         ReferencedHeaders = referencedHeaders;
 
-        InstanceFields = Array.Empty<Field>();
-        Methods = Array.Empty<IlMethodId>();
+        InstanceFields = [];
+        Methods = [];
     }
     
     public abstract CStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);

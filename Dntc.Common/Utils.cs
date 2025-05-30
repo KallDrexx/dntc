@@ -112,8 +112,13 @@ public static class Utils
         return new IlMethodId(signature);
     }
 
-    public static IlNamespace GetNamespace(TypeDefinition type)
+    public static IlNamespace GetNamespace(TypeReference type)
     {
+        if (type is ArrayType arrayType)
+        {
+            type = arrayType.ElementType;
+        }
+
         while (type.DeclaringType != null)
         {
             type = type.DeclaringType;

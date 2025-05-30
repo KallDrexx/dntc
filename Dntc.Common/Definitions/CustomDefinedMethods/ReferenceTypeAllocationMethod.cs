@@ -13,30 +13,33 @@ namespace Dntc.Common.Definitions.CustomDefinedMethods;
 /// These methods are responsible for:
 /// 1. allocating the memory that the reference type will be stored in.
 /// 2. clearing the allocated memory.
-/// 3. setting up the virtual table of the reference type. (ctors are called seperately)
+/// 3. setting up the virtual table of the reference type. (ctors are called separately)
 /// </summary>
 public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 {
-    private readonly TypeDefinition _typeDefinition;
+    private readonly TypeReference _typeReference;
     private readonly IMemoryManagementActions _memoryManagement;
 
-    public ReferenceTypeAllocationMethod(IMemoryManagementActions memoryManagement, TypeDefinition typeDefinition)
-        :  base(new IlMethodId(typeDefinition.FullName + "__Create"),
-            new IlTypeName(typeDefinition.FullName),
-            Utils.GetNamespace(typeDefinition),
-            Utils.GetHeaderName(Utils.GetNamespace(typeDefinition)),
-            Utils.GetSourceFileName(Utils.GetNamespace(typeDefinition)),
-            new CFunctionName(Utils.MakeValidCName(typeDefinition.FullName + "__Create")), [])
+    public ReferenceTypeAllocationMethod(IMemoryManagementActions memoryManagement, TypeReference typeReference)
+        :  base(new IlMethodId(typeReference.FullName + "__Create"),
+            new IlTypeName(typeReference.FullName),
+            Utils.GetNamespace(typeReference),
+            Utils.GetHeaderName(Utils.GetNamespace(typeReference)),
+            Utils.GetSourceFileName(Utils.GetNamespace(typeReference)),
+            new CFunctionName(Utils.MakeValidCName(typeReference.FullName + "__Create")), [])
     {
-        _typeDefinition = typeDefinition;
+        _typeReference = typeReference;
         _memoryManagement = memoryManagement;
         ReferencedHeaders = memoryManagement.RequiredHeaders;
 
-        foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
+        if (typeReference is TypeDefinition definition)
         {
-            if (virtualMethod.IsReuseSlot)
+            foreach (var virtualMethod in definition.Methods.Where(x => x.IsVirtual))
             {
-                InvokedMethods.Add(new InvokedMethod(new IlMethodId(virtualMethod.FullName)));
+                if (virtualMethod.IsReuseSlot)
+                {
+                    InvokedMethods.Add(new InvokedMethod(new IlMethodId(virtualMethod.FullName)));
+                }
             }
         }
     }
@@ -45,14 +48,14 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
     public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
-        var typeName = Utils.MakeValidCName(_typeDefinition.FullName);
+        var typeName = Utils.MakeValidCName(_typeReference.FullName);
         
         return new CustomCodeStatementSet($"{typeName}* {NativeName}(void)");
     }
 
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
-        var typeInfo = catalog.Find(new IlTypeName(_typeDefinition.FullName));
+        var typeInfo = catalog.Find(new IlTypeName(_typeReference.FullName));
         var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
         var variable = new Variable(typeInfo, "result", true);
         var variableExpression = new VariableValueExpression(variable);
@@ -64,49 +67,52 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
         AssignPrepPointer(catalog, variable, statements);
 
-        var sb = new StringBuilder();
-        foreach (var virtualMethod in _typeDefinition.Methods.Where(x => x.IsVirtual))
+        if (_typeReference is TypeDefinition definition)
         {
-            if (virtualMethod.IsReuseSlot)
+            var sb = new StringBuilder();
+            foreach (var virtualMethod in definition.Methods.Where(x => x.IsVirtual))
             {
-                var sourceMethod = catalog.Find(new IlMethodId(virtualMethod.FullName));
-                var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
-                    
-                var targetMethod = FindMatchingMethodInBaseTypes(catalog, sourceMethod, baseType);
-
-                if (targetMethod != null)
+                if (virtualMethod.IsReuseSlot)
                 {
-                    var thisExpression = targetMethod.Parameters[0];
-                    var thisExpressionInfo = catalog.Find(thisExpression.TypeName);
+                    var sourceMethod = catalog.Find(new IlMethodId(virtualMethod.FullName));
+                    var baseType = virtualMethod.DeclaringType.BaseType.Resolve();
 
-                    sb.Clear();
-                    sb.Append($"\t(({thisExpressionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
+                    var targetMethod = FindMatchingMethodInBaseTypes(catalog, sourceMethod, baseType);
 
-                    var methodInfo = targetMethod;
-                    sb.Append($"{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
-                    
-                    for (var x = 0; x < methodInfo.Parameters.Count; x++)
+                    if (targetMethod != null)
                     {
-                        if (x > 0) sb.Append(", ");
-                        var param = methodInfo.Parameters[x];
-                        var paramInfo = catalog.Find(param.TypeName);
-                        var paramType = paramInfo;
+                        var thisExpression = targetMethod.Parameters[0];
+                        var thisExpressionInfo = catalog.Find(thisExpression.TypeName);
 
-                        var pointerSymbol = param.IsReference ? "*" : "";
-                        sb.Append($"{paramType.NameInC}{pointerSymbol}");
+                        sb.Clear();
+                        sb.Append($"\t(({thisExpressionInfo.NameInC}*)result)->{targetMethod.NameInC} = (");
+
+                        var methodInfo = targetMethod;
+                        sb.Append($"{methodInfo.ReturnTypeInfo.NativeNameWithPossiblePointer()} (*)(");
+
+                        for (var x = 0; x < methodInfo.Parameters.Count; x++)
+                        {
+                            if (x > 0) sb.Append(", ");
+                            var param = methodInfo.Parameters[x];
+                            var paramInfo = catalog.Find(param.TypeName);
+                            var paramType = paramInfo;
+
+                            var pointerSymbol = param.IsReference ? "*" : "";
+                            sb.Append($"{paramType.NameInC}{pointerSymbol}");
+                        }
+
+                        sb.AppendLine($")){sourceMethod.NameInC};");
+                        statements.Add(new CustomCodeStatementSet(sb.ToString()));
                     }
-                        
-                    sb.AppendLine($")){sourceMethod.NameInC};");
-                    statements.Add(new CustomCodeStatementSet(sb.ToString()));
                 }
-            }
-            else
-            {
-                var methodInfo = catalog.Find(new IlMethodId(virtualMethod.FullName));
-                var customStatement = new CustomCodeStatementSet(
-                    $"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};)");
+                else
+                {
+                    var methodInfo = catalog.Find(new IlMethodId(virtualMethod.FullName));
+                    var customStatement = new CustomCodeStatementSet(
+                        $"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};)");
 
-                statements.Add(customStatement);
+                    statements.Add(customStatement);
+                }
             }
         }
 
@@ -147,10 +153,10 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         var referenceBaseTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
         var prepFnInfo = catalog.Find(
             ReferenceTypeConstants.PrepTypeToFreeMethodId(
-                new IlTypeName(_typeDefinition.FullName)));
+                new IlTypeName(_typeReference.FullName)));
 
         statements.Add(
             new CustomCodeStatementSet(
-                $"\t((({referenceBaseTypeInfo.NameInC}*)result)->PrepForFree) = (void (*)(void*)){prepFnInfo.NameInC};\n"));
+                $"\t((({referenceBaseTypeInfo.NameInC}*){variable.Name})->PrepForFree) = (void (*)(void*)){prepFnInfo.NameInC};\n"));
     }
 }

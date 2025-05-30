@@ -6,61 +6,80 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport;
 
 public class PrepToFreeDefinedMethod : CustomDefinedMethod
 {
-    private readonly DotNetDefinedType _dotNetType;
+    private readonly DefinedType _definedType;
     
-    public PrepToFreeDefinedMethod(DotNetDefinedType dotNetType)
+    public PrepToFreeDefinedMethod(DotNetDefinedType definedType)
         : base(
-            ReferenceTypeConstants.PrepTypeToFreeMethodId(dotNetType.IlName),
+            ReferenceTypeConstants.PrepTypeToFreeMethodId(definedType.IlName),
             new IlTypeName(typeof(void).FullName!),
-            dotNetType.Namespace,
-            Utils.GetHeaderName(dotNetType.Namespace),
-            Utils.GetSourceFileName(dotNetType.Namespace),
-            new CFunctionName(Utils.MakeValidCName($"{dotNetType.Definition.FullName}__PrepForFree")),
+            definedType.Namespace,
+            Utils.GetHeaderName(definedType.Namespace),
+            Utils.GetSourceFileName(definedType.Namespace),
+            new CFunctionName(Utils.MakeValidCName($"{definedType.Definition.FullName}__PrepForFree")),
             [
-                new Parameter(dotNetType.IlName, "object", true),
+                new Parameter(definedType.IlName, "object", true),
             ])
     {
-        _dotNetType = dotNetType;
+        _definedType = definedType;
+    }
+
+    public PrepToFreeDefinedMethod(CustomDefinedType customDefinedType)
+        : base(
+            ReferenceTypeConstants.PrepTypeToFreeMethodId(customDefinedType.IlName),
+            new IlTypeName(typeof(void).FullName!),
+            new IlNamespace("Dntc.System"),
+            customDefinedType.HeaderName ?? throw new NullReferenceException("customDefinedType.HeaderName"),
+            customDefinedType.SourceFileName,
+            new CFunctionName(Utils.MakeValidCName($"{customDefinedType.NativeName}__PrepForFree")),
+            [
+                new Parameter(customDefinedType.IlName, "object", true),
+            ])
+    {
+        _definedType = customDefinedType;
     }
 
     public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
-        var typeName = catalog.Find(_dotNetType.IlName);
+        var typeName = catalog.Find(_definedType.IlName);
         return new CustomCodeStatementSet($"void {NativeName}({typeName.NameInC}* object)");
     }
 
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         var statements = new List<CStatementSet>();
-        var referenceTypeFields = _dotNetType.Definition
-            .Fields
-            .Where(x => !x.FieldType.IsValueType)
-            .OrderBy(x => x.Name)
-            .Select(x => new IlFieldId(x.FullName))
-            .ToArray();
 
-        var thisTypeInfo = catalog.Find(_dotNetType.IlName);
-        var objectVariable = new Variable(thisTypeInfo, "object", true);
-        var objectVariableExpression = new VariableValueExpression(objectVariable);
-        foreach (var field in referenceTypeFields)
+        if (_definedType is DotNetDefinedType dotNetType)
         {
-            var fieldInfo = catalog.Find(field);
-            var fieldVariable = new Variable(fieldInfo.FieldTypeConversionInfo, fieldInfo.NameInC.Value, true);
-            var fieldAccess = new FieldAccessExpression(objectVariableExpression, fieldVariable);
-            statements.Add(new GcUntrackFunctionCallStatement(fieldAccess, catalog));
-            statements.Add(new CustomCodeStatementSet("\n")); // Need to come up with a better white space strategy
-        }
+            var referenceTypeFields = dotNetType.Definition
+                .Fields
+                .Where(x => !x.FieldType.IsValueType)
+                .OrderBy(x => x.Name)
+                .Select(x => new IlFieldId(x.FullName))
+                .ToArray();
 
-        var baseType = Utils.GetNonSystemBaseType(_dotNetType.Definition);
-        if (baseType != null)
-        {
-            var baseTypeInfo = catalog.Find(new IlTypeName(baseType.FullName));
-            var methodCall = new MethodCallExpression(
-                ReferenceTypeConstants.PrepTypeToFreeMethodId(baseTypeInfo.IlName),
-                catalog,
-                new LiteralValueExpression($"&(object->base)", baseTypeInfo));
+            var thisTypeInfo = catalog.Find(_definedType.IlName);
+            var objectVariable = new Variable(thisTypeInfo, "object", true);
+            var objectVariableExpression = new VariableValueExpression(objectVariable);
+            foreach (var field in referenceTypeFields)
+            {
+                var fieldInfo = catalog.Find(field);
+                var fieldVariable = new Variable(fieldInfo.FieldTypeConversionInfo, fieldInfo.NameInC.Value, true);
+                var fieldAccess = new FieldAccessExpression(objectVariableExpression, fieldVariable);
+                statements.Add(new GcUntrackFunctionCallStatement(fieldAccess, catalog));
+                statements.Add(new CustomCodeStatementSet("\n")); // Need to come up with a better white space strategy
+            }
 
-            statements.Add(new VoidExpressionStatementSet(methodCall));
+            var baseType = Utils.GetNonSystemBaseType(dotNetType.Definition);
+            if (baseType != null)
+            {
+                var baseTypeInfo = catalog.Find(new IlTypeName(baseType.FullName));
+                var methodCall = new MethodCallExpression(
+                    ReferenceTypeConstants.PrepTypeToFreeMethodId(baseTypeInfo.IlName),
+                    catalog,
+                    new LiteralValueExpression($"&(object->base)", baseTypeInfo));
+
+                statements.Add(new VoidExpressionStatementSet(methodCall));
+            }
         }
 
         if (statements.Count == 0)
