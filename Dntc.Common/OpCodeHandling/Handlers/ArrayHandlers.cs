@@ -165,7 +165,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var tempVariable = new Variable(arrayInfo, name, true);
             var tempVariableExpression = new VariableValueExpression(tempVariable);
 
-            var createFnCall = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, arrayType.Resolve());
+            var createFnCall = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, arrayType);
             var createFnMCallExpression = new MethodCallExpression(createFnCall.Id, context.ConversionCatalog);
 
             // Allocate items pointer
@@ -202,7 +202,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
 
             // Use the newarr opcode to know when we need to add the prep for free function for this array type
-            var prepMethod = new PrepToFreeDefinedMethod(new HeapArrayDefinedType(definition.MakeArrayType()));
+            var prepMethod = new PrepToFreeDefinedMethod(new HeapArrayDefinedType(definition));
 
             return new OpCodeAnalysisResult
             {
