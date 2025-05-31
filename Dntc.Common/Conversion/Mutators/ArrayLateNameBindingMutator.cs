@@ -63,6 +63,8 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
                     {
                         allocationMethod.NativeName = ReferenceTypeAllocationMethod.FormNativeName(
                             customDefinedType.NativeName.Value);
+
+                        conversionInfo.NameInC = allocationMethod.NativeName;
                     }
                 }
 

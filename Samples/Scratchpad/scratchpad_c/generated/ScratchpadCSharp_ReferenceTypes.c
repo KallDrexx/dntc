@@ -122,7 +122,7 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]* ScratchpadCSharpRefere
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0001 = {0};
-	__temp_0001 = ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]__Create();
+	__temp_0001 = ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create();
 	__temp_0001->items = calloc(5, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct));
 	__temp_0001->length = 5;
 	return __temp_0001;

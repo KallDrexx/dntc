@@ -21,7 +21,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
     private readonly IMemoryManagementActions _memoryManagement;
 
     public ReferenceTypeAllocationMethod(IMemoryManagementActions memoryManagement, TypeReference typeReference)
-        :  base(new IlMethodId(typeReference.FullName + "__Create"),
+        :  base(
+            FormIlMethodId(typeReference),
             new IlTypeName(typeReference.FullName),
             Utils.GetNamespace(typeReference),
             Utils.GetHeaderName(Utils.GetNamespace(typeReference)),
@@ -44,6 +45,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             }
         }
     }
+
+    public static IlMethodId FormIlMethodId(TypeReference typeReference) => new($"{typeReference.FullName}__Create");
 
     public static CFunctionName FormNativeName(string prefix) => new(Utils.MakeValidCName($"{prefix}__Create"));
 

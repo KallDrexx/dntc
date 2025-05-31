@@ -165,8 +165,9 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var tempVariable = new Variable(arrayInfo, name, true);
             var tempVariableExpression = new VariableValueExpression(tempVariable);
 
-            var createFnCall = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, arrayType);
-            var createFnMCallExpression = new MethodCallExpression(createFnCall.Id, context.ConversionCatalog);
+            var createFnCallExpression = new MethodCallExpression(
+                ReferenceTypeAllocationMethod.FormIlMethodId(arrayType),
+                context.ConversionCatalog);
 
             // Allocate items pointer
             var itemAllocator = context.MemoryManagementActions.AllocateCall(
@@ -184,7 +185,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
             return new OpCodeHandlingResult(new CompoundStatementSet([
                 new LocalDeclarationStatementSet(tempVariable),
-                new AssignmentStatementSet(tempVariableExpression, createFnMCallExpression),
+                new AssignmentStatementSet(tempVariableExpression, createFnCallExpression),
                 itemAllocator,
                 sizeAssignment
             ]));
