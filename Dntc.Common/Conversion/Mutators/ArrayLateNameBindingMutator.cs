@@ -58,7 +58,8 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
             {
                 if (allocationMethod.TypeReference.IsArray)
                 {
-                    // Make sure the allocation method's native name matches the native name of the array.
+                    // Make sure the allocation method's native name and return type matches the
+                    // native name of the array.
                     var type = _catalog.Get(new IlTypeName(allocationMethod.TypeReference.FullName));
                     if (type is CustomDefinedType customDefinedType)
                     {

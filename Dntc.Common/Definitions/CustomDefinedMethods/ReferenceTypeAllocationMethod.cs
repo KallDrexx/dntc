@@ -54,9 +54,8 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
     public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
-        var typeName = Utils.MakeValidCName(TypeReference.FullName);
-        
-        return new CustomCodeStatementSet($"{typeName}* {NativeName}(void)");
+        var returnType = catalog.Find(ReturnType);
+        return new CustomCodeStatementSet($"{returnType.NameInC}* {NativeName}(void)");
     }
 
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
