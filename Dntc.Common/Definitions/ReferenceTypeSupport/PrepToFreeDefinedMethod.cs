@@ -6,7 +6,7 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport;
 
 public class PrepToFreeDefinedMethod : CustomDefinedMethod
 {
-    private readonly DefinedType _definedType;
+    public DefinedType DefinedType { get; }
     
     public PrepToFreeDefinedMethod(DotNetDefinedType definedType)
         : base(
@@ -15,12 +15,12 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             definedType.Namespace,
             Utils.GetHeaderName(definedType.Namespace),
             Utils.GetSourceFileName(definedType.Namespace),
-            new CFunctionName(Utils.MakeValidCName($"{definedType.Definition.FullName}__PrepForFree")),
+            FormNativeName(definedType.Definition.FullName),
             [
                 new Parameter(definedType.IlName, "object", true),
             ])
     {
-        _definedType = definedType;
+        DefinedType = definedType;
     }
 
     public PrepToFreeDefinedMethod(CustomDefinedType customDefinedType)
@@ -30,17 +30,20 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             new IlNamespace("Dntc.System"),
             customDefinedType.HeaderName ?? throw new NullReferenceException("customDefinedType.HeaderName"),
             customDefinedType.SourceFileName,
-            new CFunctionName(Utils.MakeValidCName($"{customDefinedType.NativeName}__PrepForFree")),
+            FormNativeName(customDefinedType.NativeName.Value),
             [
                 new Parameter(customDefinedType.IlName, "object", true),
             ])
     {
-        _definedType = customDefinedType;
+        DefinedType = customDefinedType;
     }
+
+    public static CFunctionName FormNativeName(string typeNativeName) =>
+        new(Utils.MakeValidCName($"{typeNativeName}__PrepForFree"));
 
     public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
-        var typeName = catalog.Find(_definedType.IlName);
+        var typeName = catalog.Find(DefinedType.IlName);
         return new CustomCodeStatementSet($"void {NativeName}({typeName.NameInC}* object)");
     }
 
@@ -48,7 +51,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
     {
         var statements = new List<CStatementSet>();
 
-        if (_definedType is DotNetDefinedType dotNetType)
+        if (DefinedType is DotNetDefinedType dotNetType)
         {
             var referenceTypeFields = dotNetType.Definition
                 .Fields
@@ -57,7 +60,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
                 .Select(x => new IlFieldId(x.FullName))
                 .ToArray();
 
-            var thisTypeInfo = catalog.Find(_definedType.IlName);
+            var thisTypeInfo = catalog.Find(DefinedType.IlName);
             var objectVariable = new Variable(thisTypeInfo, "object", true);
             var objectVariableExpression = new VariableValueExpression(objectVariable);
             foreach (var field in referenceTypeFields)

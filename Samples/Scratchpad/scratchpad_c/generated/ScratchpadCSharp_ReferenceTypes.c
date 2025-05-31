@@ -116,7 +116,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCal
 ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void) {
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* result = {0};
 	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray));
-	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))_Late bound array name___PrepForFree;
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree;
 	return result;
 }
 

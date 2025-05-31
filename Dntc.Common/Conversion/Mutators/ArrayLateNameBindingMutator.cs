@@ -58,6 +58,7 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
             {
                 if (allocationMethod.TypeReference.IsArray)
                 {
+                    // Make sure the allocation method's native name matches the native name of the array.
                     var type = _catalog.Get(new IlTypeName(allocationMethod.TypeReference.FullName));
                     if (type is CustomDefinedType customDefinedType)
                     {
@@ -65,6 +66,28 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
                             customDefinedType.NativeName.Value);
 
                         conversionInfo.NameInC = allocationMethod.NativeName;
+                    }
+                }
+
+                break;
+            }
+
+            case PrepToFreeDefinedMethod prepToFreeMethod:
+            {
+                if (prepToFreeMethod.DefinedType is ArrayDefinedType)
+                {
+                    // PrepToFreeDefinedMethods are bound to a type definition that's not the exact one from
+                    // the definition catalog, due to it being generated in the `newarr` opcode handler. Therefore,
+                    // it will not have the correct native name, as it won't have definition mutators run. Thus we
+                    // need to get the version from the definition catalog to properly rebind its properties
+
+                    var type = _catalog.Get(prepToFreeMethod.DefinedType.IlName);
+                    if (type is CustomDefinedType customDefinedType)
+                    {
+                        prepToFreeMethod.NativeName = PrepToFreeDefinedMethod.FormNativeName(
+                            customDefinedType.NativeName.Value);
+
+                        conversionInfo.NameInC = prepToFreeMethod.NativeName;
                     }
                 }
 

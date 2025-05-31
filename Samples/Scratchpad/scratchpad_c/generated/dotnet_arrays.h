@@ -23,6 +23,6 @@ typedef struct {
 } ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray;
 
 
-void _Late bound array name___PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
+void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
 
 #endif // DOTNET_ARRAYS_H_H
