@@ -1,5 +1,7 @@
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.CustomDefinedTypes;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 
 namespace Dntc.Common.Conversion.Mutators;
 
@@ -9,7 +11,7 @@ namespace Dntc.Common.Conversion.Mutators;
 /// guaranteed to be added to the definition catalog, so we know the true representation of the
 /// element type.
 /// </summary>
-public class ArrayLateNameBindingMutator : ITypeConversionMutator
+public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConversionMutator
 {
     private readonly DefinitionCatalog _catalog;
     private readonly ConversionInfoCreator _conversionInfoCreator;
@@ -46,5 +48,26 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator
 
         // Update the type definition's name in C for correct code generation.
         arrayDefinition.NativeName = arrayDefinition.FormTypeName(elementConversionInfo);
+    }
+
+    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)
+    {
+        switch (conversionInfo.OriginalMethodDefinition)
+        {
+            case ReferenceTypeAllocationMethod allocationMethod:
+            {
+                if (allocationMethod.TypeReference.IsArray)
+                {
+                    var type = _catalog.Get(new IlTypeName(allocationMethod.TypeReference.FullName));
+                    if (type is CustomDefinedType customDefinedType)
+                    {
+                        allocationMethod.NativeName = ReferenceTypeAllocationMethod.FormNativeName(
+                            customDefinedType.NativeName.Value);
+                    }
+                }
+
+                break;
+            }
+        }
     }
 }

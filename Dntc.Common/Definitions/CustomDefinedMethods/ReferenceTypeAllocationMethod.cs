@@ -17,7 +17,7 @@ namespace Dntc.Common.Definitions.CustomDefinedMethods;
 /// </summary>
 public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 {
-    private readonly TypeReference _typeReference;
+    public TypeReference TypeReference { get; }
     private readonly IMemoryManagementActions _memoryManagement;
 
     public ReferenceTypeAllocationMethod(IMemoryManagementActions memoryManagement, TypeReference typeReference)
@@ -26,9 +26,10 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
             Utils.GetNamespace(typeReference),
             Utils.GetHeaderName(Utils.GetNamespace(typeReference)),
             Utils.GetSourceFileName(Utils.GetNamespace(typeReference)),
-            new CFunctionName(Utils.MakeValidCName(typeReference.FullName + "__Create")), [])
+            FormNativeName(typeReference.FullName),
+            [])
     {
-        _typeReference = typeReference;
+        TypeReference = typeReference;
         _memoryManagement = memoryManagement;
         ReferencedHeaders = memoryManagement.RequiredHeaders;
 
@@ -44,18 +45,20 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         }
     }
 
+    public static CFunctionName FormNativeName(string prefix) => new(Utils.MakeValidCName($"{prefix}__Create"));
+
     public sealed override List<InvokedMethod> InvokedMethods { get; } = [];
 
     public override CustomCodeStatementSet? GetCustomDeclaration(ConversionCatalog catalog)
     {
-        var typeName = Utils.MakeValidCName(_typeReference.FullName);
+        var typeName = Utils.MakeValidCName(TypeReference.FullName);
         
         return new CustomCodeStatementSet($"{typeName}* {NativeName}(void)");
     }
 
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
-        var typeInfo = catalog.Find(new IlTypeName(_typeReference.FullName));
+        var typeInfo = catalog.Find(new IlTypeName(TypeReference.FullName));
         var typeNameExpression = new LiteralValueExpression(typeInfo.NameInC.Value, typeInfo);
         var variable = new Variable(typeInfo, "result", true);
         var variableExpression = new VariableValueExpression(variable);
@@ -67,7 +70,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
 
         AssignPrepPointer(catalog, variable, statements);
 
-        if (_typeReference is TypeDefinition definition)
+        if (TypeReference is TypeDefinition definition)
         {
             var sb = new StringBuilder();
             foreach (var virtualMethod in definition.Methods.Where(x => x.IsVirtual))
@@ -153,7 +156,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
         var referenceBaseTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
         var prepFnInfo = catalog.Find(
             ReferenceTypeConstants.PrepTypeToFreeMethodId(
-                new IlTypeName(_typeReference.FullName)));
+                new IlTypeName(TypeReference.FullName)));
 
         statements.Add(
             new CustomCodeStatementSet(

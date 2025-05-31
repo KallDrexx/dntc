@@ -113,7 +113,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCal
 	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
 }
 
-ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]* ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]__Create(void) {
+ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct[]* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void) {
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* result = {0};
 	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray));
 	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))_Late bound array name___PrepForFree;

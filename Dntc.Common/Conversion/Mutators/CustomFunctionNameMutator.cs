@@ -5,9 +5,9 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class CustomFunctionNameMutator : IMethodConversionMutator
 {
-    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method)
+    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)
     {
-        var customNameAttribute = method.Definition
+        var customNameAttribute = method?.Definition
             .CustomAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == typeof(CustomFunctionNameAttribute).FullName);
 
