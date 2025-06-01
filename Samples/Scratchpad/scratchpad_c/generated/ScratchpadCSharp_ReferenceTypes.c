@@ -120,7 +120,7 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpRefere
 }
 
 void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object) {
-	// No cleanup necessary
+	free((object->items));
 }
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {

@@ -1,4 +1,5 @@
 using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.CustomDefinedTypes;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 
@@ -6,9 +7,11 @@ namespace Dntc.Common.Definitions.ReferenceTypeSupport;
 
 public class PrepToFreeDefinedMethod : CustomDefinedMethod
 {
+    private readonly IMemoryManagementActions _memoryManagement;
+
     public DefinedType DefinedType { get; }
     
-    public PrepToFreeDefinedMethod(DotNetDefinedType definedType)
+    public PrepToFreeDefinedMethod(DotNetDefinedType definedType, IMemoryManagementActions memoryManagement)
         : base(
             ReferenceTypeConstants.PrepTypeToFreeMethodId(definedType.IlName),
             new IlTypeName(typeof(void).FullName!),
@@ -21,9 +24,10 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             ])
     {
         DefinedType = definedType;
+        _memoryManagement = memoryManagement;
     }
 
-    public PrepToFreeDefinedMethod(CustomDefinedType customDefinedType)
+    public PrepToFreeDefinedMethod(CustomDefinedType customDefinedType, IMemoryManagementActions memoryManagement)
         : base(
             ReferenceTypeConstants.PrepTypeToFreeMethodId(customDefinedType.IlName),
             new IlTypeName(typeof(void).FullName!),
@@ -36,6 +40,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             ])
     {
         DefinedType = customDefinedType;
+        _memoryManagement = memoryManagement;
     }
 
     public static CFunctionName FormNativeName(string typeNativeName) =>
@@ -50,6 +55,9 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         var statements = new List<CStatementSet>();
+        var thisTypeInfo = catalog.Find(DefinedType.IlName);
+        var objectVariable = new Variable(thisTypeInfo, "object", true);
+        var objectVariableExpression = new VariableValueExpression(objectVariable);
 
         if (DefinedType is DotNetDefinedType dotNetType)
         {
@@ -60,9 +68,6 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
                 .Select(x => new IlFieldId(x.FullName))
                 .ToArray();
 
-            var thisTypeInfo = catalog.Find(DefinedType.IlName);
-            var objectVariable = new Variable(thisTypeInfo, "object", true);
-            var objectVariableExpression = new VariableValueExpression(objectVariable);
             foreach (var field in referenceTypeFields)
             {
                 var fieldInfo = catalog.Find(field);
@@ -83,6 +88,14 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
 
                 statements.Add(new VoidExpressionStatementSet(methodCall));
             }
+        }
+
+        // If this is an array, we need to free the items pointer.
+        // TODO: This logic should be owned by the array defined type and not "hardcoded" here
+        if (DefinedType is ArrayDefinedType arrayDefinedType)
+        {
+            var itemsPointer = arrayDefinedType.GetItemsAccessorExpression(objectVariableExpression, catalog);
+            statements.Add(_memoryManagement.FreeCall(itemsPointer, catalog));
         }
 
         if (statements.Count == 0)

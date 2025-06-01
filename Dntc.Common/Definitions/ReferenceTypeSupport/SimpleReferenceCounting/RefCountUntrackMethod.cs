@@ -1,4 +1,5 @@
 using Dntc.Common.Conversion;
+using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 
 namespace Dntc.Common.Definitions.ReferenceTypeSupport.SimpleReferenceCounting;
@@ -48,7 +49,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
                 "\t\tsinglePointerVariable->PrepForFree(singlePointerVariable);\n"));
 
         statements.Add(new CustomCodeStatementSet("\t"));
-        statements.Add(_memoryManagement.FreeCall(variable, catalog));
+        statements.Add(_memoryManagement.FreeCall(new VariableValueExpression(variable), catalog));
 
         statements.Add(new CustomCodeStatementSet("\t\t*referenceType = NULL;\n"));
         statements.Add(new CustomCodeStatementSet("\t}\n"));

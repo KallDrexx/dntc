@@ -36,13 +36,13 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
         return assignment;
     }
 
-    public CStatementSet FreeCall(Variable variableToFree, ConversionCatalog conversionCatalog)
+    public CStatementSet FreeCall(CBaseExpression variableToFree, ConversionCatalog conversionCatalog)
     {
         var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var freeCall = new MethodCallExpression(
             new LiteralValueExpression("free", voidType),
-            [new MethodConversionInfo.Parameter(variableToFree.Type.IlName, "ptr", true)],
-            [new VariableValueExpression(variableToFree)],
+            [new MethodConversionInfo.Parameter(variableToFree.ResultingType.IlName, "ptr", true)],
+            [variableToFree],
             voidType,
             conversionCatalog);
 

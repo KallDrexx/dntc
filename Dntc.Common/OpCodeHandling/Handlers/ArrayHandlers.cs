@@ -152,7 +152,6 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     {
         public OpCodeHandlingResult Handle(HandleContext context)
         {
-            var intType = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
             var arrayElementType = (TypeReference)context.CurrentInstruction.Operand;
             var arrayType = arrayElementType.MakeArrayType();
             var elementTypeInfo = context.ConversionCatalog.Find(new IlTypeName(arrayElementType.FullName));
@@ -175,7 +174,8 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 ReferenceTypeAllocationMethod.FormIlMethodId(arrayType),
                 context.ConversionCatalog);
 
-            // Allocate items pointer
+            // Allocate items pointer.
+            // TODO: This should be customizable for different types of arrays
             var itemAllocator = context.MemoryManagementActions.AllocateCall(
                 arrayDefinedType.GetItemsAccessorExpression(tempVariableExpression, context.ConversionCatalog),
                 new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo),
@@ -221,7 +221,9 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
 
             // Use the newarr opcode to know when we need to add the prep for free function for this array type
-            var prepMethod = new PrepToFreeDefinedMethod(new HeapArrayDefinedType(definition));
+            var prepMethod = new PrepToFreeDefinedMethod(
+                new HeapArrayDefinedType(definition),
+                context.MemoryManagementActions);
 
             return new OpCodeAnalysisResult
             {

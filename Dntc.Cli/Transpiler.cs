@@ -111,7 +111,7 @@ public class Transpiler
                 throw new InvalidOperationException(message);
             }
 
-            var graph = new DependencyGraph(definitionCatalog, foundMethod.Id);
+            var graph = new DependencyGraph(definitionCatalog, foundMethod.Id, memoryManagement);
             conversionCatalog.Add(graph);
             implementationPlan.AddMethodGraph(graph);
         }
@@ -125,7 +125,7 @@ public class Transpiler
                 throw new InvalidOperationException(message);
             }
 
-            var graph = new DependencyGraph(definitionCatalog, foundGlobal.IlName);
+            var graph = new DependencyGraph(definitionCatalog, foundGlobal.IlName, memoryManagement);
             conversionCatalog.Add(graph);
             implementationPlan.AddMethodGraph(graph);
         }

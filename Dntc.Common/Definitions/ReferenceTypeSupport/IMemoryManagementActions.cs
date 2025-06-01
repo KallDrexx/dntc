@@ -35,5 +35,5 @@ public interface IMemoryManagementActions
     /// Provides statements to perform a deallocation for the provided variable. It should be assumed that
     /// the variable's pointer could be null-ed out.
     /// </summary>
-    CStatementSet FreeCall(Variable variableToFree, ConversionCatalog conversionCatalog);
+    CStatementSet FreeCall(CBaseExpression variableToFree, ConversionCatalog conversionCatalog);
 }
