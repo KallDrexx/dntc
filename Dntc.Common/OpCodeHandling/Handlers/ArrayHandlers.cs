@@ -181,13 +181,17 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 new LiteralValueExpression($"{name}->length", intType),
                 count);
 
+            // Make sure to ref count it
+            var gcTrack = new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog);
+
             context.ExpressionStack.Push(new VariableValueExpression(tempVariable));
 
             return new OpCodeHandlingResult(new CompoundStatementSet([
                 new LocalDeclarationStatementSet(tempVariable),
                 new AssignmentStatementSet(tempVariableExpression, createFnCallExpression),
                 itemAllocator,
-                sizeAssignment
+                sizeAssignment,
+                gcTrack,
             ]));
         }
 
