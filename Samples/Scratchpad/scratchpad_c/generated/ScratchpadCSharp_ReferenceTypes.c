@@ -126,8 +126,8 @@ void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(Scrat
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0001 = {0};
 	__temp_0001 = ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create();
-	__temp_0001->items = calloc(5, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct));
-	__temp_0001->length = 5;
+	(__temp_0001->items) = calloc(5, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct));
+	(__temp_0001->length) = 5;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	return __temp_0001;
 }

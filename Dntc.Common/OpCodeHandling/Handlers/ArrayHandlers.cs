@@ -157,6 +157,12 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var arrayType = arrayElementType.MakeArrayType();
             var elementTypeInfo = context.ConversionCatalog.Find(new IlTypeName(arrayElementType.FullName));
             var arrayInfo = context.ConversionCatalog.Find(new IlTypeName(arrayType.FullName));
+            if (arrayInfo.OriginalTypeDefinition is not ArrayDefinedType arrayDefinedType)
+            {
+                var message = $"Expected array to be defined as an ArrayDefinedType, but instead was " +
+                              $"a '{arrayInfo.OriginalTypeDefinition.GetType().FullName}";
+                throw new InvalidOperationException(message);
+            }
 
             var items = context.ExpressionStack.Pop(1);
             var count = items[0];
@@ -171,15 +177,23 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
             // Allocate items pointer
             var itemAllocator = context.MemoryManagementActions.AllocateCall(
-                new LiteralValueExpression($"{name}->items", elementTypeInfo),
+                arrayDefinedType.GetItemsAccessorExpression(tempVariableExpression, context.ConversionCatalog),
                 new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo),
                 context.ConversionCatalog,
                 count);
 
             // Set the item size value
-            var sizeAssignment = new AssignmentStatementSet(
-                new LiteralValueExpression($"{name}->length", intType),
-                count);
+            var sizeExpression = arrayDefinedType.GetArraySizeExpression(
+                tempVariableExpression,
+                context.ConversionCatalog);
+
+            if (sizeExpression == null)
+            {
+                var message = $"Array defined type {arrayDefinedType.GetType()} gave a null size expression";
+                throw new InvalidOperationException(message);
+            }
+
+            var sizeAssignment = new AssignmentStatementSet(sizeExpression, count);
 
             // Make sure to ref count it
             var gcTrack = new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog);
