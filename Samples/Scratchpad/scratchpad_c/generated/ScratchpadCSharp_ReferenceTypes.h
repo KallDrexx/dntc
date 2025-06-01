@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "dntc.h"
-#include "dotnet_arrays.h"
 
 typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass {
 	DntcReferenceTypeBase __reference_type_base;
@@ -58,6 +57,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValu
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this);
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent);
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void);
+void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void);
 
 #endif // SCRATCHPADCSHARP_REFERENCETYPES_H_H

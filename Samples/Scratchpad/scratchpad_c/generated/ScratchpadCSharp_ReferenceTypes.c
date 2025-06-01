@@ -2,7 +2,6 @@
 #include "ScratchpadCSharp_ReferenceTypes.h"
 #include <stdlib.h>
 #include "dntc.h"
-#include "dotnet_arrays.h"
 
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object) {
@@ -118,6 +117,10 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpRefere
 	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray));
 	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree;
 	return result;
+}
+
+void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object) {
+	// No cleanup necessary
 }
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {

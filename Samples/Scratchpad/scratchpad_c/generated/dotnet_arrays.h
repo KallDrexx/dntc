@@ -4,10 +4,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include "dntc.h"
-#include "ScratchpadCSharp_ReferenceTypes.h"
 
 
 typedef struct {
@@ -17,6 +14,5 @@ typedef struct {
 } SystemUInt16Array;
 
 
-void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
 
 #endif // DOTNET_ARRAYS_H_H

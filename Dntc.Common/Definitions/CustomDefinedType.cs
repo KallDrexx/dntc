@@ -9,7 +9,7 @@ namespace Dntc.Common.Definitions;
 public abstract class CustomDefinedType : DefinedType
 {
     public HeaderName? HeaderName { get; set; }
-    public CSourceFileName? SourceFileName { get; }
+    public CSourceFileName? SourceFileName { get; set; }
     public CTypeName NativeName { get; set; }
     
     protected CustomDefinedType(

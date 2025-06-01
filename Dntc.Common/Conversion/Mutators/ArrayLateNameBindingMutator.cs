@@ -53,10 +53,13 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
         // as the element is defined in. Otherwise, you end up with circular dependencies. This is
         // probably more appropriate as a definition mutator but arrays are not part of the definer
         // pipeline and thus there's no good integration point.
-        if (elementDefinition is CustomDefinedType customType && customType.HeaderName != null)
+        if (elementDefinition is CustomDefinedType customType)
         {
-            arrayDefinition.HeaderName = customType.HeaderName;
-            conversionInfo.Header = customType.HeaderName;
+            if (customType.HeaderName != null)
+            {
+                arrayDefinition.HeaderName = customType.HeaderName;
+                conversionInfo.Header = customType.HeaderName;
+            }
         }
         else if (elementDefinition is DotNetDefinedType dotNetType)
         {
@@ -90,13 +93,14 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
 
             case PrepToFreeDefinedMethod prepToFreeMethod:
             {
-                if (prepToFreeMethod.DefinedType is ArrayDefinedType)
+                if (prepToFreeMethod.DefinedType is ArrayDefinedType arrayDefinedType)
                 {
                     // PrepToFreeDefinedMethods are bound to a type definition that's not the exact one from
                     // the definition catalog, due to it being generated in the `newarr` opcode handler. Therefore,
-                    // it will not have the correct native name, as it won't have definition mutators run. Thus we
-                    // need to get the version from the definition catalog to properly rebind its properties
-
+                    // it will not have the correct native name, as it won't have definition mutators run. Thus, we
+                    // need to get the info from the definition catalog to properly rebind its properties.
+                    //
+                    // It will also need its header and source file references fixed
                     var type = _catalog.Get(prepToFreeMethod.DefinedType.IlName);
                     if (type is CustomDefinedType customDefinedType)
                     {
@@ -104,6 +108,18 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
                             customDefinedType.NativeName.Value);
 
                         conversionInfo.NameInC = prepToFreeMethod.NativeName;
+
+                        if (customDefinedType.HeaderName != null)
+                        {
+                            prepToFreeMethod.HeaderName = customDefinedType.HeaderName.Value;
+                            conversionInfo.Header = prepToFreeMethod.HeaderName;
+                        }
+
+                        // Since the ArrayDefinedType will not have a source file set (since we are declaring
+                        // the type in a header) we need to tell the prep method which source file its
+                        // implementation belongs in.
+                        prepToFreeMethod.SourceFileName = Utils.ToSourceFileName(prepToFreeMethod.HeaderName);
+                        conversionInfo.SourceFileName = prepToFreeMethod.SourceFileName;
                     }
                 }
 

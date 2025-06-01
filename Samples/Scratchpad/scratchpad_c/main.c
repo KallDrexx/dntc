@@ -8,7 +8,8 @@
 
 #define ARRAY_ITEM_COUNT (10)
 
-void validate_reference_counting();
+void validate_reference_counting(void);
+void validate_array_tracking(void);
 
 int main(void) {
     dntc_utils_init_static_constructors();
@@ -223,6 +224,7 @@ int main(void) {
     assert(baseFieldValue2 == 10);
 
     validate_reference_counting();
+    validate_array_tracking();
 
     printf("Tests passed!\n");
     return 0;
@@ -261,4 +263,21 @@ void validate_reference_counting() {
 
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
     assert(inner == NULL);
+}
+
+void validate_array_tracking(void) {
+    ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* array = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest();
+    assert(array != NULL);
+    assert(array->length == 5);
+    assert(array->items != NULL);
+    assert(array->__reference_type_base.activeReferenceCount == 1);
+
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
+    assert(array->__reference_type_base.activeReferenceCount == 2);
+
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+    assert(array->__reference_type_base.activeReferenceCount == 1);
+
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+    assert(array == NULL);
 }
