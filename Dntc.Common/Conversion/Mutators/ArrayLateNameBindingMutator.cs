@@ -48,6 +48,21 @@ public class ArrayLateNameBindingMutator : ITypeConversionMutator, IMethodConver
 
         // Update the type definition's name in C for correct code generation.
         arrayDefinition.NativeName = arrayDefinition.FormTypeName(elementConversionInfo);
+
+        // If the element isn't a native type, then we want the array definition in the same header
+        // as the element is defined in. Otherwise, you end up with circular dependencies. This is
+        // probably more appropriate as a definition mutator but arrays are not part of the definer
+        // pipeline and thus there's no good integration point.
+        if (elementDefinition is CustomDefinedType customType && customType.HeaderName != null)
+        {
+            arrayDefinition.HeaderName = customType.HeaderName;
+            conversionInfo.Header = customType.HeaderName;
+        }
+        else if (elementDefinition is DotNetDefinedType dotNetType)
+        {
+            arrayDefinition.HeaderName = Utils.GetHeaderName(dotNetType.Namespace);
+            conversionInfo.Header = Utils.GetHeaderName(dotNetType.Namespace);
+        }
     }
 
     public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)

@@ -2,6 +2,7 @@
 #define SCRATCHPADCSHARP_REFERENCETYPES_H_H
 
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +31,12 @@ typedef struct ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct {
 	int32_t Value;
 } ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct;
 
+
+typedef struct {
+    DntcReferenceTypeBase __reference_type_base;
+    int32_t length;
+    ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct *items;
+} ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray;
 
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object);
