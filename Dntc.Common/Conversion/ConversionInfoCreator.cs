@@ -56,14 +56,12 @@ public class ConversionInfoCreator
     public MethodConversionInfo Create(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
         var conversionInfo = new MethodConversionInfo(method, conversionCatalog);
-        if (method is DotNetDefinedMethod dotNetDefinedMethod)
-        {
-            foreach (var mutator in _methodConversionMutators)
-            {
-                mutator.Mutate(conversionInfo, dotNetDefinedMethod);
-            }
-        }
+        var dotNetDefinedMethod = method as DotNetDefinedMethod;
 
+        foreach (var mutator in _methodConversionMutators)
+        {
+            mutator.Mutate(conversionInfo, dotNetDefinedMethod);
+        }
         return conversionInfo;
     }
     

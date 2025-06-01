@@ -2,6 +2,7 @@
 #include "ScratchpadCSharp_ReferenceTypes.h"
 #include <stdlib.h>
 #include "dntc.h"
+#include "dotnet_arrays.h"
 
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object) {
@@ -110,4 +111,19 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBas
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
 	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
+}
+
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree;
+	return result;
+}
+
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0001 = {0};
+	__temp_0001 = ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create();
+	__temp_0001->items = calloc(5, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct));
+	__temp_0001->length = 5;
+	return __temp_0001;
 }

@@ -6,9 +6,9 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public class WithAttributeMutator : IMethodConversionMutator, IFieldConversionMutator
 {
-    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method)
+    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)
     {
-        var attribute = method.Definition
+        var attribute = method?.Definition
             .CustomAttributes
             .SingleOrDefault(x => x.AttributeType.FullName == typeof(WithCAttributeAttribute).FullName);
 

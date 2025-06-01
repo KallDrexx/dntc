@@ -62,6 +62,7 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomFunctionNameMutator());
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
+        conversionInfoCreator.AddMethodMutator(new ArrayLateNameBindingMutator(definitionCatalog, conversionInfoCreator));
 
         conversionInfoCreator.AddFieldMutator(new WithAttributeMutator());
         conversionInfoCreator.AddFieldMutator(new InitialValueMutator(conversionCatalog));

@@ -26,8 +26,13 @@ public class IgnoredInHeadersMutator : ITypeConversionMutator, IMethodConversion
         conversionInfo.Header = null;
     }
 
-    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method)
+    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)
     {
+        if (method == null)
+        {
+            return;
+        }
+
         var ignoredInHeader = method.Definition
             .CustomAttributes
             .Any(x => x.AttributeType.FullName == typeof(IgnoreInHeaderAttribute).FullName);

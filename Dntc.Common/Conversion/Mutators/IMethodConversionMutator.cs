@@ -4,6 +4,5 @@ namespace Dntc.Common.Conversion.Mutators;
 
 public interface IMethodConversionMutator
 {
-    void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method);
-    
+    void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method);
 }

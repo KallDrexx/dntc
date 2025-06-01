@@ -1,4 +1,5 @@
 ﻿using Dntc.Common.Conversion;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
 using Mono.Cecil;
@@ -25,15 +26,19 @@ public class HeapArrayDefinedType : ArrayDefinedType
 
         _arrayType = arrayType;
         ManuallyReferencedHeaders = [new HeaderName("<stddef.h>")];
+        OtherReferencedTypes = OtherReferencedTypes.Concat([ReferenceTypeConstants.ReferenceTypeBaseId]).ToArray();
     }
 
-    public override CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)
+    public override CStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)
     {
         var elementInfo = catalog.Find(new IlTypeName(_arrayType.GetElementType().FullName));
+        var intType = catalog.Find(new IlTypeName(typeof(int).FullName!));
+        var referenceTypeBase = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
 
         var content = $@"
 typedef struct {{
-    int32_t length;
+    {referenceTypeBase.NameInC} {ReferenceTypeConstants.ReferenceTypeBaseFieldName};
+    {intType.NameInC} length;
     {elementInfo.NameInC} *items;
 }} {NativeName};";
 

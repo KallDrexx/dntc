@@ -12,26 +12,26 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
     public IReadOnlyList<HeaderName> RequiredHeaders => [new("<stdlib.h>")];
 
     public CStatementSet AllocateCall(
-        Variable variableToAllocate,
+        CBaseExpression variableToAllocate,
         LiteralValueExpression cTypeName,
-        ConversionCatalog conversionCatalog)
+        ConversionCatalog conversionCatalog,
+        CBaseExpression? countExpression = null)
     {
         var intType = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
-        var variableValueExpression = new VariableValueExpression(variableToAllocate);
         var callocCall = new MethodCallExpression(
-            new LiteralValueExpression("calloc", variableToAllocate.Type),
+            new LiteralValueExpression("calloc", variableToAllocate.ResultingType),
             [
                 new MethodConversionInfo.Parameter(intType.IlName, "n", false),
                 new MethodConversionInfo.Parameter(intType.IlName, "size", false)
             ],
             [
-                new LiteralValueExpression("1", intType),
+                countExpression ?? new LiteralValueExpression("1", intType),
                 new LiteralValueExpression($"sizeof({cTypeName.Value})", intType)
             ],
-            variableToAllocate.Type,
+            variableToAllocate.ResultingType,
             conversionCatalog);
 
-        var assignment = new AssignmentStatementSet(variableValueExpression, callocCall);
+        var assignment = new AssignmentStatementSet(variableToAllocate, callocCall);
 
         return assignment;
     }

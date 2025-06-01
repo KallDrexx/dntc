@@ -4,13 +4,19 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "dntc.h"
+#include "ScratchpadCSharp_ReferenceTypes.h"
 
 
 typedef struct {
+    DntcReferenceTypeBase __reference_type_base;
     int32_t length;
     uint16_t *items;
 } SystemUInt16Array;
 
 
+void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
 
 #endif // DOTNET_ARRAYS_H_H

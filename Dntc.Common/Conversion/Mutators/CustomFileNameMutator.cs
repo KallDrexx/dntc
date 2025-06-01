@@ -33,8 +33,13 @@ public class CustomFileNameMutator : ITypeConversionMutator, IMethodConversionMu
         }
     }
 
-    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod method)
+    public void Mutate(MethodConversionInfo conversionInfo, DotNetDefinedMethod? method)
     {
+        if (method == null)
+        {
+            return;
+        }
+
         var customNaming = Utils.GetCustomFileName(method.Definition.CustomAttributes, method.Id.Value);
         if (customNaming == null)
         {

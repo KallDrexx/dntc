@@ -73,9 +73,15 @@ public class MethodConversionInfo
     /// macros or functions where the implementation is defined inside the header.
     /// </summary>
     public bool IsDeclarationOnlyMethod { get; set; }
+
+    /// <summary>
+    /// The dntc method definition that created this conversion info
+    /// </summary>
+    public DefinedMethod OriginalMethodDefinition { get; }
    
     internal MethodConversionInfo(DefinedMethod method, ConversionCatalog conversionCatalog)
     {
+        OriginalMethodDefinition = method;
         MethodId = method.Id;
         ReturnTypeInfo = conversionCatalog.Find(method.ReturnType);
         Parameters = method.Parameters
