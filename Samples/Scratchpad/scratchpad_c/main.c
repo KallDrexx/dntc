@@ -280,4 +280,14 @@ void validate_array_tracking(void) {
 
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
     assert(array == NULL);
+
+    array = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest();
+    assert(array->__reference_type_base.activeReferenceCount == 1); // Verify we didn't accidentally add additional count
+    assert(array->length == 5);
+    assert(array->items[0].Value == 0);
+    assert(array->items[1].Value == 1);
+    assert(array->items[2].Value == 2);
+    assert(array->items[3].Value == 3);
+    assert(array->items[4].Value == 4);
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 }

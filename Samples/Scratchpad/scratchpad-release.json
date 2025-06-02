@@ -84,7 +84,8 @@
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::GetParentValueFromProperty(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)",
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::TestBaseFieldValue(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent,System.Int32)",
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::TestBaseMethodCall(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent)",
-    "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayStruct[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateSizedArrayTest()"
+    "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayStruct[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateSizedArrayTest()",
+    "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayStruct[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateModifiedArrayTest()"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

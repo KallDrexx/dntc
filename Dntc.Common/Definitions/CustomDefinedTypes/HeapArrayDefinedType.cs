@@ -27,6 +27,7 @@ public class HeapArrayDefinedType : ArrayDefinedType
         _arrayType = arrayType;
         ManuallyReferencedHeaders = [new HeaderName("<stddef.h>")];
         OtherReferencedTypes = OtherReferencedTypes.Concat([ReferenceTypeConstants.ReferenceTypeBaseId]).ToArray();
+        IsConsideredDotNetReferenceType = true;
     }
 
     public override CStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog)

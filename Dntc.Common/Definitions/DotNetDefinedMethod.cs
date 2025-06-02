@@ -104,7 +104,10 @@ public class DotNetDefinedMethod : DefinedMethod
             ? definition.Body
                 .Variables
                 .OrderBy(x => x.Index)
-                .Select(x => new Local(new IlTypeName(x.VariableType.FullName), x.VariableType.IsByReference || x.VariableType.IsPointer))
+                .Select(x => new Local(new IlTypeName(x.VariableType.FullName),
+                    x.VariableType.IsByReference ||
+                    x.VariableType.IsPointer ||
+                    x.VariableType.IsArray))
                 .ToArray()
             : [];
 

@@ -125,7 +125,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
             var indexExpression = new DereferencedValueExpression(index);
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
-            var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, array.ResultingType);
+            var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemsExpression.ResultingType);
             
             // Return the length check while adding the accessor expression to the stack
             context.ExpressionStack.Push(arrayIndex);

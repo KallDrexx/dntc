@@ -11,7 +11,8 @@ public abstract class CustomDefinedType : DefinedType
     public HeaderName? HeaderName { get; set; }
     public CSourceFileName? SourceFileName { get; set; }
     public CTypeName NativeName { get; set; }
-    
+    public bool IsConsideredDotNetReferenceType { get; protected set; }
+
     protected CustomDefinedType(
         IlTypeName ilTypeName, 
         HeaderName? headerName, 

@@ -2,6 +2,7 @@
 #include "ScratchpadCSharp_ReferenceTypes.h"
 #include <stdlib.h>
 #include "dntc.h"
+#include <stdbool.h>
 
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object) {
@@ -130,4 +131,32 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_Refer
 	(__temp_0001->length) = 5;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	return __temp_0001;
+}
+
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* array = {0};
+	int32_t x = {0};
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0000 = {0};
+	__temp_0000 = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0000);
+	array = __temp_0000;
+	x = 0;
+	goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b;
+
+ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_000a:
+	if ((array->length) <= x) {
+		printf("Attempted to access to array[%d], but only %u items are in the array", x, (array->length));
+		abort();
+	}
+	((array->items)[x].Value) = x;
+	x = (x + 1);
+
+ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b:
+	if ((x < ((int32_t)(array->length)))) {
+		goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_000a;
+	}
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0000);
+	return array;
 }

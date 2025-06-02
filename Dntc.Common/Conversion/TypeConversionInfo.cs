@@ -140,5 +140,6 @@ public class TypeConversionInfo
         SourceFileName = null;
         NameInC = type.NativeName;
         ReferencedHeaders = type.ReferencedHeaders;
+        IsReferenceType = type.IsConsideredDotNetReferenceType;
     }
 }

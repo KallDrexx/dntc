@@ -2,6 +2,7 @@
 #define SCRATCHPADCSHARP_REFERENCETYPES_H_H
 
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -59,5 +60,6 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCal
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void);
 void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void);
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest(void);
 
 #endif // SCRATCHPADCSHARP_REFERENCETYPES_H_H

@@ -11,4 +11,15 @@ public static class ArrayTests
     {
         return new ArrayStruct[5];
     }
+
+    public static ArrayStruct[] CreateModifiedArrayTest()
+    {
+        var array = CreateSizedArrayTest();
+        for (var x = 0; x < array.Length; x++)
+        {
+            array[x].Value = x;
+        }
+
+        return array;
+    }
 }
