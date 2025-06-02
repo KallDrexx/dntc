@@ -62,6 +62,7 @@ public class Transpiler
         conversionInfoCreator.AddMethodMutator(new CustomFunctionNameMutator());
         conversionInfoCreator.AddMethodMutator(new CustomMethodDeclarationMutator());
         conversionInfoCreator.AddMethodMutator(new IgnoredInHeadersMutator());
+        conversionInfoCreator.AddMethodMutator(new ArrayLateNameBindingMutator(definitionCatalog, conversionInfoCreator));
 
         conversionInfoCreator.AddFieldMutator(new WithAttributeMutator());
         conversionInfoCreator.AddFieldMutator(new InitialValueMutator(conversionCatalog));
@@ -110,7 +111,7 @@ public class Transpiler
                 throw new InvalidOperationException(message);
             }
 
-            var graph = new DependencyGraph(definitionCatalog, foundMethod.Id);
+            var graph = new DependencyGraph(definitionCatalog, foundMethod.Id, memoryManagement);
             conversionCatalog.Add(graph);
             implementationPlan.AddMethodGraph(graph);
         }
@@ -124,7 +125,7 @@ public class Transpiler
                 throw new InvalidOperationException(message);
             }
 
-            var graph = new DependencyGraph(definitionCatalog, foundGlobal.IlName);
+            var graph = new DependencyGraph(definitionCatalog, foundGlobal.IlName, memoryManagement);
             conversionCatalog.Add(graph);
             implementationPlan.AddMethodGraph(graph);
         }

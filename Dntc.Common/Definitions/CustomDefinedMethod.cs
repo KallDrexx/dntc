@@ -9,9 +9,9 @@ namespace Dntc.Common.Definitions;
 /// </summary>
 public abstract class CustomDefinedMethod : DefinedMethod
 {
-    public HeaderName HeaderName { get; }
-    public CSourceFileName? SourceFileName { get; }
-    public CFunctionName NativeName { get; }
+    public HeaderName HeaderName { get; set; }
+    public CSourceFileName? SourceFileName { get; set; }
+    public CFunctionName NativeName { get; set; }
     
     public bool HasImplementation { get; }
 
@@ -29,7 +29,7 @@ public abstract class CustomDefinedMethod : DefinedMethod
         ReturnType = returnType;
         Namespace = ilNamespace;
         Parameters = parameters;
-        Locals = Array.Empty<Local>();
+        Locals = [];
         HeaderName = headerName;
         SourceFileName = sourceFileName;
         NativeName = nativeName;

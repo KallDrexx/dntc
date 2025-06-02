@@ -8,6 +8,8 @@ namespace Dntc.Common.Dependencies;
 
 public class DependencyGraph
 {
+    private readonly IMemoryManagementActions _memoryManagement;
+
     public abstract record Node(bool IsPredeclared)
     {
         public List<Node> Children { get; } = [];
@@ -22,8 +24,9 @@ public class DependencyGraph
     
     public Node Root { get; private set; }
 
-    public DependencyGraph(DefinitionCatalog definitionCatalog, IlMethodId rootMethod)
+    public DependencyGraph(DefinitionCatalog definitionCatalog, IlMethodId rootMethod, IMemoryManagementActions memoryManagement)
     {
+        _memoryManagement = memoryManagement;
         var firstNode = CreateNode(definitionCatalog, rootMethod, []);
         if (firstNode == null)
         {
@@ -34,8 +37,9 @@ public class DependencyGraph
         Root = firstNode;
     }
 
-    public DependencyGraph(DefinitionCatalog definitionCatalog, IlFieldId global)
+    public DependencyGraph(DefinitionCatalog definitionCatalog, IlFieldId global, IMemoryManagementActions memoryManagement)
     {
+        _memoryManagement = memoryManagement;
         var node = CreateNode(definitionCatalog, global, []);
         if (node == null)
         {
@@ -46,7 +50,7 @@ public class DependencyGraph
         Root = node;
     }
 
-    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
+    private MethodNode? CreateNode(DefinitionCatalog definitionCatalog, GenericInvokedMethod invokedMethod, List<Node> path)
     {
         var invokedDefinition = definitionCatalog.Get(invokedMethod.MethodId);
         if (invokedDefinition != null)
@@ -68,7 +72,7 @@ public class DependencyGraph
         return CreateNode(definitionCatalog, invokedMethod.MethodId, path);
     }
 
-    private static MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path, bool isOverride = false)
+    private MethodNode? CreateNode(DefinitionCatalog definitionCatalog, IlMethodId methodId, List<Node> path, bool isOverride = false)
     {
         if (IsInPath(path, methodId))
         {
@@ -171,7 +175,7 @@ public class DependencyGraph
         return node;
     }
     
-    private static TypeNode? CreateNode(DefinitionCatalog definitionCatalog, IlTypeName typeName, List<Node> path)
+    private TypeNode? CreateNode(DefinitionCatalog definitionCatalog, IlTypeName typeName, List<Node> path)
     {
         if (IsInPath(path, typeName))
         {
@@ -223,10 +227,12 @@ public class DependencyGraph
         // If this is a .net reference type, then we need to add the prep to free call to its dependency graph
         if (type is DotNetDefinedType dotNetType && !dotNetType.Definition.IsValueType)
         {
+            // TODO: Reference types should automatically add the prepToFree method to their known required methods
+            // or through some other mechanism. It shouldn't be up to the dependency graph to manually add them in.
             var prepMethod = definitionCatalog.Get(ReferenceTypeConstants.PrepTypeToFreeMethodId(type.IlName));
             if (prepMethod == null)
             {
-                prepMethod = new PrepToFreeDefinedMethod(dotNetType);
+                prepMethod = new PrepToFreeDefinedMethod(dotNetType, _memoryManagement);
                 definitionCatalog.Add([prepMethod]);
             }
 
@@ -241,7 +247,7 @@ public class DependencyGraph
         return node;
     }
 
-    private static FieldNode? CreateNode(DefinitionCatalog definitionCatalog, IlFieldId fieldId, List<Node> path)
+    private FieldNode? CreateNode(DefinitionCatalog definitionCatalog, IlFieldId fieldId, List<Node> path)
     {
         if (IsInPath(path, fieldId))
         {

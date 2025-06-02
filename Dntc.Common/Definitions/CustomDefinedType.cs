@@ -8,8 +8,8 @@ namespace Dntc.Common.Definitions;
 /// </summary>
 public abstract class CustomDefinedType : DefinedType
 {
-    public HeaderName? HeaderName { get; }
-    public CSourceFileName? SourceFileName { get; }
+    public HeaderName? HeaderName { get; set; }
+    public CSourceFileName? SourceFileName { get; set; }
     public CTypeName NativeName { get; set; }
     
     protected CustomDefinedType(
@@ -27,9 +27,9 @@ public abstract class CustomDefinedType : DefinedType
         NativeName = nativeName;
         ReferencedHeaders = referencedHeaders;
 
-        InstanceFields = Array.Empty<Field>();
-        Methods = Array.Empty<IlMethodId>();
+        InstanceFields = [];
+        Methods = [];
     }
     
-    public abstract CustomCodeStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
+    public abstract CStatementSet? GetCustomTypeDeclaration(ConversionCatalog catalog);
 }

@@ -1,7 +1,11 @@
-﻿using Dntc.Common.Definitions.CustomDefinedTypes;
+﻿using Dntc.Common.Definitions.CustomDefinedMethods;
+using Dntc.Common.Definitions.CustomDefinedTypes;
+using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.Syntax.Expressions;
 using Dntc.Common.Syntax.Statements;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace Dntc.Common.OpCodeHandling.Handlers;
 
@@ -10,6 +14,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
     public IReadOnlyDictionary<Code, IOpCodeHandler> Handlers { get; } = new Dictionary<Code, IOpCodeHandler>
     {
         { Code.Ldlen, new LdLenHandler() },
+        { Code.Newarr, new NewArrHandler() },
 
         { Code.Ldelema, new LdElemHandler() },
         { Code.Ldelem_I, new LdElemHandler() },
@@ -140,6 +145,90 @@ public class ArrayHandlers : IOpCodeHandlerCollection
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
             return new OpCodeAnalysisResult();
+        }
+    }
+    
+    private class NewArrHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var arrayElementType = (TypeReference)context.CurrentInstruction.Operand;
+            var arrayType = arrayElementType.MakeArrayType();
+            var elementTypeInfo = context.ConversionCatalog.Find(new IlTypeName(arrayElementType.FullName));
+            var arrayInfo = context.ConversionCatalog.Find(new IlTypeName(arrayType.FullName));
+            if (arrayInfo.OriginalTypeDefinition is not ArrayDefinedType arrayDefinedType)
+            {
+                var message = $"Expected array to be defined as an ArrayDefinedType, but instead was " +
+                              $"a '{arrayInfo.OriginalTypeDefinition.GetType().FullName}";
+                throw new InvalidOperationException(message);
+            }
+
+            var items = context.ExpressionStack.Pop(1);
+            var count = items[0];
+
+            var name = $"__temp_{context.CurrentInstruction.Offset:x4}";
+            var tempVariable = new Variable(arrayInfo, name, true);
+            var tempVariableExpression = new VariableValueExpression(tempVariable);
+
+            var createFnCallExpression = new MethodCallExpression(
+                ReferenceTypeAllocationMethod.FormIlMethodId(arrayType),
+                context.ConversionCatalog);
+
+            // Allocate items pointer.
+            // TODO: This should be customizable for different types of arrays
+            var itemAllocator = context.MemoryManagementActions.AllocateCall(
+                arrayDefinedType.GetItemsAccessorExpression(tempVariableExpression, context.ConversionCatalog),
+                new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo),
+                context.ConversionCatalog,
+                count);
+
+            // Set the item size value
+            var sizeExpression = arrayDefinedType.GetArraySizeExpression(
+                tempVariableExpression,
+                context.ConversionCatalog);
+
+            if (sizeExpression == null)
+            {
+                var message = $"Array defined type {arrayDefinedType.GetType()} gave a null size expression";
+                throw new InvalidOperationException(message);
+            }
+
+            var sizeAssignment = new AssignmentStatementSet(sizeExpression, count);
+
+            // Make sure to ref count it
+            var gcTrack = new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog);
+
+            context.ExpressionStack.Push(new VariableValueExpression(tempVariable));
+
+            return new OpCodeHandlingResult(new CompoundStatementSet([
+                new LocalDeclarationStatementSet(tempVariable),
+                new AssignmentStatementSet(tempVariableExpression, createFnCallExpression),
+                itemAllocator,
+                sizeAssignment,
+                gcTrack,
+            ]));
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            if (!ExperimentalFlags.AllowReferenceTypes)
+            {
+                var message = "The newarr MSIL opcode requires reference type support, which is not enabled.";
+                throw new InvalidOperationException(message);
+            }
+
+            var definition = ((TypeDefinition)context.CurrentInstruction.Operand).MakeArrayType();
+            var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
+
+            // Use the newarr opcode to know when we need to add the prep for free function for this array type
+            var prepMethod = new PrepToFreeDefinedMethod(
+                new HeapArrayDefinedType(definition),
+                context.MemoryManagementActions);
+
+            return new OpCodeAnalysisResult
+            {
+                CalledMethods = [new CustomInvokedMethod(allocationMethod), new CustomInvokedMethod(prepMethod)],
+            };
         }
     }
 }

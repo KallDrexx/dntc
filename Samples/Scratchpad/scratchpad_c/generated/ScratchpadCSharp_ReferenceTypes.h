@@ -2,7 +2,9 @@
 #define SCRATCHPADCSHARP_REFERENCETYPES_H_H
 
 
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "dntc.h"
@@ -24,6 +26,16 @@ typedef struct ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* InnerClassInstance;
 } ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent;
 
+typedef struct ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct {
+	int32_t Value;
+} ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct;
+
+
+typedef struct {
+    DntcReferenceTypeBase __reference_type_base;
+    int32_t length;
+    ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct *items;
+} ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray;
 
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* object);
@@ -44,5 +56,8 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFro
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent, int32_t value);
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this);
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent);
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void);
+void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* object);
+ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void);
 
 #endif // SCRATCHPADCSHARP_REFERENCETYPES_H_H
