@@ -139,6 +139,10 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_Refer
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0000 = {0};
 	__temp_0000 = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0000);
+	if (array != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+
+	}
 	array = __temp_0000;
 	x = 0;
 	goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b;

@@ -337,16 +337,26 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 right = items[0];
             }
 
-            var tempStatement = HandleReferencedVariable(context.ExpressionStack, localVariable,
+            var tempStatement = HandleReferencedVariable(
+                context.ExpressionStack,
+                localVariable,
                 context.CurrentInstruction.Offset);
 
-            var statement = new AssignmentStatementSet(left, right);
+            var statements = new List<CStatementSet>();
+            if (localVariable.ResultingType.IsReferenceType)
+            {
+                // Since the local is a reference type, we need to untrack the old one
+                statements.Add(new GcUntrackIfNotNullStatementSet(localVariable, context.ConversionCatalog));
+            }
 
-            CStatementSet result = tempStatement != null
-                ? new CompoundStatementSet([tempStatement, statement])
-                : statement;
+            if (tempStatement != null)
+            {
+                statements.Add(tempStatement);
+            }
 
-            return new OpCodeHandlingResult(result);
+            statements.Add(new AssignmentStatementSet(left, right));
+
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
