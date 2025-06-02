@@ -62,7 +62,6 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 	(__temp_000e->TestValue) = value;
 	if ((__this->InnerClassInstance) != NULL) {
 		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(__this->InnerClassInstance));
-
 	}
 	(__this->InnerClassInstance) = __temp_000e;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(__this->InnerClassInstance));
@@ -141,7 +140,6 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_Refer
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0000);
 	if (array != NULL) {
 		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-
 	}
 	array = __temp_0000;
 	x = 0;

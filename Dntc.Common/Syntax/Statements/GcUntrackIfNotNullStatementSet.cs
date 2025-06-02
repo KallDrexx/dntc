@@ -22,6 +22,6 @@ public record GcUntrackIfNotNullStatementSet(CBaseExpression Expression, Convers
         await writer.WriteLineAsync(" != NULL) {");
         await writer.WriteAsync("\t");
         await gcUntrack.WriteAsync(writer);
-        await writer.WriteAsync("\n\t}\n");
+        await writer.WriteAsync("\t}\n");
     }
 }
