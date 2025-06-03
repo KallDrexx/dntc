@@ -99,10 +99,6 @@ public class CallHandlers : IOpCodeHandlerCollection
             var assignment = new AssignmentStatementSet(tempVariableExpression, methodCallExpression);
 
             var statements = new List<CStatementSet>([localDeclaration, assignment]);
-            if (returnType.IsReferenceType)
-            {
-                statements.Add(new GcTrackFunctionCallStatement(tempVariableExpression, context.ConversionCatalog));
-            }
 
             context.ExpressionStack.Push(tempVariableExpression);
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));

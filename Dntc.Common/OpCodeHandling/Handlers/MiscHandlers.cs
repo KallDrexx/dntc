@@ -108,18 +108,32 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
+            var statements = new List<CStatementSet>();
             var innerExpression = context.ExpressionStack.Count == 1
                 ? context.ExpressionStack.Pop(1)[0]
                 : null;
 
-            var returnStatement = new ReturnStatementSet(innerExpression);
+            var originalInnerExpression = innerExpression;
+            if (innerExpression != null)
+            {
+                // If we are returning a value, we need to first save that value to a temporary value. This is
+                // needed because the inner expression might use a reference type as an argument. So we need
+                // to save the value to the temporary variable before we untrack it, otherwise we'll end up
+                // with a use after free bug.
+                var returnType = context.ConversionCatalog.Find(context.CurrentDotNetMethod.ReturnType);
+                var tempVariable = new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer);
+                var tempVariableExpression = new VariableValueExpression(tempVariable);
+                var assignment = new AssignmentStatementSet(tempVariableExpression, innerExpression);
+
+                statements.Add(assignment);
+                innerExpression = tempVariableExpression;
+            }
 
             // If any locals are .net reference types, we need to untrack them
-            var statements = new List<CStatementSet>();
             var innerExpressionContainsVariable = false;
             foreach (var variable in context.ReferenceTypeVariables)
             {
-                if (innerExpression is VariableValueExpression variableValueExpression &&
+                if (originalInnerExpression is VariableValueExpression variableValueExpression &&
                     variableValueExpression.Variable == variable)
                 {
                     // Since we are returning the variable, there's no reason to track + untrack it
@@ -138,14 +152,14 @@ public class MiscHandlers : IOpCodeHandlerCollection
             // don't accidentally free it. Don't bother doing this though if we are returning a local, since
             // it should already be tracked, and we explicitly are not untracking it as part of the pre-return
             // gc cleanup.
-            if (innerExpression?.ResultingType.IsReferenceType == true && !innerExpressionContainsVariable)
+            if (originalInnerExpression?.ResultingType.IsReferenceType == true && !innerExpressionContainsVariable)
             {
                 // This needs to be added first, so it comes before any untrack calls. Otherwise, it might be
                 // freed before we are able to track it and return it.
-                statements.Insert(0, new GcTrackFunctionCallStatement(innerExpression, context.ConversionCatalog));
+                statements.Insert(0, new GcTrackFunctionCallStatement(originalInnerExpression, context.ConversionCatalog));
             }
 
-            statements.Add(returnStatement);
+            statements.Add(new ReturnStatementSet(innerExpression));
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 

@@ -12,6 +12,7 @@ int32_t ScratchpadCSharp_SingleFileTests_NumberArray[10] = {1,2,3,4,5,6,7,8,9,10
 
 #define addOneMacro(a) ((a) + 1)
 int32_t main(void) {
+	int32_t __return_value = {0};
 	ScratchpadCSharp_SingleFileTests_SomeStruct __local_0 = {0};
 	(*(&__local_0)) = ((ScratchpadCSharp_SingleFileTests_SomeStruct){0});
 	((&__local_0)->Value) = 33;
@@ -23,5 +24,6 @@ int32_t main(void) {
 		abort();
 	}
 	ScratchpadCSharp_SingleFileTests_NumberArray[3];
-	return (__local_0.Value);
+	__return_value = (__local_0.Value);
+	return __return_value;
 }

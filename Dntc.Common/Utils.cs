@@ -21,7 +21,9 @@ public static class Utils
         }
         
         return LocalName(localIndex);
-    } 
+    }
+
+    public static string ReturnVariableName() => "__return_value";
 
     public static CSourceFileName GetSourceFileName(IlNamespace csharpNamespace)
     {

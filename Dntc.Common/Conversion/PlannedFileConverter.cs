@@ -119,6 +119,17 @@ public class PlannedFileConverter
         Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
 
         OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
+
+        // If this isn't a void return type, define a local variable that will hold the return value.
+        // This is needed so we can compute a return value prior to the function untracking any
+        // used reference types.
+        if (dotNetDefinedMethod.ReturnType != new IlTypeName(typeof(void).FullName!))
+        {
+            var returnType = _conversionCatalog.Find(dotNetDefinedMethod.ReturnType);
+            statements.Add(
+                new LocalDeclarationStatementSet(
+                    new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer)));
+        }
         
         HashSet<string> locals = new();
         // Add local statements
@@ -177,6 +188,7 @@ public class PlannedFileConverter
                 .OfType<LocalDeclarationStatementSet>()
                 .Select(x => x.Variable)
                 .Where(x => x.Type.IsReferenceType)
+                .Where(x => x.Name != Utils.ReturnVariableName())
                 .ToArray();
 
             var startStackSize = expressionStack.Count;

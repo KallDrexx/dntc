@@ -356,6 +356,11 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
             statements.Add(new AssignmentStatementSet(left, right));
 
+            if (localVariable.ResultingType.IsReferenceType)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(localVariable, context.ConversionCatalog));
+            }
+
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 

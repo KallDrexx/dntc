@@ -20,13 +20,17 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree(
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this, int32_t a, int32_t b) {
-	return (a + b);
+	int32_t __return_value = {0};
+	__return_value = (a + b);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_Sum(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *__this, int32_t a, int32_t b) {
+	int32_t __return_value = {0};
 	int32_t result = {0};
 	result = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)__this, a, b);
-	return ((__this->FieldValue) + result);
+	__return_value = ((__this->FieldValue) + result);
+	return __return_value;
 }
 
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create(void) {
@@ -70,46 +74,61 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 }
 
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(int32_t value) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __return_value = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0001 = {0};
 	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0001, value);
-	return __temp_0001;
+	__return_value = __temp_0001;
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
+	int32_t __return_value = {0};
 	int32_t sum = {0};
 	sum = ((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent)->ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent, 1, 2);
-	return ((parent->FieldValue) + sum);
+	__return_value = ((parent->FieldValue) + sum);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test(void) {
+	int32_t __return_value = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0002 = {0};
 	__temp_0002 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(10);
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0002);
+	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
-	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *__this) {
-	return (__this->FieldValue);
+	int32_t __return_value = {0};
+	__return_value = (__this->FieldValue);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFromProperty(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
-	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(parent);
+	int32_t __return_value = {0};
+	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(parent);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent, int32_t value) {
+	int32_t __return_value = {0};
 	((parent->base).BaseField) = value;
-	return (((parent->base).BaseField) + 5);
+	__return_value = (((parent->base).BaseField) + 5);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this) {
-	return (__this->BaseField);
+	int32_t __return_value = {0};
+	__return_value = (__this->BaseField);
+	return __return_value;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCall(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent *parent) {
-	return ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
+	int32_t __return_value = {0};
+	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
+	return __return_value;
 }
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create(void) {
@@ -124,24 +143,27 @@ void ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__PrepForFree(Scrat
 }
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __return_value = {0};
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0001 = {0};
 	__temp_0001 = ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray__Create();
 	(__temp_0001->items) = calloc(5, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayStruct));
 	(__temp_0001->length) = 5;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
-	return __temp_0001;
+	__return_value = __temp_0001;
+	return __return_value;
 }
 
 ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __return_value = {0};
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* array = {0};
 	int32_t x = {0};
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0000 = {0};
 	__temp_0000 = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest();
-	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0000);
 	if (array != NULL) {
 		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	}
 	array = __temp_0000;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	x = 0;
 	goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b;
 
@@ -158,7 +180,8 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b:
 		goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_000a;
 	}
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
+	__return_value = array;
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0000);
-	return array;
+	return __return_value;
 }
