@@ -60,6 +60,9 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* __temp_000e = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)__this);
 	(__this->FieldValue) = value;
+	if (__temp_000e != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
+	}
 	__temp_000e = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000e);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_000e);
@@ -76,6 +79,9 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(int32_t value) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __return_value = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0001 = {0};
+	if (__temp_0001 != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
+	}
 	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0001, value);
@@ -183,5 +189,77 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b:
 	__return_value = array;
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0000);
+	return __return_value;
+}
+
+void ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* object) {
+	// No cleanup necessary
+}
+
+ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__Create(void) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__PrepForFree;
+	return result;
+}
+
+void ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* object) {
+	free((object->items));
+}
+
+ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__PrepForFree;
+	return result;
+}
+
+void ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__ctor(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass *__this) {
+	return;
+}
+
+ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray(int32_t count) {
+	ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* __return_value = {0};
+	ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* array = {0};
+	int32_t x = {0};
+	ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* __temp_0001 = {0};
+	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* __temp_000d = {0};
+	__temp_0001 = ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__Create();
+	(__temp_0001->items) = calloc(count, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass));
+	(__temp_0001->length) = count;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
+	if (array != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	}
+	array = __temp_0001;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
+	x = 0;
+	goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_001e;
+
+ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_000b:
+	if (__temp_000d != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
+	}
+	__temp_000d = ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000d);
+	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__ctor(__temp_000d);
+	(__temp_000d->Value) = x;
+	if ((array->length) <= x) {
+		printf("Attempted to access to array[%d], but only %u items are in the array", x, (array->length));
+		abort();
+	}
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000d);
+	(array->items)[x] = __temp_000d;
+	x = (x + 1);
+
+ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_001e:
+	if ((x < count)) {
+		goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_000b;
+	}
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
+	__return_value = array;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
 	return __return_value;
 }

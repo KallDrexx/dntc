@@ -4,7 +4,7 @@ namespace Dntc.Common.Syntax.Statements;
 
 public record ArrayStoreStatementSet(
     ArrayIndexExpression ArrayIndex,
-    DereferencedValueExpression Value) : CStatementSet
+    CBaseExpression Value) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {

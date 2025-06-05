@@ -64,8 +64,6 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemType);
             
-            var valueExpression = new DereferencedValueExpression(value);
-
             var statements = new List<CStatementSet>();
             var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
             if (lengthField != null)
@@ -74,7 +72,13 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 statements.Add(lengthCheck);
             }
 
-            var storeStatement = new ArrayStoreStatementSet(arrayIndex, valueExpression);
+            var storeStatement = new ArrayStoreStatementSet(arrayIndex, value);
+
+            if (value.ResultingType.IsReferenceType)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(value, context.ConversionCatalog));
+            }
+
             statements.Add(storeStatement);
 
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));

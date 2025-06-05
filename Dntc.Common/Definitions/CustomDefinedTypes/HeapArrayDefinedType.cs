@@ -35,12 +35,13 @@ public class HeapArrayDefinedType : ArrayDefinedType
         var elementInfo = catalog.Find(new IlTypeName(_arrayType.GetElementType().FullName));
         var intType = catalog.Find(new IlTypeName(typeof(int).FullName!));
         var referenceTypeBase = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
+        var isDoublePointer = elementInfo.IsReferenceType;
 
         var content = $@"
 typedef struct {{
     {referenceTypeBase.NameInC} {ReferenceTypeConstants.ReferenceTypeBaseFieldName};
     {intType.NameInC} length;
-    {elementInfo.NameInC} *items;
+    {elementInfo.NameInC} *{(isDoublePointer ? "*" : "")}items;
 }} {NativeName};";
 
         return new CustomCodeStatementSet(content);

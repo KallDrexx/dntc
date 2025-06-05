@@ -218,6 +218,9 @@ public class CallHandlers : IOpCodeHandlerCollection
                     throw new NotSupportedException(message);
                 }
 
+                // We need to make sure the temp variable is untracked if it's being set in a loop
+                statements.Add(new GcUntrackIfNotNullStatementSet(variableExpression, context.ConversionCatalog));
+
                 var createFunction = new ReferenceTypeAllocationMethod(
                     context.MemoryManagementActions,
                     constructor.DeclaringType.Resolve());
