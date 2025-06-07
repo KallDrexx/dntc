@@ -263,6 +263,14 @@ void validate_reference_counting() {
 
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
     assert(inner == NULL);
+
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* inner1 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* inner2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    inner1->TestValue = 1;
+    inner2->TestValue = 2;
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestClassSwap(inner1, inner2);
+    assert(inner1->TestValue == 2);
+    assert(inner2->TestValue == 1);
 }
 
 void validate_array_tracking(void) {

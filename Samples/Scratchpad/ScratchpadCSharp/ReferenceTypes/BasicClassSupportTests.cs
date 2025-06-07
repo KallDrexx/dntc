@@ -78,4 +78,12 @@ public static class BasicClassSupportTests
     {
         return parent.GetBaseFieldValue();
     }
+
+    public static void TestClassSwap(ref InnerClass a, ref InnerClass b)
+    {
+        // ReSharper disable once SwapViaDeconstruction
+        var temp = a;
+        a = b;
+        b = temp;
+    }
 }

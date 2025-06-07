@@ -263,3 +263,16 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_001e:
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
 	return __return_value;
 }
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestClassSwap(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *a, ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *b) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* temp = {0};
+	if (temp != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&temp);
+	}
+	temp = (*a);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)temp);
+	(*a) = b;
+	(*b) = temp;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&temp);
+	return;
+}

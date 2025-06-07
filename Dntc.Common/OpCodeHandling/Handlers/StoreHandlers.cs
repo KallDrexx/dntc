@@ -24,6 +24,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         { Code.Stind_I8, new StIndHandler() },
         { Code.Stind_R4, new StIndHandler() },
         { Code.Stind_R8, new StIndHandler() },
+        { Code.Stind_Ref, new StIndHandler() },
 
         { Code.Stloc, new StLocHandler(null) },
         { Code.Stloc_0, new StLocHandler(0) },
@@ -258,18 +259,24 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var storedVariableExpression = new VariableValueExpression(
                 new Variable(argumentInfo, argument.Name, argument.IsReference));
 
-            var statement = new AssignmentStatementSet(storedVariableExpression, value);
-
+            var statements = new List<CStatementSet>();
             var tempVariable = HandleReferencedVariable(
                 context.ExpressionStack,
                 storedVariableExpression,
                 context.CurrentInstruction.Offset);
 
-            CStatementSet result = tempVariable != null
-                ? new CompoundStatementSet([tempVariable, statement])
-                : statement;
+            if (tempVariable != null)
+            {
+                statements.Add(tempVariable);
+            }
 
-            return new OpCodeHandlingResult(result);
+            if (storedVariableExpression.ResultingType.IsReferenceType)
+            {
+                statements.Add(new GcUntrackIfNotNullStatementSet(storedVariableExpression, context.ConversionCatalog));
+            }
+
+            statements.Add(new AssignmentStatementSet(storedVariableExpression, value));
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
