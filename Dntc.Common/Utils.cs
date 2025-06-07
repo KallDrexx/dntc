@@ -10,6 +10,8 @@ public static class Utils
 {
     public static string IlOffsetToLabel(int ilOffset, MethodConversionInfo method) => $"{method.NameInC}_IL_{ilOffset:x4}";
 
+    public static string ThisArgumentName => "__this";
+
     public static string LocalName(int localIndex) => $"__local_{localIndex}";
 
     public static string LocalName(MethodDefinition method, int localIndex)

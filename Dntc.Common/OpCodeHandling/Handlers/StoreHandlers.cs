@@ -51,6 +51,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         if (expressionStack.ReplaceExpression(variable, tempVariableExpression))
         {
             // At least one expression in the stack was replaced
+            // TODO: Do I need to do an untrack here for reference types?
             var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
             var assignment = new AssignmentStatementSet(tempVariableExpression, variable);
             return new CompoundStatementSet([localDeclaration, assignment]);
@@ -258,18 +259,30 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var storedVariableExpression = new VariableValueExpression(
                 new Variable(argumentInfo, argument.Name, argument.IsReference));
 
-            var statement = new AssignmentStatementSet(storedVariableExpression, value);
-
             var tempVariable = HandleReferencedVariable(
                 context.ExpressionStack,
                 storedVariableExpression,
                 context.CurrentInstruction.Offset);
 
-            CStatementSet result = tempVariable != null
-                ? new CompoundStatementSet([tempVariable, statement])
-                : statement;
+            var statements = new List<CStatementSet>();
+            if (storedVariableExpression.ResultingType.IsReferenceType)
+            {
+                statements.Add(new GcUntrackIfNotNullStatementSet(storedVariableExpression, context.ConversionCatalog));
+            }
 
-            return new OpCodeHandlingResult(result);
+            if (tempVariable != null)
+            {
+                statements.Add(tempVariable);
+            }
+
+            statements.Add(new AssignmentStatementSet(storedVariableExpression, value));
+
+            if (storedVariableExpression.ResultingType.IsReferenceType)
+            {
+                statements.Add(new GcTrackFunctionCallStatement(storedVariableExpression, context.ConversionCatalog));
+            }
+
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
         }
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)

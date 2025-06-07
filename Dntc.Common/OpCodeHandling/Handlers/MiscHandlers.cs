@@ -143,9 +143,22 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 }
 
                 statements.Add(
-                    new GcUntrackFunctionCallStatement(
+                    new GcUntrackIfNotNullStatementSet(
                         new VariableValueExpression(variable),
                         context.ConversionCatalog));
+            }
+
+            // Since the start of the method tracked reference type arguments, we now need to untrack them.
+            foreach (var parameter in context.CurrentMethodConversion.Parameters)
+            {
+                var paramType = context.ConversionCatalog.Find(parameter.TypeName);
+                if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
+                {
+                    var variable = new VariableValueExpression(
+                        new Variable(paramType, parameter.Name, true));
+
+                    statements.Add(new GcUntrackIfNotNullStatementSet(variable, context.ConversionCatalog));
+                }
             }
 
             // If the value being returned is a .net reference type, then we need to mark it as tracked so we

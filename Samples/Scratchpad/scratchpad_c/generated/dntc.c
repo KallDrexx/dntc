@@ -3,6 +3,7 @@
 
 
 void DntcReferenceTypeBase_Gc_Untrack(DntcReferenceTypeBase **referenceType) {
+	if (*referenceType == NULL) return;
 
     DntcReferenceTypeBase *singlePointerVariable = *referenceType;
     int32_t count = --(singlePointerVariable->activeReferenceCount);

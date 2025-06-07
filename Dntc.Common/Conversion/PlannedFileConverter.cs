@@ -115,9 +115,7 @@ public class PlannedFileConverter
         }
         
         var statements = new List<CStatementSet>();
-        
-        Instruction methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
-
+        var methodInstruction = dotNetDefinedMethod.Definition.Body.Instructions.First();
         OnBeforeGenerateInstruction(statements, dotNetDefinedMethod, methodInstruction);
 
         // If this isn't a void return type, define a local variable that will hold the return value.
@@ -131,8 +129,8 @@ public class PlannedFileConverter
                     new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer)));
         }
         
-        HashSet<string> locals = new();
         // Add local statements
+        HashSet<string> locals = [];
         for (var x = 0; x < dotNetDefinedMethod.Definition.Body.Variables.Count; x++)
         {
             var local = dotNetDefinedMethod.Locals[x];
@@ -148,6 +146,21 @@ public class PlannedFileConverter
             {
                 // Error if the Variable is of a different type?
                 // but not possible? otherwise IL would not be valid?
+            }
+        }
+
+        // We need to add GC track calls for each reference type argument, as `starg` op codes may cause
+        // them to be untracked, and if we don't do an initial increment than callers may have the values
+        // freed out from under them.
+        foreach (var parameter in dotNetDefinedMethod.Parameters)
+        {
+            var paramType = _conversionCatalog.Find(parameter.Type);
+            if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
+            {
+                var variable = new VariableValueExpression(
+                    new Variable(paramType, parameter.Name, true));
+
+                statements.Add(new GcTrackFunctionCallStatement(variable, _conversionCatalog));
             }
         }
 

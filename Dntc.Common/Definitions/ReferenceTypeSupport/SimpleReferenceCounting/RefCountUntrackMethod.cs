@@ -34,6 +34,8 @@ public class RefCountUntrackMethod : CustomDefinedMethod
     {
         var intType = catalog.Find(new IlTypeName(typeof(int).FullName!));
         var statements = new List<CStatementSet>();
+        statements.Add(new CustomCodeStatementSet("\tif (*referenceType == NULL) return;\n"));
+
         statements.Add(new CustomCodeStatementSet($@"
     {ReferenceTypeConstants.ReferenceTypeBaseName} *singlePointerVariable = *referenceType;
     {intType.NameInC} count = --(singlePointerVariable->{SimpleRefCountConstants.CurrentCountFieldName});

@@ -78,4 +78,14 @@ public static class BasicClassSupportTests
     {
         return parent.GetBaseFieldValue();
     }
+
+    private static int StArgTest(InnerClass inner, bool refresh)
+    {
+        if (refresh)
+        {
+            inner = new InnerClass { TestValue = 200 };
+        }
+
+        return inner.TestValue;
+    }
 }

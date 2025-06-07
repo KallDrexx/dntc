@@ -633,11 +633,15 @@ uint16_t ScratchpadCSharp_EnumTests_GetUShortEnumValue(void) {
 }
 
 void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int32_t index, uint16_t value) {
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	if ((array->length) <= index) {
 		printf("Attempted to access to array[%d], but only %u items are in the array", index, (array->length));
 		abort();
 	}
 	(array->items)[index] = value;
+	if (array != NULL) {
+		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	}
 	return;
 }
 

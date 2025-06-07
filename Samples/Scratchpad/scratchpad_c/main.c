@@ -184,6 +184,7 @@ int main(void) {
 
     uint16_t *items2 = malloc(sizeof(uint16_t) * ARRAY_ITEM_COUNT);
     SystemUInt16Array array2 = {.length = ARRAY_ITEM_COUNT, .items = items2 };
+    array2.__reference_type_base.activeReferenceCount = 1;
     ScratchpadCSharp_SimpleFunctions_LdIndRefTest(&array2, 1, 23);
     assert(array2.items[1] == 23);
 
@@ -263,6 +264,18 @@ void validate_reference_counting() {
 
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
     assert(inner == NULL);
+
+    // Validate stdarg gc tracking
+    inner = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner);
+    inner->TestValue = 23;
+    int32_t argValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest(inner, false);
+    assert(argValue == 23);
+    assert(inner->__reference_type_base.activeReferenceCount == 1);
+
+    argValue = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest(inner, true);
+    assert(argValue == 200);
+    assert(inner->__reference_type_base.activeReferenceCount == 1);
 }
 
 void validate_array_tracking(void) {

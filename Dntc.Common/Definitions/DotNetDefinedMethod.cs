@@ -14,7 +14,6 @@ public class DotNetDefinedMethod : DefinedMethod
     private readonly HashSet<IlTypeName> _referencedTypes = [];
     private readonly HashSet<IlFieldId> _referencedGlobals = [];
     private readonly IMemoryManagementActions _memoryManagement;
-
     private bool _hasBeenAnalyzed;
 
     public MethodDefinition Definition { get; }
@@ -82,7 +81,7 @@ public class DotNetDefinedMethod : DefinedMethod
         if (!definition.IsStatic)
         {
             // If this is an instance method, then the first parameter is always the declaring type
-            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), "__this", true));
+            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), Utils.ThisArgumentName, true));
         }
 
         Parameters = parameters;
