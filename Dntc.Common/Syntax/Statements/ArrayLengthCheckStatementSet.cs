@@ -5,7 +5,7 @@ namespace Dntc.Common.Syntax.Statements;
 public record ArrayLengthCheckStatementSet(
     CBaseExpression ArrayLengthField,
     CBaseExpression Array,
-    DereferencedValueExpression Index) : CStatementSet
+    CBaseExpression Index) : CStatementSet
 {
     public override async Task WriteAsync(StreamWriter writer)
     {

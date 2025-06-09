@@ -2,7 +2,7 @@
 
 namespace Dntc.Common.Syntax.Expressions;
 
-public record ZeroValuedObjectExpression(TypeConversionInfo TypeInfo) : CBaseExpression(TypeInfo.IsPointer)
+public record ZeroValuedObjectExpression(TypeConversionInfo TypeInfo) : CBaseExpression(TypeInfo.IsPointer ? 1 : 0)
 {
     public override TypeConversionInfo ResultingType => TypeInfo;
 

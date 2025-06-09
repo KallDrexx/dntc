@@ -56,7 +56,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
     {
         var statements = new List<CStatementSet>();
         var thisTypeInfo = catalog.Find(DefinedType.IlName);
-        var objectVariable = new Variable(thisTypeInfo, "object", true);
+        var objectVariable = new Variable(thisTypeInfo, "object", 1);
         var objectVariableExpression = new VariableValueExpression(objectVariable);
 
         if (DefinedType is DotNetDefinedType dotNetType)
@@ -71,7 +71,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             foreach (var field in referenceTypeFields)
             {
                 var fieldInfo = catalog.Find(field);
-                var fieldVariable = new Variable(fieldInfo.FieldTypeConversionInfo, fieldInfo.NameInC.Value, true);
+                var fieldVariable = new Variable(fieldInfo.FieldTypeConversionInfo, fieldInfo.NameInC.Value, 1);
                 var fieldAccess = new FieldAccessExpression(objectVariableExpression, fieldVariable);
                 statements.Add(new GcUntrackFunctionCallStatement(fieldAccess, catalog));
                 statements.Add(new CustomCodeStatementSet("\n")); // Need to come up with a better white space strategy
@@ -84,7 +84,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
                 var methodCall = new MethodCallExpression(
                     ReferenceTypeConstants.PrepTypeToFreeMethodId(baseTypeInfo.IlName),
                     catalog,
-                    new LiteralValueExpression($"&(object->base)", baseTypeInfo));
+                    new LiteralValueExpression($"&(object->base)", baseTypeInfo, 0));
 
                 statements.Add(new VoidExpressionStatementSet(methodCall));
             }

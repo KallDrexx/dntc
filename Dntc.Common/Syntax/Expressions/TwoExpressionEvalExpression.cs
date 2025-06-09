@@ -10,7 +10,7 @@ public record TwoExpressionEvalExpression(
     string Operator, 
     CBaseExpression Right,
     TypeConversionInfo TypeAfterOperation) 
-    : CBaseExpression(false)
+    : CBaseExpression(0)
 {
     public override TypeConversionInfo ResultingType => TypeAfterOperation;
 

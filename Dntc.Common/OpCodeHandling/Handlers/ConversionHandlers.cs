@@ -32,7 +32,7 @@ public class ConversionHandlers : IOpCodeHandlerCollection
         {
             var typeConversion = context.ConversionCatalog.Find(new IlTypeName(castToType.FullName!));
             var items = context.ExpressionStack.Pop(1);
-            var item = new DereferencedValueExpression(items[0]);
+            var item = new AdjustPointerDepthExpression(items[0], 0);
             var expession = new CastExpression(item, typeConversion);
             context.ExpressionStack.Push(expession);
 

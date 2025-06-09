@@ -77,7 +77,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 var variable = new Variable(
                     fieldConversionInfo.FieldTypeConversionInfo,
                     fieldConversionInfo.NameInC.Value, 
-                    false);
+                    0);
 
                 var left = new VariableValueExpression(variable);
                 var right = value;
@@ -167,7 +167,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     var fieldVariable = new Variable(
                         fieldConversionInfo.FieldTypeConversionInfo,
                         fieldConversionInfo.NameInC.Value,
-                        field.FieldType.IsByReference);
+                        field.FieldType.IsByReference ? 1 : 0);
 
                     return new FieldAccessExpression(objectExpression, fieldVariable);
                 }
@@ -180,7 +180,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     var parent = context.ConversionCatalog.Find(
                         new IlTypeName(dotNetType.Definition.BaseType.FullName));
 
-                    var fieldVariable = new Variable(parent, "base", false);
+                    var fieldVariable = new Variable(parent, "base", 0);
                     objectExpression = new FieldAccessExpression(objectExpression, fieldVariable);
                     continue;
                 }
@@ -201,7 +201,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var value = items[0];
             var address = items[1];
 
-            var left = new DereferencedValueExpression(address);
+            var left = new AdjustPointerDepthExpression(address, 0);
             var statement = new AssignmentStatementSet(left, value);
 
             return new OpCodeHandlingResult(statement);
@@ -221,7 +221,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var objectValue = items[0];
             var address = items[1];
 
-            var left = new DereferencedValueExpression(address);
+            var left = new AdjustPointerDepthExpression(address, 0);
             var statement = new AssignmentStatementSet(left, objectValue);
 
             return new OpCodeHandlingResult(statement);
@@ -257,7 +257,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var argument = context.CurrentMethodConversion.Parameters[argIndex];
             var argumentInfo = context.ConversionCatalog.Find(argument.TypeName);
             var storedVariableExpression = new VariableValueExpression(
-                new Variable(argumentInfo, argument.Name, argument.IsReference));
+                new Variable(argumentInfo, argument.Name, argument.IsReference ? 1 : 0));
 
             var tempVariable = HandleReferencedVariable(
                 context.ExpressionStack,
@@ -322,33 +322,12 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var local = context.CurrentMethodConversion.Locals[localIndex];
             var localInfo = context.ConversionCatalog.Find(local.TypeName);
             var localVariable = new VariableValueExpression(
-                new Variable(localInfo, Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex), local.IsReference));
+                new Variable(
+                    localInfo,
+                    Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
+                    local.IsReference ? 1 : 0));
 
-            CBaseExpression left, right;
-            if (items[0].ProducesAPointer && localVariable.ProducesAPointer)
-            {
-                // Both are pointers and thus assignment is compatible as is
-                left = localVariable;
-                right = items[0];
-            }
-            else if (localVariable.ProducesAPointer && !items[0].ProducesAPointer)
-            {
-                // local is a pointer, so we need to dereference it to store the right hand value
-                left = new DereferencedValueExpression(localVariable);
-                right = items[0];
-            }
-            else if (!localVariable.ProducesAPointer && items[0].ProducesAPointer)
-            {
-                // Set the local's value to the dereferenced value of the assigment's expression
-                left = localVariable;
-                right = new DereferencedValueExpression(items[0]);
-            }
-            else
-            {
-                // Both are non-pointers
-                left = localVariable;
-                right = items[0];
-            }
+            var right = new AdjustPointerDepthExpression(items[0], localVariable.PointerDepth);
 
             var tempStatement = HandleReferencedVariable(
                 context.ExpressionStack,
@@ -367,7 +346,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
                 statements.Add(tempStatement);
             }
 
-            statements.Add(new AssignmentStatementSet(left, right));
+            statements.Add(new AssignmentStatementSet(localVariable, right));
 
             if (localVariable.ResultingType.IsReferenceType)
             {

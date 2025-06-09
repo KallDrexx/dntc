@@ -52,7 +52,7 @@ typedef struct {{
         ConversionCatalog conversionCatalog)
     {
         var int32Type = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
-        return new FieldAccessExpression(expressionToArray, new Variable(int32Type, "length", false));
+        return new FieldAccessExpression(expressionToArray, new Variable(int32Type, "length", 0));
     }
 
     public override CBaseExpression GetItemsAccessorExpression(
@@ -60,14 +60,14 @@ typedef struct {{
         ConversionCatalog conversionCatalog)
     {
         var elementType = conversionCatalog.Find(ElementType);
-        var items = new Variable(elementType, "items", false);
+        var items = new Variable(elementType, "items", 0);
         return new FieldAccessExpression(expressionToArray, items);
     }
 
     public override CStatementSet GetLengthCheckExpression(
         CBaseExpression arrayLengthField,
         CBaseExpression arrayInstance,
-        DereferencedValueExpression index)
+        CBaseExpression index)
     {
         return new ArrayLengthCheckStatementSet(arrayLengthField, arrayInstance, index);
     }

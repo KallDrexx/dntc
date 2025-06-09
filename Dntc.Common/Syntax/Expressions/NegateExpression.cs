@@ -5,7 +5,7 @@ namespace Dntc.Common.Syntax.Expressions;
 /// <summary>
 /// Negates the specified expression
 /// </summary>
-public record NegateExpression(CBaseExpression Expression, bool BooleanNegation) : CBaseExpression(false)
+public record NegateExpression(CBaseExpression Expression, bool BooleanNegation) : CBaseExpression(0)
 {
     // Probably can be hardcoded to bool
     public override TypeConversionInfo ResultingType => Expression.ResultingType; 

@@ -14,13 +14,13 @@ public record MethodCallExpression : CBaseExpression
     public MethodCallExpression(
         IlMethodId method,
         ConversionCatalog catalog,
-        params CBaseExpression[] arguments) : base(false)
+        params CBaseExpression[] arguments) : base(0)
     {
         Catalog = catalog;
         Arguments = arguments;
 
         var functionInfo = catalog.Find(method);
-        FnExpression = new LiteralValueExpression(functionInfo.NameInC.Value, functionInfo.ReturnTypeInfo);
+        FnExpression = new LiteralValueExpression(functionInfo.NameInC.Value, functionInfo.ReturnTypeInfo, 0);
         Parameters = functionInfo.Parameters;
         ReturnType = functionInfo.ReturnTypeInfo;
         IsVirtualCall = false;
@@ -33,7 +33,7 @@ public record MethodCallExpression : CBaseExpression
         TypeConversionInfo returnType,
         ConversionCatalog catalog,
         bool isVirtualCall = false
-    ) : base(returnType.IsPointer)
+    ) : base(returnType.IsPointer ? 1 : 0)
     {
         FnExpression = fnExpression;
         Parameters = parameters;

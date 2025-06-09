@@ -4,7 +4,7 @@ namespace Dntc.Common.Syntax.Expressions;
 
 public record FieldAccessExpression(
     CBaseExpression OwningObject,
-    Variable Field) : CBaseExpression(Field.IsPointer)
+    Variable Field) : CBaseExpression(Field.PointerDepth)
 {
     public override TypeConversionInfo ResultingType => Field.Type;
 
@@ -13,7 +13,7 @@ public record FieldAccessExpression(
         await writer.WriteAsync("(");
         await OwningObject.WriteCodeStringAsync(writer);
 
-        if (OwningObject.ProducesAPointer)
+        if (OwningObject.PointerDepth > 0)
         {
             await writer.WriteAsync("->");
         }

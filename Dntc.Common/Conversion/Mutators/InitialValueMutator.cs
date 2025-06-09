@@ -29,7 +29,7 @@ public class InitialValueMutator : IFieldConversionMutator
         }
 
         var returnType = _conversionCatalog.Find(conversionInfo.FieldTypeConversionInfo.IlName);
-        var expression = new LiteralValueExpression(attribute.ConstructorArguments[0].Value.ToString()!, returnType);
+        var expression = new LiteralValueExpression(attribute.ConstructorArguments[0].Value.ToString()!, returnType, 0);
         conversionInfo.InitialValue = expression;
     }
 }

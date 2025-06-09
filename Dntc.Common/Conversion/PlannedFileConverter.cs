@@ -126,7 +126,7 @@ public class PlannedFileConverter
             var returnType = _conversionCatalog.Find(dotNetDefinedMethod.ReturnType);
             statements.Add(
                 new LocalDeclarationStatementSet(
-                    new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer)));
+                    new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer ? 1 : 0)));
         }
         
         // Add local statements
@@ -136,7 +136,7 @@ public class PlannedFileConverter
             var local = dotNetDefinedMethod.Locals[x];
             var localType = _conversionCatalog.Find(local.Type);
             var name = Utils.LocalName(dotNetDefinedMethod.Definition, x);
-            var variable = new Variable(localType, name, local.Type.IsPointer());
+            var variable = new Variable(localType, name, local.Type.IsPointer() ? 1 : 0);
 
             if (locals.Add(name))
             {
@@ -158,7 +158,7 @@ public class PlannedFileConverter
             if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
             {
                 var variable = new VariableValueExpression(
-                    new Variable(paramType, parameter.Name, true));
+                    new Variable(paramType, parameter.Name, 1));
 
                 statements.Add(new GcTrackFunctionCallStatement(variable, _conversionCatalog));
             }
@@ -301,7 +301,7 @@ public class PlannedFileConverter
         var item = stack.Pop(1)[0];
         if (!checkpoints.TryGetValue(targetOffset, out var variable))
         {
-            variable = new Variable(item.ResultingType, $"__checkpoint_for_il{targetOffset:x4}", item.ProducesAPointer);
+            variable = new Variable(item.ResultingType, $"__checkpoint_for_il{targetOffset:x4}", item.PointerDepth);
             checkpoints.Add(targetOffset, variable);
         }
 

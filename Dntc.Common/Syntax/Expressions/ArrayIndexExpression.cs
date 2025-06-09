@@ -4,9 +4,9 @@ namespace Dntc.Common.Syntax.Expressions;
 
 public record ArrayIndexExpression(
     CBaseExpression Array,
-    DereferencedValueExpression Index,
+    CBaseExpression Index,
     TypeConversionInfo ValueType)
-    : CBaseExpression(false)
+    : CBaseExpression(Array.PointerDepth - 1)
 {
     public override TypeConversionInfo ResultingType => ValueType;
     

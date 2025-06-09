@@ -7,12 +7,16 @@ namespace Dntc.Common.Syntax.Expressions;
 /// </summary>
 public abstract record CBaseExpression
 {
-    public bool ProducesAPointer { get; }
+    public int PointerDepth { get; }
     public abstract TypeConversionInfo ResultingType { get; }
     
-    protected CBaseExpression(bool producesAPointer)
+    protected CBaseExpression(int pointerDepth)
     {
-        ProducesAPointer = producesAPointer;
+        PointerDepth = pointerDepth;
+        if (PointerDepth < 0)
+        {
+            PointerDepth = 0;
+        }
     }
 
     public abstract ValueTask WriteCodeStringAsync(StreamWriter writer);

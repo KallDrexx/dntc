@@ -32,7 +32,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
             var conversionInfo = context.ConversionCatalog.Find(new IlTypeName(typeDefinition.FullName));
             var items = context.ExpressionStack.Pop(1);
 
-            var left = new DereferencedValueExpression(items[0]);
+            var left = new AdjustPointerDepthExpression(items[0], 0);
             var right = new ZeroValuedObjectExpression(conversionInfo);
             var assignment = new AssignmentStatementSet(left, right);
             return new OpCodeHandlingResult(assignment);
@@ -121,7 +121,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 // to save the value to the temporary variable before we untrack it, otherwise we'll end up
                 // with a use after free bug.
                 var returnType = context.ConversionCatalog.Find(context.CurrentDotNetMethod.ReturnType);
-                var tempVariable = new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer);
+                var tempVariable = new Variable(returnType, Utils.ReturnVariableName(), returnType.IsPointer ? 1 : 0);
                 var tempVariableExpression = new VariableValueExpression(tempVariable);
                 var assignment = new AssignmentStatementSet(tempVariableExpression, innerExpression);
 
@@ -155,7 +155,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
                 {
                     var variable = new VariableValueExpression(
-                        new Variable(paramType, parameter.Name, true));
+                        new Variable(paramType, parameter.Name, 1));
 
                     statements.Add(new GcUntrackIfNotNullStatementSet(variable, context.ConversionCatalog));
                 }
@@ -192,7 +192,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 {
                     var tokenInfo = context.ConversionCatalog.Find(new IlTypeName(typeReference.FullName));
                     var returnTypeInfo = context.ConversionCatalog.Find(new IlTypeName(typeof(Type).FullName!));
-                    var expression = new LiteralValueExpression(tokenInfo.NameInC.Value, returnTypeInfo);
+                    var expression = new LiteralValueExpression(tokenInfo.NameInC.Value, returnTypeInfo, 0);
                     context.ExpressionStack.Push(expression);
                     break;
                 }

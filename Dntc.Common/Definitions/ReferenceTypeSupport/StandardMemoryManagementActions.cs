@@ -19,14 +19,14 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
     {
         var intType = conversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
         var callocCall = new MethodCallExpression(
-            new LiteralValueExpression("calloc", variableToAllocate.ResultingType),
+            new LiteralValueExpression("calloc", variableToAllocate.ResultingType, 0),
             [
                 new MethodConversionInfo.Parameter(intType.IlName, "n", false),
                 new MethodConversionInfo.Parameter(intType.IlName, "size", false)
             ],
             [
-                countExpression ?? new LiteralValueExpression("1", intType),
-                new LiteralValueExpression($"sizeof({cTypeName.Value})", intType)
+                countExpression ?? new LiteralValueExpression("1", intType, 0),
+                new LiteralValueExpression($"sizeof({cTypeName.Value})", intType, 0)
             ],
             variableToAllocate.ResultingType,
             conversionCatalog);
@@ -40,7 +40,7 @@ public class StandardMemoryManagementActions : IMemoryManagementActions
     {
         var voidType = conversionCatalog.Find(new IlTypeName(typeof(void).FullName!));
         var freeCall = new MethodCallExpression(
-            new LiteralValueExpression("free", voidType),
+            new LiteralValueExpression("free", voidType, 0),
             [new MethodConversionInfo.Parameter(variableToFree.ResultingType.IlName, "ptr", true)],
             [variableToFree],
             voidType,

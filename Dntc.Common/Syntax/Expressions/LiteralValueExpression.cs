@@ -2,7 +2,10 @@
 
 namespace Dntc.Common.Syntax.Expressions;
 
-public record LiteralValueExpression(string Value, TypeConversionInfo TypeInfo) : CBaseExpression(false)
+public record LiteralValueExpression(
+    string Value,
+    TypeConversionInfo TypeInfo,
+    int PointerDepth) : CBaseExpression(PointerDepth)
 {
     public override TypeConversionInfo ResultingType => TypeInfo;
 

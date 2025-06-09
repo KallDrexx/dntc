@@ -79,7 +79,9 @@ public class LoadHandlers : IOpCodeHandlerCollection
             if (field.IsStatic)
             {
                 var variable = new Variable(fieldConversionInfo.FieldTypeConversionInfo,
-                    fieldConversionInfo.NameInC.Value, field.FieldType.IsPointer);
+                    fieldConversionInfo.NameInC.Value,
+                    field.FieldType.IsPointer ? 1 : 0);
+
                 newExpression = new VariableValueExpression(variable);
             }
             else
@@ -92,7 +94,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             if (getAddress)
             {
-                newExpression = new AddressOfValueExpression(newExpression);
+                newExpression = new AdjustPointerDepthExpression(newExpression, 1);
             }
 
             context.ExpressionStack.Push(newExpression);
@@ -137,7 +139,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                     var fieldVariable = new Variable(
                         fieldConversionInfo.FieldTypeConversionInfo,
                         fieldConversionInfo.NameInC.Value,
-                        field.FieldType.IsByReference);
+                        field.FieldType.IsByReference ? 1 : 0);
 
                     return new FieldAccessExpression(objectExpression, fieldVariable);
                 }
@@ -150,7 +152,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                     var parent = context.ConversionCatalog.Find(
                         new IlTypeName(dotNetType.Definition.BaseType.FullName));
 
-                    var fieldVariable = new Variable(parent, "base", false);
+                    var fieldVariable = new Variable(parent, "base", 0);
                     objectExpression = new FieldAccessExpression(objectExpression, fieldVariable);
                     continue;
                 }
@@ -168,7 +170,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         public OpCodeHandlingResult Handle(HandleContext context)
         {
             var items = context.ExpressionStack.Pop(1);
-            var dereferencedExpression = new DereferencedValueExpression(items[0]);
+            var dereferencedExpression = new AdjustPointerDepthExpression(items[0], 0);
             context.ExpressionStack.Push(dereferencedExpression);
 
             return new OpCodeHandlingResult(null);
@@ -224,11 +226,11 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             var parameter = context.CurrentMethodConversion.Parameters[index];
             var parameterInfo = context.ConversionCatalog.Find(parameter.TypeName);
-            var variable = new Variable(parameterInfo, parameter.Name, parameter.IsReference);
+            var variable = new Variable(parameterInfo, parameter.Name, parameter.IsReference ? 1 : 0);
             CBaseExpression newExpression = new VariableValueExpression(variable);
             if (loadAddress)
             {
-                newExpression = new AddressOfValueExpression(newExpression);
+                newExpression = new AdjustPointerDepthExpression(newExpression, 1);
             }
 
             context.ExpressionStack.Push(newExpression);
@@ -312,7 +314,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 }
             }
 
-            var expression = new LiteralValueExpression(numericLiteral, typeInfo);
+            var expression = new LiteralValueExpression(numericLiteral, typeInfo, 0);
             context.ExpressionStack.Push(expression);
 
             return new OpCodeHandlingResult(null);
@@ -364,10 +366,10 @@ public class LoadHandlers : IOpCodeHandlerCollection
                 new Variable(
                     localInfo,
                     Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
-                    local.IsReference || localInfo.IlName.IsPointer()));
+                    (local.IsReference || localInfo.IlName.IsPointer()) ? 1 : 0));
 
             CBaseExpression newExpression = getAddress
-                ? new AddressOfValueExpression(expression)
+                ? new AdjustPointerDepthExpression(expression, 1)
                 : expression;
 
             context.ExpressionStack.Push(newExpression);
@@ -389,7 +391,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
             var items = context.ExpressionStack.Pop(1);
             var objectAddress = items[0];
 
-            context.ExpressionStack.Push(new DereferencedValueExpression(objectAddress));
+            context.ExpressionStack.Push(new AdjustPointerDepthExpression(objectAddress, 0));
 
             return new OpCodeHandlingResult(null);
         }
@@ -406,7 +408,7 @@ public class LoadHandlers : IOpCodeHandlerCollection
         {
             var stringType = context.ConversionCatalog.Find(new IlTypeName(typeof(string).FullName!));
             var stringValue = EscapeString((string)context.CurrentInstruction.Operand);
-            var expression = new LiteralValueExpression($"\"{stringValue}\"", stringType);
+            var expression = new LiteralValueExpression($"\"{stringValue}\"", stringType, 0);
             context.ExpressionStack.Push(expression);
 
             return new OpCodeHandlingResult(null);

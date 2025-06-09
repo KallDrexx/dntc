@@ -58,7 +58,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
             
-            var indexExpression = new DereferencedValueExpression(index);
+            var indexExpression = new AdjustPointerDepthExpression(index, 0);
 
             var itemType = value.ResultingType;
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
@@ -98,7 +98,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var array = items[0];
             var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
 
-            var newItem = new FieldAccessExpression(array, new Variable(int32Type, "length", false));
+            var newItem = new FieldAccessExpression(array, new Variable(int32Type, "length", 0));
             context.ExpressionStack.Push(newItem);
 
             return new OpCodeHandlingResult(null);
@@ -127,7 +127,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
-            var indexExpression = new DereferencedValueExpression(index);
+            var indexExpression = new AdjustPointerDepthExpression(index, 0);
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
             var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemsExpression.ResultingType);
             
@@ -171,7 +171,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             var count = items[0];
 
             var name = $"__temp_{context.CurrentInstruction.Offset:x4}";
-            var tempVariable = new Variable(arrayInfo, name, true);
+            var tempVariable = new Variable(arrayInfo, name, 1);
             var tempVariableExpression = new VariableValueExpression(tempVariable);
 
             var createFnCallExpression = new MethodCallExpression(
@@ -182,7 +182,7 @@ public class ArrayHandlers : IOpCodeHandlerCollection
             // TODO: This should be customizable for different types of arrays
             var itemAllocator = context.MemoryManagementActions.AllocateCall(
                 arrayDefinedType.GetItemsAccessorExpression(tempVariableExpression, context.ConversionCatalog),
-                new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo),
+                new LiteralValueExpression(elementTypeInfo.NameInC.Value, elementTypeInfo, 0),
                 context.ConversionCatalog,
                 count);
 

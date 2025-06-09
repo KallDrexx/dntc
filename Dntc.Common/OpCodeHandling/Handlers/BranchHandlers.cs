@@ -87,7 +87,7 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var items = context.ExpressionStack.Pop(1);
             var item = items[0];
             var target = (Instruction)context.CurrentInstruction.Operand;
-            CBaseExpression condition = new DereferencedValueExpression(item);
+            CBaseExpression condition = new AdjustPointerDepthExpression(item, 0);
             if (!isTrueCheck)
             {
                 condition = new NegateExpression(condition, true);

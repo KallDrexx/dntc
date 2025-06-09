@@ -64,7 +64,7 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
         ConversionCatalog conversionCatalog)
     {
         var sizeTypeInfo = conversionCatalog.Find(_sizeType);
-        return new LiteralValueExpression(_size.ToString(), sizeTypeInfo);
+        return new LiteralValueExpression(_size.ToString(), sizeTypeInfo, 0);
     }
 
     public override CBaseExpression GetItemsAccessorExpression(
@@ -78,7 +78,7 @@ public class StaticallySizedArrayDefinedType : ArrayDefinedType
     public override CStatementSet GetLengthCheckExpression(
         CBaseExpression arrayLengthField,
         CBaseExpression arrayInstance,
-        DereferencedValueExpression index)
+        CBaseExpression index)
     {
         return _bypassBoundsCheck
             ? new CustomCodeStatementSet(string.Empty)

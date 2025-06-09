@@ -42,7 +42,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
     if (count <= 0) {{
 "));
         var referenceTypeInfo = catalog.Find(ReferenceTypeConstants.ReferenceTypeBaseId);
-        var variable = new Variable(referenceTypeInfo, "singlePointerVariable", true);
+        var variable = new Variable(referenceTypeInfo, "singlePointerVariable", 1);
 
         // TODO: Find a way to generalize this so it doesn't have to be manually included
         // in every RC implementation.

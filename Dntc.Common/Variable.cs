@@ -2,4 +2,4 @@
 
 namespace Dntc.Common;
 
-public record Variable (TypeConversionInfo Type, string Name, bool IsPointer);
+public record Variable (TypeConversionInfo Type, string Name, int PointerDepth);

@@ -92,7 +92,7 @@ public class CallHandlers : IOpCodeHandlerCollection
         if (returnType.IsPointer)
         {
             var name = $"__temp_{context.CurrentInstruction.Offset:x4}";
-            var tempVariable = new Variable(returnType, name, returnType.IsPointer);
+            var tempVariable = new Variable(returnType, name, returnType.IsPointer ? 1 : 0);
             var tempVariableExpression = new VariableValueExpression(tempVariable);
 
             var localDeclaration = new LocalDeclarationStatementSet(tempVariable);
@@ -195,7 +195,10 @@ public class CallHandlers : IOpCodeHandlerCollection
             var constructorId = new IlMethodId(constructor.FullName);
             var constructorInfo = context.ConversionCatalog.Find(constructorId);
             var objType = context.ConversionCatalog.Find(new IlTypeName(constructor.DeclaringType.FullName));
-            var variable = new Variable(objType, $"__temp_{context.CurrentInstruction.Offset:x4}", !constructor.DeclaringType.IsValueType);
+            var variable = new Variable(
+                objType,
+                $"__temp_{context.CurrentInstruction.Offset:x4}",
+                (!constructor.DeclaringType.IsValueType) ? 1 : 0);
 
             var argumentsInCallingOrder = context.ExpressionStack.Pop(constructorInfo.Parameters.Count - 1)
                 .Reverse()
@@ -203,7 +206,7 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             // Add a pointer to the variable
             var variableExpression = new VariableValueExpression(variable);
-            argumentsInCallingOrder.Insert(0, new AddressOfValueExpression(variableExpression));
+            argumentsInCallingOrder.Insert(0, new AdjustPointerDepthExpression(variableExpression, 1));
 
             var statements = new List<CStatementSet>();
             
@@ -323,9 +326,10 @@ public class CallHandlers : IOpCodeHandlerCollection
             var conversionInfo = context.ConversionCatalog.Find(target.MethodId);
             var functionNameExpression = new LiteralValueExpression(
                 conversionInfo.NameInC.Value,
-                conversionInfo.ReturnTypeInfo);
+                conversionInfo.ReturnTypeInfo,
+                0);
 
-            var functionAddress = new AddressOfValueExpression(functionNameExpression);
+            var functionAddress = new AdjustPointerDepthExpression(functionNameExpression, 1);
             context.ExpressionStack.Push(functionAddress);
 
             return new OpCodeHandlingResult(null);

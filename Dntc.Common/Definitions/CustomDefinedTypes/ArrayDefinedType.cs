@@ -45,7 +45,7 @@ public abstract class ArrayDefinedType : CustomDefinedType
     public abstract CStatementSet GetLengthCheckExpression(
         CBaseExpression arrayLengthField,
         CBaseExpression arrayInstance,
-        DereferencedValueExpression index);
+        CBaseExpression index);
 
     /// <summary>
     /// Returns the C name for the array's element type

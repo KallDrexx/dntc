@@ -151,7 +151,7 @@ public static class Utils
 
     public static string NativeTypeName(this Variable variable)
     {
-        return variable.IsPointer
+        return variable.PointerDepth > 0
             ? variable.Type.NativeNameWithPointer()
             : variable.Type.NativeNameWithPossiblePointer(); // todo pointer to pointer (pointer to reference type)
     }

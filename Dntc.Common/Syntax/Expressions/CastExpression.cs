@@ -9,7 +9,7 @@ public record CastExpression(
     CBaseExpression Expression,
     TypeConversionInfo CastTo,
     bool ForceCastToPointer = false)
-    : CBaseExpression(ForceCastToPointer || CastTo.IsPointer)
+    : CBaseExpression((ForceCastToPointer || CastTo.IsPointer) ? 1 : 0)
 {
     // NOTE: Not sure if we need to determine if the type we are casting to is a pointer or not. This
     // all depends on how reference types end up looking.

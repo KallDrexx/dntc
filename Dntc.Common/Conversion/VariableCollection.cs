@@ -13,7 +13,7 @@ internal class VariableCollection
         var nextIndex = _locals.Count;
         var name = $"__local_{nextIndex}";
         
-        _locals.Add(new Variable(typeInfo, name, isPointer));
+        _locals.Add(new Variable(typeInfo, name, isPointer ? 1 : 0));
 
         return nextIndex;
     }
@@ -21,7 +21,7 @@ internal class VariableCollection
     public int AddParameter(TypeConversionInfo typeInfo, string name, bool isPointer)
     {
         var nextIndex = _parameters.Count;
-        _parameters.Add(new Variable(typeInfo, name, isPointer));
+        _parameters.Add(new Variable(typeInfo, name, isPointer ? 1 : 0));
 
         return nextIndex;
     }
