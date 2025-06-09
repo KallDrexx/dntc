@@ -143,7 +143,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 }
 
                 statements.Add(
-                    new GcUntrackIfNotNullStatementSet(
+                    new GcUntrackFunctionCallStatement(
                         new VariableValueExpression(variable),
                         context.ConversionCatalog));
             }
@@ -157,7 +157,7 @@ public class MiscHandlers : IOpCodeHandlerCollection
                     var variable = new VariableValueExpression(
                         new Variable(paramType, parameter.Name, 1));
 
-                    statements.Add(new GcUntrackIfNotNullStatementSet(variable, context.ConversionCatalog));
+                    statements.Add(new GcUntrackFunctionCallStatement(variable, context.ConversionCatalog));
                 }
             }
 

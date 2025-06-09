@@ -639,9 +639,7 @@ void ScratchpadCSharp_SimpleFunctions_LdIndRefTest(SystemUInt16Array *array, int
 		abort();
 	}
 	(array->items)[index] = value;
-	if (array != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	return;
 }
 

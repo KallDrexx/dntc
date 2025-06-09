@@ -222,7 +222,7 @@ public class CallHandlers : IOpCodeHandlerCollection
                 }
 
                 // We need to make sure the temp variable is untracked if it's being set in a loop
-                statements.Add(new GcUntrackIfNotNullStatementSet(variableExpression, context.ConversionCatalog));
+                statements.Add(new GcUntrackFunctionCallStatement(variableExpression, context.ConversionCatalog));
 
                 var createFunction = new ReferenceTypeAllocationMethod(
                     context.MemoryManagementActions,

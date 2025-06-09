@@ -110,7 +110,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
                 if (left.ResultingType.IsReferenceType)
                 {
-                    statements.Add(new GcUntrackIfNotNullStatementSet(left, context.ConversionCatalog));
+                    statements.Add(new GcUntrackFunctionCallStatement(left, context.ConversionCatalog));
                 }
 
                 // I think this might need to handle referenced variable replacement but using field access expression
@@ -267,7 +267,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             var statements = new List<CStatementSet>();
             if (storedVariableExpression.ResultingType.IsReferenceType)
             {
-                statements.Add(new GcUntrackIfNotNullStatementSet(storedVariableExpression, context.ConversionCatalog));
+                statements.Add(new GcUntrackFunctionCallStatement(storedVariableExpression, context.ConversionCatalog));
             }
 
             if (tempVariable != null)
@@ -338,7 +338,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             if (localVariable.ResultingType.IsReferenceType)
             {
                 // Since the local is a reference type, we need to untrack the old one
-                statements.Add(new GcUntrackIfNotNullStatementSet(localVariable, context.ConversionCatalog));
+                statements.Add(new GcUntrackFunctionCallStatement(localVariable, context.ConversionCatalog));
             }
 
             if (tempStatement != null)

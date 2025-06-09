@@ -60,30 +60,22 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(Scratch
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* __temp_000e = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)__this);
 	(__this->FieldValue) = value;
-	if (__temp_000e != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
 	__temp_000e = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000e);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_000e);
 	(__temp_000e->TestValue) = value;
-	if ((__this->InnerClassInstance) != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(__this->InnerClassInstance));
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(__this->InnerClassInstance));
 	(__this->InnerClassInstance) = __temp_000e;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(__this->InnerClassInstance));
-	if (__temp_000e != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000e);
 	return;
 }
 
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(int32_t value) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __return_value = {0};
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0001 = {0};
-	if (__temp_0001 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
 	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0001, value);
@@ -97,9 +89,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(Sc
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
 	sum = ((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent)->ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent, 1, 2);
 	__return_value = ((parent->FieldValue) + sum);
-	if (parent != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
 	return __return_value;
 }
 
@@ -108,9 +98,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Test(void) {
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0002 = {0};
 	__temp_0002 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(10);
 	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValue(__temp_0002);
-	if (__temp_0002 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
 	return __return_value;
 }
 
@@ -124,9 +112,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_GetParentValueFro
 	int32_t __return_value = {0};
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
 	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent_get_FieldValueViaProperty(parent);
-	if (parent != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
 	return __return_value;
 }
 
@@ -135,9 +121,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseFieldValu
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
 	((parent->base).BaseField) = value;
 	__return_value = (((parent->base).BaseField) + 5);
-	if (parent != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
 	return __return_value;
 }
 
@@ -151,9 +135,7 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_TestBaseMethodCal
 	int32_t __return_value = {0};
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
 	__return_value = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_GetBaseFieldValue((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase*)parent);
-	if (parent != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
 	return __return_value;
 }
 
@@ -185,9 +167,7 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* ScratchpadCSharp_Refer
 	int32_t x = {0};
 	ScratchpadCSharpReferenceTypesArrayTestsArrayStructArray* __temp_0000 = {0};
 	__temp_0000 = ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateSizedArrayTest();
-	if (array != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	array = __temp_0000;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	x = 0;
@@ -207,12 +187,8 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateModifiedArrayTest_IL_001b:
 	}
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	__return_value = array;
-	if (array != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-	}
-	if (__temp_0000 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0000);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0000);
 	return __return_value;
 }
 
@@ -252,18 +228,14 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* ScratchpadCSharp_Refere
 	(__temp_0001->items) = calloc(count, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass));
 	(__temp_0001->length) = count;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
-	if (array != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
 	array = __temp_0001;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	x = 0;
 	goto ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_001e;
 
 ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_000b:
-	if (__temp_000d != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
 	__temp_000d = ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_000d);
 	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__ctor(__temp_000d);
@@ -282,15 +254,9 @@ ScratchpadCSharp_ReferenceTypes_ArrayTests_CreateReferenceTypeArray_IL_001e:
 	}
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)array);
 	__return_value = array;
-	if (array != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
-	}
-	if (__temp_0001 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
-	}
-	if (__temp_000d != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&array);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_000d);
 	return __return_value;
 }
 
@@ -301,26 +267,18 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest(Scratch
 	if (!refresh) {
 		goto ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest_IL_0015;
 	}
-	if (__temp_0003 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0003);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0003);
 	__temp_0003 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0003);
 	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_0003);
 	(__temp_0003->TestValue) = 200;
-	if (inner != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
 	inner = __temp_0003;
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner);
 
 ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest_IL_0015:
 	__return_value = (inner->TestValue);
-	if (__temp_0003 != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0003);
-	}
-	if (inner != NULL) {
-		DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
-	}
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0003);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
 	return __return_value;
 }
