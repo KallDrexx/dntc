@@ -78,9 +78,17 @@ public record MethodCallExpression : CBaseExpression
             if (x > 0) await writer.WriteAsync(", ");
 
             var paramInfo = Catalog.Find(Parameters[x].TypeName);
-            if (Parameters[x].IsReference && paramInfo.NameInC != Arguments[x].ResultingType.NameInC)
+            if (Parameters[x].IsReference)
             {
-                await writer.WriteAsync($"({paramInfo.NameInC}*)");
+                // For ref reference types: cast to double pointer and take address
+                if (Parameters[x].IsReferenceTypeByRef && paramInfo.IsReferenceType)
+                {
+                    await writer.WriteAsync($"({paramInfo.NameInC}**)&");
+                }
+                else if (paramInfo.NameInC != Arguments[x].ResultingType.NameInC)
+                {
+                    await writer.WriteAsync($"({paramInfo.NameInC}*)");
+                }
             }
 
             var param = Arguments[x];

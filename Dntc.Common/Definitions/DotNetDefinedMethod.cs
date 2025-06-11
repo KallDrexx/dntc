@@ -81,7 +81,7 @@ public class DotNetDefinedMethod : DefinedMethod
         if (!definition.IsStatic)
         {
             // If this is an instance method, then the first parameter is always the declaring type
-            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), Utils.ThisArgumentName, true));
+            parameters.Insert(0, new Parameter(new IlTypeName(definition.DeclaringType.FullName), Utils.ThisArgumentName, true, false));
         }
 
         Parameters = parameters;
@@ -185,13 +185,24 @@ public class DotNetDefinedMethod : DefinedMethod
         if (definition.ParameterType.IsArray)
         {
             // This probably needs to be redone to pass by reference, but it's just a size_t and a pointer for now
-            return new Parameter(new IlTypeName(definition.ParameterType.FullName), definition.Name, false);
+            return new Parameter(new IlTypeName(definition.ParameterType.FullName), definition.Name, false, false);
         }
+
+        var isReference = definition.IsConsideredReferenceType();
+        var underlyingType = definition.ParameterType.IsByReference 
+            ? definition.ParameterType.GetElementType()
+            : definition.ParameterType;
+        
+        var isReferenceTypeByRef = definition.ParameterType.IsByReference && 
+                                  !underlyingType.IsValueType &&
+                                  !underlyingType.IsGenericParameter &&
+                                  !underlyingType.IsFunctionPointer;
 
         return new Parameter(
             new IlTypeName(definition.ParameterType.FullName),
             definition.Name,
-            definition.IsConsideredReferenceType());
+            isReference,
+            isReferenceTypeByRef);
     }
 
     protected override IReadOnlyList<IlTypeName> GetReferencedTypesInternal() =>

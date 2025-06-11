@@ -141,7 +141,13 @@ public class LoadHandlers : IOpCodeHandlerCollection
                         fieldConversionInfo.NameInC.Value,
                         field.FieldType.IsByReference ? 1 : 0);
 
-                    return new FieldAccessExpression(objectExpression, fieldVariable);
+                    // If the object expression is a double pointer (ref reference type), 
+                    // we need to dereference it once to access fields
+                    var adjustedObjectExpression = objectExpression.PointerDepth == 2 && objectExpression.ResultingType.IsReferenceType
+                        ? new AdjustPointerDepthExpression(objectExpression, 1)
+                        : objectExpression;
+
+                    return new FieldAccessExpression(adjustedObjectExpression, fieldVariable);
                 }
 
                 // If this is a dotnet expression, then check the type's base class
@@ -153,7 +159,14 @@ public class LoadHandlers : IOpCodeHandlerCollection
                         new IlTypeName(dotNetType.Definition.BaseType.FullName));
 
                     var fieldVariable = new Variable(parent, "base", 0);
-                    objectExpression = new FieldAccessExpression(objectExpression, fieldVariable);
+                    
+                    // If the object expression is a double pointer (ref reference type), 
+                    // we need to dereference it once to access fields
+                    var adjustedObjectExpression = objectExpression.PointerDepth == 2 && objectExpression.ResultingType.IsReferenceType
+                        ? new AdjustPointerDepthExpression(objectExpression, 1)
+                        : objectExpression;
+                    
+                    objectExpression = new FieldAccessExpression(adjustedObjectExpression, fieldVariable);
                     continue;
                 }
 
@@ -226,7 +239,14 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             var parameter = context.CurrentMethodConversion.Parameters[index];
             var parameterInfo = context.ConversionCatalog.Find(parameter.TypeName);
-            var variable = new Variable(parameterInfo, parameter.Name, parameter.IsReference ? 1 : 0);
+            
+            var pointerDepth = parameter.IsReference ? 1 : 0;
+            if (parameter.IsReferenceTypeByRef && parameterInfo.IsReferenceType) 
+            {
+                pointerDepth += 1; // ref reference types get double pointer
+            }
+            
+            var variable = new Variable(parameterInfo, parameter.Name, pointerDepth);
             CBaseExpression newExpression = new VariableValueExpression(variable);
             if (loadAddress)
             {
@@ -362,11 +382,21 @@ public class LoadHandlers : IOpCodeHandlerCollection
 
             var local = context.CurrentMethodConversion.Locals[localIndex];
             var localInfo = context.ConversionCatalog.Find(local.TypeName);
+            var pointerDepth = 0;
+            if (local.IsReference || localInfo.IlName.IsPointer())
+            {
+                pointerDepth = 1;
+            }
+            else if (localInfo.IsReferenceType)
+            {
+                pointerDepth = 1; // Reference type local variables are pointers in C
+            }
+            
             var expression = new VariableValueExpression(
                 new Variable(
                     localInfo,
                     Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
-                    (local.IsReference || localInfo.IlName.IsPointer()) ? 1 : 0));
+                    pointerDepth));
 
             CBaseExpression newExpression = getAddress
                 ? new AdjustPointerDepthExpression(expression, 1)

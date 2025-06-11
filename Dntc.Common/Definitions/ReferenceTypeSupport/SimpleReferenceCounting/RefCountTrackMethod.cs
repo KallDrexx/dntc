@@ -17,7 +17,7 @@ public class RefCountTrackMethod : CustomDefinedMethod
             ReferenceTypeConstants.SourceFileName,
             new CFunctionName("DntcReferenceTypeBase_Gc_Track"),
             [
-                new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true),
+                new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true, false),
             ])
     {
         // While untrack won't be called by track, we should include it as an invoked method so the

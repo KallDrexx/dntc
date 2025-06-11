@@ -87,7 +87,10 @@
     "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayStruct[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateSizedArrayTest()",
     "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayStruct[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateModifiedArrayTest()",
     "ScratchpadCSharp.ReferenceTypes.ArrayTests/ArrayClass[] ScratchpadCSharp.ReferenceTypes.ArrayTests::CreateReferenceTypeArray(System.Int32)",
-    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::StArgTest(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass,System.Boolean)"
+    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::StArgTest(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass,System.Boolean)",
+    "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::RefReferenceTypeTest()",
+    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::ModifyParentReference(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent&)",
+    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::ModifyInnerReference(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass&)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

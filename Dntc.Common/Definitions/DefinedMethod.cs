@@ -5,7 +5,7 @@ namespace Dntc.Common.Definitions;
 
 public abstract class DefinedMethod
 {
-    public record Parameter(IlTypeName Type, string Name, bool IsReference);
+    public record Parameter(IlTypeName Type, string Name, bool IsReference, bool IsReferenceTypeByRef);
 
     public record Local(IlTypeName Type, bool IsReference);
     

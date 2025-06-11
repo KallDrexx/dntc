@@ -282,3 +282,62 @@ ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_StArgTest_IL_0015:
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
 	return __return_value;
 }
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyParentReference(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent **parent) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0006 = {0};
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0006);
+	__temp_0006 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0006);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0006, 300);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(*parent));
+	(*parent) = __temp_0006;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(*parent));
+	(((*parent)->base).BaseField) = 25;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0006);
+	return;
+}
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyInnerReference(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass **inner) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* __temp_0001 = {0};
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
+	__temp_0001 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0001);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_0001);
+	(__temp_0001->TestValue) = 75;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(*inner));
+	(*inner) = __temp_0001;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(*inner));
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0001);
+	return;
+}
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_RefReferenceTypeTest(void) {
+	int32_t __return_value = {0};
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* parent = {0};
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* inner = {0};
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* __temp_0002 = {0};
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* __temp_0008 = {0};
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
+	__temp_0002 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0002);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__ctor(__temp_0002, 100);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
+	parent = __temp_0002;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)parent);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0008);
+	__temp_0008 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)__temp_0008);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(__temp_0008);
+	(__temp_0008->TestValue) = 50;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
+	inner = __temp_0008;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyParentReference((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent**)&parent);
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyInnerReference((ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass**)&inner);
+	__return_value = ((parent->FieldValue) + (inner->TestValue));
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&parent);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0002);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0008);
+	return __return_value;
+}

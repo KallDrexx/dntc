@@ -34,7 +34,7 @@ public class CustomFunctionDefiner : IDotNetMethodDefiner
             new IlTypeName(method.ReturnType.FullName),
             Utils.GetNamespace(method.DeclaringType),
             method.Parameters
-                .Select(x => new DefinedMethod.Parameter(new IlTypeName(x.ParameterType.FullName), x.Name, x.IsConsideredReferenceType()))
+                .Select(x => new DefinedMethod.Parameter(new IlTypeName(x.ParameterType.FullName), x.Name, x.IsConsideredReferenceType(), false))
                 .ToArray());
     }
 

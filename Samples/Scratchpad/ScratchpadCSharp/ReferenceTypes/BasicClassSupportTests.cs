@@ -88,4 +88,29 @@ public static class BasicClassSupportTests
 
         return inner.TestValue;
     }
+
+    public static int RefReferenceTypeTest()
+    {
+        var parent = new Parent(100);
+        var inner = new InnerClass { TestValue = 50 };
+        
+        // Test ref reference type reassignment
+        ModifyParentReference(ref parent);
+        ModifyInnerReference(ref inner);
+        
+        return parent.FieldValue + inner.TestValue;
+    }
+
+    private static void ModifyParentReference(ref Parent parent)
+    {
+        // This should reassign the reference via double pointer
+        parent = new Parent(300);
+        parent.BaseField = 25;
+    }
+
+    private static void ModifyInnerReference(ref InnerClass inner)
+    {
+        // This should reassign the reference via double pointer  
+        inner = new InnerClass { TestValue = 75 };
+    }
 }

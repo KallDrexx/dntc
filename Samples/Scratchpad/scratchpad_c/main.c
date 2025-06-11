@@ -227,7 +227,37 @@ int main(void) {
     validate_reference_counting();
     validate_array_tracking();
 
-    printf("Tests passed!\n");
+    // Test ref reference type functionality
+    printf("Testing ref reference type functionality...\n");
+    int32_t refReferenceTypeResult = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_RefReferenceTypeTest();
+    assert(refReferenceTypeResult == 375); // 300 (new parent FieldValue) + 75 (new inner TestValue)
+    printf("Ref reference type test passed! Result: %d\n", refReferenceTypeResult);
+
+    // Test individual ref parameter modification functions
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* testParent = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_CreateParent(50);
+    printf("Original parent FieldValue: %d\n", testParent->FieldValue);
+    
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyParentReference(&testParent);
+    printf("After ModifyParentReference - FieldValue: %d, BaseField: %d\n", 
+           testParent->FieldValue, testParent->base.BaseField);
+    assert(testParent->FieldValue == 300); // New parent instance
+    assert(testParent->base.BaseField == 25); // Field set in ModifyParentReference
+    
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* testInner = 
+        ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)testInner);
+    testInner->TestValue = 100;
+    printf("Original inner TestValue: %d\n", testInner->TestValue);
+    
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyInnerReference(&testInner);
+    printf("After ModifyInnerReference - TestValue: %d\n", testInner->TestValue);
+    assert(testInner->TestValue == 75); // New inner instance
+    
+    // Clean up
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testParent);
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testInner);
+
+    printf("All tests passed!\n");
     return 0;
 }
 
