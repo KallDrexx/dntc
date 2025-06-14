@@ -238,4 +238,25 @@ public static class AttributeTests
     {
         return NativeArrayNoBoundsCheck[0];
     }
+
+    public struct Vector2
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StaticallySizedArray(10)]
+    public static Vector2[] StaticallySizedVector2Array;
+
+    public static int ValidateLdFldFromArray()
+    {
+        var sum = 0;
+        for (var x = 0; x < StaticallySizedVector2Array.Length; x++)
+        {
+            sum += StaticallySizedVector2Array[x].X;
+            sum += StaticallySizedVector2Array[x].Y;
+        }
+
+        return sum;
+    }
 }

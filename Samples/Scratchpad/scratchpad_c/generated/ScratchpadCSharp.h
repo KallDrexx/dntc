@@ -60,6 +60,12 @@ typedef struct ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct {
 	uint8_t Index;
 } ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct;
 
+typedef struct ScratchpadCSharp_AttributeTests_Vector2 {
+	int32_t X;
+	int32_t Y;
+} ScratchpadCSharp_AttributeTests_Vector2;
+
+
 
 extern ScratchpadCSharp_SimpleFunctions_Vector3 ScratchpadCSharp_SimpleFunctions_AStaticVector;
 extern int32_t ScratchpadCSharp_SimpleFunctions_SomeStaticInt;
@@ -68,6 +74,7 @@ extern uint16_t ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[5];
 extern uint16_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[5];
 extern uint8_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex;
 extern ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct;
+extern ScratchpadCSharp_AttributeTests_Vector2 ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[10];
 extern int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField;
 extern char ScratchpadCSharp_AttributeTests_TestGlobalString[];
 extern int32_t ScratchpadCSharp_PluginTests_PluginGlobal;
@@ -158,5 +165,6 @@ void ScratchpadCSharp_SimpleFunctions_ArrayItemIncrementValidation(void);
 uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusOrderOfOperationsValidation(void);
 uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidation(void);
 void ScratchpadCSharp_StringTests_LogString(char* input);
+int32_t ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray(void);
 
 #endif // SCRATCHPADCSHARP_H_H

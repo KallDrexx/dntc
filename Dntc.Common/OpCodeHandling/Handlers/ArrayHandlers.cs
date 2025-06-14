@@ -96,11 +96,24 @@ public class ArrayHandlers : IOpCodeHandlerCollection
         {
             var items = context.ExpressionStack.Pop(1);
             var array = items[0];
-            var int32Type = context.ConversionCatalog.Find(new IlTypeName(typeof(int).FullName!));
 
-            var newItem = new FieldAccessExpression(array, new Variable(int32Type, "length", 0));
-            context.ExpressionStack.Push(newItem);
+            if (array.ResultingType.OriginalTypeDefinition is not ArrayDefinedType arrayDefinedType)
+            {
+                var message = $"LdLen opcode called for an expression returning {array.ResultingType.IlName} " +
+                              "which was defined by {array.ResultingType.OriginalTypeDefinition.GetType().FullName} " +
+                              "which does not inherit from ArrayDefinedType";
 
+                throw new InvalidOperationException(message);
+            }
+
+            var lengthField = arrayDefinedType.GetArraySizeExpression(array, context.ConversionCatalog);
+            if (lengthField == null)
+            {
+                var message = $"No known way to get the size of an array of type {array.ResultingType.IlName}";
+                throw new InvalidOperationException(message);
+            }
+
+            context.ExpressionStack.Push(lengthField);
             return new OpCodeHandlingResult(null);
         }
 
@@ -127,9 +140,10 @@ public class ArrayHandlers : IOpCodeHandlerCollection
                 throw new InvalidOperationException(message);
             }
 
+            var elementType = context.ConversionCatalog.Find(arrayDefinedType.ElementType);
             var indexExpression = new AdjustPointerDepthExpression(index, 0);
             var itemsExpression = arrayDefinedType.GetItemsAccessorExpression(array, context.ConversionCatalog);
-            var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, itemsExpression.ResultingType);
+            var arrayIndex = new ArrayIndexExpression(itemsExpression, indexExpression, elementType);
             
             // Return the length check while adding the accessor expression to the stack
             context.ExpressionStack.Push(arrayIndex);

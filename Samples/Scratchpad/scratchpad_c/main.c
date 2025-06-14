@@ -272,6 +272,14 @@ int main(void) {
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner1);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner2);
 
+
+    ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[0].X = 5;
+    ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[0].Y = 2;
+    ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[1].X = 10;
+    ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[1].Y = 3;
+    uint32_t sum = ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray();
+    assert(sum == 20);
+
     printf("All tests passed!\n");
     return 0;
 }

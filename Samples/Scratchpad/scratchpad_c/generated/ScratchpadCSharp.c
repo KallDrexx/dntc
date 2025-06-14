@@ -24,6 +24,7 @@ uint16_t ScratchpadCSharp_SimpleFunctions_StaticallySizedUshortArray[5] = {1,2,3
 uint16_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsTestArray[5] = {1,2,3,4,5};
 uint8_t ScratchpadCSharp_SimpleFunctions_OrderOfOperationsIndex = {0};
 ScratchpadCSharp_SimpleFunctions_PlusPlusOrderTestStruct ScratchpadCSharp_SimpleFunctions_PlusPlusOrderStruct = {0};
+ScratchpadCSharp_AttributeTests_Vector2 ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[10] = {0};
 int32_t ScratchpadCSharp_AttributeTests_UnreferencedGlobalField __attribute__ ((aligned (16))) = 123;
 char ScratchpadCSharp_AttributeTests_TestGlobalString[] = {0};
 int32_t ScratchpadCSharp_PluginTests_PluginGlobal __attribute__ ((aligned (8))) = {0};
@@ -686,4 +687,33 @@ uint16_t ScratchpadCSharp_SimpleFunctions_PlusPlusStructOrderOfOperationsValidat
 void ScratchpadCSharp_StringTests_LogString(char* input) {
 	printf(input);
 	return;
+}
+
+int32_t ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray(void) {
+	int32_t __return_value = {0};
+	int32_t sum = {0};
+	int32_t x = {0};
+	sum = 0;
+	x = 0;
+	goto ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray_IL_0030;
+
+ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray_IL_0006:
+	if (10 <= x) {
+		printf("Attempted to access to ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[%d], but only %u items are in the array", x, 10);
+		abort();
+	}
+	sum = (sum + (ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[x].X));
+	if (10 <= x) {
+		printf("Attempted to access to ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[%d], but only %u items are in the array", x, 10);
+		abort();
+	}
+	sum = (sum + (ScratchpadCSharp_AttributeTests_StaticallySizedVector2Array[x].Y));
+	x = (x + 1);
+
+ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray_IL_0030:
+	if ((x < ((int32_t)10))) {
+		goto ScratchpadCSharp_AttributeTests_ValidateLdFldFromArray_IL_0006;
+	}
+	__return_value = sum;
+	return __return_value;
 }
