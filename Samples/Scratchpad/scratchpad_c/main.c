@@ -242,6 +242,7 @@ int main(void) {
            testParent->FieldValue, testParent->base.BaseField);
     assert(testParent->FieldValue == 300); // New parent instance
     assert(testParent->base.BaseField == 25); // Field set in ModifyParentReference
+    assert(testParent->base.__reference_type_base.activeReferenceCount == 1);
     
     ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* testInner = 
         ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
@@ -252,6 +253,7 @@ int main(void) {
     ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ModifyInnerReference(&testInner);
     printf("After ModifyInnerReference - TestValue: %d\n", testInner->TestValue);
     assert(testInner->TestValue == 75); // New inner instance
+    assert(testInner->__reference_type_base.activeReferenceCount == 1);
     
     // Clean up
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testParent);
