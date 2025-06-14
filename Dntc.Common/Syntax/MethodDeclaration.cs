@@ -49,7 +49,19 @@ public record MethodDeclaration(MethodConversionInfo Method, DefinedMethod Defin
                 // Don't prepend the parameter with an asterisk if it's a reference type but parameter's C name
                 // already contains an asterisk. This usually causes unintended behavior, especially with instances
                 // of strings, where the type is already `char *`.
-                var pointerSymbol = param.IsReference && !paramType.NameInC.Value.EndsWith('*') ? " *" : " ";
+                var pointerSymbol = " ";
+                if (param.IsReference && !paramType.NameInC.Value.EndsWith('*'))
+                {
+                    // For ref reference types: use double pointer
+                    if (param.IsReferenceTypeByRef && paramType.IsReferenceType)
+                    {
+                        pointerSymbol = " **";
+                    }
+                    else
+                    {
+                        pointerSymbol = " *";
+                    }
+                }
 
                 if (paramType.OriginalTypeDefinition is DotNetFunctionPointerType)
                 {

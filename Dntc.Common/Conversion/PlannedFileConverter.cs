@@ -157,6 +157,13 @@ public class PlannedFileConverter
             var paramType = _conversionCatalog.Find(parameter.Type);
             if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
             {
+                // Skip GC tracking for ref reference type parameters - they represent addresses 
+                // of caller variables, not references that need tracking
+                if (parameter.IsReferenceTypeByRef && paramType.IsReferenceType)
+                {
+                    continue;
+                }
+                
                 var variable = new VariableValueExpression(
                     new Variable(paramType, parameter.Name, 1));
 

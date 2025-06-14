@@ -14,8 +14,8 @@ public class FloatMinDefinedMethod : CustomDefinedMethod
         null,
         new CFunctionName("dn_min_float"),
         [
-            new Parameter(new IlTypeName("System.Single"), "first", false),
-            new Parameter(new IlTypeName("System.Single"), "second", false),
+            new Parameter(new IlTypeName("System.Single"), "first", false, false),
+            new Parameter(new IlTypeName("System.Single"), "second", false, false),
         ], false)
     {
     }

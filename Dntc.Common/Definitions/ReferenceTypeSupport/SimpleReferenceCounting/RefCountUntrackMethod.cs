@@ -17,7 +17,7 @@ public class RefCountUntrackMethod : CustomDefinedMethod
             ReferenceTypeConstants.SourceFileName,
             new CFunctionName("DntcReferenceTypeBase_Gc_Untrack"),
             [
-                new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true),
+                new Parameter(ReferenceTypeConstants.ReferenceTypeBaseId, "referenceType", true, false),
             ])
     {
         _memoryManagement = memoryManagement;

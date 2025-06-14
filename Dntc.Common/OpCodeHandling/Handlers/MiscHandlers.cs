@@ -154,6 +154,13 @@ public class MiscHandlers : IOpCodeHandlerCollection
                 var paramType = context.ConversionCatalog.Find(parameter.TypeName);
                 if (paramType.IsReferenceType && parameter.Name != Utils.ThisArgumentName && parameter.IsReference)
                 {
+                    // Skip GC untracking for ref reference type parameters - they represent addresses 
+                    // of caller variables, not references that need untracking
+                    if (parameter.IsReferenceTypeByRef && paramType.IsReferenceType)
+                    {
+                        continue;
+                    }
+                    
                     var variable = new VariableValueExpression(
                         new Variable(paramType, parameter.Name, 1));
 

@@ -24,6 +24,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
         { Code.Stind_I8, new StIndHandler() },
         { Code.Stind_R4, new StIndHandler() },
         { Code.Stind_R8, new StIndHandler() },
+        { Code.Stind_Ref, new StIndRefHandler() },
 
         { Code.Stloc, new StLocHandler(null) },
         { Code.Stloc_0, new StLocHandler(0) },
@@ -169,7 +170,13 @@ public class StoreHandlers : IOpCodeHandlerCollection
                         fieldConversionInfo.NameInC.Value,
                         field.FieldType.IsByReference ? 1 : 0);
 
-                    return new FieldAccessExpression(objectExpression, fieldVariable);
+                    // If the object expression is a double pointer (ref reference type), 
+                    // we need to dereference it once to access fields
+                    var adjustedObjectExpression = objectExpression.PointerDepth == 2 && objectExpression.ResultingType.IsReferenceType
+                        ? new AdjustPointerDepthExpression(objectExpression, 1)
+                        : objectExpression;
+
+                    return new FieldAccessExpression(adjustedObjectExpression, fieldVariable);
                 }
 
                 // If this is a dotnet expression, then check the type's base class
@@ -181,7 +188,14 @@ public class StoreHandlers : IOpCodeHandlerCollection
                         new IlTypeName(dotNetType.Definition.BaseType.FullName));
 
                     var fieldVariable = new Variable(parent, "base", 0);
-                    objectExpression = new FieldAccessExpression(objectExpression, fieldVariable);
+                    
+                    // If the object expression is a double pointer (ref reference type), 
+                    // we need to dereference it once to access fields
+                    var adjustedObjectExpression = objectExpression.PointerDepth == 2 && objectExpression.ResultingType.IsReferenceType
+                        ? new AdjustPointerDepthExpression(objectExpression, 1)
+                        : objectExpression;
+                    
+                    objectExpression = new FieldAccessExpression(adjustedObjectExpression, fieldVariable);
                     continue;
                 }
 
@@ -256,8 +270,15 @@ public class StoreHandlers : IOpCodeHandlerCollection
 
             var argument = context.CurrentMethodConversion.Parameters[argIndex];
             var argumentInfo = context.ConversionCatalog.Find(argument.TypeName);
+            
+            var pointerDepth = argument.IsReference ? 1 : 0;
+            if (argument.IsReferenceTypeByRef && argumentInfo.IsReferenceType) 
+            {
+                pointerDepth += 1; // ref reference types get double pointer
+            }
+            
             var storedVariableExpression = new VariableValueExpression(
-                new Variable(argumentInfo, argument.Name, argument.IsReference ? 1 : 0));
+                new Variable(argumentInfo, argument.Name, pointerDepth));
 
             var tempVariable = HandleReferencedVariable(
                 context.ExpressionStack,
@@ -327,7 +348,17 @@ public class StoreHandlers : IOpCodeHandlerCollection
                     Utils.LocalName(context.CurrentDotNetMethod.Definition, localIndex),
                     local.IsReference ? 1 : 0));
 
-            var right = new AdjustPointerDepthExpression(items[0], localVariable.PointerDepth);
+            // For reference types, both the local variable and the value should be pointers,
+            // so no pointer depth adjustment is needed
+            CBaseExpression right;
+            if (localInfo.IsReferenceType && items[0].ResultingType.IsReferenceType)
+            {
+                right = new AdjustPointerDepthExpression(items[0], 1);
+            }
+            else
+            {
+                right = new AdjustPointerDepthExpression(items[0], localVariable.PointerDepth);
+            }
 
             var tempStatement = HandleReferencedVariable(
                 context.ExpressionStack,
@@ -351,6 +382,55 @@ public class StoreHandlers : IOpCodeHandlerCollection
             if (localVariable.ResultingType.IsReferenceType)
             {
                 statements.Add(new GcTrackFunctionCallStatement(localVariable, context.ConversionCatalog));
+            }
+
+            return new OpCodeHandlingResult(new CompoundStatementSet(statements));
+        }
+
+        public OpCodeAnalysisResult Analyze(AnalyzeContext context)
+        {
+            return new OpCodeAnalysisResult();
+        }
+    }
+
+    private class StIndRefHandler : IOpCodeHandler
+    {
+        public OpCodeHandlingResult Handle(HandleContext context)
+        {
+            var items = context.ExpressionStack.Pop(2);
+            var value = items[0];
+            var address = items[1];
+
+            // For reference types, we want to assign the pointer value itself, not dereference to the object
+            // So if address has pointer depth 2 (ref reference type), target depth should be 1
+            var targetDepth = address.ResultingType.IsReferenceType && address.PointerDepth == 2 ? 1 : 0;
+            var left = new AdjustPointerDepthExpression(address, targetDepth);
+
+            // If the value is coming from a reference type passed by reference, we need to dereference it
+            // for the assignment to be valid
+            if (value.PointerDepth > 1)
+            {
+                value = new AdjustPointerDepthExpression(value, 1);
+            }
+            
+            // Check if this is a reference type assignment that needs GC tracking
+            var statements = new List<CStatementSet>();
+            
+            if (address.ResultingType.IsReferenceType && value.ResultingType.IsReferenceType)
+            {
+                // Untrack the old reference before assignment
+                statements.Add(new GcUntrackFunctionCallStatement(left, context.ConversionCatalog));
+                
+                // Perform the assignment
+                statements.Add(new AssignmentStatementSet(left, value));
+                
+                // Track the new reference after assignment
+                statements.Add(new GcTrackFunctionCallStatement(left, context.ConversionCatalog));
+            }
+            else
+            {
+                // Non-reference type assignment, just do the assignment
+                statements.Add(new AssignmentStatementSet(left, value));
             }
 
             return new OpCodeHandlingResult(new CompoundStatementSet(statements));

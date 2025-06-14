@@ -20,7 +20,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             Utils.GetSourceFileName(definedType.Namespace),
             FormNativeName(definedType.Definition.FullName),
             [
-                new Parameter(definedType.IlName, "object", true),
+                new Parameter(definedType.IlName, "object", true, false),
             ])
     {
         DefinedType = definedType;
@@ -36,7 +36,7 @@ public class PrepToFreeDefinedMethod : CustomDefinedMethod
             customDefinedType.SourceFileName,
             FormNativeName(customDefinedType.NativeName.Value),
             [
-                new Parameter(customDefinedType.IlName, "object", true),
+                new Parameter(customDefinedType.IlName, "object", true, false),
             ])
     {
         DefinedType = customDefinedType;
