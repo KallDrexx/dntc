@@ -215,12 +215,6 @@ public class ArrayHandlers : IOpCodeHandlerCollection
 
         public OpCodeAnalysisResult Analyze(AnalyzeContext context)
         {
-            if (!ExperimentalFlags.AllowReferenceTypes)
-            {
-                var message = "The newarr MSIL opcode requires reference type support, which is not enabled.";
-                throw new InvalidOperationException(message);
-            }
-
             var definition = ((TypeDefinition)context.CurrentInstruction.Operand).MakeArrayType();
             var allocationMethod = new ReferenceTypeAllocationMethod(context.MemoryManagementActions, definition);
 

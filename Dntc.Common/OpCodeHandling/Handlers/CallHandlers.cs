@@ -215,12 +215,6 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                if (!ExperimentalFlags.AllowReferenceTypes)
-                {
-                    var message = "Cannot call `newobj` on a reference type, as reference types are not yet supported";
-                    throw new NotSupportedException(message);
-                }
-
                 // We need to make sure the temp variable is untracked if it's being set in a loop
                 statements.Add(new GcUntrackFunctionCallStatement(variableExpression, context.ConversionCatalog));
 

@@ -21,11 +21,6 @@ public class Transpiler
     public Transpiler(Manifest manifest)
     {
         _manifest = manifest;
-
-        if (manifest.AllowExperimentalReferenceTypeSupport)
-        {
-            ExperimentalFlags.AllowReferenceTypes = true;
-        }
     }
 
     public async Task RunAsync()

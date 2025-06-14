@@ -58,11 +58,6 @@ public class Manifest
     /// </summary>
     public string? SingleGeneratedSourceFileName { get; set; }
 
-    /// <summary>
-    /// If provided, allows enabling experimental reference type support.
-    /// </summary>
-    public bool AllowExperimentalReferenceTypeSupport { get; set; }
-    
     public DebugInfoMode DebugInfoMode { get; set; } = DebugInfoMode.CLineSourceMaps;
 
     public static async Task<Manifest> ParseManifestAsync(string manifestFilePath)
