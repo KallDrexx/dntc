@@ -44,3 +44,12 @@ jobs:
         cmake .
         make
         ./scratchpad_c || { echo "[error] Running ./scratchpad_c failed. This indicates the C code being generated is not producing the expected values."; exit 1; }
+
+    - name: Validate scratchpad_c With Debug Code Gen
+      run: |
+        sed -i 's/"BuildInDebugMode": false,/"BuildInDebugMode": true,/g' Samples/Scratchpad/scratchpad-release.json
+        dotnet run --project Dntc.Cli/Dntc.Cli.csproj -- Samples/Scratchpad/scratchpad-release.json
+        cd Samples/Scratchpad/scratchpad_c
+        cmake .
+        make
+        ./scratchpad_c || { echo "[error] Running ./scratchpad_c failed. This indicates the C code being generated is not producing the expected values."; exit 1; }
