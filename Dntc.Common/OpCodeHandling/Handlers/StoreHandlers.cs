@@ -353,7 +353,7 @@ public class StoreHandlers : IOpCodeHandlerCollection
             CBaseExpression right;
             if (localInfo.IsReferenceType && items[0].ResultingType.IsReferenceType)
             {
-                right = items[0]; // No adjustment needed for reference type assignments
+                right = new AdjustPointerDepthExpression(items[0], 1);
             }
             else
             {
@@ -405,6 +405,13 @@ public class StoreHandlers : IOpCodeHandlerCollection
             // So if address has pointer depth 2 (ref reference type), target depth should be 1
             var targetDepth = address.ResultingType.IsReferenceType && address.PointerDepth == 2 ? 1 : 0;
             var left = new AdjustPointerDepthExpression(address, targetDepth);
+
+            // If the value is coming from a reference type passed by reference, we need to dereference it
+            // for the assignment to be valid
+            if (value.PointerDepth > 1)
+            {
+                value = new AdjustPointerDepthExpression(value, 1);
+            }
             
             // Check if this is a reference type assignment that needs GC tracking
             var statements = new List<CStatementSet>();

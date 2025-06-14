@@ -90,7 +90,8 @@
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::StArgTest(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass,System.Boolean)",
     "System.Int32 ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::RefReferenceTypeTest()",
     "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::ModifyParentReference(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/Parent&)",
-    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::ModifyInnerReference(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass&)"
+    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::ModifyInnerReference(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass&)",
+    "System.Void ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests::SwapRefTest(ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass&,ScratchpadCSharp.ReferenceTypes.BasicClassSupportTests/InnerClass&)"
   ],
   "GlobalsToTranspile": [
     "System.Int32 ScratchpadCSharp.AttributeTests::UnreferencedGlobalField",

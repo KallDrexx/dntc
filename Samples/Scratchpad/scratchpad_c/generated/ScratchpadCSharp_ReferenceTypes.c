@@ -341,3 +341,18 @@ int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_RefReferenceTypeT
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&__temp_0008);
 	return __return_value;
 }
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_SwapRefTest(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass **a, ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass **b) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* temp = {0};
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&temp);
+	temp = (*a);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)temp);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(*a));
+	(*a) = (*b);
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(*a));
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(*b));
+	(*b) = temp;
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(*b));
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&temp);
+	return;
+}

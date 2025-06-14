@@ -113,4 +113,12 @@ public static class BasicClassSupportTests
         // This should reassign the reference via double pointer  
         inner = new InnerClass { TestValue = 75 };
     }
+
+    private static void SwapRefTest(ref InnerClass a, ref InnerClass b)
+    {
+        // ReSharper disable once SwapViaDeconstruction
+        var temp = a;
+        a = b;
+        b = temp;
+    }
 }

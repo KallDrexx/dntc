@@ -254,10 +254,23 @@ int main(void) {
     printf("After ModifyInnerReference - TestValue: %d\n", testInner->TestValue);
     assert(testInner->TestValue == 75); // New inner instance
     assert(testInner->__reference_type_base.activeReferenceCount == 1);
-    
+
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *inner1 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *inner2 = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create();
+    inner1->TestValue = 12;
+    inner2->TestValue = 23;
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner1);
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)inner2);
+
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_SwapRefTest(&inner1, &inner2);
+    assert(inner1->TestValue == 23);
+    assert(inner2->TestValue == 12);
+
     // Clean up
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testParent);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testInner);
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner1);
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner2);
 
     printf("All tests passed!\n");
     return 0;
