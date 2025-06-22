@@ -39,14 +39,14 @@ In order to perform a transpilation, a manifest needs to be created that instruc
 how to operate. The manifest is a `json` file containing an object with the following fields:
 
 * `DotNetProjectDirectory` - If provided, the .net project in that directory will be built with the
-    `dotnet` CLI tool. 
+    `dotnet` CLI tool.
 * `BuildInDebugMode` - If true and `DotNetProjectDirectory` is specified, the .net project to be built
     is built in debug mode.
 * `AssemblyDirectory` - The directory containing assemblies to read for transpiling
 * `AssembliesToLoad` - List of all `dll` files to read
 * `MethodsToTranspile` - List of all .net methods that should be transpiled. Any methods called by a
     method listed here will also be transpiled, as long as any types and globals used.
-  * The methods are specified in their IL id format. See [Method Querying](#method-querying) for 
+  * The methods are specified in their IL id format. See [Method Querying](#method-querying) for
 * `OutputDirectory` - Directory to place all generated source and header files.
 * `SingleGeneratedSourceFileName` - If specified, no header files will be generated and all types, globals,
     and functions are in a single file with the name provided.
@@ -59,7 +59,7 @@ on will be transpiled.
 
 ## File Deletion Warning
 
-To ensure the output directory only contains the most current and accurate transpilation results, 
+To ensure the output directory only contains the most current and accurate transpilation results,
 the whole output directory is deleted. This prevents a method that is no longer being transpiled
 from lingering around.
 
@@ -74,12 +74,12 @@ only that one file is deleted.
 
 ## Method Querying
 
-The `MethodsToTranspile` manifest value takes a list of strings where each represents the MSIL 
+The `MethodsToTranspile` manifest value takes a list of strings where each represents the MSIL
 method identifiers. The Ids must match exactly what is seen when the compiled code is inspected.
 
 To get valid values for the methods you are interested in transpiling, the manifest can be created
 with the `MethodsToTranspile` value empty. The transpiler can then be invoked with the manifest file
-followed by the `query` command (e.g. `dntc manifest.json query`). 
+followed by the `query` command (e.g. `dntc manifest.json query`).
 
 This will load all assemblies that were listed in the manifest and print out all method ids it finds.
 You can find any root methods you are interested in transpiling and copy/paste them into the manifest.
@@ -96,15 +96,20 @@ You can find any root methods you are interested in transpiling and copy/paste t
 * Arrays being passed in from C99 into transpiled methods.
 * Static constructor transpilation with helper functions to allow native code to determine
   when the cost of static constructors are paid.
+* Reference type support via reference counting
+* Plugin system which allows customizing transpilation details, such as
+  * Which native types exist and are used for which .net primitive types
+  * Allowing custom attributes to make platform specific transpilations more idiomatic
+  * Customizing the memory allocation and deallocation strategy and functions
+  * Changing the way some code is transpiled to support non-C99 conforming compilers
 
 ## Limitations
 
 While the transpiler is still in development, it has some note-worthy limitations to keep in mind.
 The following functionality is not supported:
 
-* Most reference types. 
 * Interfaces (outside of generic type parameters)
-* Casting between non-primitive types (including struct inheritance)
+* Casting between non-primitive value types.
 * Most string operations
 * Generic functions as a root method for transpilation
   * Any function that takes a generic must have a concrete type for its arguments that can be
@@ -119,26 +124,26 @@ The transpilation process runs as a series of steps run one at a time.
 
 ### 1 - Read All Assemblies
 
-All assemblies from the manifest are read. We create a catalog of custom definitions for each 
+All assemblies from the manifest are read. We create a catalog of custom definitions for each
 type we find, their methods, and fields.
 
 ### 2 - Form Dependency Graphs
 
-For each method to transpile specified in the manifest look at all types and fields the transpiled 
+For each method to transpile specified in the manifest look at all types and fields the transpiled
 method references and add it to a dependency graph. The process is then repeated for each method
 the transpiled method invokes.
 
 ### 3 - Determine Conversion Requirements For Each Dependency
 
-For each dependency found in the dependency graph, we create a catalog of information of how 
-each type, method, and field should be transpiled. This includes the name of the header and 
+For each dependency found in the dependency graph, we create a catalog of information of how
+each type, method, and field should be transpiled. This includes the name of the header and
 source file it will be compiled in, what its name will be in C, etc...
 
 ### 4 - Generate an Implementation Plan
 
 Based on the dependency graphs we calculated, we form an implementation plan for what header
 files and source files will need to be generated. For each header and source file that is planned
-out it figures out which other headers are required to be referenced, what globals are declared 
+out it figures out which other headers are required to be referenced, what globals are declared
 or has implementations, and which methods are declared or implemented.
 
 ### 5 - Abstract Syntax Tree Creation
@@ -161,10 +166,10 @@ Several attributes can be used to customize how specific fields, types, and meth
 ### NativeFunctionCallAttribute
 
 Annotating a method with the `[NativeFunctionCall]` tells the transpiler that any calls to
-the method should be replaced with a function with the provided name. This allows using the .net 
-method as a stub, and replace it with a function defined in C. 
+the method should be replaced with a function with the provided name. This allows using the .net
+method as a stub, and replace it with a function defined in C.
 
-This can be used for transpiled code to call functionality that needs to be specially optimized, 
+This can be used for transpiled code to call functionality that needs to be specially optimized,
 or invoking capabilities that can't be invoked from transpiled code (e.g. `printf()`);
 
 ### NativeGlobalAttribute
@@ -178,21 +183,21 @@ by the .net code.
 ### CustomFunctionNameAttribute
 
 Methods annotated with `[CustomFunctionName]` allow the method to be named something specific when
-transpiled instead of relying on its auto-generated name. 
+transpiled instead of relying on its auto-generated name.
 
 This allows providing a nicer name for functions that need to be called from the integrated C99 code.
 
 ### CustomDeclarationAttribute
 
 Methods annotated with `[CustomDeclaration]` allows customizing the complete declaration of a function,
-including the return type and parameters. 
+including the return type and parameters.
 
 This is useful when a method needs to be transpiled but declared using a macro.
 
 ### CustomFileNameAttribute
 
 Methods, fields and types annotated with `[CustomFileName]` allows changing the name of the header
-and source file that the type will be declared and implemented in. 
+and source file that the type will be declared and implemented in.
 
 ### IgnoreInHeaderAttribute
 
@@ -204,24 +209,24 @@ and not exist in a header file.
 C #Line directives are added to the transpiled code so that the original C# source can be debugged.
 This can be controlled via the manifest using the property  "DebugInfoMode".
 
-This will compress the C statements for each line of C# onto a single line.
-
 The default setting (if unspecified) is: "CLineSourceMaps". This generates standard C #Line directives.
 
-Alternative options are:
-LineNumberComments - this will generate a comment that custom tooling can deal with in the format 
-// filename [StartLine:StartColumn] -[EndLine:EndColumn]
+Options are:
 
-None - turns this feature off, the transpiled C would become the debug source which is helpful
-for debugging the generated code.
+* `CLineSourceMaps` - This generates standard C #Line directives. This will compress the C statements
+  for each line of C# onto a single line.
+*  `LineNumberComments` - this will generate a comment that custom tooling can deal with in the format
+  `// filename [StartLine:StartColumn] -[EndLine:EndColumn]`
+* `None` - turns this feature off, the transpiled C would become the debug source which is helpful
+  for debugging the generated code.
 
 # Samples
 
 ## Octahedron
 
-The [Octahedron samples](Samples/Octahedron) demonstrates a (very basic) software rasterizer written 
-in C#.  The [render function](Samples/Octahedron/Dntc.Samples.Octahedron.Common/Renderer.cs#L5) 
-takes in an array RGB565 pixels representing the frame buffer, the camera definition, and how 
+The [Octahedron samples](Samples/Octahedron) demonstrates a (very basic) software rasterizer written
+in C#.  The [render function](Samples/Octahedron/Dntc.Samples.Octahedron.Common/Renderer.cs#L5)
+takes in an array RGB565 pixels representing the frame buffer, the camera definition, and how
 many seconds have passed since the starting. A list of triangles is retrieved based on which
 shape is determined to be drawn, and those are rendered to the frame buffer.
 
@@ -247,9 +252,9 @@ generate the C code.
 ### ESP32S3
 
 The [Ocahedron ESP32S3 sample](Samples/Octahedron/Octahedron.Esp32s3) allows running the sample
-on an ESP32S3 all-in one board, all without a .net runtime. It uses 
+on an ESP32S3 all-in one board, all without a .net runtime. It uses
 [its own dntc manifest](Samples/Octahedron/manifest-esp32.json) to transpile the common project into
-standard C code, and then utilizes an standard ESP-IDF main function to initialize the LCD, 
+standard C code, and then utilizes an standard ESP-IDF main function to initialize the LCD,
 initialize a frame buffer array, call the `Render()` function, and display the frame buffer to
 the attached parallel LCD.
 
