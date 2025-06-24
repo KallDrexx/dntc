@@ -27,6 +27,11 @@ customized on a method by method basis.
     * [CustomDeclarationAttribute](#customdeclarationattribute)
     * [CustomFileNameAttribute](#customfilenameattribute)
     * [IgnoreInHeaderAttribute](#ignoreinheaderattribute)
+  * [Reference Types](#reference-types-)
+    * [Create Functions](#create-functions)
+    * [Memory Management](#memory-management)
+      * [Returning Reference Types Into C](#returning-reference-types-into-c)
+  * [DebugInfo](#debuginfo)
 * [Samples](#samples)
   * [Octahedron](#octahedron)
     * [SDL Project](#sdl-project)
@@ -203,6 +208,58 @@ and source file that the type will be declared and implemented in.
 
 Methods, fields, and types annotated with `[IgnoreInHeader]` will only be declared in a source file
 and not exist in a header file.
+
+## Reference Types 
+
+On platforms that support dynamic memory allocation, .net reference types can be used. This includes
+inheritance support.
+
+Since .net does not support multiple inheritance, .net reference types are transpiled in a way that
+they can be cast to parent types safely using normal casting mechanisms (e.g. `(MyParent*)child`);
+
+Parent fields can be accessed via the `base` field on the struct. Parent types contain function
+pointers that can be used to properly access virtual methods that may be overridden.
+
+All .net reference types contain a root inheritance type of `DntcReferenceTypeBase`. This base
+reference type contains common fields and function pointers needed for reference counting and
+deallocation support.
+
+### Create Functions
+
+Transpiled .net reference types have some extra work that needs to be performed when being created.
+Therefore, every transpiled .net reference type has a custom `__Create()` function that allocates
+memory for the type, sets up any virtual function pointers that are needed, and set up the 
+`PrepForFree()` function pointer. It then returns the created instance (without any reference
+count tracking performed).
+
+This means that if native C code wishes to create an instance of a .net reference type, it should always
+call the correct `__Create()` method instead of trying to construct it manually.
+
+### Memory Management
+
+Reference types rely on reference counting to know when memory is safe to be reclaimed. When a reference type 
+instance is stored in a variable (or returned from a function), the C function
+`DntcReferenceTypeBase_Gc_Track()` is called to increment the reference count. Every time a .net reference
+type is no longer needed, `DntcReferenceTypeBase_Gc_Untrack()` is called to decrement the count. If it 
+decrements the reference count to zero, then the memory location of the reference type is deallocated and
+the pointer being passed in is `NULL`ed out.
+
+Every transpiled .net reference type contains a `__PrepForFree()` function. This function is used to iterate
+through any other reference type the original instance may reference and decrement their reference counts.
+This ensures that reference types that contain reference types deallocate properly.
+
+#### Returning Reference Types Into C
+
+When writing native C code that calls a transpiled .net function which returns a .net reference type,
+it is important to keep in mind that the instance will have a reference type of at least 1. This
+guarantees the instance can be passed into other transpiled functions and not be deallocated unexpectedly.
+
+This means it is up to the non-transpiled C code to call `DntcReferenceTypeBase_Gc_Untrack()` when it is
+no longer needed. Forgetting to do so will cause a memory leaks.
+
+Likewise, if native C code creates its own instance of a .net reference type, `DntcReferenceTypeBase_Gc_Track()`
+must be called to give it a reference count of 1. If not done, then it is likely passing the instance into
+a transpiled function will deallocate it, causing a use after free later on.
 
 ## DebugInfo
 
