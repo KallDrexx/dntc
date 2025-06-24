@@ -30,7 +30,13 @@ customized on a method by method basis.
   * [Reference Types](#reference-types-)
     * [Create Functions](#create-functions)
     * [Memory Management](#memory-management)
+    * [Reference Tracking Limitations](#reference-tracking-limitations)
       * [Returning Reference Types Into C](#returning-reference-types-into-c)
+    * [Reference Tracking Limitations](#reference-tracking-limitations-1)
+      * [Warning About Structs](#warning-about-structs)
+    * [Customization](#customization)
+      * [Allocation And Deallocation](#allocation-and-deallocation)
+      * [Reference Counting Implementation](#reference-counting-implementation)
   * [DebugInfo](#debuginfo)
 * [Samples](#samples)
   * [Octahedron](#octahedron)
@@ -237,7 +243,14 @@ call the correct `__Create()` method instead of trying to construct it manually.
 
 ### Memory Management
 
-Reference types rely on reference counting to know when memory is safe to be reclaimed. When a reference type 
+Reference types rely on reference counting to know when memory is safe to be reclaimed. When a reference type
+### Reference Tracking Limitations
+
+To remain portable, reference types currently utilize a very basic reference tracking system. This
+has two main drawbacks:
+
+1. Reference tracking is not thread safe, and decrementing the 
+ 
 instance is stored in a variable (or returned from a function), the C function
 `DntcReferenceTypeBase_Gc_Track()` is called to increment the reference count. Every time a .net reference
 type is no longer needed, `DntcReferenceTypeBase_Gc_Untrack()` is called to decrement the count. If it 
@@ -260,6 +273,60 @@ no longer needed. Forgetting to do so will cause a memory leaks.
 Likewise, if native C code creates its own instance of a .net reference type, `DntcReferenceTypeBase_Gc_Track()`
 must be called to give it a reference count of 1. If not done, then it is likely passing the instance into
 a transpiled function will deallocate it, causing a use after free later on.
+
+### Reference Tracking Limitations
+
+Reference types currently utilize a very basic reference tracking system. This has two main drawbacks:
+
+1. Reference tracking is not thread safe, and calling `Untrack()` from multiple threads for the same
+  instance may cause double free and other failures.
+2. Cyclic data structures are not allowed.
+
+These may be remedied via the [customization section below](#customization).
+
+#### Warning About Structs
+
+Note that .net structs which contain reference type fields will almost always leak memory, unless
+the .net code always `null`s out the field. This is due to value types not being tracked via the
+reference counter, and thus will not have `Untrack()` called automatically when it goes out of scope.
+
+### Customization
+
+Memory management has two layers of customization that transpiler plugins may modify:
+1. Allocation and deallocation function calls
+2. Reference counting implementation
+
+#### Allocation And Deallocation
+
+The transpiler contains the `IMemoryManagementActions` interface which provides the functionality for 
+memory allocation and deallocation function calls. Each implementation allows specifying:
+1. The headers are required for memory operations
+2. The C statements required for allocating memory
+3. The C statements required to free previously allocated memory.
+
+The standard memory management scheme uses `calloc()` for allocation and `free()` for deallocation, via
+`<stdlib.h>`.
+
+Swapping out the implementation would allow .net reference types to be managed by untraditional or custom
+memory allocators (e.g. an arena allocator on systems without dynamic memory).
+
+#### Reference Counting Implementation
+
+The default reference counting system is limited in that it is not thread safe. This is done for maximum
+portability. On systems that support threading and locking mechanisms, the reference counting implementation
+could be swapped for one that better fits that system and usage pattern.
+
+Customization of the reference counting mechanisms is done by providing a custom implementation of the
+`IRefcountImplementation` interface. Implementations must provide an `UpdateCatalog()` method that adds
+
+* Any `CustomDefinedField` implementations for fields that need to be added to the reference type base
+  struct.
+* A `CustomDefinedMethod` implementation for the `ReferenceTypeConstants.GcTrackMethodId` IL method id,
+  which contains the code to increment the reference count for an instance
+* A `CustomDefinedMethod` implementation for the `ReferenceTypeConstants.GcUntrackMethodId` IL method id,
+  which contains the code to decrement the reference count for an instance (and deallocate the instance
+  if the count is low enough).
+
 
 ## DebugInfo
 
