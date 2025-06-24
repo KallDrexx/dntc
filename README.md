@@ -20,13 +20,18 @@ customized on a method by method basis.
     * [4 - Generate an Implementation Plan](#4---generate-an-implementation-plan)
     * [5 - Abstract Syntax Tree Creation](#5---abstract-syntax-tree-creation)
     * [6 - Final Output Generation](#6---final-output-generation)
-  * [Customization Via Attributes](#customization-via-attributes)
-    * [NativeFunctionCallAttribute](#nativefunctioncallattribute)
-    * [NativeGlobalAttribute](#nativeglobalattribute)
-    * [CustomFunctionNameAttribute](#customfunctionnameattribute)
-    * [CustomDeclarationAttribute](#customdeclarationattribute)
-    * [CustomFileNameAttribute](#customfilenameattribute)
-    * [IgnoreInHeaderAttribute](#ignoreinheaderattribute)
+  * [Transpilation Customization](#transpilation-customization)
+    * [Customization Via Attributes](#customization-via-attributes)
+      * [CustomDeclarationAttribute](#customdeclarationattribute)
+      * [CustomFileNameAttribute](#customfilenameattribute)
+      * [CustomFunctionNameAttribute](#customfunctionnameattribute)
+      * [InitialGlobalValueAttribute](#initialglobalvalueattribute)
+      * [IgnoreInHeaderAttribute](#ignoreinheaderattribute)
+      * [NativeFunctionCallAttribute](#nativefunctioncallattribute)
+      * [NativeGlobalAttribute](#nativeglobalattribute)
+      * [StaticallySizedArrayAttribute](#staticallysizedarrayattribute)
+      * [WithCAttributeAttribute](#withcattributeattribute)
+    * [Transpiler Plugins](#transpiler-plugins)
   * [Reference Types](#reference-types-)
     * [Create Functions](#create-functions)
     * [Memory Management](#memory-management)
@@ -170,11 +175,74 @@ The user of ASTs allows the process to be flexible and easily testable.
 
 Then the ASTs for each output file are taken, and they are converted into actual C99 compilable text.
 
-## Customization Via Attributes
+## Transpilation Customization
+
+To support a wide variety of scenarios, the way .net concepts are transpiled are customized through
+the concept of `Definers`,`Definition Mutators`, and `Conversion Mutators`.
+
+A definer takes a Mono.Cecil definition for a field, type, or method and attempts to determine if it can
+create a dntc definition based on it. It usually generates a dntc definition based on attributes attached 
+to the target. A definer implements the `IDotNetFieldDefiner`, `IDotNetMethodDefiner`, or `IDotNetTypeDefiner`
+interfaces and is then added to the `DefinitionGenerationPipeline`. If all definers for a Mono.Cecil definition
+fail to return a definition, then a default dntc definition is generated for it.
+
+A definition mutator takes a dntc definition and along with a Mono.Cecil definition to either make 
+modifications to the dntc definition or take some other action. For example, a definition mutator exists
+to ensure that any method or field that references an enum uses the underlying type of the enum instead
+of the enumeration itself. Another example of definition mutators is to update dntc definitions so that
+they are compatible with the different type of arrays that are supported (heap vs static). 
+
+These rely on the `IFieldDefinitionMutator` and `IMethodDefinitionMutator` and are added to the 
+`DefinerDefinitionPipeline`. These are executed after a definition has been generated for the Mono.Cecil
+definition.
+
+A conversion mutator is similar to a definition mutator, except it modifies a `ConversionInfo` instance
+instead of a dntc definition. This is used to customize the C name of a field, type, or method, or to
+ensure that a type is not included in a header file and only transpiled to source files. 
+
+These are implemented via the `IFieldConversionMutator`, `IMethodConversionMutator`, and 
+`ITypeConversionMutator` interfaces, and are added to the `ConversionInfoCreator` class. These mutators
+are executed after the `ConversionInfoCreator` generates a `ConversionInfo` instance from a dntc
+definition.
+
+### Customization Via Attributes
 
 Several attributes can be used to customize how specific fields, types, and methods are transpiled.
 
-### NativeFunctionCallAttribute
+#### CustomDeclarationAttribute
+
+Methods annotated with `[CustomDeclaration]` allows customizing the complete declaration of a function,
+including the return type and parameters.
+
+This is useful when a method needs to be transpiled but declared using a macro.
+
+#### CustomFileNameAttribute
+
+Methods, fields and types annotated with `[CustomFileName]` allows changing the name of the header
+and source file that the type will be declared and implemented in.
+
+#### CustomFunctionNameAttribute
+
+Methods annotated with `[CustomFunctionName]` allow the method to be named something specific when
+transpiled instead of relying on its auto-generated name.
+
+This allows providing a nicer name for functions that need to be called from the integrated C99 code.
+
+#### InitialGlobalValueAttribute
+
+A field annotated with `[InitialGlobalValue("someValue")]` will be transpiled with the raw string argument
+set as the initial value of the global field. This is required for setting an initial value, since
+providing an initial value in the normal C# method via `=` is done via static constructors, which may
+not always be executed as expected on some platforms.
+
+An example of this being useful is for a statically sized array where you want specific default values.
+
+#### IgnoreInHeaderAttribute
+
+Methods, fields, and types annotated with `[IgnoreInHeader]` will only be declared in a source file
+and not exist in a header file.
+
+#### NativeFunctionCallAttribute
 
 Annotating a method with the `[NativeFunctionCall]` tells the transpiler that any calls to
 the method should be replaced with a function with the provided name. This allows using the .net
@@ -183,7 +251,7 @@ method as a stub, and replace it with a function defined in C.
 This can be used for transpiled code to call functionality that needs to be specially optimized,
 or invoking capabilities that can't be invoked from transpiled code (e.g. `printf()`);
 
-### NativeGlobalAttribute
+#### NativeGlobalAttribute
 
 Static fields can be annotated with `[NativeGlobal]` to denote that the field itself shouldn't be
 transpiled, but instead references to it are replaced with calls to a natively defined global.
@@ -191,29 +259,40 @@ transpiled, but instead references to it are replaced with calls to a natively d
 This is useful when integrating into a system that has globals defined and they need to be referenced
 by the .net code.
 
-### CustomFunctionNameAttribute
+#### StaticallySizedArrayAttribute
 
-Methods annotated with `[CustomFunctionName]` allow the method to be named something specific when
-transpiled instead of relying on its auto-generated name.
+Fields annotated with `[StaticallySizedArray]` will be transpiled as an array whose size is declared
+at compile time, essentially creating a fixed byte array.
 
-This allows providing a nicer name for functions that need to be called from the integrated C99 code.
+#### WithCAttributeAttribute
 
-### CustomDeclarationAttribute
+Methods and fields with the `[WithCAttribute("someAttribute")]` allow the method or field to contain
+a specific C attribute after transpilation. This allows for gcc/msvc/ebpf specific attributes in
+transpiled code.
 
-Methods annotated with `[CustomDeclaration]` allows customizing the complete declaration of a function,
-including the return type and parameters.
+### Transpiler Plugins
 
-This is useful when a method needs to be transpiled but declared using a macro.
+Different platforms have different requirements for the C code that they generate. For example:
+* The SNES C compiler is not fully c99 compliant, and thus can't have '{0}' initializers for global fields.
+* Linux eBPF applications require `<vmlinux.h>` and not `<stdlib.h>` for primitive types, and must use
+  `__s32` instead of `int32_t` for `int` types
 
-### CustomFileNameAttribute
+Likewise, users of the transpiler might want custom attributes to make the API more ergonomic for a
+specific platform, such as making it easier to declare SNES assembly label references, or Linux
+eBPF license declarations.
 
-Methods, fields and types annotated with `[CustomFileName]` allows changing the name of the header
-and source file that the type will be declared and implemented in.
+All of these examples are customizations that are specific to an individual transpilation target and not
+general enough to make sense as part of the dntc framework.
 
-### IgnoreInHeaderAttribute
+These are accomplished by creating implementations of the `ITranspilerPlugin` interface. This interface
+allows declaring if the transpiler's native types should be defined (e.g. `int32_t` from `<stdlib.h>`) or
+if they should be ignored so they can be swapped out.
 
-Methods, fields, and types annotated with `[IgnoreInHeader]` will only be declared in a source file
-and not exist in a header file.
+Likewise, the transpiler plugin also allows adding custom definers and mutators that are added to the
+transpilation pipeline.
+
+Transpiler plugins are specified by `PluginAssembly` value in the manifest. When specified, the transpiler
+will automatically pick up `ITranspilerPlugin` implementation in the specified assembly and utilize it.
 
 ## Reference Types 
 
