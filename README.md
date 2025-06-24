@@ -44,6 +44,8 @@ customized on a method by method basis.
       * [Reference Counting Implementation](#reference-counting-implementation)
   * [DebugInfo](#debuginfo)
 * [Samples](#samples)
+  * [Linux eBPF Kernel Modules](#linux-ebpf-kernel-modules)
+  * [SNES Games](#snes-games)
   * [Octahedron](#octahedron)
     * [SDL Project](#sdl-project)
     * [ESP32S3](#esp32s3)
@@ -406,7 +408,6 @@ Customization of the reference counting mechanisms is done by providing a custom
   which contains the code to decrement the reference count for an instance (and deallocate the instance
   if the count is low enough).
 
-
 ## DebugInfo
 
 C #Line directives are added to the transpiled code so that the original C# source can be debugged.
@@ -424,6 +425,16 @@ Options are:
   for debugging the generated code.
 
 # Samples
+
+## Linux eBPF Kernel Modules
+
+A proof of concept utilization of the transpiler to allow writing Linux eBPF kernel modules
+in C# can be found in the [DotnetEbpf repository](https://github.com/KallDrexx/DotnetEbpf).
+
+## SNES Games
+
+SNES games written in C# has been shown to be possible via the 
+[DotnetSnes framework](https://github.com/KallDrexx/DotnetSnes).
 
 ## Octahedron
 
