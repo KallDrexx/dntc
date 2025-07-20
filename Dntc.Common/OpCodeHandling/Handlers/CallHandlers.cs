@@ -218,11 +218,8 @@ public class CallHandlers : IOpCodeHandlerCollection
                 // We need to make sure the temp variable is untracked if it's being set in a loop
                 statements.Add(new GcUntrackFunctionCallStatement(variableExpression, context.ConversionCatalog));
 
-                var createFunction = new ReferenceTypeAllocationMethod(
-                    context.MemoryManagementActions,
-                    constructor.DeclaringType.Resolve());
-
-                var createFnCall = new MethodCallExpression(createFunction.Id, context.ConversionCatalog);
+                var createMethodId = ReferenceTypeAllocationMethod.FormIlMethodId(constructor.DeclaringType.Resolve());
+                var createFnCall = new MethodCallExpression(createMethodId, context.ConversionCatalog);
                 var assignment = new AssignmentStatementSet(variableExpression, createFnCall);
                 statements.Add(assignment);
 
@@ -255,9 +252,8 @@ public class CallHandlers : IOpCodeHandlerCollection
 
             if (!constructor.DeclaringType.IsValueType)
             {
-                extraCalls.Add(new CustomInvokedMethod(
-                    new ReferenceTypeAllocationMethod(context.MemoryManagementActions,
-                        constructor.DeclaringType.Resolve())));
+                var createMethodId = ReferenceTypeAllocationMethod.FormIlMethodId(constructor.DeclaringType.Resolve());
+                extraCalls.Add(new InvokedMethod(createMethodId));
 
                 extraCalls.Add(new InvokedMethod(ReferenceTypeConstants.GcTrackMethodId));
             }

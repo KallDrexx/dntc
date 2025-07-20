@@ -110,8 +110,8 @@ public class ConversionCatalog
                 throw new InvalidOperationException(message);
             }
             
-            AddChildren(node);
             _types.Add(node.TypeName, _conversionInfoCreator.Create(definition, node.TypeName.IsPointer()));
+            AddChildren(node);
         }
     }
 
