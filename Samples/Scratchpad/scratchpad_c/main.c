@@ -266,7 +266,18 @@ int main(void) {
     assert(inner1->TestValue == 23);
     assert(inner2->TestValue == 12);
 
+    // Test NeverInstantiatedClass - this verifies that __Create functions are generated 
+    // for all reference types, even those never instantiated with 'new' in C#
+    ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass* neverInstantiated = 
+        ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass__Create();
+    DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)neverInstantiated);
+    neverInstantiated->Value = 42;
+    
+    int32_t neverInstantiatedResult = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass(neverInstantiated);
+    assert(neverInstantiatedResult == 42); // Should return the Value field directly
+    
     // Clean up
+    DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&neverInstantiated);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testParent);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testInner);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&inner1);

@@ -114,7 +114,7 @@ public class ReferenceTypeAllocationMethod : CustomDefinedMethod
                 {
                     var methodInfo = catalog.Find(new IlMethodId(virtualMethod.FullName));
                     var customStatement = new CustomCodeStatementSet(
-                        $"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};)");
+                        $"\tresult->{methodInfo.NameInC} = {methodInfo.NameInC};");
 
                     statements.Add(customStatement);
                 }

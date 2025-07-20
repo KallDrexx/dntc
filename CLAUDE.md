@@ -54,7 +54,7 @@ dotnet build Dntc.sln
 dotnet run --project Dntc.Cli/Dntc.Cli.csproj -- Samples/Scratchpad/scratchpad-release.json
 
 # 3. Build and test generated C code
-cd Samples/Scratchpad/scratchpad_c && cmake . && make && ./scratchpad_c
+(cd Samples/Scratchpad/scratchpad_c && cmake . && make && ./scratchpad_c) # The parenthesis are important!
 ```
 
 ### Validation Requirements

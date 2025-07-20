@@ -9,14 +9,22 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForF
 	// No cleanup necessary
 }
 
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree;
+	return result;
+}
+
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* object) {
 	// No cleanup necessary
 }
 
-void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* object) {
-	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(object->InnerClassInstance));
-
-	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(&(object->base));
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree;
+	result->ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum;	return result;
 }
 
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase_Sum(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this, int32_t a, int32_t b) {
@@ -41,15 +49,14 @@ ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* ScratchpadCSharp_
 	return result;
 }
 
-void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this) {
-	return;
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_Parent* object) {
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&(object->InnerClassInstance));
+
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__PrepForFree(&(object->base));
 }
 
-ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__Create(void) {
-	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass* result = {0};
-	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass));
-	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__PrepForFree;
-	return result;
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_ParentBase *__this) {
+	return;
 }
 
 void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass__ctor(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_InnerClass *__this) {
@@ -196,6 +203,13 @@ void ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__PrepForFree(Scratchp
 	// No cleanup necessary
 }
 
+ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__PrepForFree;
+	return result;
+}
+
 ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__Create(void) {
 	ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* result = {0};
 	result = calloc(1, sizeof(ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray));
@@ -205,13 +219,6 @@ ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* ScratchpadCSharpReferen
 
 void ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray__PrepForFree(ScratchpadCSharpReferenceTypesArrayTestsArrayClassArray* object) {
 	free((object->items));
-}
-
-ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__Create(void) {
-	ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass* result = {0};
-	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass));
-	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__PrepForFree;
-	return result;
 }
 
 void ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass__ctor(ScratchpadCSharp_ReferenceTypes_ArrayTests_ArrayClass *__this) {
@@ -355,4 +362,23 @@ void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_SwapRefTest(Scratchp
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)(*b));
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&temp);
 	return;
+}
+
+void ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass__PrepForFree(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass* object) {
+	// No cleanup necessary
+}
+
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass* ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass__Create(void) {
+	ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass* result = {0};
+	result = calloc(1, sizeof(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass));
+	(((DntcReferenceTypeBase*)result)->PrepForFree) = (void (*)(void*))ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass__PrepForFree;
+	return result;
+}
+
+int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass *instance) {
+	int32_t __return_value = {0};
+	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)instance);
+	__return_value = (instance->Value);
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&instance);
+	return __return_value;
 }

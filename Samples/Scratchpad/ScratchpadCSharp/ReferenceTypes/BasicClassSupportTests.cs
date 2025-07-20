@@ -121,4 +121,16 @@ public static class BasicClassSupportTests
         a = b;
         b = temp;
     }
+
+    // Test class that is used but never instantiated with 'new' keyword
+    public class NeverInstantiatedClass
+    {
+        public int Value;
+    }
+
+    // Method that takes an instance but never creates one
+    private static int UseNeverInstantiatedClass(NeverInstantiatedClass instance)
+    {
+        return instance.Value;
+    }
 }

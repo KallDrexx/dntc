@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using Dntc.Common.Definitions;
+using Dntc.Common.Definitions.CustomDefinedMethods;
 using Dntc.Common.Definitions.ReferenceTypeSupport;
 using Dntc.Common.OpCodeHandling;
 using Mono.Cecil.Rocks;
@@ -224,7 +225,7 @@ public class DependencyGraph
             }
         }
 
-        // If this is a .net reference type, then we need to add the prep to free call to its dependency graph
+        // If this is a .net reference type, then we need to add both the prep to free and create methods to its dependency graph
         if (type is DotNetDefinedType dotNetType && !dotNetType.Definition.IsValueType)
         {
             // TODO: Reference types should automatically add the prepToFree method to their known required methods
@@ -240,6 +241,21 @@ public class DependencyGraph
             if (prepNode != null)
             {
                 node.Children.Add(prepNode);
+            }
+
+            // Add the Create method alongside PrepForFree for all reference types
+            var createMethodId = ReferenceTypeAllocationMethod.FormIlMethodId(dotNetType.Definition);
+            var createMethod = definitionCatalog.Get(createMethodId);
+            if (createMethod == null)
+            {
+                createMethod = new ReferenceTypeAllocationMethod(_memoryManagement, dotNetType.Definition);
+                definitionCatalog.Add([createMethod]);
+            }
+
+            var createNode = CreateNode(definitionCatalog, createMethod.Id, path);
+            if (createNode != null)
+            {
+                node.Children.Add(createNode);
             }
         }
 
