@@ -129,8 +129,13 @@ public static class BasicClassSupportTests
     }
 
     // Method that takes an instance but never creates one
-    private static int UseNeverInstantiatedClass(NeverInstantiatedClass instance)
+    private static int UseNeverInstantiatedClass(NeverInstantiatedClass? instance)
     {
+        if (instance == null)
+        {
+            return -1;
+        }
+
         return instance.Value;
     }
 }

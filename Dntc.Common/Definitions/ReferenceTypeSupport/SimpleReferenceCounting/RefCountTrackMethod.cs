@@ -36,6 +36,7 @@ public class RefCountTrackMethod : CustomDefinedMethod
     public override CStatementSet? GetCustomImplementation(ConversionCatalog catalog)
     {
         return new CustomCodeStatementSet($@"
+    if (referenceType == NULL) return;
     referenceType->{SimpleRefCountConstants.CurrentCountFieldName}++;
 ");
     }

@@ -378,6 +378,14 @@ ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass* S
 int32_t ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass(ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_NeverInstantiatedClass *instance) {
 	int32_t __return_value = {0};
 	DntcReferenceTypeBase_Gc_Track((DntcReferenceTypeBase*)instance);
+	if (instance) {
+		goto ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass_IL_0005;
+	}
+	__return_value = -1;
+	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&instance);
+	return __return_value;
+
+ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass_IL_0005:
 	__return_value = (instance->Value);
 	DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&instance);
 	return __return_value;

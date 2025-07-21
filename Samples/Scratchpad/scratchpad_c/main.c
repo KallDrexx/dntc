@@ -276,6 +276,10 @@ int main(void) {
     int32_t neverInstantiatedResult = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass(neverInstantiated);
     assert(neverInstantiatedResult == 42); // Should return the Value field directly
     
+    // Test null check behavior - should return -1 when NULL is passed
+    int32_t nullResult = ScratchpadCSharp_ReferenceTypes_BasicClassSupportTests_UseNeverInstantiatedClass(NULL);
+    assert(nullResult == -1); // Should return -1 for null parameter
+    
     // Clean up
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&neverInstantiated);
     DntcReferenceTypeBase_Gc_Untrack((DntcReferenceTypeBase**)&testParent);
