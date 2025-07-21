@@ -87,7 +87,19 @@ public class BranchHandlers : IOpCodeHandlerCollection
             var items = context.ExpressionStack.Pop(1);
             var item = items[0];
             var target = (Instruction)context.CurrentInstruction.Operand;
-            CBaseExpression condition = new AdjustPointerDepthExpression(item, 0);
+            
+            CBaseExpression condition;
+            if (item.ResultingType.IsReferenceType && item.PointerDepth > 0)
+            {
+                // For reference types, preserve the pointer depth to check the pointer itself (null check)
+                condition = item;
+            }
+            else
+            {
+                // For value types and primitives, dereference to get the value for boolean evaluation
+                condition = new AdjustPointerDepthExpression(item, 0);
+            }
+            
             if (!isTrueCheck)
             {
                 condition = new NegateExpression(condition, true);

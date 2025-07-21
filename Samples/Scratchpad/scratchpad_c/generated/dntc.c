@@ -16,5 +16,6 @@ void DntcReferenceTypeBase_Gc_Untrack(DntcReferenceTypeBase **referenceType) {
 
 void DntcReferenceTypeBase_Gc_Track(DntcReferenceTypeBase *referenceType) {
 
+    if (referenceType == NULL) return;
     referenceType->activeReferenceCount++;
 }
